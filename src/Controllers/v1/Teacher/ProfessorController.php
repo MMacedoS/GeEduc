@@ -4,10 +4,8 @@ namespace App\Controllers\v1\Teacher;
 
 use App\Controllers\Controller;
 use App\Repositories\Person\PessoaFisicaRepository;
-use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Teacher\ProfessorRepository;
 use App\Request\Request;
-use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
