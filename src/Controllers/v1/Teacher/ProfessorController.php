@@ -113,7 +113,7 @@ class ProfessorController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'teacher/create', 
+                'teacher/edit', 
                 [
                     'active' => 'register', 
                     'errors' => $validator->getErrors()
@@ -129,7 +129,7 @@ class ProfessorController extends Controller
         $updated = $this->professorRepository->updateAll($data);
 
         if(is_null($updated)) {            
-        return $this->router->view('teacher/create', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('teacher/edit', ['active' => 'register', 'danger' => true]);
         }
 
         return $this->router->redirect('professores/');

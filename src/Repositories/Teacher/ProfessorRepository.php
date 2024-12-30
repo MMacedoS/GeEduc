@@ -163,13 +163,10 @@ class ProfessorRepository {
         try {
             $user = $this->usuarioRepository->update($data, $data['usuario_id']);
 
-            LoggerHelper::logInfo(json_encode($user));
             if (is_null($user)) {
                 $this->conn->rollBack();
                 return null;
             }
-
-            LoggerHelper::logInfo(json_encode($user));
 
             $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
             if (is_null($person)) {
@@ -179,6 +176,7 @@ class ProfessorRepository {
 
             $teacher = $this->update($data, $data['id']);
             if (is_null($teacher)) {
+                LoggerHelper::logInfo("erro no reacher");
                 $this->conn->rollBack();
                 return null;
             }
@@ -188,8 +186,6 @@ class ProfessorRepository {
             return $teacher;
 
         } catch (\Throwable $th) {
-            LoggerHelper::logInfo("Erro na transação updateAll: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             $this->conn->rollBack();
             return null;
         }
@@ -207,22 +203,17 @@ class ProfessorRepository {
             ->prepare(
                 "UPDATE " . self::TABLE . "
                     set 
-                     id = :id,
-                    uuid = :uuid,
                     graduacao = :graduacao,
-                    matricula = :matricula,
                     pessoa_fisica_id = :pessoa_fisica_id,
                     ativo = :ativo
-                    updated_at = NOW()
                 WHERE id = :id"
             );
 
             $updated = $stmt->execute([
-                ':uuid' => $professor->uuid,
                 ':graduacao' => $professor->graduacao,
-                ':matricula' => $professor->matricula,
                 ':pessoa_fisica_id' => $professor->pessoa_fisica_id,
                 ':ativo' => $professor->ativo,
+                ':id' => $id
             ]);
 
             if (!$updated) {        
@@ -231,6 +222,7 @@ class ProfessorRepository {
 
             return $this->findById($id);
         } catch (\Throwable $th) {
+
             return null;
         }
     }
