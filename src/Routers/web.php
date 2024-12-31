@@ -4,6 +4,7 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
+use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
 
@@ -13,6 +14,7 @@ $dashboardController = new DashboardController();
 $usuarioController = new UsuarioController(); 
 $professorController = new ProfessorController();
 $permissaoController = new PermissaoController();
+$planoController = new PlanoController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -45,3 +47,10 @@ $router->create('POST', '/professores/criar', [$professorController, 'store'], $
 $router->create('GET', '/professores/{id}/editar', [$professorController, 'edit'], $auth);
 $router->create('POST', '/professores/{id}/editar', [$professorController, 'update'], $auth);
 $router->create('DELETE', '/professores/{id}', [$professorController, 'destroy'], $auth);
+
+$router->create('GET', '/planos', [$planoController, 'index'], $auth);
+$router->create('GET', '/planos/criar', [$planoController, 'create'], $auth);
+$router->create('POST', '/planos/criar', [$planoController, 'store'], $auth);
+$router->create('GET', '/planos/{id}/editar', [$planoController, 'edit'], $auth);
+$router->create('POST', '/planos/{id}/editar', [$planoController, 'update'], $auth);
+$router->create('DELETE', '/planos/{id}', [$planoController, 'destroy'], $auth);

@@ -27,7 +27,7 @@ class ProfessorRepository {
         $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
     }
 
-    public function allTeachers()
+    public function allTeachers(array $params = [])
     {
         $sql = "SELECT 
            p.*,
@@ -190,7 +190,6 @@ class ProfessorRepository {
             return null;
         }
     }
-
 
     public function update(array $data, int $id)
     {

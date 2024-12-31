@@ -87,7 +87,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item current-page" href="/consumos/diaria">
+                                    <a class="dropdown-item current-page" href="/planos">
                                         <span>Planos</span>
                                     </a>
                                 </li>
