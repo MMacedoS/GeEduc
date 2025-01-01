@@ -25,8 +25,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Senha de primeiro acesso</label>
-        <input type="password" step="0" min="1" class="form-control" name="password" placeholder="digite aqui" value="" />
+        <label class="form-label">Senha de acesso</label>
+        <input type="password" step="0" min="1" class="form-control" name="password" placeholder="digite aqui" value="<?=$usuario->senha ?? ''?>" />
       </div>
     </div>
   </div>
@@ -50,9 +50,14 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Telefone de contato</label>
-        <input type="tel" step="0" min="1" class="form-control" name="telefone" placeholder="digite aqui" value="<?=$usuario->address ?? ''?>" />
-      </div>
+        <label class="form-label">Painel</label>
+        <select name="sector" class="form-control" id="">
+              <option value="estudante" selected <?php if(isset($usuario->painel) && $usuario->painel == 'estudante') { echo 'selected'; } ?>>Estudante</option>
+              <option value="administrativo" <?php if(isset($usuario->painel) && $usuario->painel == 'administrativo') { echo 'selected'; } ?>>Administrativo</option>
+              <option value="professor" <?php if(isset($usuario->painel) && $usuario->painel == 'professor') { echo 'selected'; } ?>>Professor</option>
+              <option value="secretaria" <?php if(isset($usuario->painel) && $usuario->painel == 'secretaria') { echo 'selected'; } ?>>Secretaria</option>
+          </select>
+        </div>
     </div>
   </div>
 </div>

@@ -53,7 +53,7 @@ class UsuarioRepository {
                 ':uuid' => $user->uuid,
                 ':name' => $user->nome,
                 ':email' => $user->email,
-                ':password' => md5($user->senha . $user->uuid),
+                ':password' => $user->senha,
                 ':sector' => $user->painel
             ]);
     
@@ -85,62 +85,79 @@ class UsuarioRepository {
 
     public function update(array $data, int $id)
     {
-        $user = $this->model->create(
-            $data
-        );
+        $existingUser = $this->findById($id);
+        if (!$existingUser) {
+            return null; 
+        }
+
+        $data['existing_password'] = $existingUser->senha;
+        $senha = (string)$data['password'];
+        LoggerHelper::logInfo($senha);
+        $user = $this->model->create($data, !hash_equals($senha, $existingUser->senha));
 
         try {
-            $stmt = $this->conn
-            ->prepare(
+            $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
-                    set 
-                    nome = :name, 
-                    email = :email, 
-                    ativo = :status,
-                    painel = :sector 
-                WHERE id = :id"
+                    SET 
+                        nome = :name, 
+                        email = :email, 
+                        ativo = :status,
+                        painel = :sector,
+                        senha = :senha
+                    WHERE id = :id"
             );
 
-            $updated = $stmt->execute([
+            $parameters = [
                 ':id' => $id,
                 ':name' => $user->nome,
                 ':email' => $user->email,
                 ':sector' => $user->painel,
-                ':status' => $user->ativo
-            ]);
+                ':status' => $user->ativo,
+                ':senha' => $user->senha
+            ];
 
-            if (!$updated) {        
+            $updated = $stmt->execute($parameters);
+
+            if (!$updated) {
                 return null;
             }
+
             return $this->findById($id);
         } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
             return null;
         }
     }
 
     public function getLogin(string $email, string $senha)
     {
-        if (is_null($email) && is_null($senha)) {
+        if (empty($email) || empty($senha)) {
             return null;
         }
     
-        $stmt = $this->conn->prepare("SELECT id as code, senha, nome, email, ativo, uuid as id FROM " . self::TABLE . " WHERE email = '$email'");
+        $stmt = $this->conn->prepare(
+            "SELECT id as code, senha, nome, email, ativo, uuid as id 
+             FROM " . self::TABLE . " 
+             WHERE email = :email"
+        );
         $stmt->bindValue(':email', $email);
         $stmt->execute();
-        
+    
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        $user = $stmt->fetch(); 
+        $user = $stmt->fetch();
+    
         if (!$user) {
             return null;
-        }  
-        
-        if(md5($senha . $user->id) !== $user->senha) {
+        }
+    
+        if (!password_verify($senha, $user->senha)) {
             return null;
         }
-        unset($user->uuid);
-        unset($user->senha);
+    
+        unset($user->uuid, $user->senha);
+    
         return $user;
-    }
+    }    
 
     public function delete(int $id) 
     {
@@ -172,17 +189,14 @@ class UsuarioRepository {
 
     public function addPermissions(array $data, int $id): bool 
     {
-        // Verifica se $id é válido e se há permissões para adicionar
         if (empty($data['permissions']) || $id <= 0) {
             return false;
         }
 
-        // Remove permissões existentes
         if (!$this->removePermissions($id)) {
             return false;
         }
 
-        // Adiciona novas permissões
         foreach ($data['permissions'] as $permission) {
             $stmt = $this->conn->prepare(
                 "INSERT INTO permissao_as_usuario (permissao_id, usuario_id) 
@@ -194,13 +208,11 @@ class UsuarioRepository {
                 ':usuario_id' => (int)$id
             ]);
 
-            // Retorna false se qualquer inserção falhar
             if (!$success) {
                 return false;
             }
         }
 
-        // Retorna true se todas as permissões foram inseridas com sucesso
         return true;
     }
 

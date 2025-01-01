@@ -7,6 +7,7 @@ use App\Controllers\Controller;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Request\Request;
+use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
