@@ -13,11 +13,13 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <div class="col-2 col-xl-6">
-        <div class="float-end">
-         <a href="\professores\criar" class="btn btn-outline-primary" > + </a>
+    <? if (hasPermission('cadastrar professores')) {?>
+        <div class="col-2 col-xl-6">
+            <div class="float-end">
+            <a href="\professores\criar" class="btn btn-outline-primary" > + </a>
+            </div>
         </div>
-    </div>
+    <? }?>
 </div>
     <!-- Row end -->
 <? if(isset($success)){?>
@@ -46,7 +48,9 @@
                                     <th>Nome</th>
                                     <th>email</th>
                                     <th>Situação</th>
-                                    <th>Actions</th>
+                                    <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                     <th>Actions</th>
+                                     <? } ?>
                                 </tr>
                             </thead>
                             
@@ -72,36 +76,42 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <td class="d-flex">
-                                        <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
-                                            <div class="border p-2 rounded-3">
-                                                <i class="icon-edit fs-5"></i>
-                                            </div>
-                                        </a>                                         
-                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
-                                                <div class="border p-2 rounded-3">
-                                                    <span class="fs-5 text-danger icon-delete1"></span>
-                                                </div>
-                                            </button>
-                                            <div class="modal fade" id="exampleModal_<?=$professor->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                            <td class="d-flex">
+                                                 <? if (hasPermission('editar professores')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
+                                                        <div class="border p-2 rounded-3">
+                                                            <i class="icon-edit fs-5"></i>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja excluir este registro? 
-                                                               <p>professor <?=getParamsToJson($professor->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                    </a> 
+                                                <? } ?>  
+                                                <? if (hasPermission('deletar professores')) {?>                                                                           
+                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
+                                                        <div class="border p-2 rounded-3">
+                                                            <span class="fs-5 text-danger icon-delete1"></span>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="button" onclick="deleteData('/professores/<?=$professor->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                    </button>
+                                                <? }?>
+                                                <div class="modal fade" id="exampleModal_<?=$professor->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Tem certeza que deseja excluir este registro? 
+                                                                <p>professor <?=getParamsToJson($professor->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                                <button type="button" onclick="deleteData('/professores/<?=$professor->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>                                          
-                                        </td>
+                                                </div>                                          
+                                            </td>
+                                        <? }?>
                                     </tr>
                             <? } ?>
                             </tbody>

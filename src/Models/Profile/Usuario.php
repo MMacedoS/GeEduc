@@ -29,7 +29,7 @@ class Usuario {
         $user->nome = $data['name'];
         $user->email = $data['email'];
         $user->painel = $data['sector'];
-        $user->ativo = $data['status'] ?? 1; 
+        $user->ativo = $data['active'] ?? 1; 
         $user->senha = $data['password'];        
         $user->created_at = $data['created_at'] ?? null;
         $user->updated_at = $data['updated_at'] ?? null;

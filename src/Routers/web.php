@@ -2,6 +2,7 @@
 
 use App\Config\Auth;
 use App\Config\Router;
+use App\Controllers\v1\ClassRooms\TurmaController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
@@ -15,6 +16,7 @@ $usuarioController = new UsuarioController();
 $professorController = new ProfessorController();
 $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
+$turmaController = new TurmaController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -54,3 +56,10 @@ $router->create('POST', '/planos/criar', [$planoController, 'store'], $auth);
 $router->create('GET', '/planos/{id}/editar', [$planoController, 'edit'], $auth);
 $router->create('POST', '/planos/{id}/editar', [$planoController, 'update'], $auth);
 $router->create('DELETE', '/planos/{id}', [$planoController, 'destroy'], $auth);
+
+$router->create('GET', '/turmas', [$turmaController, 'index'], $auth);
+$router->create('GET', '/turmas/criar', [$turmaController, 'create'], $auth);
+$router->create('POST', '/turmas/criar', [$turmaController, 'store'], $auth);
+$router->create('GET', '/turmas/{id}/editar', [$turmaController, 'edit'], $auth);
+$router->create('POST', '/turmas/{id}/editar', [$turmaController, 'update'], $auth);
+$router->create('DELETE', '/turmas/{id}', [$turmaController, 'destroy'], $auth);

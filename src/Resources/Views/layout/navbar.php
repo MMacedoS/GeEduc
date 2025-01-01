@@ -26,43 +26,43 @@
                                 </li>
                             </ul>
                         </li>
-                        <?php if (hasPermission('visualizar hospedagens')) { ?>
-                        <li class="nav-item dropdown <?=$active === 'hospedagens' ? 'active-link': ''?>">
+                        <?php if (hasPermission('visualizar pedagogico')) { ?>
+                        <li class="nav-item dropdown <?=$active === 'pedagogico' ? 'active-link': ''?>">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="icon-add_task"></i> Cadastros
+                                <i class="icon-add_task"></i> Pedagogico
                             </a>
                             <ul class="dropdown-menu">
-                            <?php if (hasPermission('visualizar apartamentos')) { ?>
+                            <?php if (hasPermission('visualizar bimestres')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\apartamento\">
                                         <span>Bimestres</span>
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar apartamentos')) { ?>
+                            <?php if (hasPermission('visualizar componentes')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\apartamento\">
                                         <span>Componente Curriculares</span>
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar apartamentos')) { ?>
+                            <?php if (hasPermission('visualizar estudantes')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\apartamento\">
                                         <span>Estudantes</span>
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar apartamentos')) { ?>
+                            <?php if (hasPermission('visualizar professores')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\professores">
                                         <span>Professores</span>
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar apartamentos')) { ?>
+                            <?php if (hasPermission('visualizar turmas')) { ?>
                                 <li>
-                                    <a class="dropdown-item" href="\apartamento\">
+                                    <a class="dropdown-item" href="\turmas">
                                         <span>Turmas</span>
                                     </a>
                                 </li>
@@ -70,30 +70,34 @@
                             </ul>
                         </li>
 
-                        <?php } ?>
-                        <li class="nav-item dropdown <?=$active === 'consumos' ? 'active-link': ''?>">
+                        <?php } if (hasPermission('visualizar financeiro')) {?>
+                        <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="icon-now_widgets"></i> Financeiro
                             </a>
-                            <ul class="dropdown-menu">                                
+                            <ul class="dropdown-menu"> 
+                                <?php if (hasPermission('visualizar boletos')) { ?>                               
                                 <li>
                                     <a class="dropdown-item current-page" href="/consumos/produto">
                                         <span>Boletos</span>
                                     </a>
                                 </li>
+                                <?php } if (hasPermission('visualizar mensalidades')) { ?>
                                 <li>
                                     <a class="dropdown-item current-page" href="/consumos/diaria">
                                         <span>Mensalidade</span>
                                     </a>
                                 </li>
+                                <?php } if (hasPermission('visualizar planos')) { ?>
                                 <li>
                                     <a class="dropdown-item current-page" href="/planos">
                                         <span>Planos</span>
                                     </a>
                                 </li>
+                                <? }?>
                             </ul>
                         </li>
-                        <?php if (hasPermission('visualizar cadastro')) { ?>
+                        <?php } if (hasPermission('visualizar cadastro')) { ?>
                         <li class="nav-item dropdown ">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="icon-add_task"></i>Parametros

@@ -126,6 +126,8 @@ class PlanoController extends Controller
             return $this->router->view('plan/', ['active' => 'register', 'danger' => true]);
         }
 
-        $this->planoRepository->delete($plan);
+        $this->planoRepository->delete($plan->id);
+
+        return $this->router->redirect('planos/');
     }
 }
