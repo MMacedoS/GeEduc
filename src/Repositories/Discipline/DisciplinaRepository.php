@@ -88,6 +88,6 @@ class DisciplinaRepository{
 
         $updated = $stmt->execute(['id' => $id]);
 
-        return $updated;
+        return $updated;az
     }
 }
