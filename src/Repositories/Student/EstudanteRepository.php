@@ -122,14 +122,121 @@ class EstudanteRepository {
 
     public function create(array $data){
         
+        $estudante = $this->model->create($data);
+
+        try{
+            $stmt = $this->conn->prepare(
+                "INSERT INTO " . self::TABLE . "
+                    SET
+                        uuid = :uuid,
+                        pessoa_fisica_id = :pessoa_fisica_id
+                "
+            );
+
+            $create = $stmt->execute([
+                ':uuid' => $estudante->uuid,
+                ':pessoa_fisica_id' => $pessoa_fisica_id
+            ]);
+
+            return $this->findByUuid($estudante->uuid);
+
+        }catch(\Throwable $th){
+            LoggerHelper::logInfo("Erro na transação create de estudante: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
+
     }
 
-    public function updateAll(){}
+    public function updateAll(array $data){
 
-    public function update(){}
+        if(empty($data)){
+            return null;
+        }
 
-    public function deleteAll(){}
+        $this->conn->beginTransaction();
 
-    public function delete(){}
+        try{    
+            $user = $this->usuarioRepository->update($data, $data['usuario_id']);
+            if(is_null($user)){
+                $this->conn->rollBack();
+                return null;
+            }
+
+            $person = $this->pessoaFisicaRepostory->update($data, $data['pessoa_fisica_id']);
+            if(is_null($user)){
+                $this->conn->rollBack();
+                return null;
+            }
+
+            $estudante = $this->update($data, $data['id']);
+            if(is_null($estudante)){
+                LoggerHelper::logInfo("erro no update de estudante");
+                $this->conn->rollBack();
+                return null;
+            }
+
+            $this->conn->commit();
+
+            return  $estudante;
+
+        }catch(\Throwable $th){
+            $this->conn->rollBack();
+            return null;
+        }
+    }
+
+    public function update(array $data, int $id){
+        $estudante = $this->model->create($data);
+
+        try{
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . "
+                    set
+                        pessoa_fisica_id = :pessoa_fisica,
+                        ativo = :ativo
+                    WHERE id = :id
+                "
+            );
+
+            $updated = $stmt->execute([
+                ':pessoa_fisica_id' => $estudante->pessoa_fisica_id,
+                ':ativo' => $estudante->ativo,
+                ':id' => $id
+            ]);
+
+            if(!$updated){
+                return null;
+            }
+
+            return $this->findById($id);
+        }catch(\Throwable $th){
+            return null;
+        }
+    }
+
+    public function deleteAll($estudante){
+        $pessoa_fisica = $this->pessoaFisicaRepository->delete($estudante->pessoa_fisica_id);
+
+        $this->usaurioRepository->delete($pessoa_fisica->usuario_id);
+
+        $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
+
+        return $this->delete($estudante->id);
+    }
+
+    public function delete(int $id){
+        $stmt = $this->conn->prepare(
+            "UPDATE" . self::TABLE . "
+                SET
+                    ativo = 0
+                WHERE id = :id
+            "
+        );
+
+            $updated = $stmt->execute(['id' => $id]);
+
+            return $update;
+    }
 
 }
