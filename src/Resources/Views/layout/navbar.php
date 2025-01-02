@@ -76,6 +76,13 @@
                                 <i class="icon-now_widgets"></i> Financeiro
                             </a>
                             <ul class="dropdown-menu"> 
+                                <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="/bancos/">
+                                            <span>Contas Bancárias</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
                                 <?php if (hasPermission('visualizar boletos')) { ?>                               
                                 <li>
                                     <a class="dropdown-item current-page" href="/consumos/produto">
@@ -116,6 +123,8 @@
                                     </a>
                                 </li>
                             <?php } ?>
+
+                            
                             </ul>
                         </li>
                         <?php } ?>

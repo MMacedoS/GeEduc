@@ -9,33 +9,40 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
-            <li class="breadcrumb-item">Turmas</li>
+            <li class="breadcrumb-item">Contas Bancarias</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
     
     <div class="col-2 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar turmas')) {?>
-         <a href="\turmas\criar" class="btn btn-outline-primary" > + </a>
+        <? if (hasPermission('cadastrar contas')) {?>
+         <a href="\bancos\criar" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
     </div>
 </div>
 
     <!-- Row end -->
-<? if(isset($success)){?>
-    <div class="alert border border-success alert-dismissible fade show text-success" role="alert">
-      <b>Success!</b>.
+    <? if(isset($success)){?>
+        <div class="alert border border-success alert-dismissible fade show text-success" role="alert">
+        <b>Success!</b>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <? }?>
+    <? if(isset($danger)){?>
+        <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+        <b>Danger!</b>.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-<? }?>
-<? if(isset($danger)){?>
-    <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
-       <b>Danger!</b>.
-       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-<? }?>
+        </div>
+    <? }?>
+
+    <? if(isset($_GET['error'])){?>
+        <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+            <b>Sem permissão!</b>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <? }?>
     <!-- Row start -->
 
 
@@ -49,54 +56,58 @@
                            <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
-                                    <th>Turno</th>
+                                    <th>Banco</th>
+                                    <th>Agencia</th>
+                                    <th>Conta</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                    <? if (hasPermission('editar contas') || hasPermission('deletar contas')) {?>
                                     <th>Actions</th>
                                     <? } ?>
                                 </tr>
                             </thead>
                             
                             <tbody>
-                            <? foreach ($data['turmas'] as $turma) { 
+                            <? foreach ($data['contas'] as $conta) { 
                                 ?>
                                     <tr>
-                                        <td><?=$turma->id?></td>
-                                        <td class="fw-bold"> <?=$turma->nome ?? 'não identificado'?>
+                                        <td><?=$conta->id?></td>
+                                        <td class="fw-bold"> <?=$conta->banco ?? 'não identificado'?>
                                         </td>
                                         <td>
-                                        <?=$turma->turno ?? 'não identificado'?>
+                                        <?=$conta->agencia ?? 'não identificado'?>
+                                        </td>
+                                        <td>
+                                        <?=$conta->conta ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
-                                                <? if($turma->ativo == 0) { ?>
+                                                <? if($conta->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
                                                     Impedido
                                                 <? } ?>
-                                                <? if($turma->ativo == 1) { ?>
+                                                <? if($conta->ativo == 1) { ?>
                                                     <i class="icon-circle1 me-2 text-success fs-5"></i>
                                                     Disponivel
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                        <? if (hasPermission('editar contas') || hasPermission('deletar contas')) {?>
                                         <td class="d-flex">
-                                        <? if (hasPermission('editar turmas')) {?>
-                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/editar">
+                                        <? if (hasPermission('editar contas')) {?>
+                                            <a class="mb-1 me-2 mt-1" href="/bancos/<?=$conta->uuid?>/editar">
                                                 <div class="border p-2 rounded-3">
                                                     <i class="icon-edit fs-5"></i>
                                                 </div>
                                             </a> 
                                         <? }?> 
-                                        <? if (hasPermission('deletar turmas')) {?>                                       
-                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma->uuid?>">                                                     
+                                        <? if (hasPermission('deletar contas')) {?>                                       
+                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$conta->uuid?>">                                                     
                                                 <div class="border p-2 rounded-3">
                                                     <span class="fs-5 text-danger icon-delete1"></span>
                                                 </div>
                                             </button>
                                         <? }?>
-                                            <div class="modal fade" id="exampleModal_<?=$turma->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="exampleModal_<?=$conta->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -105,11 +116,11 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             Tem certeza que deseja excluir este registro? 
-                                                               <p>Turma <?=$turma->nome ?? 'não identificado'?></p>
+                                                               <p>conta <?=$conta->nome ?? 'não identificado'?></p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="button" onclick="deleteData('/turmas/<?=$turma->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                            <button type="button" onclick="deleteData('/bancos/<?=$conta->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -122,7 +133,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($data['turmas'])?></b> registros
+                        Total <b><?=count($data['contas'])?></b> registros
                     </div>
                 </div>
             </div>

@@ -131,4 +131,24 @@ $(document).ready(function() {
 	});
 
 	$('#customers').select2();
+
+	  const bankMapping = {
+		"001": "Banco do Brasil",
+		"104": "Caixa Econômica Federal",
+		"237": "Bradesco",
+		"341": "Itaú",
+		"033": "Santander"
+	  };
+  
+	  $("#bankCode").on("change", function () {
+		const selectedCode = $(this).val();
+		const correspondingBank = bankMapping[selectedCode] || "";
+		$("#bankName").val(correspondingBank);
+	  });
+  
+	  $("#bankName").on("change", function () {
+		const selectedBank = $(this).val();
+		const correspondingCode = Object.keys(bankMapping).find(key => bankMapping[key] === selectedBank) || "";
+		$("#bankCode").val(correspondingCode);
+	  });
   });

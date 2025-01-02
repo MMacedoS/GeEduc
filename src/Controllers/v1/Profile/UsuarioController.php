@@ -24,6 +24,10 @@ class UsuarioController extends Controller
     }
 
     public function index(Request $request) {
+        if(hasPermission('visualizar usuarios')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         $usuario = $this->usuarioRepository->all();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -39,6 +43,10 @@ class UsuarioController extends Controller
     }
 
     public function create() {
+        if(hasPermission('criar usuarios')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         return $this->router->view('profile/create', ['active' => 'register']);
     }
 
@@ -72,7 +80,12 @@ class UsuarioController extends Controller
         return $this->router->redirect('usuario/');
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id) 
+    {
+        if(hasPermission('editar usuarios')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         $usuario = $this->usuarioRepository->findByUuid($id);
         
         if (is_null($usuario)) {
@@ -117,7 +130,12 @@ class UsuarioController extends Controller
         return $this->router->redirect('usuario/');
     }
 
-    public function delete(Request $request, $id) {
+    public function delete(Request $request, $id) 
+    {
+        if(hasPermission('deletar usuarios')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         $usuario = $this->usuarioRepository->findByUuid($id);
         
         if (is_null($usuario)) {
