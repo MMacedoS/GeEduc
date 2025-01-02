@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title><?=APP_NAME?></title>
-        <link rel="shortcut icon" href="<?=URL_PREFIX_APP?>/Public/assets/images/logo-dark-rm-bg.png"/>
+        <link rel="shortcut icon" href="<?=URL_PREFIX_APP?>/Public/assets/images/ico-geeduc.png"/>
             <!-- *************
                 ************ CSS Files *************
             ************* -->
