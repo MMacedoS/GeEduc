@@ -48,7 +48,7 @@
                             <?php } ?>
                             <?php if (hasPermission('visualizar estudantes')) { ?>
                                 <li>
-                                    <a class="dropdown-item" href="\apartamento\">
+                                    <a class="dropdown-item" href="\estudantes\">
                                         <span>Estudantes</span>
                                     </a>
                                 </li>
