@@ -170,8 +170,8 @@ class EstudanteRepository {
                 return null;
             }
 
-            $person = $this->pessoaFisicaRepostory->update($data, $data['pessoa_fisica_id']);
-            if(is_null($user)){
+            $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
+            if(is_null($person)){
                 $this->conn->rollBack();
                 return null;
             }
@@ -185,7 +185,7 @@ class EstudanteRepository {
 
             $this->conn->commit();
 
-            return  $estudante;
+            return $estudante;
 
         }catch(\Throwable $th){
             $this->conn->rollBack();
@@ -200,13 +200,15 @@ class EstudanteRepository {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     set
-                        pessoa_fisica_id = :pessoa_fisica,
+                        matricula = :matricula,
+                        pessoa_fisica_id = :pessoa_fisica_id,
                         ativo = :ativo
                     WHERE id = :id
-                "
+                    "
             );
 
             $updated = $stmt->execute([
+                ':matricula' => $estudante->matricula,
                 ':pessoa_fisica_id' => $estudante->pessoa_fisica_id,
                 ':ativo' => $estudante->ativo,
                 ':id' => $id

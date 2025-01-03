@@ -79,7 +79,7 @@
                                         <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('editar professores')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/professores/<?=$estudante->uuid?>/editar">
+                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/editar">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>

@@ -72,7 +72,7 @@ class EstudanteController extends Controller{
         $estudante = $this->estudanteRepository->findByUuid($id);
 
         if(is_null($estudante)){
-            return $this->router->view('/student', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('student/', ['active' => 'register', 'danger' => true]);
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
@@ -112,7 +112,7 @@ class EstudanteController extends Controller{
             ]);
         }
 
-        $data['usuario_id'] = $pessoa_fisica->usuario->id;
+        $data['usuario_id'] = $pessoa_fisica->usuario_id;
         $data['pessoa_fisica_id'] = $pessoa_fisica->id;
         $data['id'] = $estudante->id;
         $data['sector'] = 'estudante';

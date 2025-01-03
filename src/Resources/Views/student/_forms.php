@@ -89,9 +89,9 @@
       <div class="m-0">
         <label class="form-label">Gênero</label>
         <select name="gender" class="form-control" id="">
-            <option value="0" <?php if(isset($pessoa_fisica->genero) && $pessoa_fisica->genero == '1') { echo 'selected'; } ?>>Masculino</option>
-            <option value="1" <?php if(isset($pessoa_fisica->genero) && $pessoa_fisica->genero == '2') { echo 'selected'; } ?>>Feminino</option>            
-            <option value="1" selected <?php if(isset($pessoa_fisica->genero) && $pessoa_fisica->genero == '0') { echo 'selected'; } ?>>Prefiro não dizer</option>
+            <option value="1" <?php if(isset($pessoa_fisica->genero) && $pessoa_fisica->genero == "1") { echo 'selected'; } ?>>Masculino</option>
+            <option value="2" <?php if(isset($pessoa_fisica->genero) && $pessoa_fisica->genero == "2") { echo 'selected'; } ?>>Feminino</option>            
+            <option value="0" <?php if(!isset($pessoa_fisica->genero) || isset($pessoa_fisica->genero) && $pessoa_fisica->genero == "0") { echo 'selected'; } ?>>Prefiro não dizer</option>
         </select>
       </div>
     </div>
@@ -141,7 +141,7 @@
         <div class="card-body">
             <div class="d-flex flex-wrap gap-2 justify-content-end">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="\professores\" class="btn btn-secondary">Cancelar</a>
+                <a href="\estudantes\" class="btn btn-secondary">Cancelar</a>
             </div>
         </div>
     </div>
