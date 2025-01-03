@@ -82,9 +82,9 @@
                                             </a>
                                         </li>
                                     <?php } ?>
-                                    <?php if (hasPermission('visualizar bimestres')) { ?>
+                                    <?php if (hasPermission('visualizar turma e estudante')) { ?>
                                         <li>
-                                            <a class="dropdown-item" href="\apartamento\">
+                                            <a class="dropdown-item" href="\turma-estudante\">
                                                 <span>Turmas & Estudantes</span>
                                             </a>
                                         </li>
