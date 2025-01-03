@@ -24,8 +24,8 @@ class UsuarioController extends Controller
     }
 
     public function index(Request $request) {
-        if(hasPermission('visualizar usuarios')) {
-            return $this->router->redirect('usuario?error=422');
+        if(!hasPermission('visualizar usuários')) {
+            return $this->router->redirect('dashboard?error=422');
         }
 
         $usuario = $this->usuarioRepository->all();
@@ -43,7 +43,7 @@ class UsuarioController extends Controller
     }
 
     public function create() {
-        if(hasPermission('criar usuarios')) {
+        if(!hasPermission('criar usuários')) {
             return $this->router->redirect('usuario?error=422');
         }
 
@@ -82,7 +82,7 @@ class UsuarioController extends Controller
 
     public function edit(Request $request, $id) 
     {
-        if(hasPermission('editar usuarios')) {
+        if(!hasPermission('editar usuários')) {
             return $this->router->redirect('usuario?error=422');
         }
 
@@ -132,7 +132,7 @@ class UsuarioController extends Controller
 
     public function delete(Request $request, $id) 
     {
-        if(hasPermission('deletar usuarios')) {
+        if(!hasPermission('deletar usuários')) {
             return $this->router->redirect('usuario?error=422');
         }
 

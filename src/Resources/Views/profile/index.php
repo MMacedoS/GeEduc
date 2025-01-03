@@ -45,6 +45,7 @@
                                     <th></th>
                                     <th>Nome</th>
                                     <th>email</th>
+                                    <th>Acesso</th>
                                     <th>Situação</th>
                                     <th>Actions</th>
                                 </tr>
@@ -58,6 +59,9 @@
                                         </td>
                                         <td>
                                         <?=$usuario->email?>
+                                        </td>
+                                        <td>
+                                        <?=$usuario->painel?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
