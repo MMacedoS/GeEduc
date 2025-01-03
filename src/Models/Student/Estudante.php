@@ -11,6 +11,7 @@ class Estudante {
     public $id;
     public $uuid;
     public $pessoa_fisica_id;
+    public $pessoa_fisica;
     public $matricula;
     public $ativo;
     public $update_at;
@@ -27,6 +28,7 @@ class Estudante {
         $estudante->pessoa_fisica_id = $data['pessoa_fisica_id'];
         $estudante->matricula = $data['matricula'] ?? null;
         $estudante->ativo = $data['active'] ?? null;
+        $professor->pessoa_fisica = $data['pessoa_fisica'] ?? null;        
         $estudante->updated_at = $data['updated_at'] ?? null;
         $estudante->created_at = $data['created_at'] ?? null;
         return $estudante;

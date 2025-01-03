@@ -64,13 +64,7 @@ class EstudanteController extends Controller{
         if(is_null($created)){
             return $this->router->view('student/create', ['active' => 'register', 'danger' => true]);
         }
-
-        return $this->estudanteRepository->saveAll($data);
-
-        if(is_null($created)){
-            return $this->router->view('student/create', ['active' => 'register', 'danger' => true]);
-        }
-
+        
         return $this->router->redirect('estudantes/');
     }
 

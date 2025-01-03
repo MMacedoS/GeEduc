@@ -31,7 +31,7 @@ class EstudanteRepository {
     public function allStudents(array $params = []){
 
         $sql = "SELECT
-            p.*(
+            p.*,(
                 SELECT 
                     JSON_OBJECT(
                         'id', pf.id,
@@ -87,7 +87,7 @@ class EstudanteRepository {
             'sector' => 'estudante'
         ]);
 
-        $this->conn->beginTrasanction();
+        $this->conn->beginTransaction();
 
         try{
 
@@ -108,6 +108,7 @@ class EstudanteRepository {
             $student = $this->create($studentData);
             if(is_null($student)){
                 $this->conn->rollback();
+                return null;
             }
 
             $this->conn->commit();
@@ -129,14 +130,20 @@ class EstudanteRepository {
                 "INSERT INTO " . self::TABLE . "
                     SET
                         uuid = :uuid,
+                        matricula = :matricula,
                         pessoa_fisica_id = :pessoa_fisica_id
                 "
             );
 
             $create = $stmt->execute([
                 ':uuid' => $estudante->uuid,
-                ':pessoa_fisica_id' => $pessoa_fisica_id
+                ':matricula' => $estudante->matricula,
+                ':pessoa_fisica_id' => $estudante->pessoa_fisica_id
             ]);
+
+            if(!$create){
+                return null;
+            }
 
             return $this->findByUuid($estudante->uuid);
 
