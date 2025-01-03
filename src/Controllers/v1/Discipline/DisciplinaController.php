@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Discipline;
 
 use App\Controllers\Controller;
-use App\Repositories\Teacher\DisciplinaRepository;
+use App\Repositories\Discipline\DisciplinaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -17,7 +17,7 @@ class DisciplinaController extends Controller{
     }
 
     public function index(Request $request){
-        if(hasPermission('visualizar disciplinas')){
+        if(hasPermission('visualizar usuarios')){
             return $this->router->redirect('disciplinas?error=442');
         }
 

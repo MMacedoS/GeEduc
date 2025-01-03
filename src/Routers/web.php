@@ -9,6 +9,7 @@ use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
+use App\Controllers\v1\Discipline\DisciplinaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -19,6 +20,7 @@ $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
 $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
+$disciplinaController = new DisciplinaController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);

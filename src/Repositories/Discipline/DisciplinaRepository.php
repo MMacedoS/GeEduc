@@ -3,17 +3,17 @@
 namespace App\Repositories\Discipline;
 
 use App\Config\Database;
-use App\Models\Discpline\Disciplina;
+use App\Models\Discipline\Disciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
 class DisciplinaRepository{
     const CLASS_NAME = Disciplina::class;
-    const TABLE ='disciplinas';
+    const TABLE = 'disciplinas';
 
     use FindTrait;
     protected $conn;
-    protected  $model;
+    protected $model;
 
     public function __construct(){
         $conn = new Database();
@@ -22,7 +22,7 @@ class DisciplinaRepository{
     }
 
     public function allDisciplines(){
-        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . "order by nome ASC");
+        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . " order by nome ASC");
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
@@ -37,10 +37,10 @@ class DisciplinaRepository{
                 "INSERT INTO " . self::TABLE . "
                     SET
                         uuid = :uuid,
-                        nome = :name,"
+                        nome = :name"
             );
 
-            $create = stmt->execute([
+            $create = $stmt->execute([
                 ':uuid' => $disciplina->uuid,
                 ':name' => $disciplina->nome
             ]);
@@ -48,6 +48,10 @@ class DisciplinaRepository{
             if(is_null($create)){
                 return null;
             }
+
+            return $this->findByUuid($disciplina->uuid);
+        }catch (\Throwable $th) {
+            return null;
         }
     }
 
@@ -74,6 +78,11 @@ class DisciplinaRepository{
             if(!updated){
                 return null;
             }
+
+            return $this->findById($id);
+        }catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
+            return null;
         }
     }
 
@@ -88,6 +97,6 @@ class DisciplinaRepository{
 
         $updated = $stmt->execute(['id' => $id]);
 
-        return $updated;az
+        return $updated;
     }
 }
