@@ -72,11 +72,49 @@ class DisciplinaController extends Controller{
     }
 
     public function edit(Request $resquest, $id){
+        if(hasPermission('editar disciplinas')){
+            return $this->router->redirect('disciplinas?error=422');
+        }
 
+        $disciplina = $this->disciplinaRepository->findByUuid($id);
+
+        if(is_null($disciplina)){
+            return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
+        }
     }
 
     public function update(Request $resquest, $id){
-        
+        $data = $request->getBodyParams();
+
+        $disciplina = $this->discplinaRepository->findByUuid($id);
+
+        if(is_null($disciplina)){
+            return $this->router->view('discipline', ['active' => 'register', 'danger' => true]);
+        }
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100'
+        ];
+
+        if(!$validator->validate($rules)){
+            return $this->router->view(
+                'discipline/edit',
+                [
+                    'active' => 'register',
+                    'errors' => $validator->getErrors()
+                ]
+            );
+        }
+
+        $update = $this->disciplinaRepository->update($data);
+
+        if(is_null($update)){
+            return $this->router->view('discipline/edit', ['active' => 'register', 'danger' => true]);
+        }
+
+        return $this->router->redirect('disciplinas/');
     }
 
     public function destroy(Request $resquest, $id){

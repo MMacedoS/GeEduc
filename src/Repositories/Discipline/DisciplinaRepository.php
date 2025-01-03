@@ -22,7 +22,7 @@ class DisciplinaRepository{
     }
 
     public function allDisciplines(){
-        $stmt = $this->conn->query("SELECT * FROM" . self::TABLE . "order by nome ASC");
+        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . "order by nome ASC");
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
@@ -34,7 +34,7 @@ class DisciplinaRepository{
         try{
             $stmt = $this->conn
             ->prepare(
-                "INSERT INTO" . self::TABLE . "
+                "INSERT INTO " . self::TABLE . "
                     SET
                         uuid = :uuid,
                         nome = :name,"
@@ -56,7 +56,7 @@ class DisciplinaRepository{
 
         try{
             $stmt = $this->conn->prepare(
-                "UPDATE" . self::TABLE . "
+                "UPDATE " . self::TABLE . "
                     SET
                         nome = :name,
                         ativo = :status
@@ -80,7 +80,7 @@ class DisciplinaRepository{
     public function delete(int $id){
         $stmt = $this->conn
         ->prepare(
-            "UPDATE" . self::TABLE . "
+            "UPDATE " . self::TABLE . "
                 SET 
                     ativo = 0
                 WHERE id = :id"
