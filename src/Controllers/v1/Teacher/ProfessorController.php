@@ -23,6 +23,10 @@ class ProfessorController extends Controller
 
     public function index(Request $request) 
     {
+        if(!hasPermission('visualizar professores')) {
+            return $this->router->redirect('professores?error=422');
+        }
+
         $professores = $this->professorRepository->allTeachers();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -38,6 +42,10 @@ class ProfessorController extends Controller
 
     public function create() 
     {
+        if(!hasPermission('cadastrar professores')) {
+            return $this->router->redirect('professores?error=422');
+        }
+
         return $this->router->view('teacher/create', ['active' => 'register']);
     }
 
@@ -76,6 +84,10 @@ class ProfessorController extends Controller
 
     public function edit(Request $request, $id) 
     {
+        if(!hasPermission('editar professores')) {
+            return $this->router->redirect('professores?error=422');
+        }
+
         $professor = $this->professorRepository->findByUuid($id);
 
         if (is_null($professor)) {
@@ -135,6 +147,10 @@ class ProfessorController extends Controller
 
     public function destroy(Request $request, $id) 
     {
+        if(!hasPermission('deletar professores')) {
+            return $this->router->redirect('professores?error=422');
+        }
+
         $professor = $this->professorRepository->findByUuid($id);
 
         if (is_null($professor)) {

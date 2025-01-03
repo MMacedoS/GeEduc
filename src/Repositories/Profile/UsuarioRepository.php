@@ -4,6 +4,7 @@ namespace App\Repositories\Profile;
 
 use App\Config\Database;
 use App\Models\Profile\Usuario;
+use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
@@ -14,20 +15,56 @@ class UsuarioRepository {
     use FindTrait;
     protected $conn;
     protected $model;
+    private $permissioRepository;
 
     public function __construct() {
         $conn = new Database();
         $this->conn = $conn->getConnection();
         $this->model = new Usuario();
+        $this->permissioRepository = new PermissaoRepository();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . " order by nome ASC");
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        $sql = "SELECT * FROM " . self::TABLE;
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['name'])) {
+            $conditions[] = "nome = :nome";
+            $bindings[':nome'] = $params['name'];
+        }
+
+        if (isset($params['email'])) {
+            $conditions[] = "email = :email";
+            $bindings[':email'] = $params['email'];
+        }
+
+        if (isset($params['sector'])) {
+            $conditions[] = "painel = :painel";
+            $bindings[':painel'] = $params['sector'];
+        }
+
+        if (isset($params['active'])) {
+            $conditions[] = "p.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY nome DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
     }
 
-    public function create(array $data)
+    public function create(array $data, bool $forceNewPassword = true)
     {   
         $existingUser = $this->findByEmail($data['email'], $data['sector']);
         if ($existingUser) {
@@ -35,7 +72,8 @@ class UsuarioRepository {
         }
 
         $user = $this->model->create(
-            $data
+            $data,
+            $forceNewPassword
         );
 
         try {
@@ -53,16 +91,19 @@ class UsuarioRepository {
                 ':uuid' => $user->uuid,
                 ':name' => $user->nome,
                 ':email' => $user->email,
-                ':password' => md5($user->senha . $user->uuid),
+                ':password' => $user->senha,
                 ':sector' => $user->painel
             ]);
     
             if (is_null($create)) {
                 return null;
             }
-    
-            return $this->findByUuid($user->uuid);
+
+            $userFromDb = $this->findByUuid($user->uuid);
+            $this->assignPermissionsToUser($userFromDb);            
+            return $userFromDb;
         } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
             return null;
         }
     }
@@ -85,62 +126,81 @@ class UsuarioRepository {
 
     public function update(array $data, int $id)
     {
-        $user = $this->model->create(
-            $data
-        );
+        $existingUser = $this->findById($id);
+        if (!$existingUser) {
+            return null; 
+        }
+
+        $data['existing_password'] = $existingUser->senha;
+        $senha = (string)$data['password'];
+        $user = $this->model->create($data, !hash_equals($senha, $existingUser->senha));
 
         try {
-            $stmt = $this->conn
-            ->prepare(
+            $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
-                    set 
-                    nome = :name, 
-                    email = :email, 
-                    ativo = :status,
-                    painel = :sector 
-                WHERE id = :id"
+                    SET 
+                        nome = :name, 
+                        email = :email, 
+                        ativo = :status,
+                        painel = :sector,
+                        senha = :senha
+                    WHERE id = :id"
             );
 
-            $updated = $stmt->execute([
+            $parameters = [
                 ':id' => $id,
                 ':name' => $user->nome,
                 ':email' => $user->email,
                 ':sector' => $user->painel,
-                ':status' => $user->ativo
-            ]);
+                ':status' => $user->ativo,
+                ':senha' => $user->senha
+            ];
 
-            if (!$updated) {        
+            $updated = $stmt->execute($parameters);
+
+            if (!$updated) {
                 return null;
             }
-            return $this->findById($id);
+            $userFromDb = $this->findById($id);
+
+            $this->assignPermissionsToUser($userFromDb);
+
+            return $userFromDb;
         } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
             return null;
         }
     }
 
     public function getLogin(string $email, string $senha)
     {
-        if (is_null($email) && is_null($senha)) {
+        if (empty($email) || empty($senha)) {
             return null;
         }
     
-        $stmt = $this->conn->prepare("SELECT id as code, senha, nome, email, ativo, uuid as id FROM " . self::TABLE . " WHERE email = '$email'");
+        $stmt = $this->conn->prepare(
+            "SELECT id as code, senha, nome, email, ativo, uuid as id 
+             FROM " . self::TABLE . " 
+             WHERE email = :email"
+        );
         $stmt->bindValue(':email', $email);
         $stmt->execute();
-        
+    
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        $user = $stmt->fetch(); 
+        $user = $stmt->fetch();
+    
         if (!$user) {
             return null;
-        }  
-        
-        if(md5($senha . $user->id) !== $user->senha) {
+        }
+    
+        if (!password_verify($senha, $user->senha)) {
             return null;
         }
-        unset($user->uuid);
-        unset($user->senha);
+    
+        unset($user->uuid, $user->senha);
+    
         return $user;
-    }
+    }    
 
     public function delete(int $id) 
     {
@@ -172,17 +232,14 @@ class UsuarioRepository {
 
     public function addPermissions(array $data, int $id): bool 
     {
-        // Verifica se $id é válido e se há permissões para adicionar
         if (empty($data['permissions']) || $id <= 0) {
             return false;
         }
 
-        // Remove permissões existentes
         if (!$this->removePermissions($id)) {
             return false;
         }
 
-        // Adiciona novas permissões
         foreach ($data['permissions'] as $permission) {
             $stmt = $this->conn->prepare(
                 "INSERT INTO permissao_as_usuario (permissao_id, usuario_id) 
@@ -194,13 +251,11 @@ class UsuarioRepository {
                 ':usuario_id' => (int)$id
             ]);
 
-            // Retorna false se qualquer inserção falhar
             if (!$success) {
                 return false;
             }
         }
 
-        // Retorna true se todas as permissões foram inseridas com sucesso
         return true;
     }
 
@@ -214,4 +269,20 @@ class UsuarioRepository {
         return $deleted;
     }
 
+    private function assignPermissionsToUser(Usuario $userFromDb)
+    {
+        $access = $userFromDb->painel !== 'administrativo' ? ['name' => $userFromDb->painel] : [];
+        
+        $permissions = $this->permissioRepository->all($access);
+
+        if (empty($permissions)) {
+            return $userFromDb;
+        }
+
+        $permissionIds = array_map(fn($permission) => $permission->id, $permissions);
+        
+        $this->addPermissions(['permissions' => $permissionIds], $userFromDb->id);
+
+        return $userFromDb;
+    }
 }

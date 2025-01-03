@@ -20,10 +20,29 @@ class PermissaoRepository {
         $this->conn = $conn->getConnection();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . " order by name ASC");
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        $sql = "SELECT * FROM " . self::TABLE;
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['name'])) {
+            $conditions[] = "name = :nome";
+            $bindings[':nome'] = $params['name'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY name DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);         
     }
 
     public function create(array $data)

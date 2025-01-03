@@ -7,6 +7,7 @@ use App\Controllers\Controller;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Request\Request;
+use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
@@ -23,6 +24,10 @@ class UsuarioController extends Controller
     }
 
     public function index(Request $request) {
+        if(!hasPermission('visualizar usuários')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $usuario = $this->usuarioRepository->all();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -38,6 +43,10 @@ class UsuarioController extends Controller
     }
 
     public function create() {
+        if(!hasPermission('criar usuários')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         return $this->router->view('profile/create', ['active' => 'register']);
     }
 
@@ -71,7 +80,12 @@ class UsuarioController extends Controller
         return $this->router->redirect('usuario/');
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id) 
+    {
+        if(!hasPermission('editar usuários')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         $usuario = $this->usuarioRepository->findByUuid($id);
         
         if (is_null($usuario)) {
@@ -116,7 +130,12 @@ class UsuarioController extends Controller
         return $this->router->redirect('usuario/');
     }
 
-    public function delete(Request $request, $id) {
+    public function delete(Request $request, $id) 
+    {
+        if(!hasPermission('deletar usuários')) {
+            return $this->router->redirect('usuario?error=422');
+        }
+
         $usuario = $this->usuarioRepository->findByUuid($id);
         
         if (is_null($usuario)) {

@@ -2,7 +2,9 @@
 
 use App\Config\Auth;
 use App\Config\Router;
+use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\ClassRooms\TurmaController;
+use App\Controllers\v1\ClassRooms\TurmaEstudanteController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
@@ -19,6 +21,8 @@ $estudanteController = new EstudanteController();
 $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
 $turmaController = new TurmaController();
+$contaBancariaController = new ContaBancariaController();
+$turmaEstudanteController = new TurmaEstudanteController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -72,3 +76,17 @@ $router->create('POST', '/turmas/criar', [$turmaController, 'store'], $auth);
 $router->create('GET', '/turmas/{id}/editar', [$turmaController, 'edit'], $auth);
 $router->create('POST', '/turmas/{id}/editar', [$turmaController, 'update'], $auth);
 $router->create('DELETE', '/turmas/{id}', [$turmaController, 'destroy'], $auth);
+
+$router->create('GET', '/bancos', [$contaBancariaController, 'index'], $auth);
+$router->create('GET', '/bancos/criar', [$contaBancariaController, 'create'], $auth);
+$router->create('POST', '/bancos/criar', [$contaBancariaController, 'store'], $auth);
+$router->create('GET', '/bancos/{id}/editar', [$contaBancariaController, 'edit'], $auth);
+$router->create('POST', '/bancos/{id}/editar', [$contaBancariaController, 'update'], $auth);
+$router->create('DELETE', '/bancos/{id}', [$contaBancariaController, 'destroy'], $auth);
+
+$router->create('GET', '/estudante/{id}/turma', [$turmaEstudanteController, 'linkClass'], $auth);
+$router->create('GET', '/turma-estudante/criar', [$turmaEstudanteController, 'create'], $auth);
+$router->create('POST', '/turma-estudante/criar', [$turmaEstudanteController, 'store'], $auth);
+$router->create('GET', '/turma-estudante/{id}/editar', [$turmaEstudanteController, 'edit'], $auth);
+$router->create('POST', '/turma-estudante/{id}/editar', [$turmaEstudanteController, 'update'], $auth);
+$router->create('DELETE', '/turma-estudante/{id}', [$turmaEstudanteController, 'destroy'], $auth);

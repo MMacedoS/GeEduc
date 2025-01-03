@@ -7,7 +7,7 @@
         <ol class="breadcrumb mb-3">
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\" class="text-decoration-none">Início</a>
+                <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
             <li class="breadcrumb-item">Professores</li>
         </ol>
@@ -18,6 +18,13 @@
             <div class="float-end">
             <a href="\professores\criar" class="btn btn-outline-primary" > + </a>
             </div>
+        </div>
+    <? }?>
+
+    <? if(isset($_GET['error'])){?>
+        <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+            <b>Sem permissão!</b>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <? }?>
 </div>

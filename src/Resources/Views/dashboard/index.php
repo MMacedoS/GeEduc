@@ -1,5 +1,11 @@
 <?php require_once __DIR__ . '/../layout/top.php'; ?>
 
+<? if(isset($_GET['error'])){?>
+    <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+       <b>Sem permissão!</b>.
+       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<? }?>
 <!-- Row start -->
   <div class="row gx-3">
     <div class="col-sm-3 col-12">
