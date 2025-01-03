@@ -10,12 +10,14 @@ use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
+use App\Controllers\v1\Student\EstudanteController;
 
 $router = new Router();
 $auth = new Auth();
 $dashboardController = new DashboardController();
 $usuarioController = new UsuarioController(); 
 $professorController = new ProfessorController();
+$estudanteController = new EstudanteController();
 $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
 $turmaController = new TurmaController();
@@ -53,6 +55,13 @@ $router->create('POST', '/professores/criar', [$professorController, 'store'], $
 $router->create('GET', '/professores/{id}/editar', [$professorController, 'edit'], $auth);
 $router->create('POST', '/professores/{id}/editar', [$professorController, 'update'], $auth);
 $router->create('DELETE', '/professores/{id}', [$professorController, 'destroy'], $auth);
+
+$router->create('GET', '/estudantes', [$estudanteController, 'index'], $auth);
+$router->create('GET', '/estudantes/criar', [$estudanteController, 'create'], $auth);
+$router->create('POST', '/estudantes/criar', [$estudanteController, 'store'], $auth);
+$router->create('GET', '/estudantes/{id}/editar', [$estudanteController, 'edit'], $auth);
+$router->create('POST', '/estudantes/{id}/editar', [$estudanteController, 'update'], $auth);
+$router->create('DELETE', '/estudantes/{id}', [$estudanteController, 'destroy'], $auth);
 
 $router->create('GET', '/planos', [$planoController, 'index'], $auth);
 $router->create('GET', '/planos/criar', [$planoController, 'create'], $auth);
