@@ -148,8 +148,6 @@ class EstudanteRepository {
             return $this->findByUuid($estudante->uuid);
 
         }catch(\Throwable $th){
-            LoggerHelper::logInfo("Erro na transação create de estudante: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
 
@@ -178,7 +176,6 @@ class EstudanteRepository {
 
             $estudante = $this->update($data, $data['id']);
             if(is_null($estudante)){
-                LoggerHelper::logInfo("erro no update de estudante");
                 $this->conn->rollBack();
                 return null;
             }
