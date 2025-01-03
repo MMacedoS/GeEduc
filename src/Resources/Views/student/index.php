@@ -48,7 +48,7 @@
                                     <th>Nome</th>
                                     <th>email</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                    <? if (hasPermission('editar estudantes') || hasPermission('deletar professores')) {?>
                                      <th>Actions</th>
                                      <? } ?>
                                 </tr>
@@ -76,17 +76,17 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                        <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes')) {?>
                                             <td class="d-flex">
-                                                 <? if (hasPermission('editar professores')) {?>                                     
+                                                 <? if (hasPermission('editar estudantes')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/editar">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
-                                                <? if (hasPermission('deletar professores')) {?>                                                                           
-                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
+                                                <? if (hasPermission('deletar estudantes')) {?>                                                                           
+                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$estudante->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
                                                         </div>
@@ -101,7 +101,7 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>professor <?=getParamsToJson($estudante->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                                <p>Estudante: <?=getParamsToJson($estudante->pessoa_fisica)->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -109,7 +109,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>                                          
+                                                </div>                                        
                                             </td>
                                         <? }?>
                                     </tr>

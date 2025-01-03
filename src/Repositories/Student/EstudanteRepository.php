@@ -225,9 +225,9 @@ class EstudanteRepository {
     }
 
     public function deleteAll($estudante){
-        $pessoa_fisica = $this->pessoaFisicaRepository->delete($estudante->pessoa_fisica_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
 
-        $this->usaurioRepository->delete($pessoa_fisica->usuario_id);
+        $this->usuarioRepository->delete($pessoa_fisica->usuario_id);
 
         $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
 
@@ -236,7 +236,7 @@ class EstudanteRepository {
 
     public function delete(int $id){
         $stmt = $this->conn->prepare(
-            "UPDATE" . self::TABLE . "
+            "UPDATE " . self::TABLE . "
                 SET
                     ativo = 0
                 WHERE id = :id
@@ -245,7 +245,7 @@ class EstudanteRepository {
 
             $updated = $stmt->execute(['id' => $id]);
 
-            return $update;
+            return $updated;
     }
 
 }
