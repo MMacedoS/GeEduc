@@ -115,6 +115,7 @@ class ProfessorRepository {
             return $teacher;
     
         } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
             $this->conn->rollBack();
             return null;
         }

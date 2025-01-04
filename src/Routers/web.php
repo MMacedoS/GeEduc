@@ -10,17 +10,21 @@ use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
 use App\Controllers\v1\Discipline\DisciplinaController;
+use App\Controllers\v1\Student\EstudanteController;
+use App\Controllers\v1\Student\EstudanteTurmaController;
 
 $router = new Router();
 $auth = new Auth();
 $dashboardController = new DashboardController();
 $usuarioController = new UsuarioController(); 
 $professorController = new ProfessorController();
+$estudanteController = new EstudanteController();
 $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
 $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
 $disciplinaController = new DisciplinaController();
+$estudanteTurmaController = new EstudanteTurmaController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -54,6 +58,13 @@ $router->create('GET', '/professores/{id}/editar', [$professorController, 'edit'
 $router->create('POST', '/professores/{id}/editar', [$professorController, 'update'], $auth);
 $router->create('DELETE', '/professores/{id}', [$professorController, 'destroy'], $auth);
 
+$router->create('GET', '/estudantes', [$estudanteController, 'index'], $auth);
+$router->create('GET', '/estudantes/criar', [$estudanteController, 'create'], $auth);
+$router->create('POST', '/estudantes/criar', [$estudanteController, 'store'], $auth);
+$router->create('GET', '/estudantes/{id}/editar', [$estudanteController, 'edit'], $auth);
+$router->create('POST', '/estudantes/{id}/editar', [$estudanteController, 'update'], $auth);
+$router->create('DELETE', '/estudantes/{id}', [$estudanteController, 'destroy'], $auth);
+
 $router->create('GET', '/planos', [$planoController, 'index'], $auth);
 $router->create('GET', '/planos/criar', [$planoController, 'create'], $auth);
 $router->create('POST', '/planos/criar', [$planoController, 'store'], $auth);
@@ -81,3 +92,10 @@ $router->create('POST', '/disciplinas/criar', [$disciplinaController, 'store'], 
 $router->create('GET', '/disciplinas/{id}/editar', [$disciplinaController, 'edit'], $auth);
 $router->create('POST', '/disciplinas/{id}/editar', [$disciplinaController, 'update'], $auth);
 $router->create('DELETE', '/disciplinas/{id}', [$disciplinaController, 'destroy'], $auth);
+
+$router->create('GET', '/estudantes/{id}/turma', [$estudanteTurmaController, 'studentLinkClass'], $auth);
+$router->create('POST', '/estudantes/{id}/turma/{id}', [$estudanteTurmaController, 'store'], $auth);
+$router->create('PUT', '/estudantes-class/{id}', [$estudanteTurmaController, 'updateStatus'], $auth);
+
+$router->create('GET', '/estudantes/{id}/mensalidades', [$mensalidadeController, 'studentMonthlyFees'], $auth);
+

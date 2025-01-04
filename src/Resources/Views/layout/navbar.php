@@ -48,7 +48,7 @@
                             <?php } ?>
                             <?php if (hasPermission('visualizar estudantes')) { ?>
                                 <li>
-                                    <a class="dropdown-item" href="\apartamento\">
+                                    <a class="dropdown-item" href="\estudantes\">
                                         <span>Estudantes</span>
                                     </a>
                                 </li>
@@ -78,72 +78,72 @@
                         </li>
 
                         <?php } if (hasPermission('visualizar financeiro')) {?>
-                        <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="icon-now_widgets"></i> Financeiro
-                            </a>
-                            <ul class="dropdown-menu"> 
-                                <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                            <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-now_widgets"></i> Financeiro
+                                </a>
+                                <ul class="dropdown-menu"> 
+                                    <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="/bancos/">
+                                                <span>Contas Bancárias</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar boletos')) { ?>                               
                                     <li>
-                                        <a class="dropdown-item" href="/bancos/">
-                                            <span>Contas Bancárias</span>
+                                        <a class="dropdown-item current-page" href="/consumos/produto">
+                                            <span>Boletos</span>
+                                        </a>
+                                    </li>
+                                    <?php } if (hasPermission('visualizar mensalidades')) { ?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/consumos/diaria">
+                                            <span>Mensalidade</span>
+                                        </a>
+                                    </li>
+                                    <?php } if (hasPermission('visualizar planos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/planos">
+                                            <span>Planos</span>
+                                        </a>
+                                    </li>
+                                    <? }?>
+                                </ul>
+                            </li>
+                        <?php } if (hasPermission('visualizar cadastro')) { ?>
+                            <li class="nav-item dropdown ">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-add_task"></i>Parametros
+                                </a>
+                                <ul class="dropdown-menu">
+                                    
+                                <?php if (hasPermission('criar usuários')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="/usuario/">
+                                            <span>Usuário</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/permissao/">
+                                            <span>Permissões</span>
                                         </a>
                                     </li>
                                 <?php } ?>
-                                <?php if (hasPermission('visualizar boletos')) { ?>                               
-                                <li>
-                                    <a class="dropdown-item current-page" href="/consumos/produto">
-                                        <span>Boletos</span>
-                                    </a>
-                                </li>
-                                <?php } if (hasPermission('visualizar mensalidades')) { ?>
-                                <li>
-                                    <a class="dropdown-item current-page" href="/consumos/diaria">
-                                        <span>Mensalidade</span>
-                                    </a>
-                                </li>
-                                <?php } if (hasPermission('visualizar planos')) { ?>
-                                <li>
-                                    <a class="dropdown-item current-page" href="/planos">
-                                        <span>Planos</span>
-                                    </a>
-                                </li>
-                                <? }?>
-                            </ul>
-                        </li>
-                        <?php } if (hasPermission('visualizar cadastro')) { ?>
-                        <li class="nav-item dropdown ">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="icon-add_task"></i>Parametros
-                            </a>
-                            <ul class="dropdown-menu">
-                                
-                            <?php if (hasPermission('criar usuários')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="/usuario/">
-                                        <span>Usuário</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/permissao/">
-                                        <span>Permissões</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
 
-                            
-                            </ul>
-                        </li>
+                                
+                                </ul>
+                            </li>
                         <?php } ?>
                         <?php if (hasPermission('visualizar afiliados')) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href=""><i class="icon-supervised_user_circle"></i> Afiliados
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href=""><i class="icon-supervised_user_circle"></i> Afiliados
+                                </a>
+                            </li>
                         <? } ?>
-                        <li class="nav-item">
-                            <a class="nav-link text-warning" href="/logout">Sair</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-warning" href="/logout">Sair</a>
+                            </li>
                     </ul>
                 </div>
             </div>

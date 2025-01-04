@@ -52,7 +52,7 @@
                                     <th>Descricao</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar planos') || hasPermission('deletar planos')) {?>
-                                        <th>Actions</th>
+                                        <th>Ação</th>
                                     <? }?>
                                 </tr>
                             </thead>

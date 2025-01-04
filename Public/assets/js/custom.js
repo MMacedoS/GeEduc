@@ -37,7 +37,7 @@
 		  cache: false,
 		  processData:false,
 		}).catch(function(error){
-		   showErrorMessage("Error creating");
+		   showErrorMessage(error.message);
 		  hideLoader();
 		});
 	  }
@@ -62,6 +62,22 @@
 			hideLoader();
 		  }
 		});
+	  }
+
+	  function sendRequestWithMethod(url, data, method) {
+		showLoader();
+		return $.ajax({
+			url: url,
+			method: method,
+			data: data,
+			contentType: false,
+			cache: false,
+			processData:false,
+			dataType: 'json',
+		  }).catch(function(error){
+			console.error('Erro ao obter registro:', error);
+			hideLoader();
+		  });
 	  }
 	
 		// Função para exibir um registro

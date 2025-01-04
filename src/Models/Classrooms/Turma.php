@@ -22,15 +22,15 @@ class Turma {
     public function create(
         array $data
     ): Turma {
-        $shift = new Turma();
-        $shift->id = $data['id'] ?? null;
-        $shift->uuid = $data['uuid'] ?? $this->generateUUID();
-        $shift->nome = $data['name'];          
-        $shift->ordem = $data['order'];  
-        $shift->ativo = $data['active'] ?? null; 
-        $shift->turno = $data['shift'];        
-        $shift->created_at = $data['created_at'] ?? null;
-        $shift->updated_at = $data['updated_at'] ?? null;
-        return $shift;
+        $classroom = new Turma();
+        $classroom->id = $data['id'] ?? null;
+        $classroom->uuid = $data['uuid'] ?? $this->generateUUID();
+        $classroom->nome = $data['name'];          
+        $classroom->ordem = $data['order'];  
+        $classroom->ativo = $data['active'] ?? null; 
+        $classroom->turno = $data['shift'];        
+        $classroom->created_at = $data['created_at'] ?? null;
+        $classroom->updated_at = $data['updated_at'] ?? null;
+        return $classroom;
     }
 }

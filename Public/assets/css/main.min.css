@@ -12608,9 +12608,10 @@ a:hover {
 .breadcrumb .breadcrumb-item {
     display: flex;
     align-items: center;
+    font-size: x-small;
 }
 .breadcrumb .breadcrumb-item i {
-    font-size: 2.1rem;
+    font-size: x-small;
     margin-right: 0.75rem;
     color: #657c60;
 }

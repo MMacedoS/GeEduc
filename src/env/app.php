@@ -1,6 +1,6 @@
 <?php
 
-const APP_NAME = 'Sistema Reserva';
+const APP_NAME = 'GeEduc - Gestor Educacional';
 const URL_PREFIX_APP = "http://app1.localhost:8080";
 const DB_HOST = 'mysql';
 const DB_NAME = 'escola';

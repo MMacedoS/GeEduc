@@ -4,6 +4,7 @@ namespace App\Repositories\Profile;
 
 use App\Config\Database;
 use App\Models\Profile\Usuario;
+use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
@@ -14,20 +15,56 @@ class UsuarioRepository {
     use FindTrait;
     protected $conn;
     protected $model;
+    private $permissioRepository;
 
     public function __construct() {
         $conn = new Database();
         $this->conn = $conn->getConnection();
         $this->model = new Usuario();
+        $this->permissioRepository = new PermissaoRepository();
     }
 
-    public function all()
+    public function all(array $params = [])
     {
-        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . " order by nome ASC");
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        $sql = "SELECT * FROM " . self::TABLE;
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['name'])) {
+            $conditions[] = "nome = :nome";
+            $bindings[':nome'] = $params['name'];
+        }
+
+        if (isset($params['email'])) {
+            $conditions[] = "email = :email";
+            $bindings[':email'] = $params['email'];
+        }
+
+        if (isset($params['sector'])) {
+            $conditions[] = "painel = :painel";
+            $bindings[':painel'] = $params['sector'];
+        }
+
+        if (isset($params['active'])) {
+            $conditions[] = "p.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY nome DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
     }
 
-    public function create(array $data)
+    public function create(array $data, bool $forceNewPassword = true)
     {   
         $existingUser = $this->findByEmail($data['email'], $data['sector']);
         if ($existingUser) {
@@ -35,7 +72,8 @@ class UsuarioRepository {
         }
 
         $user = $this->model->create(
-            $data
+            $data,
+            $forceNewPassword
         );
 
         try {
@@ -60,9 +98,12 @@ class UsuarioRepository {
             if (is_null($create)) {
                 return null;
             }
-    
-            return $this->findByUuid($user->uuid);
+
+            $userFromDb = $this->findByUuid($user->uuid);
+            $this->assignPermissionsToUser($userFromDb);            
+            return $userFromDb;
         } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
             return null;
         }
     }
@@ -92,7 +133,6 @@ class UsuarioRepository {
 
         $data['existing_password'] = $existingUser->senha;
         $senha = (string)$data['password'];
-        LoggerHelper::logInfo($senha);
         $user = $this->model->create($data, !hash_equals($senha, $existingUser->senha));
 
         try {
@@ -121,8 +161,11 @@ class UsuarioRepository {
             if (!$updated) {
                 return null;
             }
+            $userFromDb = $this->findById($id);
 
-            return $this->findById($id);
+            $this->assignPermissionsToUser($userFromDb);
+
+            return $userFromDb;
         } catch (\Throwable $th) {
             LoggerHelper::logInfo($th->getMessage());
             return null;
@@ -226,4 +269,20 @@ class UsuarioRepository {
         return $deleted;
     }
 
+    private function assignPermissionsToUser(Usuario $userFromDb)
+    {
+        $access = $userFromDb->painel !== 'administrativo' ? ['name' => $userFromDb->painel] : [];
+        
+        $permissions = $this->permissioRepository->all($access);
+
+        if (empty($permissions)) {
+            return $userFromDb;
+        }
+
+        $permissionIds = array_map(fn($permission) => $permission->id, $permissions);
+        
+        $this->addPermissions(['permissions' => $permissionIds], $userFromDb->id);
+
+        return $userFromDb;
+    }
 }

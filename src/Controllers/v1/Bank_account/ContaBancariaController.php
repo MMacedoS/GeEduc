@@ -39,7 +39,7 @@ class ContaBancariaController extends Controller
 
     public function create(Request $request)
     {
-        if(hasPermission('cadastrar contas')) {
+        if(!hasPermission('cadastrar contas')) {
             return $this->router->redirect('bancos?error=422');
         }
 
@@ -81,7 +81,7 @@ class ContaBancariaController extends Controller
 
     public function edit(Request $request, string $id)
     {
-        if(hasPermission('editar contas')) {
+        if(!hasPermission('editar contas')) {
             return $this->router->redirect('bancos?error=422');
         }
 
@@ -135,7 +135,7 @@ class ContaBancariaController extends Controller
 
     public function destroy(Request $request, string $id)
     {
-        if(hasPermission('deletar contas')) {
+        if(!hasPermission('deletar contas')) {
             return $this->router->redirect('bancos?error=422');
         }
 

@@ -61,7 +61,7 @@
                                     <th>Conta</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar contas') || hasPermission('deletar contas')) {?>
-                                    <th>Actions</th>
+                                    <th>Ação</th>
                                     <? } ?>
                                 </tr>
                             </thead>
