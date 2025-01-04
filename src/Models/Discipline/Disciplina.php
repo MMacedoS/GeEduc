@@ -10,7 +10,7 @@ class Disciplina {
 
     public $id;
     public $uuid;
-    public $name;
+    public $nome;
     public $ativo;
     public $created_at;
     public $updated_at;
