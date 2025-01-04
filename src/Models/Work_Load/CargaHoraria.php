@@ -4,7 +4,7 @@ namespace App\Models\Work_Load;
 
 use App\Models\Traits\UuidTrait;
 
-class Carga_Horaria{
+class CargaHoraria{
 
     use UuidTrait;
 
@@ -19,7 +19,7 @@ class Carga_Horaria{
 
     public function create(
         array $data
-    ): Carga_Horaria {
+    ): CargaHoraria {
         $carga_horaria->id = $data['id'] ?? null;
         $carga_horaria->uuid = $data['uuid'] ?? $this->generateUUID();
         $carga_horaria->carga = $data['carga'] ?? null;
