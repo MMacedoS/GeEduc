@@ -4,13 +4,13 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\ClassRooms\TurmaController;
-use App\Controllers\v1\ClassRooms\TurmaEstudanteController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
 use App\Controllers\v1\Student\EstudanteController;
+use App\Controllers\v1\Student\EstudanteTurmaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -22,7 +22,7 @@ $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
 $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
-$turmaEstudanteController = new TurmaEstudanteController();
+$estudanteTurmaController = new EstudanteTurmaController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -84,9 +84,7 @@ $router->create('GET', '/bancos/{id}/editar', [$contaBancariaController, 'edit']
 $router->create('POST', '/bancos/{id}/editar', [$contaBancariaController, 'update'], $auth);
 $router->create('DELETE', '/bancos/{id}', [$contaBancariaController, 'destroy'], $auth);
 
-$router->create('GET', '/estudante/{id}/turma', [$turmaEstudanteController, 'linkClass'], $auth);
-$router->create('GET', '/turma-estudante/criar', [$turmaEstudanteController, 'create'], $auth);
-$router->create('POST', '/turma-estudante/criar', [$turmaEstudanteController, 'store'], $auth);
-$router->create('GET', '/turma-estudante/{id}/editar', [$turmaEstudanteController, 'edit'], $auth);
-$router->create('POST', '/turma-estudante/{id}/editar', [$turmaEstudanteController, 'update'], $auth);
-$router->create('DELETE', '/turma-estudante/{id}', [$turmaEstudanteController, 'destroy'], $auth);
+$router->create('GET', '/estudantes/{id}/turma', [$estudanteTurmaController, 'studentLinkClass'], $auth);
+
+$router->create('POST', '/estudantes/{id}/turma/{id}', [$estudanteTurmaController, 'store'], $auth);
+$router->create('PUT', '/estudantes-class/{id}', [$estudanteTurmaController, 'updateStatus'], $auth);

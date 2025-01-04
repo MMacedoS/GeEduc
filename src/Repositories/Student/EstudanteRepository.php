@@ -76,6 +76,34 @@ class EstudanteRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
+    public function studentWithPersonByUuid(string $uuid){
+
+        $sql = "SELECT
+            e.*,(
+                SELECT 
+                    JSON_OBJECT(
+                        'id', pf.id,
+                        'nome', pf.nome,
+                        'email', pf.email
+                    )
+                FROM pessoa_fisica pf
+                WHERE pf.id = e.pessoa_fisica_id
+            ) AS pessoa_fisica
+            FROM " . self::TABLE . " 
+            e LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
+            WHERE e.uuid = :id
+        ";
+
+        $sql .= " ORDER BY e.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $uuid]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
+    }
+
     public function saveAll(array $data){
 
         if(empty($data)){

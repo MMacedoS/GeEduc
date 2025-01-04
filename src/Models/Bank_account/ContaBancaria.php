@@ -36,13 +36,13 @@ class ContaBancaria {
         return $conta;
     }
 
-    public function update(array $data): void
+    public function update(array $data, ContaBancaria $conta_bancaria): void
     {
-        $this->convenio = $data['agreement'] ?? $this->convenio;
-        $this->agencia = $data['branch'] ?? $this->agencia;
-        $this->conta = $data['account'] ?? $this->conta;
-        $this->banco = $data['bank'] ?? $this->banco;
-        $this->codigo_banco = $data['bank_code'] ?? $this->codigo_banco;
-        $this->ativo = $data['active'] ?? $this->ativo;
+        $this->convenio = $data['agreement'] ?? $conta_bancaria->convenio;
+        $this->agencia = $data['branch'] ?? $conta_bancaria->agencia;
+        $this->conta = $data['account'] ?? $conta_bancaria->conta;
+        $this->banco = $data['bank'] ?? $conta_bancaria->banco;
+        $this->codigo_banco = $data['bank_code'] ?? $conta_bancaria->codigo_banco;
+        $this->ativo = $data['active'] ?? $conta_bancaria->ativo;
     }
 }
