@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Repositories\Student;
+namespace App\Repositories\MonthlyFees;
 
 use App\Config\Database;
-use App\Models\Student\EstudanteTurma;
+use App\Models\MonthlyFees\Mensalidade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteTurmaRepository {
-    const CLASS_NAME = EstudanteTurma::class;
+class MensalidadeRepository {
+    const CLASS_NAME = Mensalidade::class;
     const TABLE = 'estudante_turma';
 
     use FindTrait;
@@ -18,23 +18,23 @@ class EstudanteTurmaRepository {
     public function __construct() {
         $conn = new Database();
         $this->conn = $conn->getConnection();
-        $this->model = new EstudanteTurma();
+        $this->model = new Mensalidade();
     }
 
     public function allClassStudents(array $params = [])
     {
         $sql = "SELECT 
-           et.*,
+           m.*,
            (
             SELECT 
                JSON_OBJECT(
-                   'id', t.id,
-                   'nome', t.nome,
-                   'turno', t.turno
+                   'id', p.id,
+                   'nome', p.nome,
+                   'valor', p.valor
                 )
-            FROM turmas t
-            WHERE t.id = et.turma_id and t.ativo = 1
-        ) AS turma,
+            FROM planos p
+            WHERE p.id = m.plano_id
+        ) AS planos,
            (
             SELECT 
                JSON_OBJECT(
@@ -42,9 +42,9 @@ class EstudanteTurmaRepository {
                    'pessoa_fisica_id', e.pessoa_fisica_id
                 )
             FROM estudantes e
-            WHERE e.id = et.estudante_id and e.ativo = 1
+            WHERE e.id = m.estudante_id
         ) AS estudante
-        FROM " . self::TABLE . " et";
+        FROM " . self::TABLE . " m";
 
         $conditions = [];
         $bindings = [];
@@ -59,21 +59,21 @@ class EstudanteTurmaRepository {
             $bindings[':estudante_id'] = $params['student_id'];
         }
 
-        if (isset($params['class_id'])) {
-            $conditions[] = "et.turma_id = :turma_id";
-            $bindings[':turma_id'] = $params['class_id'];
+        if (isset($params['plan_id'])) {
+            $conditions[] = "m.plano_id = :plano_id";
+            $bindings[':plano_id'] = $params['plan_id'];
         }
 
-        if (isset($params['active'])) {
-            $conditions[] = "et.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation'])) {
+            $conditions[] = "m.situacao = :situacao";
+            $bindings[':situacao'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY et.created_at DESC";
+        $sql .= " ORDER BY m.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -84,31 +84,35 @@ class EstudanteTurmaRepository {
 
     public function create(array $data)
     {
-        $class = $this->model->create($data);
+        $monthly = $this->model->create($data);
 
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
                 SET 
                     uuid = :uuid,
-                    turma_id = :turma_id,
+                    plano_id = :plano_id,
                     estudante_id = :estudante_id,
-                    ano_letivo = :ano_letivo
+                    valor = :valor,
+                    data_vencimento = :data_vencimento,
+                    dia_vencimento = :dia_vencimento
                 "
             );
 
             $create = $stmt->execute([
-                ':uuid' => $class->uuid,
-                ':turma_id' => $class->turma_id,
-                ':estudante_id' => $class->estudante_id,
-                ':ano_letivo' => $class->ano_letivo
+                ':uuid' => $monthly->uuid,
+                ':plano_id' => $monthly->plano_id,
+                ':estudante_id' => $monthly->estudante_id,
+                ':valor' => $monthly->valor,
+                ':data_vencimento' => $monthly->data_vencimento,
+                ':dia_vencimento' => $monthly->dia_vencimento
             ]);
 
             if (!$create) {
                 return null;
             }
 
-            return $this->findByUuid($class->uuid);
+            return $this->findByUuid($monthly->uuid);
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
@@ -118,32 +122,36 @@ class EstudanteTurmaRepository {
 
     public function update(array $data, int $id)
     {
-        $turma_estudante = $this->findById($id);
+        $monthly = $this->findById($id);
 
-        if (!$turma_estudante) {
+        if (!$monthly) {
             return null;
         }
 
-        $turma_estudante = $turma_estudante->update($data, $turma_estudante);
+        $monthly = $monthly->update($data, $monthly);
 
         try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . " 
                 SET 
-                    turma_id = :turma_id,
+                    plano_id = :plano_id,
                     estudante_id = :estudante_id,
-                    ano_letivo = :ano_letivo,
-                    ativo = :active 
+                    valor = :valor,
+                    data_vencimento = :data_vencimento,
+                    dia_vencimento = :dia_vencimento,
+                    situacao = :situacao 
                 WHERE id = :id
                 "
             );
 
             $update = $stmt->execute([
                 ':id' => $id,
-                ':turma_id' => $turma_estudante->turma_id,
-                ':estudante_id' => $turma_estudante->estudante_id,
-                ':ano_letivo' => $turma_estudante->ano_letivo,
-                ':active' => $turma_estudante->ativo
+                ':plano_id' => $monthly->plano_id,
+                ':estudante_id' => $monthly->estudante_id,
+                ':valor' => $monthly->valor,
+                ':data_vencimento' => $monthly->data_vencimento,
+                ':dia_vencimento' => $monthly->dia_vencimento,
+                ':situacao' => $monthly->situacao
             ]);
 
             if (!$update) {
