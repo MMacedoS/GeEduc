@@ -85,6 +85,8 @@ $router->create('POST', '/bancos/{id}/editar', [$contaBancariaController, 'updat
 $router->create('DELETE', '/bancos/{id}', [$contaBancariaController, 'destroy'], $auth);
 
 $router->create('GET', '/estudantes/{id}/turma', [$estudanteTurmaController, 'studentLinkClass'], $auth);
-
 $router->create('POST', '/estudantes/{id}/turma/{id}', [$estudanteTurmaController, 'store'], $auth);
 $router->create('PUT', '/estudantes-class/{id}', [$estudanteTurmaController, 'updateStatus'], $auth);
+
+$router->create('GET', '/estudantes/{id}/mensalidades', [$mensalidadeController, 'studentMonthlyFees'], $auth);
+

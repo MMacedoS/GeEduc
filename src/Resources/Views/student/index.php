@@ -118,6 +118,13 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
+                                                <? if (hasPermission('visualizar mensalidades')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidades">
+                                                        <div class="border p-2 rounded-3">
+                                                            <i class="icon-dollar-sign fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>  
                                             </td>
                                         <? }?>
                                     </tr>
