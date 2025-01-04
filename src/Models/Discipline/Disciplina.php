@@ -23,7 +23,7 @@ class Disciplina {
         $disciplina = new Disciplina();
         $disciplina->id = $data['id'] ?? null;
         $disciplina->uuid = $data['uuid'] ?? $this->generateUUID();
-        $disciplina->nome = $data['nome'] ?? null;
+        $disciplina->nome = $data['name'] ?? null;
         $disciplina->ativo = $data['active'] ?? null; 
         $disciplina->created_at = $data['created_at'] ?? null;
         $disciplina->updated_at = $data['updated_at'] ?? null;

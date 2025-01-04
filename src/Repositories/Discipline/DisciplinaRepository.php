@@ -63,19 +63,17 @@ class DisciplinaRepository{
                 "UPDATE " . self::TABLE . "
                     SET
                         nome = :name,
-                        ativo = :status
+                        ativo = :active
                     WHERE id = :id"
             );
 
-            $parameters = [
+            $updated = $stmt->execute([
                 ':id' => $id,
                 ':name' => $disciplina->nome,
-                ':status' => $disciplina->ativo
-            ];
+                ':active' => $disciplina->ativo
+            ]);
 
-            $updated = $stmt->execute($parameters);
-
-            if(!updated){
+            if(!$updated){
                 return null;
             }
 

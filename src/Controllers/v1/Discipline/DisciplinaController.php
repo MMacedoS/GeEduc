@@ -17,7 +17,7 @@ class DisciplinaController extends Controller{
     }
 
     public function index(Request $request){
-        if(hasPermission('visualizar usuarios')){
+        if(!hasPermission('visualizar disciplinas')){
             return $this->router->redirect('disciplinas?error=442');
         }
 
@@ -43,7 +43,7 @@ class DisciplinaController extends Controller{
         return $this->router->view('discipline/create', ['active' => 'register']);
     }
 
-    public function store(Request $request, $id){
+    public function store(Request $request){
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
@@ -72,7 +72,7 @@ class DisciplinaController extends Controller{
     }
 
     public function edit(Request $resquest, $id){
-        if(hasPermission('editar disciplinas')){
+        if(!hasPermission('editar disciplinas')){
             return $this->router->redirect('disciplinas?error=422');
         }
 
@@ -81,16 +81,18 @@ class DisciplinaController extends Controller{
         if(is_null($disciplina)){
             return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
         }
+
+        return $this->router->view('discipline/edit', ['active' => 'register', 'disciplina' => $disciplina]);
     }
 
-    public function update(Request $resquest, $id){
-        $data = $request->getBodyParams();
-
-        $disciplina = $this->discplinaRepository->findByUuid($id);
+    public function update(Request $request, $id){
+        $disciplina = $this->disciplinaRepository->findByUuid($id);
 
         if(is_null($disciplina)){
-            return $this->router->view('discipline', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
         }
+
+        $data = $request->getBodyParams();
 
         $validator = new Validator($data);
 
@@ -108,9 +110,9 @@ class DisciplinaController extends Controller{
             );
         }
 
-        $update = $this->disciplinaRepository->update($data);
+        $updated = $this->disciplinaRepository->update($data, $disciplina->id);
 
-        if(is_null($update)){
+        if(is_null($updated)){
             return $this->router->view('discipline/edit', ['active' => 'register', 'danger' => true]);
         }
 
@@ -118,6 +120,18 @@ class DisciplinaController extends Controller{
     }
 
     public function destroy(Request $resquest, $id){
-        
+        if(hasPermission('deletar disciplinas')){
+            return $this->router->redirect('disciplinas?error=422');
+        }
+
+        $disciplina = $this->disciplinaRepository->findByUuid($id);
+
+        if(is_null($disciplina)){
+            return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
+        }
+
+        $disciplina = $this->disciplinaRepository->delete($disciplina->id);
+
+        return $this->router->redirect('disciplinas/');
     }
 }

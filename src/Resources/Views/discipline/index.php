@@ -72,8 +72,7 @@
                                             <div class="border p-2 rounded-3">
                                                 <i class="icon-edit fs-5"></i>
                                             </div>
-                                        </a>
-                                            <form action="/disciplinas/<?=$disciplina->uuid?>/deletar" method="post">                                            
+                                        </a>                                           
                                                 <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$disciplina->uuid?>">                                                     
                                                     <div class="border p-2 rounded-3">
                                                         <span class="fs-5 text-danger icon-delete1"></span>
@@ -92,15 +91,10 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                                                                <button type="submit" onclick="deleteData('/disciplinas/<?=$disciplina->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </form>
-                                            <a href="/disciplinas/<?=$discplinas->uuid?>/permissao" class="mb-1 ms-2 mt-1">
-                                                <div class="border p-2 rounded-3">
-                                                <span class="fs-5 icon-edit_road"></span>
                                                 </div>
                                             </a>
                                         </td>
