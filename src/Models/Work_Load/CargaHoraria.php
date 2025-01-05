@@ -20,12 +20,13 @@ class CargaHoraria{
     public function create(
         array $data
     ): CargaHoraria {
+        $carga_horaria = new CargaHoraria();
         $carga_horaria->id = $data['id'] ?? null;
         $carga_horaria->uuid = $data['uuid'] ?? $this->generateUUID();
         $carga_horaria->carga = $data['load'] ?? null;
         $carga_horaria->ativo = $data['active'] ?? null;
-        $plan->created_at = $data['created_at'] ?? null;
-        $plan->updated_at = $data['updated_at'] ?? null;
+        $carga_horaria->created_at = $data['created_at'] ?? null;
+        $carga_horaria->updated_at = $data['updated_at'] ?? null;
         return $carga_horaria;
     }
 

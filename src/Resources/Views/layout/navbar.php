@@ -67,6 +67,13 @@
                                     </a>
                                 </li>
                             <?php } ?>
+                            <?php if (hasPermission('visualizar turmas')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\carga-horaria">
+                                        <span>Carga Horaria</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
                             </ul>
                         </li>
 

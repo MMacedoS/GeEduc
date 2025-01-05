@@ -19,7 +19,7 @@ class CargaHorariaRepository{
     public function __construct(){
         $conn = new Database();
         $this->conn = $conn->getConnection();
-        $this->model = new Turma();
+        $this->model = new CargaHoraria();
     }
 
     public function all(array $params = []){
@@ -39,7 +39,7 @@ class CargaHorariaRepository{
         }
 
         if(count($conditions) > 0){
-            $slq .= " WHERE " . implode(" AND ", $conditions);
+            $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
         $sql .= " ORDER BY c.created_at DESC";
@@ -58,8 +58,8 @@ class CargaHorariaRepository{
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
                     SET
-                        uuid = :uuid;
-                        carga = :carga;
+                        uuid = :uuid,
+                        carga = :carga
                 "
             );
 
@@ -79,14 +79,14 @@ class CargaHorariaRepository{
         }
     }
 
-    public function update(array $data, $id){
+    public function update(array $data, int $id){
         $carga_horaria = $this->model->create($data);
 
         try{
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     SET
-                        carga = :nome,
+                        carga = :carga,
                         ativo = :ativo
                     WHERE id = :id
                 "
@@ -94,10 +94,11 @@ class CargaHorariaRepository{
 
             $update = $stmt->execute([
                 ':carga' => $carga_horaria->carga,
-                'ativo' => $carga_horaria->ativo
+                ':ativo' => $carga_horaria->ativo,
+                ':id' => $id
             ]);
 
-            if(is_null($update)){
+            if(!$update){
                 return null;
             }
 
