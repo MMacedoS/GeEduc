@@ -151,4 +151,54 @@ $(document).ready(function() {
 		const correspondingCode = Object.keys(bankMapping).find(key => bankMapping[key] === selectedBank) || "";
 		$("#bankCode").val(correspondingCode);
 	  });
+
+	  $('#plan_id').on('change', function () {
+		var selectedValue = $(this).val();
+	
+		$('#amount').val(selectedValue || '0.0');
+		updateTotal();
+	  });
+
+	  function updateExpirationDate() {
+		var day = parseInt($('#expiration_day').val());
+		if (isNaN(day) || day < 1 || day > 31) {
+		  $('#expiration_date').val('');
+		  return;
+		}
+	
+		var currentDate = new Date();
+		var year = currentDate.getFullYear();
+		var month = currentDate.getMonth();
+	
+		var newDate = new Date(year, month, day);
+	
+		if (newDate.getDate() !== day) {
+		  $('#expiration_date').val('');
+		  return;
+		}
+	
+		var formattedDate = newDate.toISOString().split('T')[0];
+		$('#expiration_date').val(formattedDate);
+	  }
+
+	  updateExpirationDate();
+	  
+	  $('#expiration_day').on('input focus', function () {
+		updateExpirationDate();
+	  });
+
+	  function updateTotal() {
+		const amount = parseFloat($('#amount').val()) || 0;
+		const discount = parseFloat($('#discont').val()) || 0;
+  
+		const total = Math.max(amount - discount, 0); 
+		$('#total').val(total.toFixed(2));
+	  }
+  
+	  updateTotal();
+  
+	  $('#discont').on('input', function () {
+		updateTotal();
+	  });
+	  
   });

@@ -78,3 +78,16 @@ if (!function_exists('brCurrency')) {
         return null;
     }
 }
+
+if (!function_exists('filterAvailableToursWithYear')) { 
+    function filterAvailableToursWithYear($turmas, $estudanteTurma, $year): array {
+        return array_filter($turmas, function($turma) use ($estudanteTurma, $year) {
+            foreach ($estudanteTurma as $est_tur) {
+                if ($est_tur->turma_id === $turma->id && $est_tur->ano_letivo == $year) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+}

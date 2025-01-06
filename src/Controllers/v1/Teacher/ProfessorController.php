@@ -37,7 +37,7 @@ class ProfessorController extends Controller
             'professores' => $paginatedBoards,
             'links' => $paginator->links()
         ];
-        return $this->router->view('teacher/index', ['active' => 'register', 'data' => $data]); 
+        return $this->router->view('teacher/index', ['active' => 'pedagogico', 'data' => $data]); 
     }    
 
     public function create() 
@@ -67,7 +67,7 @@ class ProfessorController extends Controller
             return $this->router->view(
                 'teacher/create', 
                 [
-                    'active' => 'register', 
+                    'active' => 'pedagogico', 
                     'errors' => $validator->getErrors()
                 ]
             );
@@ -76,7 +76,7 @@ class ProfessorController extends Controller
         $created = $this->professorRepository->saveAll($data);
 
         if(is_null($created)) {            
-        return $this->router->view('teacher/create', ['active' => 'register', 'danger' => true]);
+        return $this->router->view('teacher/create', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('professores/');
@@ -91,12 +91,12 @@ class ProfessorController extends Controller
         $professor = $this->professorRepository->findByUuid($id);
 
         if (is_null($professor)) {
-            return $this->router->view('teacher/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('teacher/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($professor->pessoa_fisica_id);
         
-        return $this->router->view('teacher/edit', ['active' => 'register', 'professor' => $professor, 'pessoa_fisica' => $pessoa_fisica]);
+        return $this->router->view('teacher/edit', ['active' => 'pedagogico', 'professor' => $professor, 'pessoa_fisica' => $pessoa_fisica]);
     }
 
     public function update(Request $request, $id) 
@@ -106,7 +106,7 @@ class ProfessorController extends Controller
         $professor = $this->professorRepository->findByUuid($id);
 
         if (is_null($professor)) {
-            return $this->router->view('teacher/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('teacher/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($professor->pessoa_fisica_id);
@@ -125,7 +125,7 @@ class ProfessorController extends Controller
             return $this->router->view(
                 'teacher/edit', 
                 [
-                    'active' => 'register', 
+                    'active' => 'pedagogico', 
                     'errors' => $validator->getErrors()
                 ]
             );
@@ -139,7 +139,7 @@ class ProfessorController extends Controller
         $updated = $this->professorRepository->updateAll($data);
 
         if(is_null($updated)) {            
-            return $this->router->view('teacher/edit', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('teacher/edit', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('professores/');
@@ -154,7 +154,7 @@ class ProfessorController extends Controller
         $professor = $this->professorRepository->findByUuid($id);
 
         if (is_null($professor)) {
-            return $this->router->view('teacher/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('teacher/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $this->professorRepository->deleteAll($professor);
