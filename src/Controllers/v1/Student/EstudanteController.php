@@ -4,6 +4,7 @@ namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
 use App\Repositories\Person\PessoaFisicaRepository;
+use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
@@ -13,11 +14,13 @@ class EstudanteController extends Controller{
 
     protected $estudanteRepository;
     protected $pessoaFisicaRepository;
+    protected $planosRepository;
 
     public function __construct(){
         parent::__construct();
         $this->estudanteRepository = new EstudanteRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->planosRepository = new PlanoRepository();
     }
 
     public function index(Request $request){
@@ -27,20 +30,27 @@ class EstudanteController extends Controller{
         $paginator = new Paginator($estudantes, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-
         $data = [
             'estudantes' => $paginatedBoards,
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('/student/index', ['active' => 'register', 'data' => $data]);
+        return $this->router->view('/student/index', 
+            [
+                'active' => 'pedagogico',  
+                'data' => $data
+            ]
+        );
     }
 
-    public function create(){
-        return $this->router->view('/student/create', ['active' => 'register']);
+    public function create(Request $request)
+    {
+        $planos = $this->planosRepository->allPlans();
+        
+        return $this->router->view('/student/create', ['active' => 'pedagogico', 'plans' => $planos]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request) {
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
@@ -49,12 +59,14 @@ class EstudanteController extends Controller{
             'name' => 'required|min:1|max:100',
             'email' => 'required',
             'mother' => 'required',
-            'doc' => 'required'
+            'doc' => 'required',
+            'monthly_day' => 'required',
+            'plan_id' => 'required'
         ];
 
         if(!$validator->validate($rules)){
             return $this->router->view('student/create', [
-                'active' => 'register',
+                'active' => 'pedagogico', 
                 'errors' => $validator->getErrors()
             ]);
         }
@@ -62,18 +74,20 @@ class EstudanteController extends Controller{
         $created = $this->estudanteRepository->saveAll($data);
 
         if(is_null($created)){
-            return $this->router->view('student/create', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('student/create', ['active' => 'pedagogico',  'danger' => true]);
         }
         
         return $this->router->redirect('estudantes/');
     }
 
-    public function edit(Request $request, $id){
+    public function edit(Request $request, $id) {
         $estudante = $this->estudanteRepository->findByUuid($id);
 
         if(is_null($estudante)){
             return $this->router->view('student/', ['active' => 'register', 'danger' => true]);
         }
+
+        $planos = $this->planosRepository->allPlans();
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
 
@@ -81,17 +95,19 @@ class EstudanteController extends Controller{
         [
             'active' => 'register', 
             'estudante' => $estudante, 
-            'pessoa_fisica' => $pessoa_fisica
+            'pessoa_fisica' => $pessoa_fisica,
+            'plans' => $planos
         ]);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id) 
+    {
         $data = $request->getBodyParams();
 
         $estudante = $this->estudanteRepository->findByUuid($id);
 
         if(is_null($estudante)){
-            return $this->router->view('student/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('student/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
@@ -102,7 +118,9 @@ class EstudanteController extends Controller{
             'name' => 'required|min:1|max:100',
             'email' => 'required',
             'mother' => 'required',
-            'doc' => 'required'
+            'doc' => 'required',
+            'monthly_day' => 'required',
+            'plan_id' => 'required'
         ];
 
         if(!$validator->validate($rules)){
@@ -121,7 +139,7 @@ class EstudanteController extends Controller{
 
         if(is_null($updated)){
             return $this->router->view('student/edit', [
-                'active' => 'register',
+                'active' => 'pedagogico', 
                 'danger' => true
             ]);
         }
@@ -129,12 +147,12 @@ class EstudanteController extends Controller{
         return $this->router->redirect('estudantes/');
     }
 
-    public function destroy(Request $request, $id){
+    public function destroy(Request $request, $id) {
         $estudante = $this->estudanteRepository->findByUuid($id);
 
         if(is_null($estudante)){
             return $this->router->view('student/', [
-                'active' => 'register',
+                'active' => 'pedagogico', 
                 'danger' => true
             ]);
         }

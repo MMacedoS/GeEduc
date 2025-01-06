@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Repositories\Classrooms;
+namespace App\Repositories\Student;
 
 use App\Config\Database;
-use App\Models\Classrooms\TurmaEstudante;
+use App\Models\Student\EstudanteTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaEstudanteRepository {
-    const CLASS_NAME = TurmaEstudante::class;
-    const TABLE = 'turma_estudante';
+class EstudanteTurmaRepository {
+    const CLASS_NAME = EstudanteTurma::class;
+    const TABLE = 'estudante_turma';
 
     use FindTrait;
     protected $conn;
@@ -18,13 +18,13 @@ class TurmaEstudanteRepository {
     public function __construct() {
         $conn = new Database();
         $this->conn = $conn->getConnection();
-        $this->model = new TurmaEstudante();
+        $this->model = new EstudanteTurma();
     }
 
     public function allClassStudents(array $params = [])
     {
         $sql = "SELECT 
-           te.*,
+           et.*,
            (
             SELECT 
                JSON_OBJECT(
@@ -33,7 +33,7 @@ class TurmaEstudanteRepository {
                    'turno', t.turno
                 )
             FROM turmas t
-            WHERE t.id = te.turma_id and t.ativo = 1
+            WHERE t.id = et.turma_id and t.ativo = 1
         ) AS turma,
            (
             SELECT 
@@ -42,9 +42,9 @@ class TurmaEstudanteRepository {
                    'pessoa_fisica_id', e.pessoa_fisica_id
                 )
             FROM estudantes e
-            WHERE e.id = te.estudante_id and e.ativo = 1
+            WHERE e.id = et.estudante_id and e.ativo = 1
         ) AS estudante
-        FROM " . self::TABLE . " te";
+        FROM " . self::TABLE . " et";
 
         $conditions = [];
         $bindings = [];
@@ -54,16 +54,26 @@ class TurmaEstudanteRepository {
             $bindings[':nome'] = '%' . $params['search'] . '%';
         }
 
-        if (isset($params['ativo'])) {
-            $conditions[] = "te.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+        if (isset($params['student_id'])) {
+            $conditions[] = "et.estudante_id = :estudante_id";
+            $bindings[':estudante_id'] = $params['student_id'];
+        }
+
+        if (isset($params['class_id'])) {
+            $conditions[] = "et.turma_id = :turma_id";
+            $bindings[':turma_id'] = $params['class_id'];
+        }
+
+        if (isset($params['active'])) {
+            $conditions[] = "et.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
         }
 
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY te.created_at DESC";
+        $sql .= " ORDER BY et.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -109,20 +119,21 @@ class TurmaEstudanteRepository {
     public function update(array $data, int $id)
     {
         $turma_estudante = $this->findById($id);
+
         if (!$turma_estudante) {
             return null;
         }
 
-        $turma_estudante->update($data);
+        $turma_estudante = $turma_estudante->update($data, $turma_estudante);
 
         try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . " 
                 SET 
-                    uuid = :uuid,
                     turma_id = :turma_id,
                     estudante_id = :estudante_id,
-                    ano_letivo = :ano_letivo
+                    ano_letivo = :ano_letivo,
+                    ativo = :active 
                 WHERE id = :id
                 "
             );
@@ -131,7 +142,8 @@ class TurmaEstudanteRepository {
                 ':id' => $id,
                 ':turma_id' => $turma_estudante->turma_id,
                 ':estudante_id' => $turma_estudante->estudante_id,
-                ':ano_letivo' => $turma_estudante->ano_letivo
+                ':ano_letivo' => $turma_estudante->ano_letivo,
+                ':active' => $turma_estudante->ativo
             ]);
 
             if (!$update) {
@@ -140,8 +152,6 @@ class TurmaEstudanteRepository {
 
             return $this->findById($id);
         } catch (\Throwable $th) {
-            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
     }

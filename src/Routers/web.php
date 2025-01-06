@@ -4,14 +4,17 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\ClassRooms\TurmaController;
-use App\Controllers\v1\ClassRooms\TurmaEstudanteController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
+use App\Controllers\v1\Discipline\DisciplinaController;
+use App\Controllers\v1\MonthlyFees\MensalidadeController;
 use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
+use App\Controllers\v1\Student\EstudanteMensalidadeController;
+use App\Controllers\v1\Student\EstudanteTurmaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -23,8 +26,12 @@ $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
 $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
-$turmaEstudanteController = new TurmaEstudanteController();
 $cargaHorariaController = new CargaHorariaController();
+$disciplinaController = new DisciplinaController();
+$estudanteTurmaController = new EstudanteTurmaController();
+$mensalidadeController = new MensalidadeController();
+$estudanteMensalidadeController = new EstudanteMensalidadeController();
+$mensalidadeController = new MensalidadeController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -99,4 +106,21 @@ $router->create('POST', '/turma-estudante/criar', [$turmaEstudanteController, 's
 $router->create('GET', '/turma-estudante/{id}/editar', [$turmaEstudanteController, 'edit'], $auth);
 $router->create('POST', '/turma-estudante/{id}/editar', [$turmaEstudanteController, 'update'], $auth);
 $router->create('DELETE', '/turma-estudante/{id}', [$turmaEstudanteController, 'destroy'], $auth);
+
+$router->create('GET', '/disciplinas', [$disciplinaController, 'index'], $auth);
+$router->create('GET', '/disciplinas/criar', [$disciplinaController, 'create'], $auth);
+$router->create('POST', '/disciplinas/criar', [$disciplinaController, 'store'], $auth);
+$router->create('GET', '/disciplinas/{id}/editar', [$disciplinaController, 'edit'], $auth);
+$router->create('POST', '/disciplinas/{id}/editar', [$disciplinaController, 'update'], $auth);
+$router->create('DELETE', '/disciplinas/{id}', [$disciplinaController, 'destroy'], $auth);
+
+$router->create('GET', '/estudantes/{id}/turma', [$estudanteTurmaController, 'studentLinkClass'], $auth);
+$router->create('POST', '/estudantes/{id}/turma/{id}', [$estudanteTurmaController, 'store'], $auth);
+$router->create('PUT', '/estudantes-class/{id}', [$estudanteTurmaController, 'updateStatus'], $auth);
+
+$router->create('GET', '/estudantes/{id}/mensalidades', [$estudanteMensalidadeController, 'index'], $auth);
+$router->create('GET', '/estudantes/{id}/mensalidade/', [$estudanteMensalidadeController, 'create'], $auth);
+$router->create('POST', '/estudantes/{id}/mensalidade/', [$estudanteMensalidadeController, 'store'], $auth);
+$router->create('GET', '/estudantes/{id}/mensalidade/{mensalidade_id}/', [$estudanteMensalidadeController, 'edit'], $auth);
+$router->create('POST', '/estudantes/{id}/mensalidade/{mensalidade_id}/', [$estudanteMensalidadeController, 'update'], $auth);
 

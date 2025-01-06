@@ -49,7 +49,7 @@
                                     <th>email</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar estudantes') || hasPermission('deletar professores')) {?>
-                                     <th>Actions</th>
+                                     <th>Ação</th>
                                      <? } ?>
                                 </tr>
                             </thead>
@@ -76,7 +76,7 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes')) {?>
+                                        <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes') || hasPermission('visualizar turmas estudantes')) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('editar estudantes')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/editar">
@@ -109,7 +109,22 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>                                        
+                                                </div> 
+
+                                                <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/turma">
+                                                        <div class="border p-2 rounded-3">
+                                                            <i class="icon-link fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>  
+                                                <? if (hasPermission('visualizar mensalidades')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidades">
+                                                        <div class="border p-2 rounded-3">
+                                                            <i class="icon-dollar-sign fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>  
                                             </td>
                                         <? }?>
                                     </tr>

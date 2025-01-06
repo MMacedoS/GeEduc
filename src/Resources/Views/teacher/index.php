@@ -56,7 +56,7 @@
                                     <th>email</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
-                                     <th>Actions</th>
+                                     <th>Ação</th>
                                      <? } ?>
                                 </tr>
                             </thead>

@@ -60,6 +60,13 @@
                                     </a>
                                 </li>
                             <?php } ?>
+                            <?php if (hasPermission('visualizar disciplinas')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\disciplinas\">
+                                        <span>Disciplinas</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
                             <?php if (hasPermission('visualizar turmas')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\turmas">

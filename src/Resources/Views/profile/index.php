@@ -47,7 +47,7 @@
                                     <th>email</th>
                                     <th>Acesso</th>
                                     <th>Situação</th>
-                                    <th>Actions</th>
+                                    <th>Ação</th>
                                 </tr>
                             </thead>
                             

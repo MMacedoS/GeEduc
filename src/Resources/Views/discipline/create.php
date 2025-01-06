@@ -12,7 +12,7 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/estudantes" class="text-decoration-none">Estudantes</a>
+                    <a href="/disciplinas/" class="text-decoration-none">Disciplinas</a>
                 </li>
                 <li class="breadcrumb-item">Cadastrar</li>
             </ol>
@@ -20,15 +20,16 @@
         </div>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-                <a href="/estudantes/" class="btn btn-outline-primary" > Voltar </a>
+                <a href="/disciplinas/" class="btn btn-outline-primary" > Voltar </a>
             </div>
         </div>
     </div>
     <!-- Row end -->
-    <form action="/estudantes/criar" method="POST">
+    <form action="/disciplinas/criar" method="POST">
         <div class="row gx-3">
             <? include_once('_forms.php');?>
         </div>
     </form>
+
 
 <?php require_once __DIR__ . '/../layout/bottom.php'; ?>

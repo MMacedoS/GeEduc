@@ -53,7 +53,7 @@
                                     <th>Turno</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
-                                    <th>Actions</th>
+                                    <th>Ação</th>
                                     <? } ?>
                                 </tr>
                             </thead>
