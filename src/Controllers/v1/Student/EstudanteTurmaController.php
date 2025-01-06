@@ -40,7 +40,6 @@ class EstudanteTurmaController extends Controller
             );
         
         $classRooms = filterAvailableToursWithYear($classRooms, $student_class, Date('Y'));
-        LoggerHelper::logInfo($student_class);
 
         $perPage = 10;
         $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -53,14 +52,15 @@ class EstudanteTurmaController extends Controller
 
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
-            'estudante' => $student,
-            'turmas' => $classRooms,
-            'estudante_turma' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-
-        return $this->router->view('/student-class/index', ['active' => 'register', 'data' => $data]);
+        return $this->router->view('/student/student-class/index', 
+            [
+                'active' => 'register', 
+                'estudante' => $student, 
+                'turmas' => $classRooms,
+                'estudante_turma' => $paginatedBoards,
+                'links' => $paginator->links()
+            ]
+        );
     }
 
     public function store(Request $request, $student_id, $class_id) 

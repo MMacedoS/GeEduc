@@ -10,7 +10,9 @@ use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
 use App\Controllers\v1\Discipline\DisciplinaController;
+use App\Controllers\v1\MonthlyFees\MensalidadeController;
 use App\Controllers\v1\Student\EstudanteController;
+use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 
 $router = new Router();
@@ -25,6 +27,9 @@ $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
 $disciplinaController = new DisciplinaController();
 $estudanteTurmaController = new EstudanteTurmaController();
+$mensalidadeController = new MensalidadeController();
+$estudanteMensalidadeController = new EstudanteMensalidadeController();
+$mensalidadeController = new MensalidadeController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -97,5 +102,9 @@ $router->create('GET', '/estudantes/{id}/turma', [$estudanteTurmaController, 'st
 $router->create('POST', '/estudantes/{id}/turma/{id}', [$estudanteTurmaController, 'store'], $auth);
 $router->create('PUT', '/estudantes-class/{id}', [$estudanteTurmaController, 'updateStatus'], $auth);
 
-$router->create('GET', '/estudantes/{id}/mensalidades', [$mensalidadeController, 'studentMonthlyFees'], $auth);
+$router->create('GET', '/estudantes/{id}/mensalidades', [$estudanteMensalidadeController, 'index'], $auth);
+$router->create('GET', '/estudantes/{id}/mensalidade/', [$estudanteMensalidadeController, 'create'], $auth);
+$router->create('POST', '/estudantes/{id}/mensalidade/', [$estudanteMensalidadeController, 'store'], $auth);
+$router->create('GET', '/estudantes/{id}/mensalidade/{mensalidade_id}/', [$estudanteMensalidadeController, 'edit'], $auth);
+$router->create('POST', '/estudantes/{id}/mensalidade/{mensalidade_id}/', [$estudanteMensalidadeController, 'update'], $auth);
 

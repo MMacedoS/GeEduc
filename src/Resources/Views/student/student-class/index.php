@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../layout/top.php'; ?>
 
 <!-- Row start -->
 <div class="row gx-3">
@@ -66,7 +66,7 @@
                             </thead>
                             
                             <tbody>
-                            <? foreach ($data['estudante_turma'] as $turma_estudante) { 
+                            <? foreach ($estudante_turma as $turma_estudante) { 
                                 ?>
                                     <tr>
                                         <td><?=$turma_estudante->id?></td>
@@ -104,7 +104,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($data['estudante_turma'])?></b> registros
+                        Total <b><?=count($estudante_turma)?></b> registros
                     </div>
                 </div>
             </div>
@@ -117,7 +117,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Vincular Turma ao <?=getParamsToJson($data['estudante']->pessoa_fisica)->nome ?? 'não identificado'?></h5>
+                <h5 class="modal-title" id="exampleModalLabel">Vincular Turma ao <?=getParamsToJson($estudante->pessoa_fisica)->nome ?? 'não identificado'?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -128,7 +128,7 @@
                                 <label class="form-label">Turmas</label>
                                 <select class="form-select" name="class_id" id="class_id">
                                     <option value="">Selecione uma turma</option>
-                                    <?php foreach ($data['turmas'] as $key => $value) {?>
+                                    <?php foreach ($turmas as $key => $value) {?>
                                         <option value="<?=$value->uuid?>"><?=$value->nome?></option>
                                    <? } ?>
                                 </select>
@@ -140,7 +140,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" disabled id="linkBtn" onclick="linkClass('<?=$data['estudante']->uuid?>')" class="btn btn-danger">vincular turma</button>
+                <button type="button" disabled id="linkBtn" onclick="linkClass('<?=$estudante->uuid?>')" class="btn btn-danger">vincular turma</button>
             </div>
         </div>
     </div>
@@ -148,11 +148,11 @@
 
 <div class="row">
     <div class="float-end">
-        <?=$data['links']?>
+        <?=$links?>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
 
 <script>
     $('#class_id').on('change', function() {

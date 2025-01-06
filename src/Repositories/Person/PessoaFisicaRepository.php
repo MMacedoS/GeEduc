@@ -155,9 +155,12 @@ class PessoaFisicaRepository {
 
             $sql = "SELECT * FROM " . self::TABLE . " WHERE " . implode(' AND ', $conditions);
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute($params);
+            $stmt->execute($params);          
 
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            $result = $stmt->fetch();  
+
+            return $result ?: null; 
 
             return $result ?: null; 
         } catch (\Throwable $th) {

@@ -4,10 +4,11 @@ namespace App\Repositories\Student;
 
 use App\Config\Database;
 use App\Models\Student\Estudante;
+use App\Repositories\Student\EstudanteMensalidadeRepository;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
-use App\Util\LoggerHelper;
+use App\Utils\LoggerHelper;
 
 class EstudanteRepository {
 
@@ -19,6 +20,7 @@ class EstudanteRepository {
     protected $model;
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
+    protected $estudanteMensalidadeRepository;
 
     public function __construct(){
         $conn = new Database();
@@ -26,6 +28,7 @@ class EstudanteRepository {
         $this->model = new Estudante();
         $this->usuarioRepository = new UsuarioRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
     }
 
     public function allStudents(array $params = []){
@@ -103,54 +106,45 @@ class EstudanteRepository {
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
         return $stmt->fetch();  
     }
-
-    public function saveAll(array $data){
-
-        if(empty($data)){
+    public function saveAll(array $data)
+    {
+        if (empty($data)) {
             return null;
         }
-
-        $userData = array_merge($data, [
-            'password' => 'escola123',
-            'sector' => 'estudante'
-        ]);
-
-        $this->conn->beginTransaction();
-
-        try{
-
+        
+        try {
+            $userData = array_merge($data, [
+                'password' => 'escola123',
+                'sector' => 'estudante',
+            ]);
+    
             $user = $this->usuarioRepository->create($userData);
-            if(is_null($user)){
-                $this->conn->rollBack();
-                return null;
-            }
-
+    
             $personData = array_merge($data, ['usuario_id' => $user->id]);
             $person = $this->pessoaFisicaRepository->create($personData);
-            if(is_null($person)){
-                $this->conn->rollBack();
-                return null;
-            }
-
-            $studentData = array_merge($data, ['pessoa_fisica_id' => $person->id]);
+    
+            $studentData = array_merge($data, ['person_id' => $person->id]);
             $student = $this->create($studentData);
-            if(is_null($student)){
-                $this->conn->rollback();
-                return null;
-            }
-
-            $this->conn->commit();
-
+    
+            $monthlyData = array_merge($data, ['student_id' => $student->id]);
+            $monthly = $this->estudanteMensalidadeRepository->create($monthlyData);
+    
             return $student;
-
-        } catch(\Throwable $th){
-            $this->conn->rollBack();
+    
+        } catch (\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
     }
 
-    public function create(array $data){
-        
+    public function create(array $data) 
+    {
+        $existingPerson = $this->findByStudentId($data);
+        if ($existingPerson) {
+            return $existingPerson;
+        }
+
         $estudante = $this->model->create($data);
 
         try{
@@ -187,39 +181,49 @@ class EstudanteRepository {
             return null;
         }
 
-        $this->conn->beginTransaction();
-
         try{    
             $user = $this->usuarioRepository->update($data, $data['usuario_id']);
             if(is_null($user)){
-                $this->conn->rollBack();
                 return null;
             }
 
             $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
             if(is_null($person)){
-                $this->conn->rollBack();
                 return null;
             }
-
+            
             $estudante = $this->update($data, $data['id']);
+
             if(is_null($estudante)){
-                $this->conn->rollBack();
                 return null;
             }
 
-            $this->conn->commit();
+            $monthlyData = $this->estudanteMensalidadeRepository
+                ->getMonthlyFee(
+                [
+                   'student_id' => $estudante->id, 
+                   'active' => 1
+                ]
+            );
+
+            $monthly = $this->estudanteMensalidadeRepository->update($data, $monthlyData->id);
+
+            if(is_null($monthly)){
+                return null;
+            }
 
             return $estudante;
 
-        }catch(\Throwable $th){
-            $this->conn->rollBack();
+        } catch(\Throwable $th) {
             return null;
         }
     }
 
-    public function update(array $data, int $id){
-        $estudante = $this->model->create($data);
+    public function update(array $data, int $id)
+    {
+        $estudante = $this->findById($id);
+
+        $estudante = $this->model->update($data, $estudante);
 
         try{
             $stmt = $this->conn->prepare(
@@ -273,4 +277,38 @@ class EstudanteRepository {
             return $updated;
     }
 
+    private function verifyAndRollback($object, string $errorMessage)
+    {
+        if (is_null($object->id ?? null)) {
+            throw new \Exception($errorMessage);
+        }
+    }
+
+    public function findByStudentId(array $criteria): ?array
+    {
+        try {
+            $conditions = [];
+            $params = [];
+
+            if (!empty($criteria['person_id'])) {
+                $conditions[] = "pessoa_fisica_id = :pessoa_id";
+                $params[':pessoa_id'] = $criteria['person_id'];
+            }
+
+            if (empty($conditions)) {
+                return null; 
+            }
+
+            $sql = "SELECT * FROM " . self::TABLE . " WHERE " . implode(' AND ', $conditions);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($params);
+
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            $result = $stmt->fetch();  
+
+            return $result ?: null; 
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
 }

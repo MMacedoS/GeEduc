@@ -32,7 +32,7 @@ class DisciplinaController extends Controller{
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('discipline/index', ['active' => 'register', 'data' => $data]);
+        return $this->router->view('discipline/index', ['active' => 'pedagogico', 'data' => $data]);
     }
 
     public function create(){
@@ -56,7 +56,7 @@ class DisciplinaController extends Controller{
             return $this->router->view(
                 'discipline/create',
                 [
-                    'active' => 'register',
+                    'active' => 'pedagogico',
                     'errors' => $validator->getErrors()
                 ]
             );
@@ -65,7 +65,7 @@ class DisciplinaController extends Controller{
         $created = $this->disciplinaRepository->create($data);
 
         if(is_null($created)){
-            return $this->router->view('discipline/create', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('discipline/create', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('disciplinas/');
@@ -79,17 +79,17 @@ class DisciplinaController extends Controller{
         $disciplina = $this->disciplinaRepository->findByUuid($id);
 
         if(is_null($disciplina)){
-            return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('discipline/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
-        return $this->router->view('discipline/edit', ['active' => 'register', 'disciplina' => $disciplina]);
+        return $this->router->view('discipline/edit', ['active' => 'pedagogico', 'disciplina' => $disciplina]);
     }
 
     public function update(Request $request, $id){
         $disciplina = $this->disciplinaRepository->findByUuid($id);
 
         if(is_null($disciplina)){
-            return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('discipline/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $data = $request->getBodyParams();
@@ -104,7 +104,7 @@ class DisciplinaController extends Controller{
             return $this->router->view(
                 'discipline/edit',
                 [
-                    'active' => 'register',
+                    'active' => 'pedagogico',
                     'errors' => $validator->getErrors()
                 ]
             );
@@ -113,7 +113,7 @@ class DisciplinaController extends Controller{
         $updated = $this->disciplinaRepository->update($data, $disciplina->id);
 
         if(is_null($updated)){
-            return $this->router->view('discipline/edit', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('discipline/edit', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('disciplinas/');
@@ -127,7 +127,7 @@ class DisciplinaController extends Controller{
         $disciplina = $this->disciplinaRepository->findByUuid($id);
 
         if(is_null($disciplina)){
-            return $this->router->view('discipline/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('discipline/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $disciplina = $this->disciplinaRepository->delete($disciplina->id);

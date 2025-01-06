@@ -1,0 +1,202 @@
+<?php
+
+namespace App\Repositories\Student;
+
+use App\Config\Database;
+use App\Models\Student\EstudanteMensalidade;
+use App\Repositories\MonthlyFees\MensalidadeRepository;
+use App\Repositories\Plan\PlanoRepository;
+use App\Repositories\Traits\FindTrait;
+use App\Utils\LoggerHelper;
+
+class EstudanteMensalidadeRepository {
+    const CLASS_NAME = EstudanteMensalidade::class;
+    const TABLE = 'estudante_mensalidade';
+
+    use FindTrait;
+    protected $conn;
+    protected $model;
+    protected $mensalidadeRepository;
+    protected $planoRepository;
+
+    public function __construct() {
+        $conn = new Database();
+        $this->conn = $conn->getConnection();
+        $this->model = new EstudanteMensalidade();
+        $this->mensalidadeRepository = new MensalidadeRepository();
+        $this->planoRepository = new PlanoRepository();
+    }
+
+    public function allMonthlyfees(array $params = [])
+    {
+        $sql = "SELECT 
+           m.*
+        FROM " . self::TABLE . " m";
+
+        $conditions = [];
+        $bindings = [];
+        
+        if (isset($params['active'])) {
+            $conditions[] = "m.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
+        }
+
+        if (isset($params['start_date']) && isset($params['end_date'])) {
+            $conditions[] = "m.created_at between :start_date and :end_date";
+            $bindings[':start_date'] = $params['start_date'];
+            $bindings[':end_date'] = $params['end_date'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY m.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+    }
+
+    public function create(array $data)
+    {
+        $monthly = $this->model->create($data);
+
+        try {
+            $stmt = $this->conn->prepare(
+                "INSERT INTO " . self::TABLE . " 
+                SET 
+                    uuid = :uuid,
+                    estudante_id = :estudante_id,
+                    desconto = :desconto,
+                    dia_mensalidade = :dia_mensalidade,
+                    plano_id = :plano_id
+                "
+            );
+
+            $create = $stmt->execute([
+                ':uuid' => $monthly->uuid,
+                ':estudante_id' => $monthly->estudante_id,
+                ':desconto' => $monthly->desconto,
+                ':dia_mensalidade' => $monthly->dia_mensalidade,
+                ':plano_id' => $monthly->plano_id
+            ]);
+
+            if (!$create) {
+                return null;
+            }
+
+            $monthly = $this->findByUuid($monthly->uuid);            
+            $data['studante_monthly_id'] = $monthly->id;
+            $data['expiration_day'] = $monthly->dia_mensalidade;
+            $monthlyfees = $this->mensalidadeRepository->create($data);
+
+            if(is_null($monthlyfees)){
+                return null;
+            }
+            
+            return $monthly;
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
+
+    public function update(array $data, int $id)
+    {
+        $monthly = $this->findById($id);
+
+        if (is_null($monthly)) {
+            return null;
+        }
+
+        $monthly = $monthly->update($data, $monthly);
+
+        try {
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . " 
+                SET 
+                    desconto = :desconto,
+                    dia_mensalidade = :dia_mensalidade,
+                    plano_id = :plano_id
+                WHERE id = :id
+                "
+            );
+
+            $update = $stmt->execute([
+                ':id' => $id,
+                ':desconto' => $monthly->desconto,
+                ':dia_mensalidade' => $monthly->dia_mensalidade,
+                ':plano_id' => $monthly->plano_id
+            ]);
+
+            if (!$update) {
+                return null;
+            }
+
+            $monthly = $this->findByUuid($monthly->uuid);            
+
+            if(is_null($monthly)){
+                return null;
+            }
+
+            return $monthly;
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
+
+    public function delete(int $id)
+    {
+        $stmt = $this->conn
+        ->prepare(
+            "UPDATE " . self::TABLE . " 
+             SET ativo = 0 
+             WHERE id = :id"
+        );
+
+        $updated = $stmt->execute(['id' => $id]);
+
+        return $updated;
+    }
+
+    public function getMonthlyFee(array $params = [])
+    {
+        $sql = "SELECT 
+                m.* 
+                FROM " . self::TABLE . " m";
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['active'])) {
+            $conditions[] = "m.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
+        }
+
+        if (isset($params['plan_id'])) {
+            $conditions[] = "m.plano_id = :plano_id";
+            $bindings[':plano_id'] = $params['plan_id'];
+        }
+
+        if (isset($params['student_id'])) {
+            $conditions[] = "m.estudante_id = :estudante_id";
+            $bindings[':estudante_id'] = $params['student_id'];
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY m.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($bindings);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        $result = $stmt->fetch(); 
+
+        return $result;
+    }
+}

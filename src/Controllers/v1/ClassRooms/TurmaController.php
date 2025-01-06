@@ -30,7 +30,7 @@ class TurmaController extends Controller
             'turmas' => $paginatedBoards,
             'links' => $paginator->links()
         ];
-        return $this->router->view('classRooms/index', ['active' => 'register', 'data' => $data]); 
+        return $this->router->view('classRooms/index', ['active' => 'pedagogico', 'data' => $data]); 
     }
 
     public function create(Request $request)
@@ -55,7 +55,7 @@ class TurmaController extends Controller
             return $this->router->view(
                 'classRooms/create', 
                 [
-                    'active' => 'register', 
+                    'active' => 'pedagogico', 
                     'errors' => $validator->getErrors()
                 ]
             );
@@ -64,7 +64,7 @@ class TurmaController extends Controller
         $created = $this->turmaRepository->create($data);
 
         if(is_null($created)) {            
-        return $this->router->view('classRooms/create', ['active' => 'register', 'danger' => true]);
+        return $this->router->view('classRooms/create', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('turmas/');
@@ -75,10 +75,10 @@ class TurmaController extends Controller
         $turma = $this->turmaRepository->findByUuid($id);
 
         if (is_null($turma)) {
-            return $this->router->view('classRooms/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('classRooms/', ['active' => 'pedagogico', 'danger' => true]);
         }
         
-        return $this->router->view('classRooms/edit', ['active' => 'register', 'turma' => $turma]);
+        return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'turma' => $turma]);
     }
 
     public function update(Request $request, string $id)
@@ -88,7 +88,7 @@ class TurmaController extends Controller
         $turma = $this->turmaRepository->findByUuid($id);
 
         if (is_null($turma)) {
-            return $this->router->view('classRooms/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('classRooms/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $validator = new Validator($data);
@@ -103,7 +103,7 @@ class TurmaController extends Controller
             return $this->router->view(
                 'classRooms/edit', 
                 [
-                    'active' => 'register', 
+                    'active' => 'pedagogico', 
                     'errors' => $validator->getErrors()
                 ]
             );
@@ -112,7 +112,7 @@ class TurmaController extends Controller
         $updated = $this->turmaRepository->update($data, $turma->id);
 
         if(is_null($updated)) {            
-            return $this->router->view('classRooms/edit', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('turmas/');
@@ -123,7 +123,7 @@ class TurmaController extends Controller
         $turma = $this->turmaRepository->findByUuid($id);
 
         if (is_null($turma)) {
-            return $this->router->view('classRooms/', ['active' => 'register', 'danger' => true]);
+            return $this->router->view('classRooms/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         $this->turmaRepository->delete($turma->id);

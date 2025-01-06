@@ -10,10 +10,8 @@ class Mensalidade {
 
     public $id;
     public $uuid;
-    public $estudante_id;
+    public $estudante_mensalidade_id;
     public $estudante;
-    public $plano_id;
-    public $plano;
     public $valor;
     public $data_vencimento;
     public $dia_vencimento;
@@ -28,20 +26,18 @@ class Mensalidade {
         $mensalidade = new Mensalidade();
         $mensalidade->id = $data['id'] ?? null;
         $mensalidade->uuid = $data['uuid'] ?? $this->generateUUID();
-        $mensalidade->estudante_id = $data['studante_id'];
-        $mensalidade->plano_id = $data['plan_id'];
+        $mensalidade->estudante_mensalidade_id = $data['studante_monthly_id'];
         $mensalidade->data_vencimento = $data['expiration_date'];
         $mensalidade->dia_vencimento = $data['expiration_day'];
         $mensalidade->valor = $data['amount'];
-        $mensalidade->situacao = $data['situation'] ?? '1';
+        $mensalidade->situacao = $data['situation'] ?? 'pendente';
 
         return $mensalidade;
     }
 
     public function update(array $data, Mensalidade $mensalidade): Mensalidade
     {
-        $mensalidade->estudante_id = $data['studante_id'] ?? $mensalidade->estudante_id;
-        $mensalidade->plano_id = $data['plan_id'] ?? $mensalidade->plano_id;
+        $mensalidade->estudante_mensalidade_id = $data['studante_id'] ?? $mensalidade->estudante_mensalidade_id;
         $mensalidade->data_vencimento = $data['expiration_date'] ?? $mensalidade->data_vencimento;
         $mensalidade->dia_vencimento = $data['expiration_day'] ?? $mensalidade->dia_vencimento;
         $mensalidade->valor = $data['amount'] ?? $mensalidade->valor;
