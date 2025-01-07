@@ -64,53 +64,77 @@
                                      <? } ?>
                                 </tr>
                             </thead>
-                            
+
                             <tbody>
-                            <? foreach ($estudante_mensalidades as $estudante_mensalidades) { 
+                            <? foreach ($estudante_mensalidades as $estudante_mensalidade) {
                                 ?>
                                     <tr>
-                                        <td><?=$estudante_mensalidades->id?></td>
-                                        <td class="fw-bold"> <?=brDate($estudante_mensalidades->data_vencimento)?>
+                                        <td><?=$estudante_mensalidade->id?></td>
+                                        <td class="fw-bold"> <?=brDate($estudante_mensalidade->data_vencimento)?>
                                         </td>
                                         <td>
-                                        <?=brCurrency($estudante_mensalidades->valor)?>
+                                        <?=brCurrency($estudante_mensalidade->valor)?>
                                         </td>
-                                        <td>    
+                                        <td>
                                             <div class="d-flex align-items-center">
-                                                <? if($estudante_mensalidades->situacao == 'atrasado') { ?>
+                                                <? if($estudante_mensalidade->situacao == 'atrasado') { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
                                                     Vencido
                                                 <? } ?>
-                                                <? if($estudante_mensalidades->situacao == 'pendente') { ?>
+                                                <? if($estudante_mensalidade->situacao == 'pendente') { ?>
                                                     <i class="icon-circle1 me-2 text-warning fs-5"></i>
                                                     Aberto
                                                 <? } ?>
-                                                <? if($estudante_mensalidades->situacao == 'cancelado') { ?>
+                                                <? if($estudante_mensalidade->situacao == 'cancelado') { ?>
                                                     <i class="icon-circle1 me-2 text-secondary fs-5"></i>
                                                     Cancelado
                                                 <? } ?>
-                                                <? if($estudante_mensalidades->situacao == 'pago') { ?>
+                                                <? if($estudante_mensalidade->situacao == 'pago') { ?>
                                                     <i class="icon-circle1 me-2 text-success fs-5"></i>
                                                     Efetivado
                                                 <? } ?>
                                             </div>
                                         </td>
                                         <? if (hasPermission('editar mensalidade') && hasPermission('cancelar mensalidades')) {?>
-                                            <td class="d-flex">                                                 
-                                                <? if (hasPermission('cancelar mensalidades')) {?>                                                                           
-                                                    <button class="btn btn-outline btn-sm" type="button" onclick="inactivateLink('<?=$estudante_mensalidades->uuid?>')">                                                     
+                                            <td class="d-flex">
+                                                <? if (
+                                                    hasPermission('cancelar mensalidades') &&
+                                                    (
+                                                        $estudante_mensalidade->situacao !== 'cancelado' &&
+                                                        $estudante_mensalidade->situacao !== 'pago'
+                                                    )
+                                                ) {?>
+                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$estudante_mensalidade->uuid?>">
                                                         <div class="border p-2 rounded-3">
-                                                            <span class="fs-5 text-danger icon-power_settings_new"></span>
+                                                            <span class="fs-5 text-danger icon-delete1"></span>
                                                         </div>
                                                     </button>
                                                 <? }?>
-                                                <? if (hasPermission('editar mensalidade')) {?>                                                                           
-                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidade/<?=$estudante_mensalidades->uuid?>/">
+                                                <div class="modal fade" id="exampleModal_<?=$estudante_mensalidade->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Tem certeza que deseja excluir este registro?
+                                                                <p>mensalidade: <?=brDate($estudante_mensalidade->data_vencimento)?></p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                                <button type="button" onclick="deleteData('/estudantes/<?=$estudante->uuid?>/mensalidade/<?=$estudante_mensalidade->uuid?>')" class="btn btn-danger">Confirmar Cancelamento</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <? if (hasPermission('editar mensalidade')) {?>
+                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidade/<?=$estudante_mensalidade->uuid?>/">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
-                                                    </a> 
-                                                <? }?>                                                                                        
+                                                    </a>
+                                                <? }?>
                                             </td>
                                         <? }?>
                                     </tr>
@@ -119,7 +143,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=@count($estudante_mensalidades)?></b> registros
+                        Total <b><?=count($estudante_mensalidades)?></b> registros
                     </div>
                 </div>
             </div>
