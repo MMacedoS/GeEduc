@@ -9,6 +9,7 @@ use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
 use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
+use App\Controllers\v1\Teacher\ProfessorDisciplinaController;
 use App\Controllers\v1\Discipline\DisciplinaController;
 use App\Controllers\v1\MonthlyFees\MensalidadeController;
 use App\Controllers\v1\Student\EstudanteController;
@@ -21,6 +22,7 @@ $auth = new Auth();
 $dashboardController = new DashboardController();
 $usuarioController = new UsuarioController();
 $professorController = new ProfessorController();
+$professorDisciplinaController = new ProfessorDisciplinaController();
 $estudanteController = new EstudanteController();
 $permissaoController = new PermissaoController();
 $planoController = new PlanoController();
@@ -381,5 +383,25 @@ $router->create(
     "DELETE",
     "/estudantes/{id}/mensalidade/{mensalidade_id}/",
     [$estudanteMensalidadeController, "destroy"],
+    $auth
+);
+
+//teacher-disciplines
+$router->create(
+    "GET",
+    "/professores/{id}/disciplina",
+    [$professorDisciplinaController, "teacherLinkDiscipline"],
+    $auth
+);
+$router->create(
+    "POST",
+    "/professores/{id}/disciplina/{id}",
+    [$professorDisciplinaController, "store"],
+    $auth
+);
+$router->create(
+    "PUT",
+    "/professores-disciplina/{id}",
+    [$professorDisciplinaController, "updateStatus"],
     $auth
 );
