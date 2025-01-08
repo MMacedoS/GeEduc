@@ -383,3 +383,41 @@ $router->create(
     [$estudanteMensalidadeController, "destroy"],
     $auth
 );
+
+//bimesters
+$router->create(
+    "GET", 
+    "/bimestres", 
+    [$bimestreController, "index"], 
+    $auth
+);
+$router->create(
+    "GET",
+    "/bimestres/criar",
+    [$bimestreController, "create"],
+    $auth
+);
+$router->create(
+    "POST",
+    "/bimestres/criar",
+    [$bimestreController, "store"],
+    $auth
+);
+$router->create(
+    "GET",
+    "/bimestres/{id}/editar",
+    [$bimestreController, "edit"],
+    $auth
+);
+$router->create(
+    "POST",
+    "/bimestres/{id}/editar",
+    [$bimestreController, "update"],
+    $auth
+);
+$router->create(
+    "DELETE",
+    "/bimestres/{id}",
+    [$bimestreController, "destroy"],
+    $auth
+);
