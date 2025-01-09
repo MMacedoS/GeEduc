@@ -59,7 +59,44 @@ class ProfessorDisciplinaController extends Controller{
 
     }
 
-    public function store(Request $request, $teacher_id, $discipline_id){}
+    public function store(Request $request, $teacher_id, $discipline_id){
+        $teacher = $this->professorRepository
+            ->findByUuid((string)$teacher_id);
+
+        if(is_null($teacher)){
+            echo json_encode(['status' => 422, 'message' => 'Professor não encontrado']);
+            exit();
+            return;
+        }
+
+        $discipline = $this->disciplinaRepository
+            ->findByUuid($discipline_id);
+
+        if(is_null($discipline)){
+            echo json_encode(['status' => 422, 'message' => 'Disciplina não encontrada']);
+            exit();
+            return;
+        }
+
+        $data = [
+            'teacher_id' => $teacher->id,
+            'discipline_id' => $discipline->id,
+            'school_year' => date('Y'),
+            'active' => 1
+        ];
+
+        $created = $this->professorDisciplinaRepository->create($data);
+
+        if(is_null($created)){
+            echo json_encode(['status' => 422, 'message' => 'Vínculo não realizado']);
+            exit();
+            return;
+        }
+
+        echo json_encode(['status' => 201, 'message' => 'Vínculo realizado']);
+        exit();
+        return;
+    }
 
     public function updateStatus(Request $request, $teacher_discipline_id){}
 }

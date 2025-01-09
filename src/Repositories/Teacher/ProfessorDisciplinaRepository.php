@@ -78,4 +78,37 @@ class ProfessorDisciplinaRepository {
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
+
+    public function create(array $data){
+        $teacherDiscipline = $this->model->create($data);
+
+        try{
+            $stmt = $this->conn->prepare(
+                "INSERT INTO " . self::TABLE . "
+                    SET
+                        uuid = :uuid,
+                        disciplina_id = :disciplina_id,
+                        professor_id = :professor_id,
+                        ano_letivo = :ano_letivo
+                "
+            );
+
+            $create = $stmt->execute([
+                ':uuid' => $teacherDiscipline->uuid,
+                ':disciplina_id' => $teacherDiscipline->disciplina_id,
+                ':professor_id' => $teacherDiscipline->professor_id,
+                ':ano_letivo' => $teacherDiscipline->ano_letivo,
+            ]);
+
+            if(!$create){
+                return null;
+            }
+
+            return $this->findByUuid($teacherDiscipline->uuid);
+        }catch(\Throwable $th){
+            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
+    }
 }

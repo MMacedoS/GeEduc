@@ -57,6 +57,7 @@
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
+                                    <th>Ano Letivo</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
                                      <th>Ação</th>
@@ -70,6 +71,7 @@
                                     <tr>
                                         <td><?=$professor_disciplina->id?></td>
                                         <td class="fw-bold"> <?=getParamsToJson($professor_disciplina->disciplina)->nome ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=$professor_disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
@@ -122,7 +124,7 @@
                         <div class="card-body">
                             <div class="m-0">
                                 <label class="form-label">Disciplinas</label>
-                                <select class="form-select" name="class_id" id="class_id">
+                                <select class="form-select" name="discipline_id" id="discipline_id">
                                     <option value="">Selecione uma disciplinas</option>
                                     <?php foreach ($disciplinas as $key => $value) {?>
                                         <option value="<?=$value->uuid?>"><?=$value->nome?></option>
@@ -136,7 +138,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" disabled id="linkBtn" onclick="linkClass('<?=$professor->uuid?>')" class="btn btn-danger">vincular disciplinas</button>
+                <button type="button" disabled id="linkBtn" onclick="linkClass('<?=$professor->uuid?>')" class="btn btn-danger">Vincular disciplinas</button>
             </div>
         </div>
     </div>
@@ -151,24 +153,24 @@
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
 
 <script>
-    $('#class_id').on('change', function() {
+    $('#discipline_id').on('change', function() {
         $(this).val() ?  $('#linkBtn').attr('disabled', false) :  $('#linkBtn').attr('disabled', true);;
     });
 
-    function linkClass(student) {
-        const classId = $('#class_id').val();
+    function linkClass(teacher) {
+        const disciplineId = $('#discipline_id').val();
 
-        if (!classId) {
-            showSuccessMessage('Selecione uma turma antes de prosseguir.');
+        if (!disciplineId) {
+            showSuccessMessage('Selecione uma disciplina antes de prosseguir.');
             return;
         }
 
-        if (!student) {
-            showSuccessMessage('Estudante não especificado.');
+        if (!teacher) {
+            showSuccessMessage('Professor não especificado.');
             return;
         }
 
-        const url = '/estudantes/' + student + '/turma/' + classId;
+        const url = '/professores/' + teacher + '/disciplina/' + disciplineId;
         createData(url, '').then((res) => {
             if (res.status === 422) {
                 showErrorMessage(res.message);
@@ -179,8 +181,8 @@
         });
     }
 
-    function inactivateLink(studentClass) {
-        const url = '/estudantes-class/' + studentClass;
+    function inactivateLink(teacherDiscipline) {
+        const url = '/professores-disciplina/' + teacherDiscipline;
         sendRequestWithMethod(url,'', 'PUT').then((res) => {
             if (res.status === 422) {
                 showErrorMessage(res.message);
