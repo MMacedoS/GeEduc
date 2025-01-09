@@ -4,6 +4,7 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\ClassRooms\TurmaController;
+use App\Controllers\v1\Coordination\CoordenacaoController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
 use App\Controllers\v1\Plan\PlanoController;
@@ -14,6 +15,7 @@ use App\Controllers\v1\MonthlyFees\MensalidadeController;
 use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
+
 
 $router = new Router();
 $auth = new Auth();
@@ -30,6 +32,7 @@ $estudanteTurmaController = new EstudanteTurmaController();
 $mensalidadeController = new MensalidadeController();
 $estudanteMensalidadeController = new EstudanteMensalidadeController();
 $mensalidadeController = new MensalidadeController();
+$coordenacaoController = new CoordenacaoController();
 
 $router->create('GET', '/', [$usuarioController, 'login'], null);
 $router->create('POST', '/login', [$usuarioController, 'auth']);
@@ -108,3 +111,10 @@ $router->create('POST', '/estudantes/{id}/mensalidade/', [$estudanteMensalidadeC
 $router->create('GET', '/estudantes/{id}/mensalidade/{mensalidade_id}/', [$estudanteMensalidadeController, 'edit'], $auth);
 $router->create('POST', '/estudantes/{id}/mensalidade/{mensalidade_id}/', [$estudanteMensalidadeController, 'update'], $auth);
 
+// Coordenação
+$router->create('GET', '/coordenadores', [$coordenacaoController, 'index'], $auth);
+$router->create('GET', '/coordenadores/criar', [$coordenacaoController, 'create'], $auth);
+$router->create('POST', '/coordenadores/criar', [$coordenacaoController, 'store'], $auth);
+$router->create('GET', '/coordenadores/{id}/editar', [$coordenacaoController, 'edit'], $auth);
+$router->create('POST', '/coordenadores/{id}/editar', [$coordenacaoController, 'update'], $auth);
+$router->create('DELETE', '/coordenadores/{id}', [$coordenacaoController, 'destroy'], $auth);
