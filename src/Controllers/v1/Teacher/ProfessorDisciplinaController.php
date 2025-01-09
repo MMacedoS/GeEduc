@@ -29,11 +29,13 @@ class ProfessorDisciplinaController extends Controller{
             ->teacherWithPersonByUuid((string)$teacher_id);
 
         $discipline = $this->disciplinaRepository
-            ->allDisciplines();
+            ->allDisciplines(
+                ['active' => 1]
+            );
 
         $teacher_discipline = $this->professorDisciplinaRepository
             ->allTeacherDisciplines(
-                ['teacher_id' => $teacher_id]
+                ['teacher_id' => $teacher->id]
             );
 
         $perPage = 10;
@@ -98,5 +100,30 @@ class ProfessorDisciplinaController extends Controller{
         return;
     }
 
-    public function updateStatus(Request $request, $teacher_discipline_id){}
+    public function updateStatus(Request $request, $teacher_discipline_id){
+        $teacher_discipline = $this->professorDisciplinaRepository
+            ->findByUuid((string)$teacher_discipline_id);
+
+        if(is_null($teacher_discipline)){
+            echo json_encode(['status' => 422, 'message' => 'ProfessorDisciplina não encontrado']);
+            exit();
+            return;
+        }
+
+        $data = [
+            'active' => $teacher_discipline->ativo == 1 ? '0' : '1'
+        ];
+
+        $created = $this->professorDisciplinaRepository->update($data, $teacher_discipline->id);
+
+        if(is_null($created)){
+            echo json_encode(['status' => 422, 'message' => 'Vínculo não atualizado']);
+            exit();
+            return;
+        }
+        
+        echo json_encode(['status' => 201, 'message' => 'Vínculo atualizado']);
+        exit();
+        return;
+    }
 }

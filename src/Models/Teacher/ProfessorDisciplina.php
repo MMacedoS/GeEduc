@@ -42,7 +42,7 @@ class ProfessorDisciplina {
         $professor_disciplina->professor_id = $data['teacher_id'] ?? $professor_disciplina->professor_id;
         $professor_disciplina->disciplina_id = $data['discipline_id'] ?? $professor_disciplina->disciplina_id;
         $professor_disciplina->ano_letivo = $data['school_year'] ?? $professor_disciplina->ano_letivo;
-        $professor_disciplina->ano_letivo = $data['active'] ?? $professor_disciplina->ativo;
+        $professor_disciplina->ativo = $data['active'] ?? $professor_disciplina->ativo;
         return $professor_disciplina;
     }
 
