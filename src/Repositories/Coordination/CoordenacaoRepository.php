@@ -189,4 +189,14 @@ class CoordenacaoRepository {
 
         return $updated;
     }
+
+    public function deleteAll($coordenador){
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
+
+        $this->usuarioRepository->delete($pessoa_fisica->usuario_id);
+
+        $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
+
+        return $this->delete($coordenador->id);
+    }
 }

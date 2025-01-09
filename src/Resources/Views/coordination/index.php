@@ -87,7 +87,7 @@
                                                     </a> 
                                                 <? } ?>  
                                                 <? if (hasPermission('deletar estudantes')) {?>                                                                           
-                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$estudante->uuid?>">                                                     
+                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$coordenador->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
                                                         </div>
@@ -102,7 +102,7 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>Estudante: <?=getParamsToJson($coordenador->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                                <p>Coordenador: <?=getParamsToJson($coordenador->pessoa_fisica)->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

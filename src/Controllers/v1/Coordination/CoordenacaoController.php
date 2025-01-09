@@ -144,15 +144,15 @@ class CoordenacaoController extends Controller{
     }
 
     public function destroy(Request $request, $id) {
-        $estudante = $this->estudanteRepository->findByUuid($id);
-
-        if(is_null($estudante)){
-            return $this->router->view('student/', [
+        $coordenador = $this->coordenacaoRepository->findByUuid($id);
+      
+        if(is_null($coordenador)){
+            return $this->router->view('coordination/', [
                 'active' => 'pedagogico', 
                 'danger' => true
             ]);
         }
 
-        $this->estudanteRepository->deleteAll($estudante);
+        $this->coordenacaoRepository->deleteAll($coordenador);
     }
 }
