@@ -42,9 +42,9 @@ class CoordenacaoController extends Controller{
 
     public function create(Request $request)
     {
-        $coordinators = $this->coordenacaoRepository->allCoordinator();
+        // $coordinators = $this->coordenacaoRepository->allCoordinator();
         
-        return $this->router->view('/coordination/create', ['active' => 'pedagogico', 'coordinators' => $coordinators]);
+        return $this->router->view('/coordination/create', ['active' => 'pedagogico']);
     }
 
     public function store(Request $request) {

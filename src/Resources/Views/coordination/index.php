@@ -9,14 +9,14 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\" class="text-decoration-none">Início</a>
             </li>
-            <li class="breadcrumb-item">Coordenação</li>
+            <li class="breadcrumb-item">Coordenadores</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
     <? if (hasPermission('cadastrar estudantes')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-            <a href="\estudantes\criar" class="btn btn-outline-primary" > + </a>
+            <a href="\coordenadores\criar" class="btn btn-outline-primary" > + </a>
             </div>
         </div>
     <? }?>
