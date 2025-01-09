@@ -67,6 +67,13 @@
                                     </a>
                                 </li>
                             <?php } ?>
+                            <?php if (hasPermission('visualizar disciplinas')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\bimestres\">
+                                        <span>Bimestres</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
                             <?php if (hasPermission('visualizar turmas')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\turmas">

@@ -11,6 +11,7 @@ use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
 use App\Controllers\v1\Teacher\ProfessorDisciplinaController;
 use App\Controllers\v1\Discipline\DisciplinaController;
+use App\Controllers\v1\Bimester\BimestreController;
 use App\Controllers\v1\MonthlyFees\MensalidadeController;
 use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
@@ -30,6 +31,7 @@ $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
 $cargaHorariaController = new CargaHorariaController();
 $disciplinaController = new DisciplinaController();
+$bimestreController = new BimestreController();
 $estudanteTurmaController = new EstudanteTurmaController();
 $mensalidadeController = new MensalidadeController();
 $estudanteMensalidadeController = new EstudanteMensalidadeController();
@@ -383,6 +385,44 @@ $router->create(
     "DELETE",
     "/estudantes/{id}/mensalidade/{mensalidade_id}/",
     [$estudanteMensalidadeController, "destroy"],
+    $auth
+);
+
+//bimesters
+$router->create(
+    "GET", 
+    "/bimestres", 
+    [$bimestreController, "index"], 
+    $auth
+);
+$router->create(
+    "GET",
+    "/bimestres/criar",
+    [$bimestreController, "create"],
+    $auth
+);
+$router->create(
+    "POST",
+    "/bimestres/criar",
+    [$bimestreController, "store"],
+    $auth
+);
+$router->create(
+    "GET",
+    "/bimestres/{id}/editar",
+    [$bimestreController, "edit"],
+    $auth
+);
+$router->create(
+    "POST",
+    "/bimestres/{id}/editar",
+    [$bimestreController, "update"],
+    $auth
+);
+$router->create(
+    "DELETE",
+    "/bimestres/{id}",
+    [$bimestreController, "destroy"],
     $auth
 );
 
