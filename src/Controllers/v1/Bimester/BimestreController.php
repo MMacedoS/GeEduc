@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\v1\Bimestre;
+namespace App\Controllers\v1\Bimester;
 
 use App\Controllers\Controller;
 use App\Repositories\Bimester\BimestreRepository;
@@ -11,13 +11,13 @@ use App\Utils\Validator;
 class BimestreController extends Controller{
     protected $bimestreRepository;
 
-    public function __contruct(){
+    public function __construct(){
         parent::__construct();
-        $this->bimestreRepository = new BimestreRepository();    
+        $this->bimestreRepository = new BimestreRepository();   
     }
 
     public function index(Request $request){
-        if(!hasPermission('visyalizar disciplinas')){
+        if(!hasPermission('visualizar disciplinas')){
             return $this->router->redirect('bimestres?error=442');
         }
 
@@ -36,8 +36,8 @@ class BimestreController extends Controller{
     }
 
     public function create(){
-        if(hasPermission('cadastrar disciplinas')){
-            return $this->router->redirect('bimestres?error=442')
+        if(!hasPermission('visualizar disciplinas')){
+            return $this->router->redirect('bimestres?error=442');
         }
 
         return $this->router->view('bimester/create', ['active' => 'register']);
@@ -49,7 +49,7 @@ class BimestreController extends Controller{
         $validator = new Validator($data);
 
         $rules = [
-            'bimester' => 'required|min:1|max:20'
+            'bimester' => 'required|min:1|max:6'
         ];
 
         if(!$validator->validate($rules)){
@@ -57,9 +57,9 @@ class BimestreController extends Controller{
                 'bimester/create',
                 [
                     'active' => 'pedagogico',
-                    'errors' => $validator->getErrors().
+                    'errors' => $validator->getErrors()
                 ]
-            )
+            );
         }
 
         $created = $this->bimestreRepository->create($data);
@@ -71,7 +71,7 @@ class BimestreController extends Controller{
         return $this->router->redirect('bimestres/');
     }
 
-    public function edit(Request $request, int $id){
+    public function edit(Request $request, $id){
         if(!hasPermission('editar disciplinas')){
             return $this->router->redirect('bimestres?error=422');
         }
@@ -79,7 +79,7 @@ class BimestreController extends Controller{
         $bimestre = $this->bimestreRepository->findByUuid($id);
         
         if(is_null($bimestre)){
-            return $thisrouter->view('bimester/', ['active' => 'pedagogico', 'danger' => true]);
+            return $this->router->view('bimester/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->view('bimester/edit', ['active' => 'pedagogico', 'bimestre' => $bimestre]);
@@ -97,7 +97,7 @@ class BimestreController extends Controller{
         $validator = new Validator($data);
 
         $rules = [
-            'bimester' => 'required|min:1max:20'
+            'bimester' => 'required|min:1|max:6'
         ];
 
         if(!$validator->validate($rules)){
@@ -118,21 +118,4 @@ class BimestreController extends Controller{
 
         return $this->router->redirect('bimestres/');
     }
-
-    public function destroy(Request $request, $id){
-        if(hasPermission('deletar disciplinas')){
-            return $this->router->redirect('bimestres?error=422');
-        }
-
-        $bimestre = $this->bimestreRepository->findByUuid($id);
-
-        if(is_null($bimestre)){
-            return $this->router->view('bimester/', ['active' => 'pedagogico', 'danger' => true]);
-        }
-
-        $bimestre = $this->bimestreRepository->delete($bimestre->id);
-
-        return $this->router->redirect('bimestres/');
-    }
-
 }

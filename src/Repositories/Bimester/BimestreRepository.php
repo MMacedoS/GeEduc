@@ -50,7 +50,7 @@ class BimestreRepository{
             }
 
             return $this->findByUuid($bimestre->uuid);
-        }catch(\Trowable $th){
+        }catch(\Throwable $th){
             return null;
         }
     }
@@ -80,19 +80,5 @@ class BimestreRepository{
             LoggerHelper::logInfo($th->getMessage());
             return null;
         }
-    }
-
-    public function delete(int $id){
-        $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . "
-                SET
-                    ativo = 0
-                WHERE id = :id"
-        );
-
-        $updated = $stmt->execute(['id' => $id]);
-
-        return $updated;
     }
 }
