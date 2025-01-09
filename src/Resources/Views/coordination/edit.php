@@ -27,7 +27,7 @@
     <!-- Row end -->
     <?php 
     ?>
-    <form action="/coordenadores/<?=$coordenador->$uuid?>/editar" method="post" enctype="multipart/form-data">   
+    <form action="/coordenadores/<?=$coordenador->uuid?>/editar" method="post" enctype="multipart/form-data">   
         <div class="row gx-3">
             <?php include_once '_forms.php';?>
         </div>

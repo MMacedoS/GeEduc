@@ -100,27 +100,28 @@ class CoordenacaoController extends Controller{
     {
         $data = $request->getBodyParams();
 
-        $estudante = $this->estudanteRepository->findByUuid($id);
+        $coordenador = $this->coordenacaoRepository->findByUuid($id);
 
-        if(is_null($estudante)){
-            return $this->router->view('student/', ['active' => 'pedagogico', 'danger' => true]);
+        if(is_null($coordenador)){
+            return $this->router->view('coordination/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
 
         $validator = new Validator($data);
 
         $rules = [
             'name' => 'required|min:1|max:100',
             'email' => 'required',
-            'mother' => 'required',
+            'graduacao' => 'required',
+            'phone' => 'required',
             'doc' => 'required',
-            'monthly_day' => 'required',
-            'plan_id' => 'required'
+            'type_doc' => 'required',
+            'address' => 'required',
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('student/edit', [
+            return $this->router->view('coordination/edit', [
                 'active' => 'register',
                 'errors' => $validator->getErrors()
             ]);
@@ -128,19 +129,19 @@ class CoordenacaoController extends Controller{
 
         $data['usuario_id'] = $pessoa_fisica->usuario_id;
         $data['pessoa_fisica_id'] = $pessoa_fisica->id;
-        $data['id'] = $estudante->id;
-        $data['sector'] = 'estudante';
+        $data['id'] = $coordenador->id;
+        $data['sector'] = 'coordenador';
 
-        $updated = $this->estudanteRepository->updateAll($data);
+        $updated = $this->coordenacaoRepository->updateAll($data);
 
         if(is_null($updated)){
-            return $this->router->view('student/edit', [
+            return $this->router->view('coordination/edit', [
                 'active' => 'pedagogico', 
                 'danger' => true
             ]);
         }
 
-        return $this->router->redirect('estudantes/');
+        return $this->router->redirect('coordenadores/');
     }
 
     public function destroy(Request $request, $id) {

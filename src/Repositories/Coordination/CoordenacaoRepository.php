@@ -107,7 +107,7 @@ class CoordenacaoRepository {
         }
     }
 
-    public function create(array $data)
+    public function create(array $data): ?Coordenacao
     {
         $coordinator = $this->model->create($data);
 
@@ -140,27 +140,23 @@ class CoordenacaoRepository {
         }
     }
 
-    public function update(array $data, int $id) 
+    public function update(array $data, int $id) : ?Coordenacao 
     {
-        $class = $this->model->create($data);
+        $coordenador = $this->model->create($data);
 
         try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . " 
                 SET 
-                    nome = :nome,
-                    turno = :turno,
-                    ordem = :ordem,
+                    graduacao = :graduacao,
                     ativo = :ativo
                 WHERE id = :id
                 "
             );
 
             $update = $stmt->execute([
-                ':nome' => $class->nome,
-                ':turno' => $class->turno,
-                ':ordem' => $class->ordem,
-                ':ativo' => $class->ativo,
+                ':graduacao' => $coordenador->graduacao,
+                ':ativo' => $coordenador->ativo,
                 ':id' => $id
             ]);
 
@@ -172,6 +168,36 @@ class CoordenacaoRepository {
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
+    }
+
+    public function updateAll(array $data): ?Coordenacao {
+
+        if(empty($data)){
+            return null;
+        }
+
+        try{    
+            $user = $this->usuarioRepository->update($data, $data['usuario_id']);
+            if(is_null($user)){
+                return null;
+            }
+
+            $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
+            if(is_null($person)){
+                return null;
+            }
+            
+            $coordenador = $this->update($data, $data['id']);
+
+            if(is_null($coordenador)){
+                return null;
+            }
+            
+            return $coordenador;
+
+        } catch(\Throwable $th) {
             return null;
         }
     }
