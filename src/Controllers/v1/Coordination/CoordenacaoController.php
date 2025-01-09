@@ -78,22 +78,20 @@ class CoordenacaoController extends Controller{
     }
 
     public function edit(Request $request, $id) {
-        $estudante = $this->estudanteRepository->findByUuid($id);
+        $coordenador = $this->coordenacaoRepository->findByUuid($id);
 
-        if(is_null($estudante)){
-            return $this->router->view('student/', ['active' => 'register', 'danger' => true]);
+        if(is_null($coordenador)){
+            return $this->router->view('coordination/', ['active' => 'register', 'danger' => true]);
         }
 
-        $planos = $this->planosRepository->allPlans();
 
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
 
-        return $this->router->view('student/edit', 
+        return $this->router->view('coordination/edit', 
         [
             'active' => 'register', 
-            'estudante' => $estudante, 
+            'coordenador' => $coordenador, 
             'pessoa_fisica' => $pessoa_fisica,
-            'plans' => $planos
         ]);
     }
 
