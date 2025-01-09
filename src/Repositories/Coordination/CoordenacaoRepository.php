@@ -77,6 +77,7 @@ class CoordenacaoRepository {
 
     public function saveAll(array $data): ?Coordenacao
     {
+        
         if (empty($data)) {
             return null;
         }
@@ -88,12 +89,14 @@ class CoordenacaoRepository {
             ]);
     
             $user = $this->usuarioRepository->create($userData);
-    
+            
             $personData = array_merge($data, ['usuario_id' => $user->id]);
+            
             $person = $this->pessoaFisicaRepository->create($personData);
-    
+           
             $coordinatorData = array_merge($data, ['person_id' => $person->id]);
             $coordinator = $this->create($coordinatorData);
+           
 
             return $coordinator;
     
@@ -120,7 +123,7 @@ class CoordenacaoRepository {
 
             $create = $stmt->execute([
                 ':uuid' => $coordinator->uuid,
-                ':person_id' => $coordinator->person_id,
+                ':person_id' => $coordinator->pessoa_fisica_id,
                 ':graduacao' => $coordinator->graduacao
             ]);
 
@@ -130,6 +133,7 @@ class CoordenacaoRepository {
 
             return $this->findByUuid($coordinator->uuid);
         } catch (\Throwable $th) {
+            
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;

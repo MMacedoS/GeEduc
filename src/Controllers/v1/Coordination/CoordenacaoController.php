@@ -55,26 +55,27 @@ class CoordenacaoController extends Controller{
         $rules = [
             'name' => 'required|min:1|max:100',
             'email' => 'required',
-            'mother' => 'required',
+            'graduacao' => 'required',
+            'phone' => 'required',
             'doc' => 'required',
-            'monthly_day' => 'required',
-            'plan_id' => 'required'
+            'type_doc' => 'required',
+            'address' => 'required',
         ];
-
+        
         if(!$validator->validate($rules)){
             return $this->router->view('coordination/create', [
                 'active' => 'pedagogico', 
                 'errors' => $validator->getErrors()
             ]);
         }
-
+        
         $created = $this->coordenacaoRepository->saveAll($data);
-
+        
         if(is_null($created)){
             return $this->router->view('coordination/create', ['active' => 'pedagogico',  'danger' => true]);
         }
         
-        return $this->router->redirect('coordenacao/');
+        return $this->router->redirect('coordenadores/');
     }
 
     public function edit(Request $request, $id) {
