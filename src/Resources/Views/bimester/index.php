@@ -51,7 +51,8 @@
                             <? foreach ($data['bimestres'] as $bimestre) { ?>
                                     <tr>
                                         <td><?=$bimestre->id?></td>
-                                        <td class="fw-bold"> <?=$bimestre->bimestre ?>
+                                        <td class="fw-bold"> 
+                                            <?=$bimestre->bimestre ?>º bimestre
                                         </td>
                                         <td>    
                                             
