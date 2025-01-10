@@ -55,7 +55,32 @@ class SiteArquivoRepository {
     public function create(array $data){
         $archive = $this->model->create($data);
 
-        
+        try{
+            $stmt = $this->conn->prepare(
+                "INSERT INTO " . self::TABLE . "
+                    SET
+                        uuid = :uuid,
+                        nome_original = :nome_original,
+                        ext_arquivo = :ext_arquivo,
+                        arquivo = :arquivo
+                "
+            );
+
+            $create = $stmt->execute([
+                ':uuid' => $archive->uuid,
+                ':nome_original' => $archive->nome_original,
+                ':ext_arquivo' => $archive->ext_arquivo,
+                ':arquivo' => $archive->arquivo
+            ]);
+
+            if(!$create){
+                return null;
+            }
+
+            return $this->findByUuid($archive->uuid);
+        }catch(\Throwable $th){
+            return null;
+        }
     }
 
     public function update(array $data, int $id){}
