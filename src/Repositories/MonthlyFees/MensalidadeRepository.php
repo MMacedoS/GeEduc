@@ -23,13 +23,13 @@ class MensalidadeRepository {
 
     public function allMonthlyfees(array $params = [])
     {
-        $sql = "SELECT 
+        $sql = "SELECT
            m.*
         FROM " . self::TABLE . " m";
 
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['situation'])) {
             $conditions[] = "m.situacao = :situacao";
             $bindings[':situacao'] = $params['situation'];
@@ -51,7 +51,7 @@ class MensalidadeRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
     public function create(array $data)
@@ -60,8 +60,8 @@ class MensalidadeRepository {
 
         try {
             $stmt = $this->conn->prepare(
-                "INSERT INTO " . self::TABLE . " 
-                SET 
+                "INSERT INTO " . self::TABLE . "
+                SET
                     uuid = :uuid,
                     estudante_mensalidade_id = :estudante_mensalidade_id,
                     valor = :valor,
@@ -102,8 +102,8 @@ class MensalidadeRepository {
 
         try {
             $stmt = $this->conn->prepare(
-                "UPDATE " . self::TABLE . " 
-                SET 
+                "UPDATE " . self::TABLE . "
+                SET
                     estudante_mensalidade_id = :estudante_mensalidade_id,
                     valor = :valor,
                     data_vencimento = :data_vencimento,
@@ -132,15 +132,19 @@ class MensalidadeRepository {
 
     public function delete(int $id)
     {
-        $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
-             SET ativo = 0 
-             WHERE id = :id"
-        );
+        try {
+            $stmt = $this->conn
+            ->prepare(
+                "UPDATE " . self::TABLE . "
+                 SET situacao = 'cancelado'
+                 WHERE id = :id"
+            );
 
-        $updated = $stmt->execute(['id' => $id]);
+            $updated = $stmt->execute(['id' => $id]);
 
-        return $updated;
+            return $updated;
+        } catch(\Trowable $th) {
+            return false;
+        }
     }
 }

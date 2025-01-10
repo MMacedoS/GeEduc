@@ -67,6 +67,13 @@
                                     </a>
                                 </li>
                             <?php } ?>
+                            <?php if (hasPermission('visualizar disciplinas')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\bimestres\">
+                                        <span>Bimestres</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
                             <?php if (hasPermission('visualizar turmas')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\turmas">
@@ -74,10 +81,15 @@
                                     </a>
                                 </li>
                             <?php } ?>
+
                             <?php if (hasPermission('visualizar coordenadores')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\coordenadores">
                                         <span>Coordenadores</span>
+                            <?php if (hasPermission('visualizar turmas')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\carga-horaria">
+                                        <span>Carga Horaria</span>
                                     </a>
                                 </li>
                             <?php } ?>
