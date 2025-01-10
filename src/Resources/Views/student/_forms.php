@@ -105,7 +105,7 @@
         <label class="form-label">Situação</label>
         <select name="active" class="form-control" id="">
             <option value="0" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
-            <option value="1" selected <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
+            <option value="1" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
         </select>
       </div>
    </div>
