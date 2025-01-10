@@ -91,3 +91,4 @@ if (!function_exists('filterAvailableToursWithYear')) {
         });
     }
 }
+
