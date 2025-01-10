@@ -77,7 +77,6 @@ class CoordenacaoRepository {
 
     public function saveAll(array $data): ?Coordenacao
     {
-        
         if (empty($data)) {
             return null;
         }
@@ -87,7 +86,7 @@ class CoordenacaoRepository {
                 'password' => 'password',
                 'sector' => 'coordenador',
             ]);
-    
+            $this->conn->beginTransaction();
             $user = $this->usuarioRepository->create($userData);
             
             $personData = array_merge($data, ['usuario_id' => $user->id]);
@@ -97,10 +96,11 @@ class CoordenacaoRepository {
             $coordinatorData = array_merge($data, ['person_id' => $person->id]);
             $coordinator = $this->create($coordinatorData);
            
-
+            $this->conn->commit();
             return $coordinator;
     
         } catch (\Throwable $th) {
+            $this->conn->rollBack();
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
@@ -179,6 +179,7 @@ class CoordenacaoRepository {
         }
 
         try{    
+            $this->conn->beginTransaction();
             $user = $this->usuarioRepository->update($data, $data['usuario_id']);
             if(is_null($user)){
                 return null;
@@ -194,10 +195,13 @@ class CoordenacaoRepository {
             if(is_null($coordenador)){
                 return null;
             }
-            
+            $this->conn->commit();
             return $coordenador;
 
         } catch(\Throwable $th) {
+            $this->conn->rollBack();
+            LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
     }
@@ -216,13 +220,21 @@ class CoordenacaoRepository {
         return $updated;
     }
 
-    public function deleteAll($coordenador){
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
+    public function deleteAll($coordenador): ?bool {
+        try {
+            $this->conn->beginTransaction();
+            $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
 
-        $this->usuarioRepository->delete($pessoa_fisica->usuario_id);
+            $this->usuarioRepository->delete($pessoa_fisica->usuario_id);
 
-        $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
-
-        return $this->delete($coordenador->id);
+            $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
+            $this->conn->commit();
+            return $this->delete($coordenador->id);
+        } catch(\Throwable $th) {
+            $this->conn->rollBack();
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
     }
 }
