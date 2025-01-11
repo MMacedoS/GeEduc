@@ -13,7 +13,7 @@
                 <i class="icon-person lh-1"></i>
                 <a href="\professores" class="text-decoration-none">Professores</a>
             </li>
-            <li class="breadcrumb-item">Professor & Disciplina</li>
+            <li class="breadcrumb-item">Componente Curricular</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
@@ -56,7 +56,7 @@
                            <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nome</th>
+                                    <th>Componente Curricular</th>
                                     <th>Ano Letivo</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>

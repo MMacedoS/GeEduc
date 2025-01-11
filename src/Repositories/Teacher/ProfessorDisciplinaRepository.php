@@ -10,7 +10,7 @@ use App\Utils\LoggerHelper;
 class ProfessorDisciplinaRepository {
 
     const CLASS_NAME = ProfessorDisciplina::class;
-    const TABLE = 'disciplina_professor';
+    const TABLE = 'professor_disciplina';
 
     use FindTrait;
 
@@ -25,35 +25,30 @@ class ProfessorDisciplinaRepository {
 
     public function allTeacherDisciplines(array $params = []){
         $sql = "SELECT 
-           pd.*,
-           (
-            SELECT 
-               JSON_OBJECT(
-                   'id', d.id,
-                   'nome', d.nome
-                )
-            FROM disciplinas d
-            WHERE d.id = pd.disciplina_id and d.ativo = 1
-        ) AS disciplina,
-           (
-            SELECT 
-               JSON_OBJECT(
-                   'id', p.id,
-                   'pessoa_fisica_id', p.pessoa_fisica_id
-                )
-            FROM professores p
-            WHERE p.id = pd.professor_id and p.ativo = 1
-        ) AS professor
-        FROM " . self::TABLE . " pd";
+                pd.*,
+                JSON_OBJECT(
+                    'nome', pf.nome,
+                    'email', pf.email
+                ) AS professor,
+                JSON_OBJECT(
+                    'id', d.id,
+                    'uuid', d.uuid,
+                    'nome', d.nome
+                ) AS disciplina
+            FROM " . self::TABLE . " pd 
+            LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1
+            LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id 
+            LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
+        ";
         
         $conditions = [];
         $bindings = [];
 
         ////////////////////ERRO AQUI
-        if(isset($params['search'])){
-            $conditions[] = "d.nome LIKE :nome";
-            $bindings[':nome'] = '%' . $params['search'] . '%';
-        }
+        if (isset($params['search'])) {
+            $conditions[] = "(d.nome LIKE :search OR pf.nome LIKE :search)";
+            $bindings[':search'] = '%' . $params['search'] . '%';
+        }        
 
         if(isset($params['teacher_id'])){
             $conditions[] = 'pd.professor_id = :professor_id';
@@ -75,7 +70,7 @@ class ProfessorDisciplinaRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY pd.created_at DESC";
+        $sql .= " ORDER BY d.nome DESC";
 
         $stmt = $this->conn->prepare($sql);
 

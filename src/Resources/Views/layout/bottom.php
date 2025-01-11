@@ -74,7 +74,7 @@
         let isRequestInProgress = false;
         $(document).ready(function() {
             $('.js-example-basic-multiple').select2({
-                placeholder: "Selecione os Hóspedes",
+                placeholder: "Selecione",
                 allowClear: true
             });
 
