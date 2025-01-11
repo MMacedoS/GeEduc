@@ -73,6 +73,11 @@ class TurmaDisciplinaRepository {
             $conditions[] = 'td.ano_letivo = :ano_letivo';
             $bindings[':ano_letivo'] = $params['academic_year'];
         }
+
+        if (isset($params['uuid'])) {
+            $conditions[] = 'td.uuid = :uuid';
+            $bindings[':uuid'] = $params['uuid'];
+        }
     
         if (isset($params['active'])) {
             $conditions[] = 'td.ativo = :ativo';
@@ -132,7 +137,9 @@ class TurmaDisciplinaRepository {
 
     public function update(array $data, int $id) 
     {
-        $class = $this->model->create($data);
+        $class_disciplina = $this->findById($id);
+
+        $class = $this->model->update($data, $class_disciplina);
 
         try {
             $stmt = $this->conn->prepare(
@@ -160,7 +167,7 @@ class TurmaDisciplinaRepository {
                 return null;
             }
 
-            return $this->findById($id);
+            return $class;
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());

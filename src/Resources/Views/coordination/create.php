@@ -11,8 +11,8 @@
                     <a href="/" class="text-decoration-none">Início</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/estudantes" class="text-decoration-none">Coordenadores</a>
+                    <i class="icon-archive lh-1"></i>
+                    <a href="/coordenadores" class="text-decoration-none">Coordenadores</a>
                 </li>
                 <li class="breadcrumb-item">Cadastrar</li>
             </ol>
@@ -25,7 +25,7 @@
         </div>
     </div>
     <!-- Row end -->
-    <form action="/coordenadores/criar" method="POST">
+    <form action="/coordenador" method="POST">
         <div class="row gx-3">
             <?php include_once '_forms.php';?>
         </div>

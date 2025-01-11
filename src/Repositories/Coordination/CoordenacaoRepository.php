@@ -11,7 +11,7 @@ use App\Utils\LoggerHelper;
 
 class CoordenacaoRepository {
     const CLASS_NAME = Coordenacao::class;
-    const TABLE = 'Coordenacao';
+    const TABLE = 'coordenacao';
 
     use FindTrait;
     protected $conn;
@@ -30,18 +30,13 @@ class CoordenacaoRepository {
     public function allCoordinators(array $params = []){
 
         $sql = "SELECT
-            p.*,(
-                SELECT 
-                    JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    )
-                FROM pessoa_fisica pf
-                WHERE pf.id = p.person_id
-            ) AS pessoa_fisica
-            FROM " . self::TABLE . " 
-            p LEFT JOIN pessoa_fisica pf ON p.person_id = pf.id
+            c.*,
+                JSON_OBJECT(
+                    'nome', pf.nome,
+                    'email', pf.email
+                ) AS pessoa_fisica
+            FROM " . self::TABLE . " c 
+            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id 
         ";
 
         $conditions = [];
@@ -58,7 +53,7 @@ class CoordenacaoRepository {
         }
 
         if (isset($params['ativo'])) {
-            $conditions[] = "p.ativo = :ativo";
+            $conditions[] = "c.ativo = :ativo";
             $bindings[':ativo'] = $params['ativo'];
         }
 
@@ -66,7 +61,7 @@ class CoordenacaoRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY created_at DESC";
+        $sql .= " ORDER BY c.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -116,7 +111,7 @@ class CoordenacaoRepository {
                 "INSERT INTO " . self::TABLE . " 
                 SET 
                     uuid = :uuid,
-                    person_id = :person_id,
+                    pessoa_fisica_id = :person_id,
                     graduacao = :graduacao
                 "
             );
