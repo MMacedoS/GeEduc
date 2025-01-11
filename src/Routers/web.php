@@ -141,11 +141,11 @@ $router->create( "DELETE", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$e
 
 // Coordenação
 $router->create('GET', '/coordenadores', [$coordenacaoController, 'index'], $auth);
-$router->create('GET', '/coordenadores/criar', [$coordenacaoController, 'create'], $auth);
-$router->create('POST', '/coordenadores/criar', [$coordenacaoController, 'store'], $auth);
-$router->create('GET', '/coordenadores/{id}/editar', [$coordenacaoController, 'edit'], $auth);
-$router->create('POST', '/coordenadores/{id}/editar', [$coordenacaoController, 'update'], $auth);
-$router->create('DELETE', '/coordenadores/{id}', [$coordenacaoController, 'destroy'], $auth);
+$router->create('GET', '/coordenador', [$coordenacaoController, 'create'], $auth);
+$router->create('POST', '/coordenador', [$coordenacaoController, 'store'], $auth);
+$router->create('GET', '/coordenador/{id}/', [$coordenacaoController, 'edit'], $auth);
+$router->create('POST', '/coordenador/{id}/', [$coordenacaoController, 'update'], $auth);
+$router->create('DELETE', '/coordenador/{id}', [$coordenacaoController, 'destroy'], $auth);
 
 //bimesters
 $router->create( "GET", "/bimestres", [$bimestreController, "index"], $auth);

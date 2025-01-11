@@ -10,7 +10,7 @@ class Coordenacao {
 
     public $id;
     public $uuid;
-    public $person_id;
+    public $pessoa_fisica_id;
     public $graduacao;
     public $ativo;
     public $created_at;
@@ -26,7 +26,7 @@ class Coordenacao {
         $coordination->uuid = $data['uuid'] ?? $this->generateUUID();
         $coordination->pessoa_fisica_id = $data['person_id'] ?? null;          
         $coordination->graduacao = $data['graduacao'];  
-        $coordination->ativo = $data['active'] ?? null;  
+        $coordination->ativo = $data['active'] ?? 1;  
         $coordination->created_at = $data['created_at'] ?? null;
         $coordination->updated_at = $data['updated_at'] ?? null;
         return $coordination;

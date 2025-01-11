@@ -86,7 +86,7 @@ class CoordenacaoController extends Controller{
         }
 
 
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->pessoa_fisica_id);
 
         return $this->router->view('coordination/edit', 
         [
@@ -106,7 +106,7 @@ class CoordenacaoController extends Controller{
             return $this->router->view('coordination/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->pessoa_fisica_id);
 
         $validator = new Validator($data);
 
