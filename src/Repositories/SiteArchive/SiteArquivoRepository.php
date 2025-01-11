@@ -83,7 +83,36 @@ class SiteArquivoRepository {
         }
     }
 
-    public function update(array $data, int $id){}
+    public function update(array $data, int $id){
+        $archive = $this->model->create($data);
+
+        try {
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . " 
+                    SET
+                        nome_original = :original_name,
+                        ext_arquivo = :ext_archive,
+                        arquivo = :archive
+                    WHERE id = :id
+                " 
+            );
+
+            $create = $stmt->execute([
+                ':id' => $id,
+                ':original_name' => $archive->nome_original,
+                ':ext_archive' => $archive->ext_arquivo,
+                ':archive' => $archive->arquivo
+            ]);
+
+            if(!$create){
+                return null;
+            }
+
+            return $this->findByUuid($archive->uuid);
+        }catch(\Throwable $th){
+            return null;
+        }
+    }
 
     public function delete(int $id){}
 
