@@ -29,8 +29,8 @@ class ProfessorDisciplina {
         $professor_disciplina->uuid = $data['uuid' ] ?? $professor_disciplina->generateUUID(); 
         $professor_disciplina->professor_id = $data['teacher_id' ];
         $professor_disciplina->disciplina_id = $data['discipline_id' ];
-        $professor_disciplina->ano_letivo = $data['school_year'];
-        $professor_disciplina->ativo = $data['active'] ?? null;
+        $professor_disciplina->ano_letivo = $data['school_year'] ?? Date('Y');
+        $professor_disciplina->ativo = $data['active'] ?? 1;
         $professor_disciplina->created_at = $data['created_at'] ?? null;
         $professor_disciplina->updated_at = $data['updated_at'] ?? null;
         return $professor_disciplina;

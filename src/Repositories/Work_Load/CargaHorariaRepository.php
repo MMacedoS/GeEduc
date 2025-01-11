@@ -22,7 +22,7 @@ class CargaHorariaRepository{
         $this->model = new CargaHoraria();
     }
 
-    public function all(array $params = []){
+    public function allWorkLoad(array $params = []){
         $sql = "SELECT c.* FROM " . self::TABLE . " c";
 
         $conditions = [];
