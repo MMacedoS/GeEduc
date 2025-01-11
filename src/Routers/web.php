@@ -165,17 +165,4 @@ $router->create( "GET", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDis
 $router->create( "POST", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "destroy"], $auth);
 
-$router->create("GET", "/professores/{id}/disciplina", [$professorDisciplinaController, "teacherLinkDiscipline"], $auth);
-$router->create(
-    "POST",
-    "/professores/{id}/disciplina/{id}",
-    [$professorDisciplinaController, "store"],
-    $auth
-);
-$router->create(
-    "PUT",
-    "/professores-disciplina/{id}",
-    [$professorDisciplinaController, "updateStatus"],
-    $auth
-);
 
