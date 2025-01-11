@@ -49,7 +49,7 @@
                            <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Carga</th>
+                                    <th>Carga Horaria</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
                                     <th>Actions</th>
@@ -62,7 +62,7 @@
                                 ?>
                                     <tr>
                                         <td><?=$carga_horaria->id?></td>
-                                        <td class="fw-bold"> <?=$carga_horaria->carga ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=$carga_horaria->carga ?? 'não identificado'?> Horas
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">

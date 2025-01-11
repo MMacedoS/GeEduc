@@ -3,8 +3,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Carga</label>
-        <input type="text" class="form-control" name="load" placeholder="digite aqui" value="<?=$carga_horaria->carga ?? ''?>" />
+        <label class="form-label">Carga Horária</label>
+        <input type="number" step="0" min="5" max="200" class="form-control" name="load" placeholder="digite aqui" value="<?=$carga_horaria->carga ?? '10'?>" />
       </div>
     </div>
   </div>
