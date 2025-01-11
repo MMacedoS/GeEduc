@@ -25,8 +25,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Matricula</label>
-        <input type="text" class="form-control" name="matricula" placeholder="digite aqui" value="<?=$estudante->matricula ?? ''?>" />
+        <label class="form-label">Graduação</label>
+        <input type="text" class="form-control" name="graduacao" placeholder="digite aqui" value="<?=$coordenador->graduacao ?? ''?>" />
       </div>
     </div>
   </div>
@@ -122,55 +122,6 @@
         <div class="invalid-feedback">Telefone inválido</div>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="col-lg-2 col-sm-3 col-12">
-  <div class="card mb-3">
-    <div class="card-body">
-      <div class="m-0">
-        <label class="form-label">Planos</label>
-        <select name="plan_id" class="form-control" id="plan_id">
-            <?php foreach ($plans as $plan): ?>
-                <option value="<?= htmlspecialchars($plan->id) ?>" 
-                    <?= isset($monthly->plan_id) && $monthly->plan_id == $plan->id ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($plan->nome) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-      </div>
-   </div>
-  </div>
-</div>
-
-<div class="col-lg-2 col-sm-3 col-12">
-  <div class="card mb-3">
-    <div class="card-body">
-      <div class="m-0">
-        <label class="form-label">Desconto</label>
-        <input type="number" class="form-control" step="0.01" min="0" name="discont" id="" value="<?=$monthly->desconto ?? '0'?>">
-      </div>
-   </div>
-  </div>
-</div>
-
-<div class="col-lg-2 col-sm-3 col-12">
-  <div class="card mb-3">
-    <div class="card-body">
-      <div class="m-0">
-        <label class="form-label">Dia Mensalidade</label>
-        <select name="monthly_day" class="form-control" id="monthly_day">
-            <option value="1" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '1') { echo 'selected'; } ?>>01</option>
-            <option value="5" selected <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '5') { echo 'selected'; } ?>>05</option>
-            <option value="10" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '10') { echo 'selected'; } ?>>10</option>
-            <option value="15" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '15') { echo 'selected'; } ?>>15</option>
-            <option value="20" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '20') { echo 'selected'; } ?>>20</option>
-            <option value="25" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '25') { echo 'selected'; } ?>>25</option>
-            <option value="28" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '28') { echo 'selected'; } ?>>28</option>
-            <option value="30" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '30') { echo 'selected'; } ?>>30</option>
-        </select>
-      </div>
-   </div>
   </div>
 </div>
 
