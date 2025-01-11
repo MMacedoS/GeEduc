@@ -11,7 +11,11 @@
             </li>
             <li class="breadcrumb-item">
                     <i class="icon-archive lh-1"></i>
-                    <a href="/turmas" class="text-decoration-none">Turma <?=$turma->nome?></a>
+                    <a href="/turmas" class="text-decoration-none">Turmas</a>
+            </li>
+            <li class="breadcrumb-item">
+                    <i class="icon-archive lh-1"></i>
+                    <a href="/turmas/<?=$turma->uuid?>/disciplinas" class="text-decoration-none">Turma: <?=$turma->nome?></a>
             </li>
             <li class="breadcrumb-item">Componentes Curriculares</li>
         </ol>
@@ -50,7 +54,7 @@
                 <div class="table-outer">
                     <div class="table-responsive">
                         <table class="table table-striped align-middle m-0">
-                           <thead>
+                            <thead>
                                 <tr>
                                     <th></th>
                                     <th class="text-center">Componente Curicular</th>
@@ -64,17 +68,18 @@
                             </thead>
                             
                             <tbody>
-                            <? foreach ($turmas_disciplinas as $turma_disciplina) { 
-                                ?>
+                                <? foreach ($turmas_disciplinas as $turma_disciplina) { 
+                                    ?>
                                     <tr>
                                         <td><?=$turma_disciplina->id?></td>
-                                        <td class="text-center"> <?=  getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
+                                        <td class="text-center"> 
+                                            <?=getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                        <?=getParamsToJson($turma_disciplina->professor_disciplina)->professor->nome ?? 'não identificado'?>
+                                            <?=getParamsToJson($turma_disciplina->professor_disciplina)->professor->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                        <?=getParamsToJson($turma_disciplina->carga_horaria)->carga_horaria ?? 'não identificado'?> Horas
+                                            <?=getParamsToJson($turma_disciplina->carga_horaria)->carga_horaria ?? 'não identificado'?> Horas
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
@@ -90,13 +95,20 @@
                                         </td>
                                         <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
                                         <td class="d-flex">
-                                        <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                            <? if (hasPermission('editar turmas-disciplinas')) {?>
                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplina/<?=$turma_disciplina->uuid?>">
                                                 <div class="border p-2 rounded-3">
                                                     <i class="icon-edit fs-5"></i>
                                                 </div>
                                             </a> 
                                         <? }?> 
+                                        <? if (hasPermission('visualizar atividades')) {?>                                     
+                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
+                                                <div class="border p-2 rounded-3">
+                                                   <i class="icon-link fs-5"></i>
+                                                </div>
+                                            </a> 
+                                        <? } ?>  
                                         <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
                                                 <div class="border p-2 rounded-3">
@@ -104,7 +116,7 @@
                                                 </div>
                                             </button>
                                         <? }?>
-                                            <div class="modal fade" id="exampleModal_<?=$turma_disciplina->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="exampleModal_<?=$turma_disciplina->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -113,7 +125,7 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             Tem certeza que deseja excluir este registro? 
-                                                               <p>Turma <?=$turma->nome ?? 'não identificado'?></p>
+                                                                <p>Turma <?=$turma->nome ?? 'não identificado'?></p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -125,7 +137,7 @@
                                         </td>
                                     <? }?>
                                     </tr>
-                            <? } ?>
+                                <? } ?>
                             </tbody>
                         </table>
                     </div>
