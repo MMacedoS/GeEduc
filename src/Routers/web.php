@@ -2,6 +2,7 @@
 
 use App\Config\Auth;
 use App\Config\Router;
+use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\ClassRooms\TurmaController;
 use App\Controllers\v1\Dashboard\DashboardController;
@@ -40,6 +41,7 @@ $estudanteMensalidadeController = new EstudanteMensalidadeController();
 $mensalidadeController = new MensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenacaoController = new CoordenacaoController();
+$atividadeController = new AtividadeController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -165,4 +167,11 @@ $router->create( "GET", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDis
 $router->create( "POST", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "destroy"], $auth);
 
+//activities
+$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
+$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
+$router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
+$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
+$router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
+$router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
 
