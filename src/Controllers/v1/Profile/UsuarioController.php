@@ -82,7 +82,7 @@ class UsuarioController extends Controller
 
     public function edit(Request $request, $id) 
     {
-        if(!hasPermission('editar usuários')) {
+        if(!hasPermission('editar usuarios')) {
             return $this->router->redirect('usuario?error=422');
         }
 

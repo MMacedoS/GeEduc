@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/top.php'; ?>
 
 <!-- Row start -->
 <div class="row gx-3">
@@ -9,15 +9,27 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
-            <li class="breadcrumb-item">Carga Horária</li>
+            <li class="breadcrumb-item">
+                    <i class="icon-archive lh-1"></i>
+                    <a href="/turmas" class="text-decoration-none">Turmas</a>
+            </li>
+            <li class="breadcrumb-item">
+                    <i class="icon-archive lh-1"></i>
+                    <a href="/turmas/<?=$turma->uuid?>/disciplinas" class="text-decoration-none">Turma: <?=$turma->nome?></a>
+            </li>
+            <li class="breadcrumb-item">
+                    <i class="icon-archive lh-1"></i>
+                    <a href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="text-decoration-none">Componente: <?=getParamsToJson($turmas_disciplinas[0]->professor_disciplina)->disciplina->nome?></a>
+            </li>
+            <li class="breadcrumb-item">Atividades</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
     
     <div class="col-2 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar turmas')) {?>
-         <a href="\carga-horaria\criar" class="btn btn-outline-primary" > + </a>
+        <? if (hasPermission('cadastrar atividades')) {?>
+         <a href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividade" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
     </div>
@@ -38,7 +50,6 @@
 <? }?>
     <!-- Row start -->
 
-
 <div class="row gx-3">
     <div class="col-12">
         <div class="card mb-3">
@@ -46,53 +57,58 @@
                 <div class="table-outer">
                     <div class="table-responsive">
                         <table class="table table-striped align-middle m-0">
-                           <thead>
+                            <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Carga Horaria</th>
+                                    <th class="text-center">Atividade</th>
+                                    <th class="text-center <?=$total_maximo > 10 ? 'text-danger': 'text-success'?>">Pontuação Maxima: <?=$total_maximo?></th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
-                                    <th>Actions</th>
+                                    <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
+                                    <th>Ação</th>
                                     <? } ?>
                                 </tr>
                             </thead>
                             
                             <tbody>
-                            <? foreach ($data['carga_horaria'] as $carga_horaria) { 
-                                ?>
+                                <? foreach ($atividades as $atividade) { 
+                                    ?>
                                     <tr>
-                                        <td><?=$carga_horaria->id?></td>
-                                        <td class="fw-bold"> <?=$carga_horaria->carga ?? 'não identificado'?> Horas
+                                        <td><?=$atividade->id?></td>
+                                        <td class="text-center"> 
+                                            <?=$atividade->tipo ?? 'não identificado'?>
+                                        </td>
+                                        <td class="text-center">
+                                            <?=$atividade->valor ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
-                                                <? if($carga_horaria->ativo == 0) { ?>
+                                                <? if($atividade->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
                                                     Impedido
                                                 <? } ?>
-                                                <? if($carga_horaria->ativo == 1) { ?>
+                                                <? if($atividade->ativo == 1) { ?>
                                                     <i class="icon-circle1 me-2 text-success fs-5"></i>
                                                     Disponivel
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                        <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
                                         <td class="d-flex">
-                                        <? if (hasPermission('editar turmas')) {?>
-                                            <a class="mb-1 me-2 mt-1" href="/carga-horaria/<?=$carga_horaria->uuid?>/editar">
+                                            <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividade/<?=$atividade->uuid?>">
                                                 <div class="border p-2 rounded-3">
                                                     <i class="icon-edit fs-5"></i>
                                                 </div>
                                             </a> 
                                         <? }?> 
-                                        <? if (hasPermission('deletar turmas')) {?>                                       
-                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$carga_horaria->uuid?>">                                                     
+                                        <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$atividade->uuid?>">                                                     
                                                 <div class="border p-2 rounded-3">
                                                     <span class="fs-5 text-danger icon-delete1"></span>
                                                 </div>
                                             </button>
                                         <? }?>
-                                            <div class="modal fade" id="exampleModal_<?=$carga_horaria->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="exampleModal_<?=$atividade->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -101,11 +117,13 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             Tem certeza que deseja excluir este registro? 
-                                                               <p>Carga Horaria <?=$carga_horaria->nome ?? 'não identificado'?></p>
+                                                                <p>Atividade: <?=$atividade->tipo ?? 'não identificado'?></p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="button" onclick="deleteData('/carga-horaria/<?=$carga_horaria->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                            <button type="button" 
+                                                                onclick="deleteData('/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina[0]->uuid?>/atividade<?=$atividade->uuid?>')" 
+                                                                class="btn btn-danger">Confirmar Exclusão</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -113,12 +131,12 @@
                                         </td>
                                     <? }?>
                                     </tr>
-                            <? } ?>
+                                <? } ?>
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-end ">
-                        Total <b><?=count($data['carga_horaria'])?></b> registros
+                    <div class="text-end ">                        
+                        Total <b><?=count($atividades)?></b> registros
                     </div>
                 </div>
             </div>
@@ -128,8 +146,8 @@
 
 <div class="row">
     <div class="float-end">
-        <?=$data['links']?>
+        <?=$links?>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/bottom.php'; ?>

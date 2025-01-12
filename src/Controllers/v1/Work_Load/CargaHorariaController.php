@@ -18,7 +18,7 @@ class CargaHorariaController extends Controller{
     }
 
     public function index(Request $request){
-        $cargaHoraria = $this->cargaHorariaRepository->all();
+        $cargaHoraria = $this->cargaHorariaRepository->allWorkLoad();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($cargaHoraria, $perPage, $currentPage);

@@ -89,6 +89,13 @@
                                                 </div>
                                             </a> 
                                         <? }?> 
+                                        <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas">
+                                                <div class="border p-2 rounded-3">
+                                                   <i class="icon-link fs-5"></i>
+                                                </div>
+                                            </a> 
+                                        <? } ?>  
                                         <? if (hasPermission('deletar turmas')) {?>                                       
                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma->uuid?>">                                                     
                                                 <div class="border p-2 rounded-3">
