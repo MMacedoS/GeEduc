@@ -23,7 +23,7 @@ class SiteArquivoRepository {
         $this->model = new SiteArquivo();
     }
 
-    public function allSiteArchives(array $params = []){
+    public function allFiles(array $params = []){
         $sql = "SELECT * FROM " . self::TABLE;
 
         $conditions = [];
@@ -52,8 +52,15 @@ class SiteArquivoRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
     }
 
-    public function create(array $data){
+    public function create(array $data /*passar rota aqui*/){
         $archive = $this->model->create($data);
+
+                                        ///passar uma rota vindo do controller
+        $manipulation = publicPath($data['arquivo'], '/files/site/carousel/');
+
+        if(!$manipulation){
+            return null;
+        }
 
         try{
             $stmt = $this->conn->prepare(
@@ -68,9 +75,9 @@ class SiteArquivoRepository {
 
             $create = $stmt->execute([
                 ':uuid' => $archive->uuid,
-                ':nome_original' => $archive->nome_original,
-                ':ext_arquivo' => $archive->ext_arquivo,
-                ':arquivo' => $archive->arquivo
+                ':nome_original' => $manipulation['name'],
+                ':ext_arquivo' => $manipulation['ext'],
+                ':arquivo' => $manipulation['new_name']
             ]);
 
             if(!$create){
@@ -114,6 +121,14 @@ class SiteArquivoRepository {
         }
     }
 
-    public function delete(int $id){}
+    public function delete(int $id){
+        $stmt = $this->conn->prepare(
+            "DELETE FROM " . self::TABLE . " WHERE id = :id"
+        );
+
+        $deleted = $stmt->execute(['id' => $id]);
+
+        return $deleted;
+    }
 
 }
