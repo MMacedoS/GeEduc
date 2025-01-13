@@ -4,7 +4,7 @@ namespace App\Models\Coordination;
 
 use App\Models\Traits\UuidTrait;
 
-class Coordenacao {
+class Coordenador {
     
     use UuidTrait;
 
@@ -20,8 +20,8 @@ class Coordenacao {
 
     public function create(
         array $data
-    ): Coordenacao {
-        $coordination = new Coordenacao();
+    ): Coordenador {
+        $coordination = new Coordenador();
         $coordination->id = $data['id'] ?? null;
         $coordination->uuid = $data['uuid'] ?? $this->generateUUID();
         $coordination->pessoa_fisica_id = $data['person_id'] ?? null;          

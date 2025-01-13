@@ -24,17 +24,23 @@ class TurmaRepository {
     public function allClassRooms(array $params = [])
     {
         $sql = "SELECT 
-            t.*
-            FROM " . self::TABLE . " t   
+            t.*,
+            JSON_OBJECT(
+                    'nome', pf.nome,
+                    'email', pf.email
+                ) AS coordenador 
+            FROM " . self::TABLE . " t 
+            LEFT JOIN coordenadores c ON c.id = t.coordenador_id AND c.ativo = 1
+            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id  
         ";
 
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['name'])) {
-            $conditions[] = "t.nome = :nome";
-            $bindings[':nome'] = $params['name'];
-        }
+        if (isset($params['search'])) {
+            $conditions[] = "(t.nome LIKE :search OR pf.nome LIKE :search)";
+            $bindings[':search'] = '%' . $params['search'] . '%';
+        }   
 
         if (isset($params['shift'])) {
             $conditions[] = "t.turno = :turno";
@@ -70,7 +76,8 @@ class TurmaRepository {
                     uuid = :uuid,
                     nome = :nome,
                     turno = :turno,
-                    ordem = :ordem
+                    ordem = :ordem,
+                    coordenador_id = :coordenador_id
                 "
             );
 
@@ -78,7 +85,8 @@ class TurmaRepository {
                 ':uuid' => $class->uuid,
                 ':nome' => $class->nome,
                 ':turno' => $class->turno,
-                ':ordem' => $class->ordem
+                ':ordem' => $class->ordem,
+                ':coordenador_id' => $class->coordenador_id
             ]);
 
             if (!$create) {
@@ -104,7 +112,8 @@ class TurmaRepository {
                     nome = :nome,
                     turno = :turno,
                     ordem = :ordem,
-                    ativo = :ativo
+                    ativo = :ativo,
+                    coordenador_id = :coordenador_id
                 WHERE id = :id
                 "
             );
@@ -114,6 +123,7 @@ class TurmaRepository {
                 ':turno' => $class->turno,
                 ':ordem' => $class->ordem,
                 ':ativo' => $class->ativo,
+                ':coordenador_id' => $class->coordenador_id,
                 ':id' => $id
             ]);
 

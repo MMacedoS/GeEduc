@@ -280,4 +280,21 @@ class ProfessorRepository {
         return $updated;
     }
 
+    public function teacherByPersonId(int $person_id){
+
+        $sql = "SELECT
+            p.*
+            FROM " . self::TABLE . " p
+            WHERE p.pessoa_fisica_id = :id
+        ";
+
+        $sql .= " ORDER BY p.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $person_id]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
+    }
 }

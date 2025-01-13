@@ -36,7 +36,7 @@ class AtividadeController extends Controller
             ]
         );
         
-        $activities = $this->atividadeRepository->allActivities();
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id]);
 
         $totalValue = $this->sumValueActivities($activities);
 
@@ -59,15 +59,7 @@ class AtividadeController extends Controller
     }
 
     public function create(Request $request, string $class_id, string $class_discipline_id)
-    {
-        $activities = $this->atividadeRepository->allActivities();
-
-        $totalValue = $this->sumValueActivities($activities);
-
-        if($totalValue > self::TEN) {
-            return $this->router->redirect("turmas/$class_id/disciplinas/" . $class_discipline_id. "/atividades");
-        }
-        
+    {        
         $classRooms = $this->turmaRepository->findByUuid($class_id);
         $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
             [
@@ -75,6 +67,14 @@ class AtividadeController extends Controller
                 'uuid' => $class_discipline_id
             ]
         );
+
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
+
+        $totalValue = $this->sumValueActivities($activities);
+
+        if($totalValue >= self::TEN) {
+            return $this->router->redirect("turmas/$class_id/disciplinas/" . $class_discipline_id. "/atividades");
+        }
 
         return $this->router->view(
             'classRooms/discipline/activitie/create', 
@@ -88,14 +88,6 @@ class AtividadeController extends Controller
 
     public function store(Request $request, string $class_id, string $class_discipline_id)
     {
-        $activities = $this->atividadeRepository->allActivities();
-
-        $totalValue = $this->sumValueActivities($activities);
-
-        if($totalValue > self::TEN) {
-            return $this->router->redirect("turmas/$class_id/disciplinas/" . $class_discipline_id. "/atividades");
-        }
-
         $classRooms = $this->turmaRepository->findByUuid($class_id);
         $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
             [
@@ -103,6 +95,14 @@ class AtividadeController extends Controller
                 'uuid' => $class_discipline_id
             ]
         );
+
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
+
+        $totalValue = $this->sumValueActivities($activities);
+
+        if($totalValue >= self::TEN) {
+            return $this->router->redirect("turmas/$class_id/disciplinas/" . $class_discipline_id. "/atividades");
+        }
 
         $data = $request->getBodyParams();
 
@@ -237,18 +237,22 @@ class AtividadeController extends Controller
         $activitie = $this->atividadeRepository->findByUuid($id);
 
         if (is_null($activitie)) {
-            return $this->router->redirect("turmas/$classRooms->uuid/disciplinas/" . $class_disciplines[0]->uuid . "/atividades?error=not_deleted");
+            echo json_encode(['status' => 422, 'message' => 'não pode ser deletado!']);
+            exit();
         }
 
-        $this->turmaDisciplinaRepository->delete($activitie->id);
+        $this->atividadeRepository->delete($activitie->id);
 
-        return $this->router->redirect("turmas/$classRooms->uuid/disciplinas/" . $class_disciplines[0]->uuid . "/atividades");
+        echo json_encode(['status' => 422, 'message' => 'deletado!']);
+        exit();
     }
 
     private function sumValueActivities($activities) 
     {
         return array_reduce($activities, function ($sum, $item) {
-            return $sum + floatval($item->valor);
+            if($item->ativo) {
+                return $sum + floatval($item->valor);
+            }
         }, 0);
     }
 }

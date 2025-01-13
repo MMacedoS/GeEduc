@@ -106,6 +106,7 @@ class EstudanteRepository {
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
         return $stmt->fetch();  
     }
+
     public function saveAll(array $data)
     {
         if (empty($data)) {
@@ -310,5 +311,23 @@ class EstudanteRepository {
         } catch (\Throwable $th) {
             return null;
         }
+    }
+
+    public function studentByPersonId(int $person_id){
+
+        $sql = "SELECT
+            e.*
+            FROM " . self::TABLE . " e
+            WHERE e.pessoa_fisica_id = :id
+        ";
+
+        $sql .= " ORDER BY e.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $person_id]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
     }
 }

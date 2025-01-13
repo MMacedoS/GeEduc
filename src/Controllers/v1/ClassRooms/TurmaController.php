@@ -4,6 +4,7 @@ namespace App\Controllers\v1\ClassRooms;
 
 use App\Controllers\Controller;
 use App\Repositories\Classrooms\TurmaRepository;
+use App\Repositories\Coordination\CoordenadorRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -11,11 +12,13 @@ use App\Utils\Validator;
 class TurmaController extends Controller 
 {
     protected $turmaRepository;
+    protected $coordenadorRepository;
 
     public function __construct()
     {
         parent::__construct();   
         $this->turmaRepository = new TurmaRepository(); 
+        $this->coordenadorRepository = new CoordenadorRepository();
     }
 
     public function index(Request $request) 
@@ -35,7 +38,8 @@ class TurmaController extends Controller
 
     public function create(Request $request)
     {
-        return $this->router->view('classRooms/create', ['active' => 'register']);
+        $coordenators = $this->coordenadorRepository->allCoordinators(['active' => 1]);
+        return $this->router->view('classRooms/create', ['active' => 'register', 'coordenadores' => $coordenators]);
     }
 
     public function store(Request $request)
@@ -48,7 +52,8 @@ class TurmaController extends Controller
             'name' => 'required|min:1|max:100',           
             'order' => 'required',
             'shift' => 'required',
-            'active' => 'required'
+            'active' => 'required',
+            'coordinator_id' => 'required'
         ];
 
         if (!$validator->validate($rules)) {
@@ -73,12 +78,13 @@ class TurmaController extends Controller
     public function edit(Request $request, string $id)
     {
         $turma = $this->turmaRepository->findByUuid($id);
+        $coordenators = $this->coordenadorRepository->allCoordinators(['active' => 1]);
 
         if (is_null($turma)) {
             return $this->router->view('classRooms/', ['active' => 'pedagogico', 'danger' => true]);
         }
         
-        return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'turma' => $turma]);
+        return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'turma' => $turma, 'coordenadores' => $coordenators]);
     }
 
     public function update(Request $request, string $id)
@@ -96,7 +102,8 @@ class TurmaController extends Controller
         $rules = [
             'name' => 'required|min:1|max:100',           
             'order' => 'required',
-            'shift' => 'required'
+            'shift' => 'required',
+            'coordinator_id' => 'required'
         ];
 
         if (!$validator->validate($rules)) {

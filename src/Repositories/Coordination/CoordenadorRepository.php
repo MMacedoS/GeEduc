@@ -3,15 +3,15 @@
 namespace App\Repositories\Coordination;
 
 use App\Config\Database;
-use App\Models\Coordination\Coordenacao;
+use App\Models\Coordination\Coordenador;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenacaoRepository {
-    const CLASS_NAME = Coordenacao::class;
-    const TABLE = 'coordenacao';
+class CoordenadorRepository {
+    const CLASS_NAME = Coordenador::class;
+    const TABLE = 'coordenadores';
 
     use FindTrait;
     protected $conn;
@@ -22,7 +22,7 @@ class CoordenacaoRepository {
     public function __construct() {
         $conn = new Database();
         $this->conn = $conn->getConnection();
-        $this->model = new Coordenacao();
+        $this->model = new Coordenador();
         $this->usuarioRepository = new UsuarioRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
     }
@@ -70,7 +70,7 @@ class CoordenacaoRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
-    public function saveAll(array $data): ?Coordenacao
+    public function saveAll(array $data): ?Coordenador
     {
         if (empty($data)) {
             return null;
@@ -102,7 +102,7 @@ class CoordenacaoRepository {
         }
     }
 
-    public function create(array $data): ?Coordenacao
+    public function create(array $data): ?Coordenador
     {
         $coordinator = $this->model->create($data);
 
@@ -135,7 +135,7 @@ class CoordenacaoRepository {
         }
     }
 
-    public function update(array $data, int $id) : ?Coordenacao 
+    public function update(array $data, int $id) : ?Coordenador 
     {
         $coordenador = $this->model->create($data);
 
@@ -167,7 +167,7 @@ class CoordenacaoRepository {
         }
     }
 
-    public function updateAll(array $data): ?Coordenacao {
+    public function updateAll(array $data): ?Coordenador {
 
         if(empty($data)){
             return null;

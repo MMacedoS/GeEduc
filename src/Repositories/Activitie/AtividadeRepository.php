@@ -36,7 +36,7 @@ class AtividadeRepository {
         }
     
         if (isset($params['active'])) {
-            $conditions[] = 'td.ativo = :ativo';
+            $conditions[] = 'a.ativo = :ativo';
             $bindings[':ativo'] = $params['active'];
         }
     

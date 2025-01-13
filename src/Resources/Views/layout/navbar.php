@@ -31,18 +31,32 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="icon-add_task"></i> Pedagógico
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu">                             
                             <?php if (hasPermission('visualizar bimestres')) { ?>
                                 <li>
-                                    <a class="dropdown-item" href="\apartamento\">
+                                    <a class="dropdown-item" href="\bimestres\">
                                         <span>Bimestres</span>
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar componentes')) { ?>
+                            <?php if (hasPermission('visualizar coordenadores')) { ?>
                                 <li>
-                                    <a class="dropdown-item" href="\apartamento\">
-                                        <span>Componente Curriculares</span>
+                                    <a class="dropdown-item" href="\coordenadores">
+                                        <span>Coordenadores</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if (hasPermission('visualizar carga_horaria')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\carga-horaria">
+                                        <span>Carga Horaria</span>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if (hasPermission('visualizar disciplinas')) { ?>
+                                <li>
+                                    <a class="dropdown-item" href="\disciplinas\">
+                                        <span>Disciplinas</span>
                                     </a>
                                 </li>
                             <?php } ?>
@@ -60,20 +74,6 @@
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar disciplinas')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\disciplinas\">
-                                        <span>Disciplinas</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar disciplinas')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\bimestres\">
-                                        <span>Bimestres</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
                             <?php if (hasPermission('visualizar turmas')) { ?>
                                 <li>
                                     <a class="dropdown-item" href="\turmas">
@@ -81,23 +81,8 @@
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (hasPermission('visualizar coordenadores')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\coordenadores">
-                                        <span>Coordenadores</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar turmas')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\carga-horaria">
-                                        <span>Carga Horaria</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
                             </ul>
                         </li>
-
                         <?php } if (hasPermission('visualizar financeiro')) {?>
                             <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -156,9 +141,19 @@
                                 </ul>
                             </li>
                         <?php } ?>
-                        <?php if (hasPermission('visualizar afiliados')) { ?>
+                        <?php if (hasPermission('estudante')) { ?>
+                            <li class="nav-item <?=$active === 'students' ? 'active-link': ''?>">
+                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Turma
+                                </a>
+                            </li>
                             <li class="nav-item">
-                                <a class="nav-link" href=""><i class="icon-supervised_user_circle"></i> Afiliados
+                                <a class="nav-link" href=""><i class="icon-supervised_user_circle"></i> Contrato
+                                </a>
+                            </li>
+                        <? } ?>
+                        <?php if (hasPermission('professor')) { ?>
+                            <li class="nav-item <?=$active === 'teacher' ? 'active-link': ''?>">
+                                <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Minhas Disciplinas
                                 </a>
                             </li>
                         <? } ?>

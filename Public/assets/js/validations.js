@@ -200,5 +200,21 @@ $(document).ready(function() {
 	  $('#discont').on('input', function () {
 		updateTotal();
 	  });
+
+
+	  const dateInput = document.getElementById("data-frequencia");
+
+        // Restrict selectable dates
+        dateInput.addEventListener("change", () => {
+            const selectedDate = new Date(dateInput.value);
+            const today = new Date();
+            const day = selectedDate.getDay(); // 0: Sunday, 6: Saturday
+
+            // Check if the selected date is in the future or is a weekend
+            if (selectedDate > today || day === 0 || day === 6) {
+                alert("Selecione uma data válida (dias úteis até hoje).");
+                dateInput.value = ""; // Reset to empty if invalid
+            }
+        });
 	  
   });

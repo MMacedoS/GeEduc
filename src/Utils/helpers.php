@@ -70,6 +70,22 @@ if (!function_exists('brDate')) {
     }
 }
 
+if (!function_exists('brDateHora')) {    
+    function brDateHora($date) {
+        if (!is_null($date)) {
+            try {
+                // Converte para o formato de data brasileiro (DD/MM/AAAA HH:MM:SS)
+                $dateTime = new DateTime($date);
+                return $dateTime->format('d/m/Y H:i:s');
+            } catch (Exception $e) {
+                // Em caso de erro, retorna a mensagem de data inválida
+                return "Formato de data inválido";
+            }
+        }
+        return "Não identificado";
+    }
+}
+
 if (!function_exists('brCurrency')) {    
     function brCurrency($value) {
         if (!is_null($value) && is_numeric($value)) {
@@ -89,6 +105,13 @@ if (!function_exists('filterAvailableToursWithYear')) {
             }
             return true;
         });
+    }
+}
+
+if (!function_exists('dd')) {
+    function dd($data) {
+        var_dump($data);
+        die;
     }
 }
 

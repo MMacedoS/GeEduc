@@ -122,7 +122,7 @@
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                                             <button type="button" 
-                                                                onclick="deleteData('/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina[0]->uuid?>/atividade<?=$atividade->uuid?>')" 
+                                                                onclick="deleteData('/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividade/<?=$atividade->uuid?>')" 
                                                                 class="btn btn-danger">Confirmar Exclusão</button>
                                                         </div>
                                                     </div>

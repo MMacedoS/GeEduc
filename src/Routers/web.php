@@ -19,7 +19,8 @@ use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
-use App\Controllers\v1\Coordination\CoordenacaoController;
+use App\Controllers\v1\Coordination\CoordenadorController;
+use App\Controllers\v1\Frequencies\FrequenciaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -40,8 +41,9 @@ $mensalidadeController = new MensalidadeController();
 $estudanteMensalidadeController = new EstudanteMensalidadeController();
 $mensalidadeController = new MensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
-$coordenacaoController = new CoordenacaoController();
+$coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
+$frequenciaController = new FrequenciaController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -140,12 +142,12 @@ $router->create( "POST", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$est
 $router->create( "DELETE", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$estudanteMensalidadeController, "destroy"], $auth);
 
 // Coordenação
-$router->create('GET', '/coordenadores', [$coordenacaoController, 'index'], $auth);
-$router->create('GET', '/coordenador', [$coordenacaoController, 'create'], $auth);
-$router->create('POST', '/coordenador', [$coordenacaoController, 'store'], $auth);
-$router->create('GET', '/coordenador/{id}/', [$coordenacaoController, 'edit'], $auth);
-$router->create('POST', '/coordenador/{id}/', [$coordenacaoController, 'update'], $auth);
-$router->create('DELETE', '/coordenador/{id}', [$coordenacaoController, 'destroy'], $auth);
+$router->create('GET', '/coordenadores', [$coordenadorController, 'index'], $auth);
+$router->create('GET', '/coordenador', [$coordenadorController, 'create'], $auth);
+$router->create('POST', '/coordenador', [$coordenadorController, 'store'], $auth);
+$router->create('GET', '/coordenador/{id}/', [$coordenadorController, 'edit'], $auth);
+$router->create('POST', '/coordenador/{id}/', [$coordenadorController, 'update'], $auth);
+$router->create('DELETE', '/coordenador/{id}', [$coordenadorController, 'destroy'], $auth);
 
 //bimesters
 $router->create( "GET", "/bimestres", [$bimestreController, "index"], $auth);
@@ -174,4 +176,13 @@ $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade"
 $router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
 $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+
+//minha-turma-estudantes
+$router->create("GET", "/minhas-turmas/", [$estudanteController, "indexStudents"], $auth);
+$router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController, 'indexStudents'], $auth);
+
+//minha-turma-professor
+$router->create("GET", "/meus-componentes/", [$professorController, "indexTeacher"], $auth);
+$router->create('GET', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
+$router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'store'], $auth);
 
