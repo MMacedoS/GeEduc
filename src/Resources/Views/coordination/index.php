@@ -16,7 +16,7 @@
     <? if (hasPermission('cadastrar coordenadores')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-            <a href="\coordenadores\criar" class="btn btn-outline-primary" > + </a>
+            <a href="\coordenador" class="btn btn-outline-primary" > + </a>
             </div>
         </div>
     <? }?>
@@ -80,7 +80,7 @@
                                         <? if (hasPermission('editar coordenadores') || hasPermission('deletar coordenadores')) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('editar coordenadores')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/coordenadores/<?=$coordenador->uuid?>/editar">
+                                                    <a class="mb-1 me-2 mt-1" href="/coordenador/<?=$coordenador->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
@@ -106,20 +106,11 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="button" onclick="deleteData('/coordenadores/<?=$coordenador->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                                <button type="button" onclick="deleteData('/coordenador/<?=$coordenador->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div> 
-
-                                                <!-- <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/coordenadores/<?=$coordenador->uuid?>/turma">
-                                                        <div class="border p-2 rounded-3">
-                                                            <i class="icon-link fs-5"></i>
-                                                        </div>
-                                                    </a> 
-                                                <? } ?>   -->
-                                        
+                                                </div>                                         
                                             </td>
                                         <? }?>
                                     </tr>

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Repositories\Classrooms;
+namespace App\Repositories\Activitie;
 
 use App\Config\Database;
-use App\Models\Classrooms\Turma;
+use App\Models\Activitie\Atividade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaRepository {
-    const CLASS_NAME = Turma::class;
-    const TABLE = 'turmas';
+class AtividadeRepository {
+    const CLASS_NAME = Atividade::class;
+    const TABLE = 'atividade';
 
     use FindTrait;
     protected $conn;
@@ -18,75 +18,67 @@ class TurmaRepository {
     public function __construct() {
         $conn = new Database();
         $this->conn = $conn->getConnection();
-        $this->model = new Turma();
+        $this->model = new Atividade();
     }
 
-    public function allClassRooms(array $params = [])
+    public function allActivities(array $params = [])
     {
         $sql = "SELECT 
-            t.*,
-            JSON_OBJECT(
-                    'nome', pf.nome,
-                    'email', pf.email
-                ) AS coordenador 
-            FROM " . self::TABLE . " t 
-            LEFT JOIN coordenadores c ON c.id = t.coordenador_id AND c.ativo = 1
-            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id  
-        ";
-
+                a.*
+            FROM atividade a";
+    
         $conditions = [];
         $bindings = [];
-
-        if (isset($params['search'])) {
-            $conditions[] = "(t.nome LIKE :search OR pf.nome LIKE :search)";
-            $bindings[':search'] = '%' . $params['search'] . '%';
-        }   
-
-        if (isset($params['shift'])) {
-            $conditions[] = "t.turno = :turno";
-            $bindings[':turno'] = $params['shift'];
+    
+        if (isset($params['class_discipline_id'])) {
+            $conditions[] = 'a.turma_disciplina_id = :turma_disciplina_id';
+            $bindings[':turma_disciplina_id'] = $params['class_discipline_id'];
         }
-
+    
         if (isset($params['active'])) {
-            $conditions[] = "t.ativo = :ativo";
+            $conditions[] = 'a.ativo = :ativo';
             $bindings[':ativo'] = $params['active'];
         }
-
+    
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-
-        $sql .= " ORDER BY t.created_at DESC";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute($bindings);
-
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+    
+        $sql .= " ORDER BY a.created_at DESC";
+    
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        }
     }
 
-    public function create(array $data)
+    public function create(array $params) 
     {
-        $class = $this->model->create($data);
+        $class = $this->model->create($params);
+
+        LoggerHelper::logInfo(json_encode($class));
 
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
                 SET 
                     uuid = :uuid,
-                    nome = :nome,
-                    turno = :turno,
-                    ordem = :ordem,
-                    coordenador_id = :coordenador_id
+                    turma_disciplina_id = :turma_disciplina_id,
+                    tipo = :tipo,
+                    valor = :valor,
+                    ativo = :ativo                    
                 "
             );
 
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
-                ':nome' => $class->nome,
-                ':turno' => $class->turno,
-                ':ordem' => $class->ordem,
-                ':coordenador_id' => $class->coordenador_id
+                ':turma_disciplina_id' => $class->turma_disciplina_id,
+                ':valor' => $class->valor,
+                ':tipo' => $class->tipo,
+                ':ativo' => $class->ativo
             ]);
 
             if (!$create) {
@@ -103,27 +95,27 @@ class TurmaRepository {
 
     public function update(array $data, int $id) 
     {
-        $class = $this->model->create($data);
+        $atividades = $this->findById($id);
+
+        $class = $this->model->update($data, $atividades);
 
         try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . " 
                 SET 
-                    nome = :nome,
-                    turno = :turno,
-                    ordem = :ordem,
-                    ativo = :ativo,
-                    coordenador_id = :coordenador_id
+                    turma_disciplina_id = :turma_disciplina_id,
+                    tipo = :tipo,
+                    valor = :valor,
+                    ativo = :ativo    
                 WHERE id = :id
                 "
             );
 
             $update = $stmt->execute([
-                ':nome' => $class->nome,
-                ':turno' => $class->turno,
-                ':ordem' => $class->ordem,
+                ':turma_disciplina_id' => $class->turma_disciplina_id,
+                ':valor' => $class->valor,
+                ':tipo' => $class->tipo,
                 ':ativo' => $class->ativo,
-                ':coordenador_id' => $class->coordenador_id,
                 ':id' => $id
             ]);
 
@@ -131,7 +123,7 @@ class TurmaRepository {
                 return null;
             }
 
-            return $this->findById($id);
+            return $class;
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());

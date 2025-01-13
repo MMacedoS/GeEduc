@@ -3,25 +3,25 @@
 namespace App\Controllers\v1\Coordination;
 
 use App\Controllers\Controller;
-use App\Repositories\Coordination\CoordenacaoRepository;
+use App\Repositories\Coordination\CoordenadorRepository;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class CoordenacaoController extends Controller{
+class CoordenadorController extends Controller{
 
-    protected $coordenacaoRepository;
+    protected $coordenadorRepository;
     protected $pessoaFisicaRepository;
 
     public function __construct(){
         parent::__construct();
-        $this->coordenacaoRepository = new CoordenacaoRepository();
+        $this->coordenadorRepository = new CoordenadorRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
     }
 
     public function index(Request $request){
-        $coordenadores = $this->coordenacaoRepository->allCoordinators();
+        $coordenadores = $this->coordenadorRepository->allCoordinators();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($coordenadores, $perPage, $currentPage);
@@ -42,7 +42,7 @@ class CoordenacaoController extends Controller{
 
     public function create(Request $request)
     {
-        // $coordinators = $this->coordenacaoRepository->allCoordinator();
+        // $coordinators = $this->CoordenadorRepository->allCoordinator();
         
         return $this->router->view('/coordination/create', ['active' => 'pedagogico']);
     }
@@ -69,7 +69,7 @@ class CoordenacaoController extends Controller{
             ]);
         }
         
-        $created = $this->coordenacaoRepository->saveAll($data);
+        $created = $this->coordenadorRepository->saveAll($data);
         
         if(is_null($created)){
             return $this->router->view('coordination/create', ['active' => 'pedagogico',  'danger' => true]);
@@ -79,14 +79,14 @@ class CoordenacaoController extends Controller{
     }
 
     public function edit(Request $request, $id) {
-        $coordenador = $this->coordenacaoRepository->findByUuid($id);
+        $coordenador = $this->coordenadorRepository->findByUuid($id);
 
         if(is_null($coordenador)){
             return $this->router->view('coordination/', ['active' => 'register', 'danger' => true]);
         }
 
 
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->pessoa_fisica_id);
 
         return $this->router->view('coordination/edit', 
         [
@@ -100,13 +100,13 @@ class CoordenacaoController extends Controller{
     {
         $data = $request->getBodyParams();
 
-        $coordenador = $this->coordenacaoRepository->findByUuid($id);
+        $coordenador = $this->coordenadorRepository->findByUuid($id);
 
         if(is_null($coordenador)){
             return $this->router->view('coordination/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->pessoa_fisica_id);
 
         $validator = new Validator($data);
 
@@ -132,7 +132,7 @@ class CoordenacaoController extends Controller{
         $data['id'] = $coordenador->id;
         $data['sector'] = 'coordenador';
 
-        $updated = $this->coordenacaoRepository->updateAll($data);
+        $updated = $this->coordenadorRepository->updateAll($data);
 
         if(is_null($updated)){
             return $this->router->view('coordination/edit', [
@@ -145,7 +145,7 @@ class CoordenacaoController extends Controller{
     }
 
     public function destroy(Request $request, $id) {
-        $coordenador = $this->coordenacaoRepository->findByUuid($id);
+        $coordenador = $this->coordenadorRepository->findByUuid($id);
       
         if(is_null($coordenador)){
             return $this->router->view('coordination/', [
@@ -154,6 +154,6 @@ class CoordenacaoController extends Controller{
             ]);
         }
 
-        $this->coordenacaoRepository->deleteAll($coordenador);
+        $this->coordenadorRepository->deleteAll($coordenador);
     }
 }

@@ -14,8 +14,8 @@
                     <a href="/turmas" class="text-decoration-none">Turmas</a>
             </li>
             <li class="breadcrumb-item">
-                    <i class="icon-content_copy lh-1"></i>
-                    <a href="/turmas/<?=$turma->uuid?>/disciplinas/" class="text-decoration-none"><?=$turma->nome?></a>
+                    <i class="icon-archive lh-1"></i>
+                    <a href="/turmas/<?=$turma->uuid?>/disciplinas" class="text-decoration-none">Turma: <?=$turma->nome?></a>
             </li>
             <li class="breadcrumb-item">Atualizar Componentes Curricular</li>
         </ol>

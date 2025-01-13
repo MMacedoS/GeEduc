@@ -3,24 +3,30 @@
 namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\UserToPerson;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Student\EstudanteRepository;
+use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class EstudanteController extends Controller{
+class EstudanteController extends Controller 
+{
+    use UserToPerson;
 
     protected $estudanteRepository;
     protected $pessoaFisicaRepository;
     protected $planosRepository;
+    protected $estudanteTurmaRepository;
 
     public function __construct(){
         parent::__construct();
         $this->estudanteRepository = new EstudanteRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
         $this->planosRepository = new PlanoRepository();
+        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
     }
 
     public function index(Request $request){
@@ -158,5 +164,21 @@ class EstudanteController extends Controller{
         }
 
         $this->estudanteRepository->deleteAll($estudante);
+    }
+
+    public function indexStudents(Request $request)
+    {
+        $pessoaAuth = $this->authUser();
+        
+        $estudante = $this->estudanteRepository->studentByPersonId($pessoaAuth->id);
+
+        $turmas_estudante = $this->estudanteTurmaRepository->allClassStudents(['student_id' => $estudante->id]);
+
+        return $this->router->view('/student/my-classrooms/index', 
+            [
+                'active' => 'students',  
+                'turmas' => $turmas_estudante
+            ]
+        );
     }
 }

@@ -14,7 +14,7 @@ use App\Utils\Validator;
 
 class TurmaDisciplinaController extends Controller 
 {
-    protected $turmaRepository;
+    private $turmaRepository;
     protected $turmaDisciplinaRepository;
     protected $cargaHorariaRepository;
     protected $professorDisciplinaRepository;
