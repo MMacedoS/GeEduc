@@ -41,6 +41,7 @@ class TurmaDisciplinaRepository {
                 ) AS professor_disciplina,
                 JSON_OBJECT(
                     'id', t.id,
+                    'nome', t.nome,
                     'uuid', t.uuid
                 ) AS turma,
                 JSON_OBJECT(
@@ -64,9 +65,9 @@ class TurmaDisciplinaRepository {
             $bindings[':turma_id'] = $params['class_id'];
         }
     
-        if (isset($params['professor_discipline_id'])) {
-            $conditions[] = 'td.professor_disciplina_id = :professor_disciplina_id';
-            $bindings[':professor_disciplina_id'] = $params['professor_discipline_id'];
+        if (isset($params['teacher_discipline_id'])) {
+            $conditions[] = 'pd.id = :professor_disciplina_id';
+            $bindings[':professor_disciplina_id'] = $params['teacher_discipline_id'];
         }
     
         if (isset($params['academic_year'])) {
@@ -187,5 +188,95 @@ class TurmaDisciplinaRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function classDisciplinesByTeacherDisciplineId(int $teacherDisciplineId){
+
+        $sql = "SELECT 
+                td.*,
+                JSON_OBJECT(
+                    'id', pd.id,
+                    'disciplina_id', pd.disciplina_id,
+                    'professor_id', pd.professor_id,
+                    'professor', JSON_OBJECT(
+                        'id', pf.id,
+                        'nome', pf.nome,
+                        'email', pf.email
+                    ),
+                    'disciplina', JSON_OBJECT(
+                        'id', d.id,
+                        'nome', d.nome
+                    )
+                ) AS professor_disciplina,
+                JSON_OBJECT(
+                    'id', t.id,
+                    'uuid', t.uuid
+                ) AS turma,
+                JSON_OBJECT(
+                    'id', ch.id,
+                    'carga_horaria', ch.carga
+                ) AS carga_horaria
+            FROM turma_disciplina td
+            LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id AND pd.ativo = 1
+            LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1
+            LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
+            LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
+            LEFT JOIN turmas t ON t.id = td.turma_id
+            LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id
+            WHERE td.professor_disciplina_id = :id
+        ";
+
+        $sql .= " ORDER BY created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $teacherDisciplineId]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
+    }
+
+    public function classDisciplinesByTeacherId(int $teacherId){
+
+        $sql = "SELECT 
+                td.*,
+                    JSON_OBJECT(
+                        'id', pd.id,
+                        'disciplina_id', pd.disciplina_id,
+                        'professor_id', pd.professor_id,
+                        'professor', JSON_OBJECT(
+                            'id', pf.id,
+                            'nome', pf.nome,
+                            'email', pf.email
+                        ),
+                        'disciplina', JSON_OBJECT(
+                            'id', d.id,
+                            'nome', d.nome
+                        )
+                    ) AS professor_disciplina,
+                    JSON_OBJECT(
+                        'id', t.id,
+                        'nome', t.nome,
+                        'uuid', t.uuid
+                    ) AS turma
+            FROM professores p
+            INNER JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
+            INNER JOIN professor_disciplina pd ON pd.professor_id = p.id
+            INNER JOIN disciplinas d ON d.id = pd.disciplina_id
+            INNER JOIN turma_disciplina td ON td.professor_disciplina_id = pd.id
+            INNER JOIN turmas t ON t.id = td.turma_id
+            WHERE p.ativo = 1  
+            AND pd.ativo = 1 
+            AND td.ativo = 1
+            AND p.id = :id
+        ";
+
+        $sql .= " ORDER BY p.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $teacherId]);
+        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 }

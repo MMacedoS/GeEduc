@@ -51,6 +51,7 @@
                                     <th></th>
                                     <th>Nome</th>
                                     <th>Turno</th>
+                                    <th>Coordenador</th>
                                     <th>Situação</th>
                                     <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
                                     <th>Ação</th>
@@ -67,6 +68,9 @@
                                         </td>
                                         <td>
                                         <?=$turma->turno ?? 'não identificado'?>
+                                        </td>
+                                        <td>
+                                            <?=getParamsToJson($turma->coordenador)->nome ?? 'Não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">

@@ -31,6 +31,26 @@ class PessoaFisicaRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
     }
 
+    public function personByUserId(int $user_id)
+    {
+        $stmt = $this->conn->query(
+            "SELECT 
+            p.*
+            FROM " . self::TABLE . " p 
+            WHERE p.usuario_id = '$user_id'
+            LIMIT 1
+            "
+        );
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        $register = $stmt->fetch();  
+        if (is_null($register)) {
+            return null;
+        }
+    
+        return $register;       
+    }
+
     public function create(array $data)
     {
         $existingPerson = $this->findPessoaFisica($data);
