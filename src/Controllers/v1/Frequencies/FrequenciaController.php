@@ -116,19 +116,19 @@ class FrequenciaController extends Controller
         $data['class_discipline_id'] = $turma_disciplina->id;
 
        
-        if (isset($data['class_student_id'])) {
-            foreach ($data['class_student_id'] as $studentId => $attendance) {
+        if (isset($data['class_students_id'])) {
+            foreach ($data['class_students_id'] as $classStudentID => $attendance) {
                 $data['faltas'] = $attendance;
-                $data['estudante_id'] = $studentId;
+                $data['class_student_id'] = $classStudentID;
                 $created = $this->frequenciaRepository->create($data);
             }
         }
-       
+      
         if(is_null($created)){
             return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?error=422");
         }
-        
-        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia");
+       
+        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&bimester_id=$data[bimester_id]");
     }
 
     // $dataForChart = array_map(function ($frequencia) {
