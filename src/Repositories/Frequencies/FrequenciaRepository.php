@@ -88,6 +88,16 @@ class FrequenciaRepository {
             $bindings[':class_id'] = $params['class_id'];
         }
         
+        if (isset($params['data_presence'])) {
+            $conditions[] = 'f.data = :data_presence';
+            $bindings[':data_presence'] = $params['data_presence'];
+        }
+        
+        if (isset($params['bimester_id'])) {
+            $conditions[] = 'f.bimestre_id = :bimester_id';
+            $bindings[':bimester_id'] = $params['bimester_id'];
+        }
+        
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -100,6 +110,7 @@ class FrequenciaRepository {
             
             return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);    
         } catch (\PDOException $e) {
+            
             throw new \Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -116,29 +127,75 @@ class FrequenciaRepository {
                     turma_disciplina_id = :turma_disciplina_id,
                     bimestre_id = :bimestre_id,
                     estudante_turma_id = :estudante_turma_id,
-                    data = :data"
+                    data = :data,
+                    faltas = :faltas"
+                    
             );
-    
+            if($this->checkIfExistsFrequency($class)) {
+                $this->removeFrequency($class);
+            }
+      
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
                 ':bimestre_id' => $class->bimestre_id,
                 ':estudante_turma_id' => $class->turma_estudante_id,
                 ':data' => $class->data ?? null,
+                ':faltas' => $class->faltas,
             ]);
-    
+  
             if (!$create) {
                 return null;
             }
     
             return $this->findByUuid($class->uuid);
         } catch (\Throwable $th) {
+            
             // Log de erros
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
     }    
+
+    private function checkIfExistsFrequency($class) :?bool {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
+            $select = $stmt->execute([
+                ':data' => $class->data,
+                ':turma_estudante_id' => $class->turma_estudante_id,
+                ':bimestre_id' => $class->bimester_id
+            ]);
+            if($select && $stmt->fetch()) {
+                return true;
+            }
+            
+            return false;
+        } catch(\Throwable $th) {
+            
+            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
+    }
+    private function removeFrequency($class) :?bool {
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
+            $delete = $stmt->execute([
+                ':data' => $class->data,
+                ':turma_estudante_id' => $class->turma_estudante_id,
+                ':bimestre_id' => $class->bimester_id
+            ]);
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
+    }
 
     public function update(array $data, int $id)
     {
@@ -153,7 +210,7 @@ class FrequenciaRepository {
                     turma_disciplina_id = :turma_disciplina_id,
                     bimestre_id = :bimestre_id,
                     turma_estudante_id = :turma_estudante_id,
-                    frequencia = :frequencia,
+                    faltas = :faltas,
                     data = :data,
                     ativo = :ativo
                 WHERE id = :id"
@@ -163,7 +220,7 @@ class FrequenciaRepository {
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
                 ':bimestre_id' => $class->bimestre_id,
                 ':turma_estudante_id' => $class->turma_estudante_id,
-                ':frequencia' => $class->frequencia ?? null,
+                ':faltas' => $class->faltas ?? null,
                 ':data' => $class->data ?? null,
                 ':id' => $id
             ]);
@@ -203,7 +260,7 @@ class FrequenciaRepository {
                     f.turma_disciplina_id,
                     f.bimestre_id,
                     f.turma_estudante_id,
-                    f.frequencia,
+                    f.faltas,
                     f.data,
                     f.created_at,
                     f.updated_at
