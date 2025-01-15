@@ -118,7 +118,7 @@ class FrequenciaRepository {
     public function create(array $params)
     {
         $class = $this->model->create($params);
-      
+    
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
@@ -131,17 +131,17 @@ class FrequenciaRepository {
                     faltas = :faltas"
                     
             );
-            if($this->checkIfExistsFrequency($class->data, $params["estudante_id"], $class->bimestre_id)) {
-                $this->removeFrequency($class->data, $params["estudante_id"], $class->bimestre_id);
+            if($this->checkIfExistsFrequency($class)) {
+                $this->removeFrequency($class);
             }
       
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
                 ':bimestre_id' => $class->bimestre_id,
-                ':estudante_turma_id' => $params["estudante_id"],
+                ':estudante_turma_id' => $class->turma_estudante_id,
                 ':data' => $class->data ?? null,
-                ':faltas' => $params["faltas"],
+                ':faltas' => $class->faltas,
             ]);
   
             if (!$create) {
@@ -158,13 +158,13 @@ class FrequenciaRepository {
         }
     }    
 
-    private function checkIfExistsFrequency($data, $estudante_id, $bimestre_id) :?bool {
+    private function checkIfExistsFrequency($class) :?bool {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
             $select = $stmt->execute([
-                ':data' => $data,
-                ':turma_estudante_id' => $estudante_id,
-                ':bimestre_id' => $bimestre_id
+                ':data' => $class->data,
+                ':turma_estudante_id' => $class->turma_estudante_id,
+                ':bimestre_id' => $class->bimester_id
             ]);
             if($select && $stmt->fetch()) {
                 return true;
@@ -178,13 +178,13 @@ class FrequenciaRepository {
             return null;
         }
     }
-    private function removeFrequency($data, $estudante_id, $bimestre_id) :?bool {
+    private function removeFrequency($class) :?bool {
         try {
             $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
             $delete = $stmt->execute([
-                ':data' => $data,
-                ':turma_estudante_id' => $estudante_id,
-                ':bimestre_id' => $bimestre_id
+                ':data' => $class->data,
+                ':turma_estudante_id' => $class->turma_estudante_id,
+                ':bimestre_id' => $class->bimester_id
             ]);
             if($delete) {
                 return true;
