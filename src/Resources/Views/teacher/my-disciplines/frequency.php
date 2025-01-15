@@ -96,7 +96,7 @@
                             $frequenciasMap[$frequencia->estudante_turma_id] = $frequencia->faltas;
                         }
                         foreach ($estudantes as $key => $estudante) {             
-                            $checked = isset($frequenciasMap[$estudante->id]) && $frequenciasMap[$estudante->id] ? "checked" : "";
+                          
                         ?>
                             <div class="row mb-3">
                                 <div class="col-7">
@@ -107,20 +107,11 @@
                                 <div class="col-5">
                                     <div class="form-check form-switch form-check-reverse mr-2" style="padding-right: 5.5em;">
                                     <label class="form-check-label fs-5" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
-                                    <select name="class_student_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
+                                    <select name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
                                         <option value="0" <?= $frequenciasMap[$estudante->id] == 0 ? 'selected' : '' ?>>0</option>
                                         <option value="1" <?= $frequenciasMap[$estudante->id] == 1 ? 'selected' : '' ?>>1</option>
                                         <option value="2" <?= $frequenciasMap[$estudante->id] == 2 ? 'selected' : '' ?>>2</option>
                                     </select>
-                                        <!-- <input 
-                                            class="form-check-input fs-3" 
-                                            type="checkbox" 
-                                            role="switch" 
-                                            id="presenca-<?= $estudante->id ?>" 
-                                            name="class_student_id[]"
-                                            value="<?= $estudante->id ?>"
-                                            <?=$checked?>
-                                        /> -->
                                         
                                     </div>
                                 </div>
