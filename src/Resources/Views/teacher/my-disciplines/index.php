@@ -11,7 +11,7 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\meus-componentes" class="text-decoration-none">Meus Compoenentes</a>
+                <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
             </li>
             <li class="breadcrumb-item">Meus Componentes Curriculares</li>
         </ol>
