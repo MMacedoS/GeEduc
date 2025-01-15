@@ -29,7 +29,7 @@ class Frequencia {
         $frequencia->turma_disciplina_id = $data['class_discipline_id'];
         $frequencia->bimestre_id = $data['bimester_id'] ?? null;
         $frequencia->turma_estudante_id = $data['class_student_id'] ?? '0.0';     
-        $frequencia->faltas = (int)$data['frequency'] ?? 1;  
+        $frequencia->faltas = (int)$data['faltas'] ?? 0;  
         $frequencia->data = $data['data'] ?? null;  
         $frequencia->updated_at = $data['updated_at'] ?? null;
         $frequencia->created_at = $data['created_at'] ?? null;
