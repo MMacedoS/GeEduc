@@ -118,7 +118,7 @@ class FrequenciaRepository {
     public function create(array $params)
     {
         $class = $this->model->create($params);
-        // dd($class);
+      
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
@@ -134,7 +134,7 @@ class FrequenciaRepository {
             if($this->checkIfExistsFrequency($class->data, $params["estudante_id"], $class->bimestre_id)) {
                 $this->removeFrequency($class->data, $params["estudante_id"], $class->bimestre_id);
             }
-            // dd();
+      
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
@@ -160,7 +160,6 @@ class FrequenciaRepository {
 
     private function checkIfExistsFrequency($data, $estudante_id, $bimestre_id) :?bool {
         try {
-            // dd($estudante_id);
             $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
             $select = $stmt->execute([
                 ':data' => $data,

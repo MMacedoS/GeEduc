@@ -110,7 +110,7 @@ class FrequenciaController extends Controller
     public function store(Request $request, string $class_discipline_id)
     {
         $data = $request->getBodyParams();
-        // dd($data);
+     
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
 
         $data['class_discipline_id'] = $turma_disciplina->id;
@@ -123,8 +123,7 @@ class FrequenciaController extends Controller
                 $created = $this->frequenciaRepository->create($data);
             }
         }
-        // dd("fim");
-        
+       
         if(is_null($created)){
             return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?error=422");
         }
