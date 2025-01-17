@@ -59,6 +59,7 @@ class SiteEventoRepository {
             $site_archive = $this->siteArquivoRepository->create($data, $dir);
 
             $site_eventoData = array_merge($data, ['site_arquivo_id' => $site_archive->id]);
+            
             $site_evento = $this->create($site_eventoData);
 
             return $site_evento;
@@ -92,6 +93,61 @@ class SiteEventoRepository {
             }
 
             return $this->findByUuid($site_evento->uuid);
+        }catch(\Throwable $th){
+            return null;
+        }
+    }
+
+    public function updateAll(array $data, string $dir){
+        if(empty($data)){
+            return null;
+        }
+
+        try{
+            $archive = $this->siteArquivoRepository->update($data['arquivo'], $dir, $data['site_arquivo_id']);
+            if(is_null($archive)){
+                return null;
+            }
+
+            $site_evento = $this->update($data, $data['id']);
+            if(is_null($site_evento)){
+                return null;
+            }
+
+            return $site_evento;
+        }catch(\Throwable $th){
+            return null;
+        }
+    }
+
+    public function update(array $data, int $id){
+        $site_evento = $this->findById($id);
+
+        $site_evento = $this->model->create($data);
+
+        try{
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . "
+                    set 
+                        nome = :name,
+                        descricao = :description
+                        ativo = :active
+                    WHERE id = :id
+                "
+            );
+
+            $updated = $stmt->execute([
+                ':name' => $site_evento->nome,
+                ':description' => $site_evento->descricao,
+                ':active' => $site_evento->ativo
+            ]);
+
+            if(!$updated){
+                return null;
+            }
+
+            return $this->findById($id);
+
         }catch(\Throwable $th){
             return null;
         }

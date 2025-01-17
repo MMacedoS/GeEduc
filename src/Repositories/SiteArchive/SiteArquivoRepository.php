@@ -66,17 +66,17 @@ class SiteArquivoRepository {
                 "INSERT INTO " . self::TABLE . "
                     SET
                         uuid = :uuid,
-                        nome_original = :nome_original,
-                        ext_arquivo = :ext_arquivo,
-                        arquivo = :arquivo
+                        nome_original = :original_name,
+                        ext_arquivo = :ext_archive,
+                        arquivo = :archive
                 "
             );
 
             $create = $stmt->execute([
                 ':uuid' => $archive->uuid,
-                ':nome_original' => $manipulation['name'],
-                ':ext_arquivo' => $manipulation['ext'],
-                ':arquivo' => $manipulation['new_name']
+                ':original_name' => $manipulation['name'],
+                ':ext_archive' => $manipulation['ext'],
+                ':archive' => $manipulation['new_name']
             ]);
 
             if(!$create){
@@ -89,8 +89,14 @@ class SiteArquivoRepository {
         }
     }
 
-    public function update(array $data, int $id){
+    public function update(array $data, string $dir, int $id){
         $archive = $this->model->create($data);
+
+        $manipulation = publicPath($data['arquivo'], $dir);
+
+        if(!$manipulation){
+            return null;
+        }
 
         try {
             $stmt = $this->conn->prepare(
@@ -105,9 +111,9 @@ class SiteArquivoRepository {
 
             $create = $stmt->execute([
                 ':id' => $id,
-                ':original_name' => $archive->nome_original,
-                ':ext_archive' => $archive->ext_arquivo,
-                ':archive' => $archive->arquivo
+                ':original_name' => $manipulation['name'],
+                ':ext_archive' => $manipulation['ext'],
+                ':archive' => $manipulation['new_name']
             ]);
 
             if(!$create){
