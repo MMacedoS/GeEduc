@@ -211,8 +211,8 @@ $(document).ready(function() {
             const day = selectedDate.getDay(); // 0: Sunday, 6: Saturday
 
             // Check if the selected date is in the future or is a weekend
-            if (selectedDate > today || day === 0 || day === 6) {
-                alert("Selecione uma data válida (dias úteis até hoje).");
+            if (selectedDate > today || day === 5 || day === 6) {
+                alert("Selecione uma data válida (dias úteis - Segunda até Sexta).");
                 dateInput.value = ""; // Reset to empty if invalid
             }
         });

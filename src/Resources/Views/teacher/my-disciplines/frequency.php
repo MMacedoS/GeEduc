@@ -140,8 +140,16 @@
 <script>
 $(document).ready(function() {
     $('#search').click(function() {
-        // Capturar valores do formulário
-        var data = $('#data-frequencia').val();
+        searchDate();       
+    });
+
+    $('#data-frequencia').change(function() {
+        searchDate();       
+    });
+
+    const searchDate = function() {
+         // Capturar valores do formulário
+         var data = $('#data-frequencia').val();
         var bimester_id = $('#bimester_id').val();
 
         // Montar a URL
@@ -150,7 +158,7 @@ $(document).ready(function() {
 
         // Redirecionar para a URL
         window.location.href = url;
-    });
+    }
 });
 
 </script>

@@ -79,13 +79,19 @@ class FrequenciaController extends Controller
                     'school_year' => Date('Y')
                 ]
             );
+        
+        $data_presence = Date('Y-m-d');
+
+        if(isset($paramsURL['data']) && !empty($paramsURL['data'])) {
+            $data_presence = $paramsURL['data'];
+        }   
 
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
                 [
                     'class_discipline_id' => $turma_disciplina->id,
                     'class_id' => $turma_disciplina->turma_id,
-                    'data_presence' => $paramsURL['data'] ?? Date('Y-m-d'),
+                    'data_presence' => $data_presence,
                     'bimester_id' => $paramsURL['bimester_id'] ?? null
                 ]
             );
@@ -101,7 +107,7 @@ class FrequenciaController extends Controller
                 'estudantes' => $estudantes,
                 'frequencias' => $frequencias,
                 'bimestres' => $bimestres,
-                'dataFilter' => $paramsURL['data'] ?? Date('Y-m-d'),
+                'dataFilter' => $data_presence,
                 'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
             ]
         ); 
