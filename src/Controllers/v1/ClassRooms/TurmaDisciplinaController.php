@@ -227,8 +227,6 @@ class TurmaDisciplinaController extends Controller
         $class_disciplines = $this->turmaDisciplinaRepository->findByUuid($id);
         $classRooms = $this->turmaRepository->findByUuid($class_id);
 
-        LoggerHelper::logInfo(json_encode($classRooms));
-
         if (is_null($class_disciplines)) {
             return $this->router->redirect("turmas/$classRooms->uuid/disciplinas?error=not_deleted");
         }
