@@ -94,8 +94,8 @@ if (!function_exists('filterAvailableToursWithYear')) {
 
 if(!function_exists('publicPath')){
     function publicPath($file, $path){
-        if(empty($file['name'])){
-            return null;
+        if(empty($file['name']) || empty($file['tmp_name'])){
+            echo 'Erro: Arquivo não enviado corretamente.';
         }
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -112,8 +112,8 @@ if(!function_exists('publicPath')){
                 'new_name' => $new_name,
                 'ext' => $ext
             ];
+        }else{
+            return null;
         }
-
-        return null;
     }
 }

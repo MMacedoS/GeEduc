@@ -2,7 +2,7 @@
 
 namespace App\Models\SiteEvent;
 
-use App\Models\Trais\UuidTrait;
+use App\Models\Traits\UuidTrait;
 
 class SiteEvento {
     
@@ -11,7 +11,8 @@ class SiteEvento {
     public $id;
     public $uuid;
     public $nome;
-    public $site_arquivos_id;
+    public $arquivo;
+    public $site_arquivo_id;
     public $descricao;
     public $ativo;
     public $created_at;
@@ -26,7 +27,8 @@ class SiteEvento {
         $site_evento->id = $data['id'] ?? null;
         $site_evento->uuid = $data['uuid'] ?? $this->generateUUID();
         $site_evento->nome = $data['name'] ?? null;
-        $site_evento->site_arquivo_id = $data['site_arquvio_id'];
+        $site_evento->arquivo = $data['arquivo'] ?? null;
+        $site_evento->site_arquivo_id = $data['site_arquivo_id'];
         $site_evento->descricao = $data['description'] ?? null;
         $site_evento->ativo = $data['active'] ?? null;
         $site_evento->created_at = $data['created_at'] ?? null;

@@ -20,6 +20,7 @@ use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\Coordination\CoordenacaoController;
+use App\Controllers\v1\SiteEvent\SiteEventoController;
 
 $router = new Router();
 $auth = new Auth();
@@ -42,6 +43,7 @@ $mensalidadeController = new MensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenacaoController = new CoordenacaoController();
 $atividadeController = new AtividadeController();
+$siteEventoController = new SiteEventoController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -175,3 +177,10 @@ $router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{
 $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
 
+//siteEvents
+$router->create('GET', '/site-eventos', [$siteEventoController, 'index'], $auth);
+$router->create('GET', '/site-eventos/criar', [$siteEventoController, 'create'], $auth);
+$router->create('POST', '/site-eventos/criar', [$siteEventoController, 'store'], $auth);
+$router->create('GET', '/site-eventos/editar/{id}', [$siteEventoController, 'edit'], $auth);
+$router->create('POST', '/site-eventos/editar/{id}', [$siteEventoController, 'update'], $auth);
+$router->create('DELETE', '/site-eventos/{id}', [$siteEventoController, 'destroy'], $auth);

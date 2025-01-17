@@ -47,7 +47,7 @@ class SiteEventoRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, selff::CLASS_NAME);
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
     public function saveAll(array $data, string $dir){
@@ -57,9 +57,8 @@ class SiteEventoRepository {
 
         try{
             $site_archive = $this->siteArquivoRepository->create($data, $dir);
-
-            $site_eventoData = array_merge($data, ['site_arquivo_id' => $site_archive->id]);
             
+            $site_eventoData = array_merge($data, ['site_arquivo_id' => $site_archive['id']]);
             $site_evento = $this->create($site_eventoData);
 
             return $site_evento;
@@ -78,23 +77,25 @@ class SiteEventoRepository {
                     SET
                         uuid = :uuid,
                         nome = :name,
-                        descricao = :description
+                        descricao = :description,
+                        site_arquivo_id = :site_arquivo_id
                 "
             );
 
             $create = $stmt->execute([
                 ':uuid' => $site_evento->uuid,
                 ':name' => $site_evento->nome,
-                ':description' => $site_evento->descricao
+                ':description' => $site_evento->descricao,
+                ':site_arquivo_id' => $site_evento->site_arquivo_id
             ]);
             
-            if(is_null($create)){
+            if(!$create){
                 return null;
             }
 
             return $this->findByUuid($site_evento->uuid);
         }catch(\Throwable $th){
-            return null;
+            echo $th->getMessage();
         }
     }
 

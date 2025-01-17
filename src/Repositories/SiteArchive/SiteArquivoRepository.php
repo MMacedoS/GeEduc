@@ -54,13 +54,9 @@ class SiteArquivoRepository {
 
     public function create(array $data, string $dir){
         $archive = $this->model->create($data);
-
+        
         $manipulation = publicPath($data['arquivo'], $dir);
-
-        if(!$manipulation){
-            return null;
-        }
-
+        
         try{
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
@@ -79,11 +75,12 @@ class SiteArquivoRepository {
                 ':archive' => $manipulation['new_name']
             ]);
 
-            if(!$create){
+            if(is_null($create)){
                 return null;
             }
 
-            return $this->findByUuid($archive->uuid);
+            $archiveFromDb = $this->findByUuid($archive->uuid);
+            return $archiveFromDb;
         }catch(\Throwable $th){
             return null;
         }
