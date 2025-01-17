@@ -52,11 +52,10 @@ class SiteArquivoRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
     }
 
-    public function create(array $data /*passar rota aqui*/){
-        $archive = $this->model->create($data);
+    public function create(array $data, string $dir){
+        $archive = $this->model->create($data, $dir);
 
-                                        ///passar uma rota vindo do controller
-        $manipulation = publicPath($data['arquivo'], '/files/site/carousel/');
+        $manipulation = publicPath($data['arquivo'], $dir);
 
         if(!$manipulation){
             return null;
