@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Activitie;
+namespace App\Models\Scores;
 
 use App\Models\Traits\uuidTrait;
 
-class Note {
+class Score {
 
     use uuidTrait;
 
@@ -21,17 +21,17 @@ class Note {
 
     public function create(
         array $data
-    ) : Note{
-        $note = new Note();
-        $note->id = $data['id'] ?? null;
-        $note->uuid = $data['uuid'] ?? $this->generateUUID();
-        $note->atividade_id = $data['activie_id'];
-        $note->bimestre_id = $data['bimester_id'];
-        $note->turma_disciplina_id = $data['class_discipline_id'];
-        $note->nota = floatval($data['value']) ?? '0.0';     
-        $note->updated_at = $data['updated_at'] ?? null;
-        $note->created_at = $data['created_at'] ?? null;
-        return $note;
+    ) : Score{
+        $score = new Score();
+        $score->id = $data['id'] ?? null;
+        $score->uuid = $data['uuid'] ?? $this->generateUUID();
+        $score->atividade_id = $data['activie_id'];
+        $score->bimestre_id = $data['bimester_id'];
+        $score->turma_disciplina_id = $data['class_discipline_id'];
+        $score->nota = floatval($data['value']) ?? '0.0';     
+        $score->updated_at = $data['updated_at'] ?? null;
+        $score->created_at = $data['created_at'] ?? null;
+        return $score;
     }
 
     // public function update(array $data, Note $note): Note
