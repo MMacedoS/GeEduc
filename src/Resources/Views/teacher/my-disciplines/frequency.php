@@ -98,16 +98,16 @@
                         foreach ($estudantes as $key => $estudante) {             
                           
                         ?>
-                            <div class="row mb-3">
+                            <div class="row mb-3 me-0">
                                 <div class="col-6">
-                                    <span class="fw-2"><?= getParamsToJson($estudante->estudante)->nome ?>
+                                    <span class="fw-2 mt-2"><?= getParamsToJson($estudante->estudante)->nome ?>
                                     -
                                     <?= getParamsToJson($estudante->turma)->nome ?></span>
                                 </div>
                                 <div class="col-6">
-                                    <div class="form-check form-switch form-check-reverse mr-2" style="padding-right: 5.5em;">
-                                        <label class="form-check-label" style="width: 100px" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
-                                        <select name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
+                                    <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">
+                                        <label class="form-check-label mt-2 me-2" style="width: 100px;" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
+                                        <select class="form-select" name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
                                             <option value="0" <?= $frequenciasMap[$estudante->id] == 0 ? 'selected' : '' ?>>0</option>
                                             <option value="1" <?= $frequenciasMap[$estudante->id] == 1 ? 'selected' : '' ?>>1</option>
                                             <option value="2" <?= $frequenciasMap[$estudante->id] == 2 ? 'selected' : '' ?>>2</option>
