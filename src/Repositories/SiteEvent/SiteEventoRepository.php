@@ -152,4 +152,26 @@ class SiteEventoRepository {
             return null;
         }
     }
+
+    public function deleteAll($site_evento){
+        $site_archive = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+
+        $this->siteArquivoRepository->delete($site_evento->site_arquivo_id);
+
+        return $this->delete($site_evento->id);
+    }
+
+    public function delete(int $id){
+        $stmt = $this->conn->prepare(
+            "UPDATE " . self::TABLE . "
+                SET
+                    ativo = 0
+                WHERE id = :id
+            "
+        );
+
+        $updated = $stmt->execute(['id' => $id]);
+
+        return $updated;
+    }
 }
