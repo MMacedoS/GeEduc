@@ -53,7 +53,7 @@ class SiteArquivoRepository {
     }
 
     public function create(array $data, string $dir){
-        $archive = $this->model->create($data, $dir);
+        $archive = $this->model->create($data);
 
         $manipulation = publicPath($data['arquivo'], $dir);
 
