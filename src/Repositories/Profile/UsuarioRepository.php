@@ -179,7 +179,7 @@ class UsuarioRepository {
         }
     
         $stmt = $this->conn->prepare(
-            "SELECT id as code, senha, nome, email, ativo, uuid as id 
+            "SELECT id as code, senha, nome, email, painel, ativo, uuid as id 
              FROM " . self::TABLE . " 
              WHERE email = :email"
         );

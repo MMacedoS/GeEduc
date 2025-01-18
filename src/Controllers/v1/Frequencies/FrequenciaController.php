@@ -3,12 +3,14 @@
 namespace App\Controllers\v1\Frequencies;
 
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\GenericTrait;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Frequencies\FrequenciaRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Repositories\Teacher\ProfessorDisciplinaRepository;
+use App\Repositories\Work_Load\CargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -16,6 +18,8 @@ use App\Utils\Validator;
 
 class FrequenciaController extends Controller 
 {
+    use GenericTrait;
+
     const TEN = 10;
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
@@ -23,6 +27,7 @@ class FrequenciaController extends Controller
     protected $estudanteTurmaRepository;
     protected $professorDisciplinaRepository;
     protected $bimestreRepository;
+    protected $cargaHorariaRepository;
 
     public function __construct()
     {
@@ -33,11 +38,12 @@ class FrequenciaController extends Controller
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
         $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
         $this->bimestreRepository = new BimestreRepository();
+        $this->cargaHorariaRepository = new CargaHorariaRepository();
     }
 
-    public function indexStudents(Request $request, string $class_discipline_id)
+    public function indexStudents(Request $request, string $studant_class_id)
     {
-        $student_class = $this->estudanteTurmaRepository->findByUuid($class_discipline_id);
+        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -47,10 +53,21 @@ class FrequenciaController extends Controller
                 ]
             );
 
+        $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
+
+        $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
+
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($frequencias, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
+
+        $total_faltas = $this->sumAbsences($frequencias); 
+        $carga = $carga_horaria->carga ?? 80;
+
+        $presenca = $carga - $total_faltas;
+        $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
+        $percentual_presenca = round(($presenca / $carga) * 100, 2);
 
         return $this->router->view(
             'student/my-classrooms/frequencies', 
@@ -58,6 +75,10 @@ class FrequenciaController extends Controller
                 'active' => 'students',
                 'estudante_turma' => $student_class,
                 'frequencias' => $paginatedBoards, 
+                'percentual_faltas' => $percentual_faltas,
+                'percentual_presenca' => $percentual_presenca,
+                'total_faltas' => $total_faltas,
+                'presenca' => $presenca,
                 'links' => $paginator->links()
             ]
         ); 

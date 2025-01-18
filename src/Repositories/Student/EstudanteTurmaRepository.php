@@ -174,4 +174,22 @@ class EstudanteTurmaRepository {
 
         return $updated;
     }
+
+    public function studentClassByStudentId(int $student_id){
+
+        $sql = "SELECT
+            et.*
+            FROM " . self::TABLE . " et
+            WHERE et.estudante_id = :id
+        ";
+
+        $sql .= " ORDER BY et.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $student_id]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
+    }
 }
