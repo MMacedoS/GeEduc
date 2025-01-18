@@ -6,6 +6,7 @@ use App\Config\Database;
 use App\Models\Scores\Nota;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
+use PDO;
 
 class NotaRepository {
     const CLASS_NAME = Nota::class;
@@ -23,82 +24,47 @@ class NotaRepository {
 
     public function allScores(array $params = [])
     {
-        $sql = "SELECT 
-            f.*,
+        $sql = "SELECT
+            n.*, 
             JSON_OBJECT(
                 'id', td.id,
                 'uuid', td.uuid,
-                'professor_disciplina', JSON_OBJECT(
-                    'id', pd.id,
-                    'disciplina_id', pd.disciplina_id,
-                    'professor_id', pd.professor_id,
-                    'professor', JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    ),
-                    'disciplina', JSON_OBJECT(
-                        'id', d.id,
-                        'nome', d.nome
-                    )
-                ),
-                'turma', JSON_OBJECT(
-                    'id', t.id,
-                    'uuid', t.uuid
-                ),
-                'carga_horaria', JSON_OBJECT(
-                    'id', ch.id,
-                    'carga_horaria', ch.carga
-                ),
-                'bimestres', JSON_OBJECT(
-                    'id', b.id,
-                    'bimestre', b.bimestre
-                )
-            ) AS turma_disciplina_details
-        FROM frequencias f
-        LEFT JOIN turma_disciplina td ON td.id = f.turma_disciplina_id
-        LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id AND pd.ativo = 1
-        LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1
-        LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
-        LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
-        LEFT JOIN turmas t ON t.id = td.turma_id
-        LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id         
-        LEFT JOIN bimestres b ON b.id = f.bimestre_id ";
+                'atividades', JSON_OBJECT(
+                    'id', a.id,
+                    'uuid', a.uuid,
+                    'tipo', a.tipo
+                ) 
+            ) AS turmas_details
+            FROM notas n
+            LEFT JOIN atividade a ON n.atividade_id = a.id
+            LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
+            LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id";
+        
         
         $conditions = [];
         $bindings = [];
         
         if (isset($params['class_discipline_id'])) {
-            $conditions[] = 'f.turma_disciplina_id = :class_discipline_id';
+            $conditions[] = 'a.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
         }
 
         if (isset($params['bimester_id'])) {
-            $conditions[] = 'f.bimestre_id = :bimester_id';
+            $conditions[] = 'n.bimestre_id = :bimester_id';
             $bindings[':bimester_id'] = $params['bimester_id'];
-        }
-        
-        if (isset($params['student_id'])) {
-            $conditions[] = 'f.estudante_turma_id = :student_id';
-            $bindings[':student_id'] = $params['student_id'];
-        }
-
-        if (isset($params['class_id'])) {
-            $conditions[] = 't.id = :class_id';
-            $bindings[':class_id'] = $params['class_id'];
         }
         
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY b.bimestre asc, f.created_at DESC";
+        $sql .= " ORDER BY n.created_at DESC";
 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             
-            return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);    
+            return $stmt->fetchAll(PDO::FETCH_CLASS, self::CLASS_NAME);    
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
         }
@@ -107,125 +73,76 @@ class NotaRepository {
     public function create(array $params)
     {
         $class = $this->model->create($params);
-    
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
                 SET 
                     uuid = :uuid,
-                    turma_disciplina_id = :turma_disciplina_id,
+                    atividade_id = :atividade_id,
                     bimestre_id = :bimestre_id,
                     estudante_turma_id = :estudante_turma_id,
-                    data = :data"
+                    nota = :nota"
             );
-    
+
+            $idScore = $this->checkIfExistsScore($class);
+            if($idScore) {
+                $this->removeScore($idScore);
+            }
+
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
-                ':turma_disciplina_id' => $class->turma_disciplina_id,
+                ':atividade_id' => $class->atividade_id,
                 ':bimestre_id' => $class->bimestre_id,
-                ':estudante_turma_id' => $class->turma_estudante_id,
-                ':data' => $class->data ?? null,
+                ':estudante_turma_id' => $class->estudante_turma_id,
+                ':nota' => $class->nota
             ]);
-    
+  
             if (!$create) {
                 return null;
             }
     
             return $this->findByUuid($class->uuid);
         } catch (\Throwable $th) {
-            // Log de erros
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
     }    
 
-    public function update(array $data, int $id)
-    {
-        $frequencia = $this->findById($id);
 
-        $class = $this->model->update($data, $frequencia);
-
+    private function checkIfExistsScore($class) :?String {
         try {
-            $stmt = $this->conn->prepare(
-                "UPDATE " . self::TABLE . " 
-                SET 
-                    turma_disciplina_id = :turma_disciplina_id,
-                    bimestre_id = :bimestre_id,
-                    turma_estudante_id = :turma_estudante_id,
-                    frequencia = :frequencia,
-                    data = :data,
-                    ativo = :ativo
-                WHERE id = :id"
-            );
-
-            $update = $stmt->execute([
-                ':turma_disciplina_id' => $class->turma_disciplina_id,
+            $stmt = $this->conn->prepare("SELECT id FROM notas WHERE estudante_turma_id = :estudante_turma_id AND bimestre_id = :bimestre_id AND atividade_id = :atividade_id");
+            $stmt->execute([
+                ':estudante_turma_id' => $class->estudante_turma_id,
                 ':bimestre_id' => $class->bimestre_id,
-                ':turma_estudante_id' => $class->turma_estudante_id,
-                ':frequencia' => $class->frequencia ?? null,
-                ':data' => $class->data ?? null,
-                ':id' => $id
+                ':atividade_id' => $class->atividade_id
             ]);
 
-            if (!$update) {
-                return null;
-            }
-
-            return $class;
-        } catch (\Throwable $th) {
-            // Log de erros
-            LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
+            $id = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $id['id'] ?? null;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação select: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
         }
     }
 
-    public function delete(int $id)
-    {
-        $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
-             SET ativo = 0 
-             WHERE id = :id"
-        );
-
-        $updated = $stmt->execute(['id' => $id]);
-
-        return $updated;
-    }
-
-    public function selectFrequencies(int $turmaDisciplinaId, int $turmaEstudanteId)
-    {
-        $sql = "SELECT 
-                    f.id,
-                    f.uuid,
-                    f.turma_disciplina_id,
-                    f.bimestre_id,
-                    f.turma_estudante_id,
-                    f.frequencia,
-                    f.data,
-                    f.created_at,
-                    f.updated_at
-                FROM " . self::TABLE . " f
-                WHERE f.turma_disciplina_id = :turma_disciplina_id
-                AND f.turma_estudante_id = :turma_estudante_id";
-
+    private function removeScore($id) :?bool {
         try {
-            $stmt = $this->conn->prepare($sql);
-
-            $stmt->execute([
-                ':turma_disciplina_id' => $turmaDisciplinaId,
-                ':turma_estudante_id' => $turmaEstudanteId
+            $stmt = $this->conn->prepare("DELETE FROM notas WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
             ]);
-
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $th) {
-            // Log de erros
-            LoggerHelper::logInfo("Erro ao buscar frequências: {$th->getMessage()}");
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
-            return [];
+            return null;
         }
     }
-
 }
