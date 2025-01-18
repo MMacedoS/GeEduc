@@ -3,6 +3,7 @@
 namespace App\Controllers\v1\Frequencies;
 
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\GenericTrait;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
@@ -17,6 +18,8 @@ use App\Utils\Validator;
 
 class FrequenciaController extends Controller 
 {
+    use GenericTrait;
+
     const TEN = 10;
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
@@ -41,8 +44,6 @@ class FrequenciaController extends Controller
     public function indexStudents(Request $request, string $studant_class_id)
     {
         $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
-
-        
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -155,13 +156,6 @@ class FrequenciaController extends Controller
         }
        
         return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&bimester_id=$data[bimester_id]");
-    }
-
-    private function sumAbsences($frequencias)
-    {
-        return array_reduce($frequencias, function ($carry, $item) {
-            return $carry + $item->faltas;
-        }, 0);
     }
 
     // $dataForChart = array_map(function ($frequencia) {

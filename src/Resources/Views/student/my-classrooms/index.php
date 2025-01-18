@@ -39,8 +39,8 @@
                                 <tr>
                                     <th></th>
                                     <th>Turma</th>
-                                    <th>Coordenador</th>
-                                    <th>Ano</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell" >Coordenador</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Ano</th>
                                     <? if (hasPermission('estudante')) {?>
                                      <th>Ação</th>
                                      <? } ?>
@@ -54,10 +54,10 @@
                                         <td><?=$turma->id?></td>
                                         <td class="fw-bold"> <?=getParamsToJson($turma->turma)->nome ?? 'não identificado'?>
                                         </td>
-                                        <td>
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
                                         <?=getParamsToJson($turma->turma)->coordenador->nome ?? 'não identificado'?>
                                         </td>
-                                        <td>    
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <?=$turma->ano_letivo?>
                                         </td>
                                         <? if (hasPermission('estudante')) {?>
