@@ -132,6 +132,21 @@
                                     <? }?>
                                 </ul>
                             </li>
+                            <?php } if (hasPermission('visualizar financeiro')) {?>
+                            <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-now_widgets"></i> Site
+                                </a>
+                                <ul class="dropdown-menu"> 
+                                    <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="/site-eventos/">
+                                                <span>Eventos</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
                         <?php } if (hasPermission('visualizar cadastro')) { ?>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

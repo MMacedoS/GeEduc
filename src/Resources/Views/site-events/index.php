@@ -9,7 +9,7 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\" class="text-decoration-none">Início</a>
             </li>
-            <li class="breadcrumb-item">Site Eventos</li>
+            <li class="breadcrumb-item">Eventos</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>

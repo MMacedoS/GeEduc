@@ -78,10 +78,76 @@ class SiteEventoController extends Controller {
         return $this->router->redirect('site-eventos/');
     }
 
-    public function edit(Request $request, int $id){}
+    public function edit(Request $request, $id){
+        $site_evento = $this->siteEventoRepository->findByUuid($id);
 
-    public function update(Request $request, int $id){}
+        if(is_null($site_evento)){
+            return $this->router->view('site-events/', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
 
-    public function destroy(Request $request, int $id){}
+        return $this->router->view('site-events/edit', [
+            'active' => 'register',
+            'site_evento' => $site_evento
+        ]);
+    }
+
+    public function update(Request $request, $id){
+        $data = $request->getBodyParams();
+
+        $site_evento = $this->siteEventoRepository->findByUuid($id);
+
+        if(is_null($site_evento)){
+            return $this->router->view('site-events/',[
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $site_arquivo = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100',
+            'description' => 'max:255'
+        ];
+
+        if(!$validator->validate($rules)){
+            return $this->router->view('site-events/edit', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $data['site_arquivo_id'] = $site_evento->site_arquivo_id;
+        $data['id'] = $site_evento->id;
+
+        $updated = $this->siteEventoRepository->updateAll($data);
+
+        if(is_null($updated)){
+            return $this->router->view('site-events/edit', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->redirect('site-eventos');
+    }
+
+    public function destroy(Request $request, $id){
+        $site_evento = $this->siteEventoRepository->findByUuid($id);
+
+        if(is_null($site_evento)){
+            return $this->router->view('site-events/', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $this->siteEventoRepository->deleteAll($site_evento);
+    }
 
 }

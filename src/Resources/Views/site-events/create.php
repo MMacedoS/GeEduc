@@ -12,7 +12,7 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/site-eventos" class="text-decoration-none">Site Eventos</a>
+                    <a href="/site-eventos" class="text-decoration-none">Eventos</a>
                 </li>
                 <li class="breadcrumb-item">Cadastrar</li>
             </ol>
