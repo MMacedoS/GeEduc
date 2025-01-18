@@ -11,7 +11,7 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\meus-componentes" class="text-decoration-none">Meus Compoenentes</a>
+                <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
             </li>
             <li class="breadcrumb-item">Componente: <?=getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
         </ol>
@@ -51,18 +51,8 @@
         <div class="card mb-3">
             <div class="card-body">
                 <div class="container mt-4">   
-                    <form id="frequencia-form" action="/meus-componentes/<?=$turma_disciplina->uuid?>/frequencia" method="POST">
+                    <form id="frequencia-form" action="/meus-componentes/<?=$turma_disciplina->uuid?>/notas" method="POST">
                         <div class="row mb-3">
-                            <div class="col-md-4">                                           
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <div class="m-0">
-                                            <label for="data-frequencia" class="form-label">Selecione a Data</label>
-                                            <input type="date" id="data-frequencia" name="data" class="form-control" required value="<?= Date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="col-md-4">                    
                                 <div class="card mb-3">
@@ -71,7 +61,7 @@
                                             <label class="form-label">Bimestre</label>
                                             <select class="form-select" name="bimester_id" id="bimester_id">
                                                 <?php foreach ($bimestres as $key => $value) {?>
-                                                    <option value="<?=$value->id?>"><?=$value->bimestre?></option>
+                                                    <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->bimestre?></option>
                                                 <? } ?>
                                             </select>
                                         </div>
@@ -82,7 +72,7 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
-                                            <button type="button" id="buscar-estudantes" class="btn btn-primary w-100">Buscar</button>
+                                            <button type="button" id="search" class="btn btn-primary w-100">Buscar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -90,33 +80,36 @@
                         </div>        
                         <hr>
                         <?php 
-                        // Transformar o array de frequências em um índice rápido por ID do estudante
-                        $frequenciasMap = [];
-                        foreach ($frequencias as $frequencia) {                            
-                            $frequenciasMap['id'] = $frequencia->estudante_turma_id;
+                        // Transformar o array de notas em um índice rápido por ID do estudante e ID de atividades
+                        // Também ter a soma de todas as notas de cada aluno passando some o ID do estudante
+                        $notasMap = [];
+                        
+                        foreach ($notas as $nota) {                            
+                            $notasMap["$nota->estudante_turma_id$nota->atividade_id"] = $nota->nota;
+                            $notasMap[$nota->estudante_turma_id] += $nota->nota;
                         }
-
+                
                         foreach ($estudantes as $key => $estudante) {             
-                            $checked = $frequenciasMap['id'] == $estudante->id ? "checked" : "";
+                          
                         ?>
-                            <div class="row mb-3">
-                                <div class="col-7">
-                                    <span class="fs-4"><?= getParamsToJson($estudante->estudante)->nome ?>
-                                    ---
+                            <div class="row mb-3 me-0">
+                                <div class="col-6">
+                                    <span class="fw-2 mt-2"><?= getParamsToJson($estudante->estudante)->nome ?>
+                                    -
                                     <?= getParamsToJson($estudante->turma)->nome ?></span>
                                 </div>
-                                <div class="col-5">
-                                    <div class="form-check form-switch form-check-reverse mr-2" style="padding-right: 5.5em;">
-                                        <input 
-                                            class="form-check-input fs-3" 
-                                            type="checkbox" 
-                                            role="switch" 
-                                            id="presenca-<?= $estudante->id ?>" 
-                                            name="class_student_id[]"
-                                            value="<?= $estudante->id ?>"
-                                            <?=$checked?>
-                                        />
-                                        <label class="form-check-label fs-3" for="presenca-<?= $estudante->id ?>">Não está Presente?</label>
+                                <?php foreach($atividades as $atividade) { ?> 
+                                <div class="col-1">
+                                    <div class="mr-2 d-flex flex-column pe-0">
+                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getParamsToJson($atividade->activies_details)->tipo ?>: </label>
+                                        <input type="number" name="notas[<?= "$estudante->id,$atividade->id"?>]" min="0" step="0.1" max="<?= $atividade->valor ?>" value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
+                                    </div>
+                                </div>
+                                <?php } ?> 
+                                <div class="col-1">
+                                    <div class="mr-2 d-flex flex-column pe-0">
+                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
+                                        <input type="number" min="0" step="0.1" max="10" name="total[<?= $estudante->id ?>]" value="<?= $notasMap[$estudante->id] ?>" disabled>                                   
                                     </div>
                                 </div>
                             </div>     
@@ -124,7 +117,7 @@
                         <?php } ?>
                         
                         <div class="text-end mt-4">
-                            <button type="submit" class="btn btn-success">Salvar Frequência</button>
+                            <button type="submit" class="btn btn-success">Salvar notas</button>
                         </div>
                     </form>
                 </div>
@@ -140,3 +133,28 @@
 </div>
 
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
+
+<script>
+$(document).ready(function() {
+    $('#search').click(function() {
+        searchDate();       
+    });
+
+    $('#data-frequencia').change(function() {
+        searchDate();       
+    });
+
+    const searchDate = function() {
+        // Capturar valores do formulário
+        var bimester_id = $('#bimester_id').val();
+
+        // Montar a URL
+        var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/notas';
+        url += '?bimester_id=' + bimester_id;
+
+        // Redirecionar para a URL
+        window.location.href = url;
+    }
+});
+
+</script>
