@@ -50,6 +50,8 @@ class DashboardController extends Controller
         if($painel == 'estudante') {
             return $this->indexStudents();
         }
+
+        return $this->router->view('dashboard/index', ['active' => 'dashboard']);
     }
 
     private function indexStudents() 
