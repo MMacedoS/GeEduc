@@ -106,14 +106,14 @@ class SiteArquivoRepository {
                 " 
             );
 
-            $create = $stmt->execute([
-                ':id' => $id,
+            $updated = $stmt->execute([
                 ':original_name' => $manipulation['name'],
                 ':ext_archive' => $manipulation['ext'],
-                ':archive' => $manipulation['new_name']
+                ':archive' => $manipulation['new_name'],
+                ':id' => $id
             ]);
 
-            if(!$create){
+            if(!$updated){
                 return null;
             }
 

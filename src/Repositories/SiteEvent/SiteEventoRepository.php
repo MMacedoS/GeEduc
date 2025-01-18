@@ -105,9 +105,8 @@ class SiteEventoRepository {
         }
 
         try{
-            $archive = $this->siteArquivoRepository->update($data['arquivo'], $dir, $data['site_arquivo_id']);
-            if(is_null($archive)){
-                return null;
+            if(!empty($data['arquivo']['name'])){
+                $archive = $this->siteArquivoRepository->update($data, $dir, $data['site_arquivo_id']);
             }
 
             $site_evento = $this->update($data, $data['id']);
@@ -122,8 +121,6 @@ class SiteEventoRepository {
     }
 
     public function update(array $data, int $id){
-        $site_evento = $this->findById($id);
-
         $site_evento = $this->model->create($data);
 
         try{
@@ -131,7 +128,7 @@ class SiteEventoRepository {
                 "UPDATE " . self::TABLE . "
                     set 
                         nome = :name,
-                        descricao = :description
+                        descricao = :description,
                         ativo = :active
                     WHERE id = :id
                 "
@@ -140,7 +137,8 @@ class SiteEventoRepository {
             $updated = $stmt->execute([
                 ':name' => $site_evento->nome,
                 ':description' => $site_evento->descricao,
-                ':active' => $site_evento->ativo
+                ':active' => $site_evento->ativo,
+                ':id' => $id
             ]);
 
             if(!$updated){
@@ -148,7 +146,7 @@ class SiteEventoRepository {
             }
 
             return $this->findById($id);
-
+            
         }catch(\Throwable $th){
             return null;
         }

@@ -9,13 +9,12 @@
     </div>
   </div>
 </div>
-
 <div class="col-lg-6 col-sm-6 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Imagem</label>
-        <input type="file" class="form-control" name="arquivo" value="<?=$site_evento->archive ?? ''?>" />
+        <input type="file" class="form-control" name="arquivo" />
       </div>
     </div>
   </div>

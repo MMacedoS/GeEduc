@@ -97,6 +97,12 @@ class SiteEventoController extends Controller {
     public function update(Request $request, $id){
         $data = $request->getBodyParams();
 
+        if(isset($_FILES['arquivo'])){
+            $data['arquivo'] = $_FILES['arquivo'];
+        }
+
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/events/';
+
         $site_evento = $this->siteEventoRepository->findByUuid($id);
 
         if(is_null($site_evento)){
@@ -125,7 +131,7 @@ class SiteEventoController extends Controller {
         $data['site_arquivo_id'] = $site_evento->site_arquivo_id;
         $data['id'] = $site_evento->id;
 
-        $updated = $this->siteEventoRepository->updateAll($data);
+        $updated = $this->siteEventoRepository->updateAll($data, $dir);
 
         if(is_null($updated)){
             return $this->router->view('site-events/edit', [
