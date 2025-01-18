@@ -7,7 +7,7 @@
         <ol class="breadcrumb mb-3">
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\" class="text-decoration-none">Início</a>
+                <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
             <li class="breadcrumb-item">Turmas</li>
         </ol>
@@ -40,7 +40,7 @@
                                     <th></th>
                                     <th>Turma</th>
                                     <th>Coordenador</th>
-                                    <th>Ano Letivo</th>
+                                    <th>Ano</th>
                                     <? if (hasPermission('estudante')) {?>
                                      <th>Ação</th>
                                      <? } ?>

@@ -102,7 +102,7 @@ class FrequenciaRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY b.bimestre asc, f.created_at DESC";
+        $sql .= " ORDER BY f.data DESC, b.bimestre DESC";
 
         try {
             $stmt = $this->conn->prepare($sql);
