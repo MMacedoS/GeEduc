@@ -12,7 +12,7 @@ class nota {
     public $uuid;
     public $atividade_id;
     public $bimestre_id;
-    public $turma_disciplina_id;
+    public $estudante_turma_id;
     public $nota;
     public $updated_at;
     public $created_at;
@@ -25,10 +25,10 @@ class nota {
         $nota = new Nota();
         $nota->id = $data['id'] ?? null;
         $nota->uuid = $data['uuid'] ?? $this->generateUUID();
-        $nota->atividade_id = $data['activie_id'];
+        $nota->atividade_id = $data['atividade_id'];
         $nota->bimestre_id = $data['bimester_id'];
-        $nota->turma_disciplina_id = $data['class_discipline_id'];
-        $nota->nota = floatval($data['value']) ?? '0.0';     
+        $nota->estudante_turma_id = $data['estudante_turma_id'];
+        $nota->nota = floatval($data['nota']) ?? '0.0';     
         $nota->updated_at = $data['updated_at'] ?? null;
         $nota->created_at = $data['created_at'] ?? null;
         return $nota;
