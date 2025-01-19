@@ -16,20 +16,16 @@ class NotaController extends Controller
 {
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
-    protected $frequenciaRepository;
     protected $notaRepository;
     protected $estudanteTurmaRepository;
-    protected $professorDisciplinaRepository;
     protected $bimestreRepository;
 
     public function __construct()
     {
         parent::__construct();   
-        $this->frequenciaRepository = new FrequenciaRepository();
         $this->atividadeRepository = new AtividadeRepository();
         $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
         $this->bimestreRepository = new BimestreRepository();
         $this->notaRepository = new NotaRepository();
     }
