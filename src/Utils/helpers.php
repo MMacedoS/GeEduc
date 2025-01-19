@@ -108,6 +108,31 @@ if (!function_exists('filterAvailableToursWithYear')) {
     }
 }
 
+if(!function_exists('publicPath')){
+    function publicPath($file, $path){
+        if(empty($file['name']) || empty($file['tmp_name'])){
+            echo 'Erro: Arquivo não enviado corretamente.';
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $name = strtolower(pathinfo($file['name'], PATHINFO_FILENAME));
+        $new_name = uniqid() . "_" . time() . "." . $ext;
+
+        if(!is_dir($path)){
+            mkdir($path, 0755, true);
+        }
+
+        if(move_uploaded_file($file['tmp_name'], $path . $new_name)){
+            return [
+                'name' => $name,
+                'new_name' => $new_name,
+                'ext' => $ext
+            ];
+        }else{
+            return null;
+        }
+    }
+}
 if (!function_exists('dd')) {
     function dd($data) {
         echo "<pre>";

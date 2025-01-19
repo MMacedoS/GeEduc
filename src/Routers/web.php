@@ -19,6 +19,8 @@ use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
+use App\Controllers\v1\Coordination\CoordenacaoController;
+use App\Controllers\v1\SiteEvent\SiteEventoController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Person\PessoaContatoController;
@@ -44,6 +46,7 @@ $estudanteMensalidadeController = new EstudanteMensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
+$siteEventoController = new SiteEventoController();
 $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
@@ -180,6 +183,13 @@ $router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{
 $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
 
+//siteEvents
+$router->create('GET', '/site-eventos', [$siteEventoController, 'index'], $auth);
+$router->create('GET', '/site-eventos/criar', [$siteEventoController, 'create'], $auth);
+$router->create('POST', '/site-eventos/criar', [$siteEventoController, 'store'], $auth);
+$router->create('GET', '/site-eventos/{id}/editar', [$siteEventoController, 'edit'], $auth);
+$router->create('POST', '/site-eventos/{id}/editar', [$siteEventoController, 'update'], $auth);
+$router->create('DELETE', '/site-eventos/{id}', [$siteEventoController, 'destroy'], $auth);
 //minha-turma-estudantes
 $router->create("GET", "/minhas-turmas/", [$estudanteController, "indexStudents"], $auth);
 $router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController, 'indexStudents'], $auth);
