@@ -46,7 +46,7 @@
     </div>
 <? }?>
     <!-- Row start -->
-    <div class="row gx-3">
+<div class="row gx-3">
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-body">
@@ -66,7 +66,9 @@
                             </thead>
 
                             <tbody>
-                            <? foreach ($estudante_mensalidades as $estudante_mensalidade) {
+                            <? 
+                                if (!is_null($estudante_mensalidades) && !empty($estudante_mensalidades)) {
+                                foreach (getJsonToObject($estudante_mensalidades[0]->mensalidades) as $estudante_mensalidade) {
                                 ?>
                                     <tr>
                                         <td><?=$estudante_mensalidade->id?></td>
@@ -138,12 +140,14 @@
                                             </td>
                                         <? }?>
                                     </tr>
-                            <? } ?>
+                            <? }
+                            }
+                            ?>
                             </tbody>
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($estudante_mensalidades)?></b> registros
+                        Total <b><?=@count(getJsonToObject($estudante_mensalidades[0]->mensalidades))?></b> registros
                     </div>
                 </div>
             </div>

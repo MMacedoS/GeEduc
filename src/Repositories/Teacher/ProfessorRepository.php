@@ -48,9 +48,9 @@ class ProfessorRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['nome'])) {
+        if (isset($params['name'])) {
             $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['nome'];
+            $bindings[':nome'] = $params['name'];
         }
 
         if (isset($params['email'])) {
@@ -58,9 +58,9 @@ class ProfessorRepository {
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['ativo'])) {
+        if (isset($params['active'])) {
             $conditions[] = "p.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+            $bindings[':ativo'] = $params['active'];
         }
 
         if (count($conditions) > 0) {

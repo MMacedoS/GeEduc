@@ -52,10 +52,10 @@
                                 ?>
                                     <tr>
                                         <td><?=$turma->id?></td>
-                                        <td class="fw-bold"> <?=getParamsToJson($turma->turma)->nome ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=getJsonToObject($turma->turma)->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                        <?=getParamsToJson($turma->turma)->coordenador->nome ?? 'não identificado'?>
+                                        <?=getJsonToObject($turma->turma)->coordenador->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <?=$turma->ano_letivo?>

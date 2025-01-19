@@ -45,12 +45,12 @@
                                             <?= brDate($frequencia->data) ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?=getParamsToJson($frequencia->turma_disciplina_details)->professor_disciplina->disciplina->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->disciplina->nome ?? 'não identificado'?>
                                             --
-                                            <?=getParamsToJson($frequencia->turma_disciplina_details)->professor_disciplina->professor->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->professor->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?= getParamsToJson($frequencia->turma_disciplina_details)->bimestres->bimestre ?? 'não identificado'?>
+                                            <?= getJsonToObject($frequencia->turma_disciplina_details)->bimestres->bimestre ?? 'não identificado'?>
                                         </td>
                                     </tr>
                             <? } ?>

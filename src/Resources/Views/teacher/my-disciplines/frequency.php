@@ -13,7 +13,7 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
             </li>
-            <li class="breadcrumb-item">Componente: <?=getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
+            <li class="breadcrumb-item">Componente: <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
@@ -100,9 +100,9 @@
                         ?>
                             <div class="row mb-3 me-0">
                                 <div class="col-6">
-                                    <span class="fw-2 mt-2"><?= getParamsToJson($estudante->estudante)->nome ?>
+                                    <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
                                     -
-                                    <?= getParamsToJson($estudante->turma)->nome ?></span>
+                                    <?= getJsonToObject($estudante->turma)->nome ?></span>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">

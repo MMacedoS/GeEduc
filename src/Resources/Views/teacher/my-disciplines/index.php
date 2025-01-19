@@ -70,9 +70,9 @@
                                     <tr>
                                         <td class="text-center"><?=$disciplina->id?></td>
                                         <td class="fw-bold text-center"> 
-                                            <?=getParamsToJson($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
                                             ---
-                                            <?=getParamsToJson($disciplina->turma)->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($disciplina->turma)->nome ?? 'não identificado'?>
                                         <td class="text-center"> <?=$disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>

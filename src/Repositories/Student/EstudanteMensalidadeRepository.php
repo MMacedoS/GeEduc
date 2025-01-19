@@ -30,9 +30,18 @@ class EstudanteMensalidadeRepository {
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT 
-           m.*
-        FROM " . self::TABLE . " m";
-
+           m.*,
+            json_object(
+            'id', e.id,
+            'uuid', e.uuid,
+            'nome', pf.nome
+            ) as 'estudantes'
+        FROM " . self::TABLE . " m 
+        LEFT JOIN estudantes e
+        on e.id = m.estudante_id 
+        LEFT JOIN pessoa_fisica pf 
+        on e.pessoa_fisica_id = pf.id
+        ";
         $conditions = [];
         $bindings = [];
         
@@ -161,42 +170,50 @@ class EstudanteMensalidadeRepository {
         return $updated;
     }
 
-    public function getMonthlyFee(array $params = [])
+    public function getMonthlyFee(array $params = []): ?EstudanteMensalidade
     {
-        $sql = "SELECT 
-                m.* 
-                FROM " . self::TABLE . " m";
-
-        $conditions = [];
-        $bindings = [];
-
-        if (isset($params['active'])) {
-            $conditions[] = "m.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        try {
+            // Base SQL
+            $sql = "SELECT em.* FROM " . self::TABLE . " em";
+            
+            // Inicializa condições e bindings
+            $conditions = [];
+            $bindings = [];
+    
+            // Condições dinâmicas
+            if (!empty($params['active'])) {
+                $conditions[] = "em.ativo = :ativo";
+                $bindings[':ativo'] = $params['active'];
+            }
+    
+            if (!empty($params['plan_id'])) {
+                $conditions[] = "em.plano_id = :plano_id";
+                $bindings[':plano_id'] = $params['plan_id'];
+            }
+    
+            if (!empty($params['student_id'])) {
+                $conditions[] = "em.estudante_id = :estudante_id";
+                $bindings[':estudante_id'] = $params['student_id'];
+            }
+    
+            // Adiciona condições ao SQL
+            if ($conditions) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+    
+            $sql .= " ORDER BY em.created_at DESC LIMIT 1";
+    
+            // Prepara e executa a consulta
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+    
+            // Configura o modo de retorno
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            $result = $stmt->fetch(); // Retorna o resultado
+            return $result !== false ? $result : null;
+        } catch (\Throwable $th) {
+            return null;
         }
-
-        if (isset($params['plan_id'])) {
-            $conditions[] = "m.plano_id = :plano_id";
-            $bindings[':plano_id'] = $params['plan_id'];
-        }
-
-        if (isset($params['student_id'])) {
-            $conditions[] = "m.estudante_id = :estudante_id";
-            $bindings[':estudante_id'] = $params['student_id'];
-        }
-
-        if (!empty($conditions)) {
-            $sql .= " WHERE " . implode(" AND ", $conditions);
-        }
-
-        $sql .= " ORDER BY m.created_at DESC LIMIT 1";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($bindings);
-
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        $result = $stmt->fetch(); 
-
-        return $result;
     }
+    
 }

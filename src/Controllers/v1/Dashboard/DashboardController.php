@@ -6,11 +6,15 @@ use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Controllers\v1\Traits\UserToPerson;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
+use App\Repositories\Classrooms\TurmaRepository;
+use App\Repositories\Discipline\DisciplinaRepository;
 use App\Repositories\Frequencies\FrequenciaRepository;
+use App\Repositories\MonthlyFees\MensalidadeRepository;
 use App\Repositories\Product\ProdutoRepository;
 use App\Repositories\Reservate\ReservaRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
+use App\Repositories\Teacher\ProfessorRepository;
 use App\Repositories\Work_Load\CargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
@@ -25,6 +29,10 @@ class DashboardController extends Controller
     protected $turmaDisciplinaRepository;
     protected $frequenciaRepository;
     protected $cargaHorariaRepository;
+    protected $mensalidadeRepository;
+    protected $turmaRepository;
+    protected $professorRepository;
+    protected $disciplinaRepository;
 
     public function __construct() {
         parent::__construct();
@@ -34,6 +42,10 @@ class DashboardController extends Controller
         $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
         $this->estudanteRepository = new EstudanteRepository();
+        $this->mensalidadeRepository = new MensalidadeRepository();
+        $this->turmaRepository = new TurmaRepository();
+        $this->professorRepository = new ProfessorRepository();
+        $this->disciplinaRepository = new DisciplinaRepository();
     }
     
     public function index(Request $request) {
@@ -49,6 +61,10 @@ class DashboardController extends Controller
     {
         if($painel == 'estudante') {
             return $this->indexStudents();
+        }
+
+        if($painel == 'administrativo') {
+            return $this->indexAdministrators();
         }
 
         return $this->router->view('dashboard/index', ['active' => 'dashboard']);
@@ -91,6 +107,77 @@ class DashboardController extends Controller
                 'percentual_presenca' => $percentual_presenca,
                 'total_faltas' => $total_faltas,
                 'presenca' => $presenca,
+            ]
+        ); 
+    }
+
+    private function indexAdministrators () 
+    {
+        $estudante_turmas = $this->estudanteTurmaRepository
+            ->allClassStudents(
+                [
+                    'active' => 1, 
+                    'school_year' => Date('Y')
+                ]
+            );
+
+        $discipline = $this->disciplinaRepository
+            ->allDisciplines(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $class = $this->turmaRepository
+            ->allClassRooms(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $professor = $this->professorRepository
+            ->allTeachers(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $monthlyfees = $this->mensalidadeRepository->allMonthlyfeesGraph();
+        
+        $total_monthly = $this->sumMonthlyFees($monthlyfees); 
+
+        $late_monthly = $this->sumMonthlyFees($monthlyfees, 'atrasado'); 
+        
+        $canceled_monthly = $this->sumMonthlyFees($monthlyfees, 'cancelado'); 
+        
+        $paid_monthly = $this->sumMonthlyFees($monthlyfees, 'pago'); 
+        
+        $pending_monthly = $this->sumMonthlyFees($monthlyfees, 'pendente'); 
+
+        $percentual_pending = $this->calculatePercentage($pending_monthly, $total_monthly);
+        $percentual_late = $this->calculatePercentage($late_monthly, $total_monthly);
+        $percentual_paid = $this->calculatePercentage($paid_monthly, $total_monthly);        
+        $percentual_canceled = $this->calculatePercentage($canceled_monthly, $total_monthly);
+
+        $total_monthly -= $canceled_monthly; 
+
+        return $this->router->view(
+            'dashboard/index',
+            [
+                'active' => 'dashboard',
+                'percentual_pending' => $percentual_pending,
+                'pending_monthly' => $pending_monthly,
+                'percentual_late' => $percentual_late,
+                'late_monthly' => $late_monthly,
+                'percentual_paid' => $percentual_paid,
+                'paid_monthly' => $paid_monthly,
+                'percentual_canceled' => $percentual_canceled,
+                'canceled_monthly' => $canceled_monthly,
+                'total_monthly' => $total_monthly,
+                'estudante_turmas' => $estudante_turmas,
+                'discipline' => $discipline,
+                'teachers' => $professor,
+                'class' => $class
             ]
         ); 
     }

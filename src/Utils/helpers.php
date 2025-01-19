@@ -54,8 +54,8 @@ if (!function_exists('getCustomers')) {
     }
 }
 
-if (!function_exists('getParamsToJson')) {    
-    function getParamsToJson($data) {
+if (!function_exists('getJsonToObject')) {    
+    function getJsonToObject($data) {
         return json_decode($data);
     }
 }

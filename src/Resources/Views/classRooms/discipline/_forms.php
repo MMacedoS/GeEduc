@@ -9,7 +9,7 @@
                 <option 
                     value="<?=$value->id ?>" 
                     <?= isset($turma_disciplina->professor_disciplina_id) && $turma_disciplina->professor_disciplina_id == $value->id ? 'selected' : '' ?>>
-                    <?="Componente: " . getParamsToJson($value->disciplina)->nome . " | Professor: " . getParamsToJson($value->professor)->nome?>
+                    <?="Componente: " . getJsonToObject($value->disciplina)->nome . " | Professor: " . getJsonToObject($value->professor)->nome?>
                 </option>
             <?php } ?>
         </select>

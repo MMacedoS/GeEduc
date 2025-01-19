@@ -150,4 +150,38 @@ class PlanoRepository {
 
         return $updated;
     }
+
+    public function planByAmmount(string $valor): ?Plano
+    {
+        try {
+            // Base SQL
+            $sql = "SELECT p.* FROM " . self::TABLE . " p";
+            
+            // Inicializa condições e bindings
+            $conditions = [];
+            $bindings = [];
+    
+            // Condições dinâmicas
+            if (!empty($params['active'])) {
+                $conditions[] = "p.ativo = :ativo";
+                $bindings[':ativo'] = $valor;
+            }
+    
+            // Adiciona condições ao SQL
+            if ($conditions) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+    
+            $sql .= " ORDER BY p.created_at DESC LIMIT 1";
+    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+    
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            $result = $stmt->fetch(); 
+            return $result !== false ? $result : null;
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
 }

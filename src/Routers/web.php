@@ -39,7 +39,6 @@ $bimestreController = new BimestreController();
 $estudanteTurmaController = new EstudanteTurmaController();
 $mensalidadeController = new MensalidadeController();
 $estudanteMensalidadeController = new EstudanteMensalidadeController();
-$mensalidadeController = new MensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
@@ -185,4 +184,11 @@ $router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController,
 $router->create("GET", "/meus-componentes/", [$professorController, "indexTeacher"], $auth);
 $router->create('GET', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
 $router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'store'], $auth);
+
+$router->create("GET", "/mensalidades", [$mensalidadeController, 'index'], $auth);
+$router->create("GET", "/mensalidade", [$mensalidadeController, 'create'], $auth);
+$router->create("POST", "/mensalidade", [$mensalidadeController, 'store'], $auth);
+$router->create("GET", "/mensalidade/{id}", [$mensalidadeController, 'edit'], $auth);
+$router->create("POST", "/mensalidade/{id}", [$mensalidadeController, 'update'], $auth);
+$router->create("DELETE", "/mensalidade/{id}", [$mensalidadeController, 'destroy'], $auth);
 

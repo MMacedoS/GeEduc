@@ -104,7 +104,7 @@
                                     </li>
                                     <?php } if (hasPermission('visualizar mensalidades')) { ?>
                                     <li>
-                                        <a class="dropdown-item current-page" href="/consumos/diaria">
+                                        <a class="dropdown-item current-page" href="/mensalidades">
                                             <span>Mensalidade</span>
                                         </a>
                                     </li>

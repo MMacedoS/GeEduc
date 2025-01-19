@@ -8,7 +8,6 @@ use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Student\EstudanteMensalidadeRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Request\Request;
-use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
@@ -94,7 +93,7 @@ class EstudanteMensalidadeController extends Controller
     {
         $data = $request->getBodyParams();
 
-        $student = $this->estudanteRepository->findByUuid((string) $student_id);
+        $student = $this->estudanteRepository->findByUuid((string)$student_id);
 
         if (is_null($student)) {
             return $this->router->redirect(
@@ -104,22 +103,31 @@ class EstudanteMensalidadeController extends Controller
 
         $student_mensalidade = $this->estudanteMensalidadeRepository->getMonthlyFee(
             [
-                "student_id" => $student->id,
-                "active" => 1,
+                "student_id" => (int)$student->id
             ]
         );
 
         if (is_null($student_mensalidade)) {
-            return $this->router->redirect(
-                "estudantes/$student_id/mensalidades?error=442"
-            );
+            $planos = $this->planosRepository->planByAmmount($data['plan_amount']);
+
+            $data['plan_id'] = is_null($planos) ? 1 : $planos->id;
+            
+            $data['student_id'] = (int)$student->id;
+
+            $student_mensalidade = $this->estudanteMensalidadeRepository->create($data);
+
+            if (is_null($student_mensalidade)) {
+                return $this->router->redirect(
+                    "estudantes/$student_id/mensalidades?error=442"
+                );
+            }
         }
 
         $validator = new Validator($data);
 
         $rules = [
             "expiration_date" => "required",
-            "expiration_day" => "required",
+            "monthly_day" => "required",
             "amount" => "required",
         ];
 
@@ -213,6 +221,8 @@ class EstudanteMensalidadeController extends Controller
             );
         }
 
+        $planos = $this->planosRepository->allPlans(["active" => 1]);
+
         $monthlyfees = $this->mensalidadeRepository->findByUuid(
             (string) $monthlyfees_id
         );
@@ -227,14 +237,17 @@ class EstudanteMensalidadeController extends Controller
 
         $rules = [
             "expiration_date" => "required",
-            "expiration_day" => "required",
+            "monthly_day" => "required",
             "amount" => "required",
         ];
 
         if (!$validator->validate($rules)) {
             return $this->router->view("/student/student-monthly/edit", [
                 "active" => "register",
-                "errors" => $validator->getErrors(),
+                "errors" => $validator->getErrors(),"estudante" => $student,
+                "estudante_mensalidade" => $student_mensalidade,
+                "planos" => $planos,
+                "mensalidade" => $monthlyfees,
             ]);
         }
 
@@ -249,6 +262,9 @@ class EstudanteMensalidadeController extends Controller
             return $this->router->view("/student/student-monthly/edit", [
                 "active" => "register",
                 "errors" => $validator->getErrors(),
+                "estudante_mensalidade" => $student_mensalidade,
+                "planos" => $planos,
+                "mensalidade" => $monthlyfees,
             ]);
         }
 

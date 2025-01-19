@@ -3,7 +3,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Dia de Pagamento</label>
-        <input type="number" step="0" min="1" max="30" name="expiration_day" id="expiration_day" class="form-control" value="<?= $mensalidade->dia_vencimento ?? $estudante_mensalidade->dia_mensalidade ?>">
+        <input type="number" step="0" min="1" max="30" name="monthly_day" id="expiration_day" class="form-control" value="<?= $mensalidade->dia_vencimento ?? $estudante_mensalidade->dia_mensalidade ?>">
       </div>
     </div>
   </div>
@@ -25,7 +25,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Plano</label>
-        <select class="form-select" name="plan_id" id="plan_id">
+        <select class="form-select" name="plan_amount" id="plan_id">
             <option value="">Selecione uma turma</option>
             <?php foreach ($planos as $key => $value) { ?>
                 <option 
