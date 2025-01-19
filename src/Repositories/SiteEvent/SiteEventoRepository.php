@@ -155,8 +155,6 @@ class SiteEventoRepository {
     public function deleteAll($site_evento){
         $site_archive = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
 
-        $this->siteArquivoRepository->delete($site_evento->site_arquivo_id);
-
         return $this->delete($site_evento->id);
     }
 
