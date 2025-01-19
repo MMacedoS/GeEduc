@@ -109,7 +109,6 @@ class NotaRepository {
         }
     }    
 
-
     private function checkIfExistsScore($class) :?String {
         try {
             $stmt = $this->conn->prepare("SELECT id FROM notas WHERE estudante_turma_id = :estudante_turma_id AND bimestre_id = :bimestre_id AND atividade_id = :atividade_id");
