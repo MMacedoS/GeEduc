@@ -80,8 +80,6 @@
                         </div>        
                         <hr>
                         <?php 
-                        // Transformar o array de notas em um índice rápido por ID do estudante e ID de atividades
-                        // Também ter a soma de todas as notas de cada aluno passando some o ID do estudante
                         $notasMap = [];
                         
                         foreach ($notas as $nota) {                            
@@ -102,7 +100,7 @@
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getParamsToJson($atividade->activies_details)->tipo ?>: </label>
-                                        <input type="number" name="notas[<?= "$estudante->id,$atividade->id"?>]" min="0" step="0.1" max="<?= $atividade->valor ?>" value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
+                                        <input class="form-floating" type="number" name="notas[<?= "$estudante->id,$atividade->id"?>]" min="0" step="0.1" max="<?= $atividade->valor ?>" value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
                                     </div>
                                 </div>
                                 <?php } ?> 
@@ -140,7 +138,7 @@ $(document).ready(function() {
         searchDate();       
     });
 
-    $('#data-frequencia').change(function() {
+    $('#bimester_id').change(function() {
         searchDate();       
     });
 
