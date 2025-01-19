@@ -6,12 +6,11 @@ use PDO;
 
 class Database {
     private static $instance = null;
-    private $pdo;
+    private ?PDO $pdo; // Permite null
 
-    public function __construct() {
+    private function __construct() {
         $this->pdo = new PDO(
-            'mysql:host='. DB_HOST .';
-            dbname='. DB_NAME, 
+            'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, 
             DB_USER, 
             DB_PASS
         );
@@ -19,14 +18,21 @@ class Database {
         $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     }
 
-    public static function getInstance() {
+    // Garante uma única instância
+    public static function getInstance(): self {
         if (!self::$instance) {
             self::$instance = new Database();
         }
         return self::$instance;
     }
 
-    public function getConnection() {
+    // Retorna a conexão
+    public function getConnection(): ?PDO {
         return $this->pdo;
+    }
+
+    // Fecha a conexão
+    public function closeConnection(): void {
+        $this->pdo = null; // Agora é permitido
     }
 }

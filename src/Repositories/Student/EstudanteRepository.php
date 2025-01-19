@@ -25,8 +25,7 @@ class EstudanteRepository {
     protected $estudanteMensalidadeRepository;
 
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Estudante();
         $this->usuarioRepository = new UsuarioRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
@@ -129,9 +128,11 @@ class EstudanteRepository {
     
             $studentData = array_merge($data, ['person_id' => $person->id]);
             $student = $this->create($studentData);
-    
-            $monthlyData = array_merge($data, ['student_id' => $student->id]);
-            $monthly = $this->estudanteMensalidadeRepository->create($monthlyData);
+            
+            if(isset($data['procees_monthylees']) && $data['procees_monthylees'] == 'sim') {
+                $monthlyData = array_merge($data, ['student_id' => $student->id]);
+                $monthly = $this->estudanteMensalidadeRepository->create($monthlyData);
+            }
     
             return $student;
     
@@ -139,6 +140,8 @@ class EstudanteRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -177,6 +180,8 @@ class EstudanteRepository {
 
         }catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
 
     }
@@ -198,30 +203,34 @@ class EstudanteRepository {
                 return null;
             }
             
-            $estudante = $this->update($data, $data['id']);
+            $estudante = $this->update($data, (int)$data['id']);
 
             if(is_null($estudante)){
                 return null;
             }
 
-            $monthlyData = $this->estudanteMensalidadeRepository
+            if(isset($data['procees_monthylees']) && $data['procees_monthylees'] == 'sim') {
+                $monthlyData = $this->estudanteMensalidadeRepository
                 ->getMonthlyFee(
                 [
                    'student_id' => $estudante->id, 
                    'active' => 1
                 ]
-            );
+                );
 
-            $monthly = $this->estudanteMensalidadeRepository->update($data, $monthlyData->id);
+                $monthly = $this->estudanteMensalidadeRepository->update($data, $monthlyData->id);
 
-            if(is_null($monthly)){
-                return null;
+                if(is_null($monthly)){
+                    return null;
+                }
             }
 
             return $estudante;
 
         } catch(\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -237,7 +246,7 @@ class EstudanteRepository {
                     set
                         matricula = :matricula,
                         pessoa_fisica_id = :pessoa_fisica_id,
-                        ativo = :ativo,,
+                        ativo = :ativo,
                         pessoa_contato_id = :pessoa_contato_id
                     WHERE id = :id
                     "
@@ -258,6 +267,8 @@ class EstudanteRepository {
             return $this->findById($id);
         }catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -319,6 +330,8 @@ class EstudanteRepository {
             return $result ?: null; 
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

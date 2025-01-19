@@ -16,8 +16,7 @@ class TurmaDisciplinaRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new TurmaDisciplina();
     }
 
@@ -97,6 +96,8 @@ class TurmaDisciplinaRepository {
             return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }   
 
@@ -133,6 +134,8 @@ class TurmaDisciplinaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -173,6 +176,8 @@ class TurmaDisciplinaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

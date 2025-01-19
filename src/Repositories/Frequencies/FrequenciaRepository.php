@@ -16,8 +16,7 @@ class FrequenciaRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Frequencia();
     }
 
@@ -150,11 +149,9 @@ class FrequenciaRepository {
     
             return $this->findByUuid($class->uuid);
         } catch (\Throwable $th) {
-            
-            // Log de erros
-            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }    
 
@@ -172,10 +169,9 @@ class FrequenciaRepository {
             
             return false;
         } catch(\Throwable $th) {
-            
-            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
     private function removeFrequency($class) :?bool {
@@ -191,9 +187,9 @@ class FrequenciaRepository {
             }
             return false;
         } catch(\Throwable $th) {
-            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -231,10 +227,9 @@ class FrequenciaRepository {
 
             return $class;
         } catch (\Throwable $th) {
-            // Log de erros
-            LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -278,10 +273,9 @@ class FrequenciaRepository {
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $th) {
-            // Log de erros
-            LoggerHelper::logInfo("Erro ao buscar frequências: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return [];
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

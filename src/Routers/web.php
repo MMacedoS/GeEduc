@@ -84,11 +84,11 @@ $router->create("DELETE", "/professores/{id}", [$professorController, "destroy"]
 
 //students
 $router->create("GET", "/estudantes", [$estudanteController, "index"], $auth);
-$router->create("GET", "/estudantes/criar", [$estudanteController, "create"], $auth);
-$router->create("POST", "/estudantes/criar",[$estudanteController, "store"], $auth);
-$router->create("GET","/estudantes/{id}/editar", [$estudanteController, "edit"], $auth);
-$router->create("POST", "/estudantes/{id}/editar", [$estudanteController, "update"], $auth);
-$router->create("DELETE", "/estudantes/{id}", [$estudanteController, "destroy"], $auth);
+$router->create("GET", "/estudante", [$estudanteController, "create"], $auth);
+$router->create("POST", "/estudante",[$estudanteController, "store"], $auth);
+$router->create("GET","/estudante/{id}", [$estudanteController, "edit"], $auth);
+$router->create("POST", "/estudante/{id}", [$estudanteController, "update"], $auth);
+$router->create("DELETE", "/estudante/{id}", [$estudanteController, "destroy"], $auth);
 
 //plans
 $router->create("GET", "/planos", [$planoController, "index"], $auth);
@@ -206,3 +206,5 @@ $router->create('POST', '/pessoa', [$pessoaContatoController, 'store'], $auth);
 $router->create('GET', '/pessoa/{id}/', [$pessoaContatoController, 'edit'], $auth);
 $router->create('POST', '/pessoa/{id}/', [$pessoaContatoController, 'update'], $auth);
 $router->create('DELETE', '/pessoa/{id}', [$pessoaContatoController, 'destroy'], $auth);
+
+$router->create('GET', '/pessoas-lista', [$pessoaContatoController, 'indexWithoutPagination'], $auth);

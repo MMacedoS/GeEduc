@@ -17,8 +17,7 @@ class NotaRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Nota();
     }
 
@@ -67,6 +66,8 @@ class NotaRepository {
             return $stmt->fetchAll(PDO::FETCH_CLASS, self::CLASS_NAME);    
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -106,6 +107,8 @@ class NotaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }    
 
@@ -125,6 +128,8 @@ class NotaRepository {
             LoggerHelper::logInfo("Erro na transação select: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -142,6 +147,8 @@ class NotaRepository {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 }

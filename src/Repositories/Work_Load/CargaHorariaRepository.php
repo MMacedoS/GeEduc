@@ -17,8 +17,7 @@ class CargaHorariaRepository{
     protected $model;
 
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new CargaHoraria();
     }
 
@@ -74,8 +73,10 @@ class CargaHorariaRepository{
 
             return $this->findByUuid($carga_horaria->uuid);
 
-        }catch(\Throwable $th){
+        } catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -104,8 +105,10 @@ class CargaHorariaRepository{
 
             return $this->findById($id);
 
-        }catch(\Throwable $th){
+        } catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

@@ -16,7 +16,7 @@
     <? if (hasPermission('cadastrar estudantes')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-            <a href="\estudantes\criar" class="btn btn-outline-primary" > + </a>
+            <a href="\estudante" class="btn btn-outline-primary" > + </a>
             </div>
         </div>
     <? }?>
@@ -79,7 +79,7 @@
                                         <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes') || hasPermission('visualizar turmas estudantes')) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('editar estudantes')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/editar">
+                                                    <a class="mb-1 me-2 mt-1" href="/estudante/<?=$estudante->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
@@ -105,7 +105,7 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="button" onclick="deleteData('/estudantes/<?=$estudante->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                                <button type="button" onclick="deleteData('/estudante/<?=$estudante->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                             </div>
                                                         </div>
                                                     </div>
