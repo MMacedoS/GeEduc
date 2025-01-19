@@ -20,8 +20,7 @@ class EstudanteMensalidadeRepository {
     protected $planoRepository;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new EstudanteMensalidade();
         $this->mensalidadeRepository = new MensalidadeRepository();
         $this->planoRepository = new PlanoRepository();
@@ -109,6 +108,8 @@ class EstudanteMensalidadeRepository {
             return $monthly;
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -153,6 +154,8 @@ class EstudanteMensalidadeRepository {
             return $monthly;
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -213,6 +216,8 @@ class EstudanteMensalidadeRepository {
             return $result !== false ? $result : null;
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
     

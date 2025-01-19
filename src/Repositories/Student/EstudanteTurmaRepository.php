@@ -16,8 +16,7 @@ class EstudanteTurmaRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new EstudanteTurma();
     }
 
@@ -118,6 +117,8 @@ class EstudanteTurmaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -158,6 +159,8 @@ class EstudanteTurmaRepository {
             return $this->findById($id);
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

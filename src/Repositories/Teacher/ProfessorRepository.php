@@ -20,8 +20,7 @@ class ProfessorRepository {
     protected $pessoaFisicaRepository;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Professor();
         $this->usuarioRepository = new UsuarioRepository(); 
         $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
@@ -146,6 +145,8 @@ class ProfessorRepository {
             LoggerHelper::logInfo($th->getMessage());
             $this->conn->rollBack();
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -178,6 +179,8 @@ class ProfessorRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -217,6 +220,8 @@ class ProfessorRepository {
         } catch (\Throwable $th) {
             $this->conn->rollBack();
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -250,8 +255,9 @@ class ProfessorRepository {
 
             return $this->findById($id);
         } catch (\Throwable $th) {
-
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

@@ -22,8 +22,7 @@ class PessoaContatoRepository {
     protected $estudanteMensalidadeRepository;
 
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new PessoaContato();
         $this->usuarioRepository = new UsuarioRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
@@ -123,6 +122,8 @@ class PessoaContatoRepository {
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             $this->conn->rollBack();
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -159,6 +160,8 @@ class PessoaContatoRepository {
 
         }catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
 
     }
@@ -190,6 +193,8 @@ class PessoaContatoRepository {
 
         } catch(\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -224,6 +229,8 @@ class PessoaContatoRepository {
             return $this->findById($id);
         }catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -281,6 +288,8 @@ class PessoaContatoRepository {
             return $result ?: null; 
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 }

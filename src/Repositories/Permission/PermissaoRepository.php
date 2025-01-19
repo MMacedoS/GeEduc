@@ -16,8 +16,7 @@ class PermissaoRepository {
 
     public function __construct() {
         $this->model = new Permissao();
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
     }
 
     public function all(array $params = [])
@@ -73,6 +72,8 @@ class PermissaoRepository {
             return $this->findById($this->conn->lastInsertId());
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -114,6 +115,8 @@ class PermissaoRepository {
         } catch (\Throwable $th) {
             $this->conn->rollBack();
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
