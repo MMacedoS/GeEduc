@@ -21,6 +21,7 @@ use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
+use App\Controllers\v1\Person\PessoaContatoController;
 use App\Controllers\v1\Scores\NotaController;
 
 $router = new Router();
@@ -44,6 +45,7 @@ $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
 $frequenciaController = new FrequenciaController();
+$pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
@@ -189,7 +191,7 @@ $router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaControl
 $router->create('GET', "/meus-componentes/{id}/notas", [$notaController, 'indexTeacher'], $auth);
 $router->create('POST', "/meus-componentes/{id}/notas", [$notaController, 'store'], $auth);
 
-
+//mensalidades
 $router->create("GET", "/mensalidades", [$mensalidadeController, 'index'], $auth);
 $router->create("GET", "/mensalidade", [$mensalidadeController, 'create'], $auth);
 $router->create("POST", "/mensalidade", [$mensalidadeController, 'store'], $auth);
@@ -197,3 +199,10 @@ $router->create("GET", "/mensalidade/{id}", [$mensalidadeController, 'edit'], $a
 $router->create("POST", "/mensalidade/{id}", [$mensalidadeController, 'update'], $auth);
 $router->create("DELETE", "/mensalidade/{id}", [$mensalidadeController, 'destroy'], $auth);
 
+// pessoa_contato
+$router->create('GET', '/pessoas', [$pessoaContatoController, 'index'], $auth);
+$router->create('GET', '/pessoa', [$pessoaContatoController, 'create'], $auth);
+$router->create('POST', '/pessoa', [$pessoaContatoController, 'store'], $auth);
+$router->create('GET', '/pessoa/{id}/', [$pessoaContatoController, 'edit'], $auth);
+$router->create('POST', '/pessoa/{id}/', [$pessoaContatoController, 'update'], $auth);
+$router->create('DELETE', '/pessoa/{id}', [$pessoaContatoController, 'destroy'], $auth);

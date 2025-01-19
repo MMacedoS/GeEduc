@@ -1,43 +1,38 @@
 <?php 
 
-namespace App\Repositories\Student;
+namespace App\Repositories\Person;
 
 use App\Config\Database;
-use App\Models\Student\Estudante;
-use App\Repositories\Person\PessoaContatoRepository;
-use App\Repositories\Student\EstudanteMensalidadeRepository;
+use App\Models\Person\PessoaContato;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteRepository {
+class PessoaContatoRepository {
 
-    const CLASS_NAME = Estudante::class;
-    const TABLE = 'estudantes';
+    const CLASS_NAME = PessoaContato::class;
+    const TABLE = 'pessoa_contato';
 
     use FindTrait;
     protected $conn;
     protected $model;
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
-    protected $pessoaContatoRepository;
     protected $estudanteMensalidadeRepository;
 
     public function __construct(){
         $conn = new Database();
         $this->conn = $conn->getConnection();
-        $this->model = new Estudante();
+        $this->model = new PessoaContato();
         $this->usuarioRepository = new UsuarioRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
-        $this->pessoaContatoRepository = new PessoaContatoRepository();
-        $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
     }
 
-    public function allStudents(array $params = []){
+    public function allPersons(array $params = []){
 
         $sql = "SELECT
-            p.*,(
+            pc.*,(
                 SELECT 
                     JSON_OBJECT(
                         'id', pf.id,
@@ -45,10 +40,10 @@ class EstudanteRepository {
                         'email', pf.email
                     )
                 FROM pessoa_fisica pf
-                WHERE pf.id = p.pessoa_fisica_id
+                WHERE pf.id = pc.pessoa_fisica_id
             ) AS pessoa_fisica
             FROM " . self::TABLE . " 
-            p LEFT JOIN pessoa_fisica pf ON p.pessoa_fisica_id = pf.id
+            pc LEFT JOIN pessoa_fisica pf ON pc.pessoa_fisica_id = pf.id
         ";
 
         $conditions = [];
@@ -65,7 +60,7 @@ class EstudanteRepository {
         }
 
         if (isset($params['ativo'])) {
-            $conditions[] = "p.ativo = :ativo";
+            $conditions[] = "pc.ativo = :ativo";
             $bindings[':ativo'] = $params['ativo'];
         }
 
@@ -73,7 +68,7 @@ class EstudanteRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY created_at DESC";
+        $sql .= " ORDER BY pc.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -82,62 +77,51 @@ class EstudanteRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
-    public function studentWithPersonByUuid(string $uuid){
-
-        $sql = "SELECT
-            e.*,(
-                SELECT 
-                    JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    )
-                FROM pessoa_fisica pf
-                WHERE pf.id = e.pessoa_fisica_id
-            ) AS pessoa_fisica
-            FROM " . self::TABLE . " 
-            e LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
-            WHERE e.uuid = :id
-        ";
-
-        $sql .= " ORDER BY e.created_at DESC LIMIT 1";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([':id' => $uuid]);
-
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
-    }
-
     public function saveAll(array $data)
     {
         if (empty($data)) {
             return null;
         }
+
+        $this->conn->beginTransaction();
         
         try {
             $userData = array_merge($data, [
                 'password' => 'escola123',
-                'sector' => 'estudante',
+                'sector' => 'responsavel_legal',
             ]);
     
             $user = $this->usuarioRepository->create($userData);
+
+            if (is_null($user)) {
+                $this->conn->rollBack();
+                return null;
+            }
     
             $personData = array_merge($data, ['usuario_id' => $user->id]);
             $person = $this->pessoaFisicaRepository->create($personData);
+
+            if (is_null($person)) {
+                $this->conn->rollBack();
+                return null;
+            }
     
-            $studentData = array_merge($data, ['person_id' => $person->id]);
-            $student = $this->create($studentData);
+            $personContactData = array_merge($data, ['person_id' => $person->id]);
+            $personContact = $this->create($personContactData);
+
+            if (is_null($personContact)) {
+                $this->conn->rollBack();
+                return null;
+            }
+
+            $this->conn->commit();
     
-            $monthlyData = array_merge($data, ['student_id' => $student->id]);
-            $monthly = $this->estudanteMensalidadeRepository->create($monthlyData);
-    
-            return $student;
+            return $personContact;
     
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            $this->conn->rollBack();
             return null;
         }
     }
@@ -149,31 +133,29 @@ class EstudanteRepository {
             return $existingPerson;
         }
 
-        $estudante = $this->model->create($data);
+        $person = $this->model->create($data);
 
         try{
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
                     SET
                         uuid = :uuid,
-                        matricula = :matricula,
-                        pessoa_fisica_id = :pessoa_fisica_id,
-                        pessoa_contato_id = :pessoa_contato_id
+                        responsavel_legal = :responsavel_legal,
+                        pessoa_fisica_id = :pessoa_fisica_id
                 "
             );
 
             $create = $stmt->execute([
-                ':uuid' => $estudante->uuid,
-                ':matricula' => $estudante->matricula,
-                ':pessoa_fisica_id' => $estudante->pessoa_fisica_id,
-                ':pessoa_contato_id' => $estudante->pessoa_contato_id
+                ':uuid' => $person->uuid,
+                ':responsavel_legal' => $person->responsavel_legal,
+                ':pessoa_fisica_id' => $person->pessoa_fisica_id
             ]);
 
             if(!$create){
                 return null;
             }
 
-            return $this->findByUuid($estudante->uuid);
+            return $this->findByUuid($person->uuid);
 
         }catch(\Throwable $th){
             return null;
@@ -198,27 +180,13 @@ class EstudanteRepository {
                 return null;
             }
             
-            $estudante = $this->update($data, $data['id']);
+            $personContact = $this->update($data, $data['id']);
 
-            if(is_null($estudante)){
+            if(is_null($personContact)){
                 return null;
             }
 
-            $monthlyData = $this->estudanteMensalidadeRepository
-                ->getMonthlyFee(
-                [
-                   'student_id' => $estudante->id, 
-                   'active' => 1
-                ]
-            );
-
-            $monthly = $this->estudanteMensalidadeRepository->update($data, $monthlyData->id);
-
-            if(is_null($monthly)){
-                return null;
-            }
-
-            return $estudante;
+            return $personContact;
 
         } catch(\Throwable $th) {
             return null;
@@ -227,27 +195,25 @@ class EstudanteRepository {
 
     public function update(array $data, int $id)
     {
-        $estudante = $this->findById($id);
+        $person_contact = $this->findById($id);
 
-        $estudante = $this->model->update($data, $estudante);
+        $person_contact = $this->model->update($data, $person_contact);
 
         try{
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     set
-                        matricula = :matricula,
-                        pessoa_fisica_id = :pessoa_fisica_id,
-                        ativo = :ativo,,
-                        pessoa_contato_id = :pessoa_contato_id
+                        responsavel_legal = :responsavel_legal,
+                        pessoa_fisica_id = :pessoa_fisica_id
+                        ativo = :ativo,
                     WHERE id = :id
                     "
             );
 
             $updated = $stmt->execute([
-                ':matricula' => $estudante->matricula,
-                ':pessoa_fisica_id' => $estudante->pessoa_fisica_id,
-                ':ativo' => $estudante->ativo,
-                ':pessoa_contato_id' => $estudante->pessoa_contato_id,
+                ':responsavel_legal' => $person_contact->responsavel_legal,
+                ':pessoa_fisica_id' => $person_contact->pessoa_fisica_id,
+                ':ativo' => $person_contact->ativo,
                 ':id' => $id
             ]);
 
@@ -261,16 +227,19 @@ class EstudanteRepository {
         }
     }
 
-    public function deleteAll($estudante){
-        $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
+    public function deleteAll($person_contact_id)
+    {
+        if (is_null($person_contact_id)) {
+            return null;
+        }
+
+        $pessoa_fisica = $this->findById($person_contact_id);
 
         $this->usuarioRepository->delete($pessoa_fisica->usuario_id);
 
         $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
 
-        $this->pessoaContatoRepository->deleteAll($estudante->pessoa_contato_id);
-
-        return $this->delete($estudante->id);
+        return $this->delete($person_contact_id);
     }
 
     public function delete(int $id){
@@ -285,13 +254,6 @@ class EstudanteRepository {
             $updated = $stmt->execute(['id' => $id]);
 
             return $updated;
-    }
-
-    private function verifyAndRollback($object, string $errorMessage)
-    {
-        if (is_null($object->id ?? null)) {
-            throw new \Exception($errorMessage);
-        }
     }
 
     public function findByStudentId(array $criteria): ?array
@@ -320,23 +282,5 @@ class EstudanteRepository {
         } catch (\Throwable $th) {
             return null;
         }
-    }
-
-    public function studentByPersonId(int $person_id){
-
-        $sql = "SELECT
-            e.*
-            FROM " . self::TABLE . " e
-            WHERE e.pessoa_fisica_id = :id
-        ";
-
-        $sql .= " ORDER BY e.created_at DESC LIMIT 1";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([':id' => $person_id]);
-
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
     }
 }

@@ -135,6 +135,11 @@
                                             <span>Permissões</span>
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/pessoas/">
+                                            <span>Pessoa Contato</span>
+                                        </a>
+                                    </li>
                                 <?php } ?>
 
                                 
