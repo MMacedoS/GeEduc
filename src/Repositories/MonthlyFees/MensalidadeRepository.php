@@ -16,42 +16,74 @@ class MensalidadeRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Mensalidade();
     }
 
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT
-           m.*
-        FROM " . self::TABLE . " m";
+                m.estudante_mensalidade_id,
+                JSON_OBJECT(
+                    'id', em.id,
+                    'uuid', em.uuid,
+                    'estudante', JSON_OBJECT(
+                        'id', e.id,
+                        'uuid', e.uuid,
+                        'nome', pf.nome
+                    )
+                ) AS estudante_mensalidade,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'id', m.id,
+                        'uuid', m.uuid,
+                        'situacao', m.situacao,
+                        'valor', m.valor,
+                        'data_vencimento', m.data_vencimento,
+                        'created_at', m.created_at
+                    )
+                ) AS mensalidades,
+                MAX(m.data_vencimento) AS created_at
+            FROM " . self::TABLE . " m
+            LEFT JOIN estudante_mensalidade em 
+            ON em.id = m.estudante_mensalidade_id 
+            LEFT JOIN estudantes e
+            ON e.id = em.estudante_id 
+            LEFT JOIN pessoa_fisica pf 
+            ON e.pessoa_fisica_id = pf.id";
 
         $conditions = [];
         $bindings = [];
 
         if (isset($params['situation'])) {
-            $conditions[] = "m.situacao = :situacao";
-            $bindings[':situacao'] = $params['situation'];
+        $conditions[] = "m.situacao = :situacao";
+        $bindings[':situacao'] = $params['situation'];
+        }
+
+        if (isset($params['student_id'])) {
+        $conditions[] = "em.estudante_id = :estudante_id";
+        $bindings[':estudante_id'] = $params['student_id'];
         }
 
         if (isset($params['start_date']) && isset($params['end_date'])) {
-            $conditions[] = "m.created_at between :start_date and :end_date";
-            $bindings[':start_date'] = $params['start_date'];
-            $bindings[':end_date'] = $params['end_date'];
+        $conditions[] = "m.created_at BETWEEN :start_date AND :end_date";
+        $bindings[':start_date'] = $params['start_date'];
+        $bindings[':end_date'] = $params['end_date'];
         }
 
         if (count($conditions) > 0) {
-            $sql .= " WHERE " . implode(" AND ", $conditions);
+        $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY m.created_at DESC";
+        $sql .= " GROUP BY m.estudante_mensalidade_id";
+        $sql .= " ORDER BY created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
+
     }
 
     public function create(array $data)
@@ -84,9 +116,9 @@ class MensalidadeRepository {
 
             return $this->findByUuid($monthly->uuid);
         } catch (\Throwable $th) {
-            LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
-            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        }  finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -127,6 +159,8 @@ class MensalidadeRepository {
             return $this->findById($id);
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -143,8 +177,41 @@ class MensalidadeRepository {
             $updated = $stmt->execute(['id' => $id]);
 
             return $updated;
-        } catch(\Trowable $th) {
+        } catch(\Throwable $th) {
             return false;
         }
+    }
+
+    public function allMonthlyfeesGraph(array $params = [])
+    {
+        $sql = "SELECT
+           m.*
+        FROM " . self::TABLE . " m";
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['situation'])) {
+            $conditions[] = "m.situacao = :situacao";
+            $bindings[':situacao'] = $params['situation'];
+        }
+
+        if (isset($params['start_date']) && isset($params['end_date'])) {
+            $conditions[] = "m.created_at between :start_date and :end_date";
+            $bindings[':start_date'] = $params['start_date'];
+            $bindings[':end_date'] = $params['end_date'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY m.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 }

@@ -66,10 +66,10 @@
                                 ?>
                                     <tr>
                                         <td><?=$professor->id?></td>
-                                        <td class="fw-bold"> <?=getParamsToJson($professor->pessoa_fisica)->nome ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=getJsonToObject($professor->pessoa_fisica)->nome ?? 'não identificado'?>
                                         </td>
                                         <td>
-                                        <?=getParamsToJson($professor->pessoa_fisica)->email ?? 'não identificado'?>
+                                        <?=getJsonToObject($professor->pessoa_fisica)->email ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
@@ -115,7 +115,7 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>professor <?=getParamsToJson($professor->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                                <p>professor <?=getJsonToObject($professor->pessoa_fisica)->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

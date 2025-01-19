@@ -28,7 +28,7 @@ class Mensalidade {
         $mensalidade->uuid = $data['uuid'] ?? $this->generateUUID();
         $mensalidade->estudante_mensalidade_id = $data['studante_monthly_id'];
         $mensalidade->data_vencimento = $data['expiration_date'];
-        $mensalidade->dia_vencimento = $data['expiration_day'];
+        $mensalidade->dia_vencimento = $data['monthly_day'];
         $mensalidade->valor = $data['amount'];
         $mensalidade->situacao = $data['situation'] ?? 'pendente';
 
@@ -39,7 +39,7 @@ class Mensalidade {
     {
         $mensalidade->estudante_mensalidade_id = $data['studante_id'] ?? $mensalidade->estudante_mensalidade_id;
         $mensalidade->data_vencimento = $data['expiration_date'] ?? $mensalidade->data_vencimento;
-        $mensalidade->dia_vencimento = $data['expiration_day'] ?? $mensalidade->dia_vencimento;
+        $mensalidade->dia_vencimento = $data['monthly_day'] ?? $mensalidade->dia_vencimento;
         $mensalidade->valor = $data['amount'] ?? $mensalidade->valor;
         $mensalidade->situacao = $data['situation'] ?? $mensalidade->situacao;
 

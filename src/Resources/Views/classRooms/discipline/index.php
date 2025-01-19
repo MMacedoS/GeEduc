@@ -73,13 +73,13 @@
                                     <tr>
                                         <td><?=$turma_disciplina->id?></td>
                                         <td class="text-center"> 
-                                            <?=getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?=getParamsToJson($turma_disciplina->professor_disciplina)->professor->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($turma_disciplina->professor_disciplina)->professor->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?=getParamsToJson($turma_disciplina->carga_horaria)->carga_horaria ?? 'não identificado'?> Horas
+                                            <?=getJsonToObject($turma_disciplina->carga_horaria)->carga_horaria ?? 'não identificado'?> Horas
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">

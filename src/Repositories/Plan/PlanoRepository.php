@@ -20,8 +20,7 @@ class PlanoRepository {
     protected $pessoaFisicaRepository;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Plano();
         $this->usuarioRepository = new UsuarioRepository(); 
         $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
@@ -98,6 +97,8 @@ class PlanoRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -134,6 +135,8 @@ class PlanoRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -149,5 +152,41 @@ class PlanoRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function planByAmmount(string $valor): ?Plano
+    {
+        try {
+            // Base SQL
+            $sql = "SELECT p.* FROM " . self::TABLE . " p";
+            
+            // Inicializa condições e bindings
+            $conditions = [];
+            $bindings = [];
+    
+            // Condições dinâmicas
+            if (!empty($params['active'])) {
+                $conditions[] = "p.ativo = :ativo";
+                $bindings[':ativo'] = $valor;
+            }
+    
+            // Adiciona condições ao SQL
+            if ($conditions) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+    
+            $sql .= " ORDER BY p.created_at DESC LIMIT 1";
+    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+    
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            $result = $stmt->fetch(); 
+            return $result !== false ? $result : null;
+        } catch (\Throwable $th) {
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 }

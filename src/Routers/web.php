@@ -21,6 +21,10 @@ use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\Coordination\CoordenacaoController;
 use App\Controllers\v1\SiteEvent\SiteEventoController;
+use App\Controllers\v1\Coordination\CoordenadorController;
+use App\Controllers\v1\Frequencies\FrequenciaController;
+use App\Controllers\v1\Person\PessoaContatoController;
+use App\Controllers\v1\Scores\NotaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -39,11 +43,13 @@ $bimestreController = new BimestreController();
 $estudanteTurmaController = new EstudanteTurmaController();
 $mensalidadeController = new MensalidadeController();
 $estudanteMensalidadeController = new EstudanteMensalidadeController();
-$mensalidadeController = new MensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
-$coordenacaoController = new CoordenacaoController();
+$coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
 $siteEventoController = new SiteEventoController();
+$frequenciaController = new FrequenciaController();
+$pessoaContatoController = new PessoaContatoController();
+$notaController = new NotaController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -81,11 +87,11 @@ $router->create("DELETE", "/professores/{id}", [$professorController, "destroy"]
 
 //students
 $router->create("GET", "/estudantes", [$estudanteController, "index"], $auth);
-$router->create("GET", "/estudantes/criar", [$estudanteController, "create"], $auth);
-$router->create("POST", "/estudantes/criar",[$estudanteController, "store"], $auth);
-$router->create("GET","/estudantes/{id}/editar", [$estudanteController, "edit"], $auth);
-$router->create("POST", "/estudantes/{id}/editar", [$estudanteController, "update"], $auth);
-$router->create("DELETE", "/estudantes/{id}", [$estudanteController, "destroy"], $auth);
+$router->create("GET", "/estudante", [$estudanteController, "create"], $auth);
+$router->create("POST", "/estudante",[$estudanteController, "store"], $auth);
+$router->create("GET","/estudante/{id}", [$estudanteController, "edit"], $auth);
+$router->create("POST", "/estudante/{id}", [$estudanteController, "update"], $auth);
+$router->create("DELETE", "/estudante/{id}", [$estudanteController, "destroy"], $auth);
 
 //plans
 $router->create("GET", "/planos", [$planoController, "index"], $auth);
@@ -142,12 +148,12 @@ $router->create( "POST", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$est
 $router->create( "DELETE", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$estudanteMensalidadeController, "destroy"], $auth);
 
 // Coordenação
-$router->create('GET', '/coordenadores', [$coordenacaoController, 'index'], $auth);
-$router->create('GET', '/coordenador', [$coordenacaoController, 'create'], $auth);
-$router->create('POST', '/coordenador', [$coordenacaoController, 'store'], $auth);
-$router->create('GET', '/coordenador/{id}/', [$coordenacaoController, 'edit'], $auth);
-$router->create('POST', '/coordenador/{id}/', [$coordenacaoController, 'update'], $auth);
-$router->create('DELETE', '/coordenador/{id}', [$coordenacaoController, 'destroy'], $auth);
+$router->create('GET', '/coordenadores', [$coordenadorController, 'index'], $auth);
+$router->create('GET', '/coordenador', [$coordenadorController, 'create'], $auth);
+$router->create('POST', '/coordenador', [$coordenadorController, 'store'], $auth);
+$router->create('GET', '/coordenador/{id}/', [$coordenadorController, 'edit'], $auth);
+$router->create('POST', '/coordenador/{id}/', [$coordenadorController, 'update'], $auth);
+$router->create('DELETE', '/coordenador/{id}', [$coordenadorController, 'destroy'], $auth);
 
 //bimesters
 $router->create( "GET", "/bimestres", [$bimestreController, "index"], $auth);
@@ -184,3 +190,31 @@ $router->create('POST', '/site-eventos/criar', [$siteEventoController, 'store'],
 $router->create('GET', '/site-eventos/{id}/editar', [$siteEventoController, 'edit'], $auth);
 $router->create('POST', '/site-eventos/{id}/editar', [$siteEventoController, 'update'], $auth);
 $router->create('DELETE', '/site-eventos/{id}', [$siteEventoController, 'destroy'], $auth);
+//minha-turma-estudantes
+$router->create("GET", "/minhas-turmas/", [$estudanteController, "indexStudents"], $auth);
+$router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController, 'indexStudents'], $auth);
+
+//minha-turma-professor
+$router->create("GET", "/meus-componentes/", [$professorController, "indexTeacher"], $auth);
+$router->create('GET', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
+$router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'store'], $auth);
+$router->create('GET', "/meus-componentes/{id}/notas", [$notaController, 'indexTeacher'], $auth);
+$router->create('POST', "/meus-componentes/{id}/notas", [$notaController, 'store'], $auth);
+
+//mensalidades
+$router->create("GET", "/mensalidades", [$mensalidadeController, 'index'], $auth);
+$router->create("GET", "/mensalidade", [$mensalidadeController, 'create'], $auth);
+$router->create("POST", "/mensalidade", [$mensalidadeController, 'store'], $auth);
+$router->create("GET", "/mensalidade/{id}", [$mensalidadeController, 'edit'], $auth);
+$router->create("POST", "/mensalidade/{id}", [$mensalidadeController, 'update'], $auth);
+$router->create("DELETE", "/mensalidade/{id}", [$mensalidadeController, 'destroy'], $auth);
+
+// pessoa_contato
+$router->create('GET', '/pessoas', [$pessoaContatoController, 'index'], $auth);
+$router->create('GET', '/pessoa', [$pessoaContatoController, 'create'], $auth);
+$router->create('POST', '/pessoa', [$pessoaContatoController, 'store'], $auth);
+$router->create('GET', '/pessoa/{id}/', [$pessoaContatoController, 'edit'], $auth);
+$router->create('POST', '/pessoa/{id}/', [$pessoaContatoController, 'update'], $auth);
+$router->create('DELETE', '/pessoa/{id}', [$pessoaContatoController, 'destroy'], $auth);
+
+$router->create('GET', '/pessoas-lista', [$pessoaContatoController, 'indexWithoutPagination'], $auth);

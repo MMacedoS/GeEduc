@@ -70,7 +70,7 @@
                                 ?>
                                     <tr>
                                         <td><?=$professor_disciplina->id?></td>
-                                        <td class="fw-bold"> <?=getParamsToJson($professor_disciplina->disciplina)->nome ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=getJsonToObject($professor_disciplina->disciplina)->nome ?? 'não identificado'?>
                                         <td class="fw-bold"> <?=$professor_disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <td>    
@@ -115,7 +115,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Vincular Disciplina ao <?=getParamsToJson($professor->pessoa_fisica)->nome ?? 'não identificado'?></h5>
+                <h5 class="modal-title" id="exampleModalLabel">Vincular Disciplina ao <?=getJsonToObject($professor->pessoa_fisica)->nome ?? 'não identificado'?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

@@ -16,8 +16,7 @@ class BimestreRepository{
     protected $model;
 
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Bimestre();
     }
 
@@ -50,8 +49,10 @@ class BimestreRepository{
             }
 
             return $this->findByUuid($bimestre->uuid);
-        }catch(\Throwable $th){
+        } catch(\Throwable $th){
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -76,9 +77,11 @@ class BimestreRepository{
             }
 
             return $this->findById($id);
-        }catch(\Throwable $th){
+        } catch(\Throwable $th){
             LoggerHelper::logInfo($th->getMessage());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 }

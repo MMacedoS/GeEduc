@@ -16,71 +16,75 @@ class EstudanteTurmaRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new EstudanteTurma();
     }
 
     public function allClassStudents(array $params = [])
     {
         $sql = "SELECT 
-           et.*,
-           (
-            SELECT 
-               JSON_OBJECT(
-                   'id', t.id,
-                   'nome', t.nome,
-                   'turno', t.turno
-                )
-            FROM turmas t
-            WHERE t.id = et.turma_id and t.ativo = 1
-        ) AS turma,
-           (
-            SELECT 
-               JSON_OBJECT(
-                   'id', e.id,
-                   'pessoa_fisica_id', e.pessoa_fisica_id
-                )
-            FROM estudantes e
-            WHERE e.id = et.estudante_id and e.ativo = 1
-        ) AS estudante
-        FROM " . self::TABLE . " et";
-
+                et.*,
+                JSON_OBJECT(
+                    'id', t.id,
+                    'nome', t.nome,
+                    'turno', t.turno,
+                    'coordenador', JSON_OBJECT(
+                        'nome', pf.nome,
+                        'email', pf.email
+                    )
+                ) AS turma,
+                JSON_OBJECT(
+                    'id', e.id,
+                    'pessoa_fisica_id', e.pessoa_fisica_id,
+                    'nome', pfe.nome
+                ) AS estudante
+            FROM " . self::TABLE . " et
+            LEFT JOIN turmas t ON t.id = et.turma_id AND t.ativo = 1
+            LEFT JOIN coordenadores c ON c.id = t.coordenador_id
+            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id
+            LEFT JOIN estudantes e ON e.id = et.estudante_id AND e.ativo = 1
+            LEFT JOIN pessoa_fisica pfe ON pfe.id = e.pessoa_fisica_id
+        ";
+    
         $conditions = [];
         $bindings = [];
-
+    
         if (isset($params['search'])) {
             $conditions[] = "t.nome LIKE :nome";
             $bindings[':nome'] = '%' . $params['search'] . '%';
         }
-
+    
         if (isset($params['student_id'])) {
             $conditions[] = "et.estudante_id = :estudante_id";
             $bindings[':estudante_id'] = $params['student_id'];
         }
-
+    
         if (isset($params['class_id'])) {
             $conditions[] = "et.turma_id = :turma_id";
             $bindings[':turma_id'] = $params['class_id'];
         }
 
+        if (isset($params['school_year'])) {
+            $conditions[] = "et.ano_letivo = :ano_letivo";
+            $bindings[':ano_letivo'] = $params['school_year'];
+        }
+    
         if (isset($params['active'])) {
             $conditions[] = "et.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
         }
-
+    
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-
+    
         $sql .= " ORDER BY et.created_at DESC";
-
+    
         $stmt = $this->conn->prepare($sql);
-
         $stmt->execute($bindings);
-
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
-    }
+    
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+    }    
 
     public function create(array $data)
     {
@@ -113,6 +117,8 @@ class EstudanteTurmaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -153,6 +159,8 @@ class EstudanteTurmaRepository {
             return $this->findById($id);
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -168,5 +176,23 @@ class EstudanteTurmaRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function studentClassByStudentId(int $student_id){
+
+        $sql = "SELECT
+            et.*
+            FROM " . self::TABLE . " et
+            WHERE et.estudante_id = :id
+        ";
+
+        $sql .= " ORDER BY et.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $student_id]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
     }
 }

@@ -7,7 +7,7 @@
         <ol class="breadcrumb mb-3">
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\" class="text-decoration-none">Início</a>
+                <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
             <li class="breadcrumb-item">Coordenadores</li>
         </ol>
@@ -60,10 +60,10 @@
                                 ?>
                                     <tr>
                                         <td><?=$coordenador->id?></td>
-                                        <td class="fw-bold"> <?=getParamsToJson($coordenador->pessoa_fisica)->nome ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'não identificado'?>
                                         </td>
                                         <td>
-                                        <?=getParamsToJson($coordenador->pessoa_fisica)->email ?? 'não identificado'?>
+                                        <?=getJsonToObject($coordenador->pessoa_fisica)->email ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
@@ -102,7 +102,7 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>Coordenador: <?=getParamsToJson($coordenador->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                                <p>Coordenador: <?=getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

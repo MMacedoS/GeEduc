@@ -20,8 +20,7 @@ class ProfessorRepository {
     protected $pessoaFisicaRepository;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Professor();
         $this->usuarioRepository = new UsuarioRepository(); 
         $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
@@ -48,9 +47,9 @@ class ProfessorRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['nome'])) {
+        if (isset($params['name'])) {
             $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['nome'];
+            $bindings[':nome'] = $params['name'];
         }
 
         if (isset($params['email'])) {
@@ -58,9 +57,9 @@ class ProfessorRepository {
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['ativo'])) {
+        if (isset($params['active'])) {
             $conditions[] = "p.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+            $bindings[':ativo'] = $params['active'];
         }
 
         if (count($conditions) > 0) {
@@ -146,6 +145,8 @@ class ProfessorRepository {
             LoggerHelper::logInfo($th->getMessage());
             $this->conn->rollBack();
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -178,6 +179,8 @@ class ProfessorRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -217,6 +220,8 @@ class ProfessorRepository {
         } catch (\Throwable $th) {
             $this->conn->rollBack();
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -250,8 +255,9 @@ class ProfessorRepository {
 
             return $this->findById($id);
         } catch (\Throwable $th) {
-
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -280,4 +286,21 @@ class ProfessorRepository {
         return $updated;
     }
 
+    public function teacherByPersonId(int $person_id){
+
+        $sql = "SELECT
+            p.*
+            FROM " . self::TABLE . " p
+            WHERE p.pessoa_fisica_id = :id
+        ";
+
+        $sql .= " ORDER BY p.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $person_id]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
+    }
 }

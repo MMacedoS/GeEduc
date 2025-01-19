@@ -1,5 +1,26 @@
+<style>
+  #responsible_suggestions {
+    background-color: #fff;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+  }
 
-<div class="col-lg-5 col-sm-6 col-12">
+  #responsible_suggestions .list-group-item {
+      cursor: pointer;
+  }
+
+  #responsible_suggestions .list-group-item:hover {
+      background-color: #f1f1f1;
+  }
+</style>
+
+<div class="col-lg-3 col-sm-6 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
@@ -10,7 +31,7 @@
   </div>
 </div>
 
-<div class="col-lg-4 col-sm-4 col-12">
+<div class="col-lg-3 col-sm-4 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
@@ -21,12 +42,30 @@
   </div>
 </div>
 
-<div class="col-lg-3 col-sm-4 col-12">
+<div class="col-lg-2 col-sm-4 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Matricula</label>
         <input type="text" class="form-control" name="matricula" placeholder="digite aqui" value="<?=$estudante->matricula ?? ''?>" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-4 col-sm-3 col-12">
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="m-0">
+        <label class="form-label">Responsavel Legal</label>
+        <input type="hidden" id="responsible_id" name="legal_responsible_id" value="<?=$estudante->pessoa_contato_id ?? ''?>">
+
+        <input type="text" id="responsible_search" class="form-control" placeholder="Digite o nome do responsavel" value="<?=$pessoa_fisica_contato->nome ?? ''?>" autocomplete="off" />
+        <ul 
+          id="responsible_suggestions" 
+          class="list-group" 
+          style="display: none; position: absolute; z-index: 100; width: 100%; max-height: 200px; overflow-y: auto; border: 1px solid #ccc;">
+        </ul>
       </div>
     </div>
   </div>
@@ -54,7 +93,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Numero documento</label>
-        <input type="text" class="form-control" name="doc" id="doc" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
+        <input type="text" class="form-control" name="doc" id="doc" maxlength="14" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
         <div class="invalid-feedback" id="doc_error"></div>
       </div>
     </div>
@@ -102,10 +141,10 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Situação</label>
-        <select name="active" class="form-control" id="">
-            <option value="0" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
-            <option value="1" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
+        <label class="form-label">Gerar Mensalidades</label>
+        <select name="procees_monthylees" class="form-control" id="">
+            <option value="nao" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == 'nao') { echo 'selected'; } ?>>Não</option>
+            <option value="sim" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == 'sim') { echo 'selected'; } ?>>Sim</option>
         </select>
       </div>
    </div>
@@ -117,7 +156,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Telefone de contato</label>
-        <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
+        <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" maxlength="15" value="<?=$pessoa_fisica->telefone ?? ''?>" 
         required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
         <div class="invalid-feedback">Telefone inválido</div>
       </div>

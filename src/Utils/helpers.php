@@ -54,8 +54,8 @@ if (!function_exists('getCustomers')) {
     }
 }
 
-if (!function_exists('getParamsToJson')) {    
-    function getParamsToJson($data) {
+if (!function_exists('getJsonToObject')) {    
+    function getJsonToObject($data) {
         return json_decode($data);
     }
 }
@@ -65,6 +65,22 @@ if (!function_exists('brDate')) {
         if (!is_null($date)) {
             $date = implode('/', array_reverse(explode('-', $date)));
             return $date;
+        }
+        return "Não identificado";
+    }
+}
+
+if (!function_exists('brDateHora')) {    
+    function brDateHora($date) {
+        if (!is_null($date)) {
+            try {
+                // Converte para o formato de data brasileiro (DD/MM/AAAA HH:MM:SS)
+                $dateTime = new DateTime($date);
+                return $dateTime->format('d/m/Y H:i:s');
+            } catch (Exception $e) {
+                // Em caso de erro, retorna a mensagem de data inválida
+                return "Formato de data inválido";
+            }
         }
         return "Não identificado";
     }
@@ -117,3 +133,12 @@ if(!function_exists('publicPath')){
         }
     }
 }
+if (!function_exists('dd')) {
+    function dd($data) {
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+        die;
+    }
+}
+

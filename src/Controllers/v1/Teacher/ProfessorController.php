@@ -3,7 +3,10 @@
 namespace App\Controllers\v1\Teacher;
 
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\UserToPerson;
+use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Person\PessoaFisicaRepository;
+use App\Repositories\Teacher\ProfessorDisciplinaRepository;
 use App\Repositories\Teacher\ProfessorRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
@@ -11,14 +14,20 @@ use App\Utils\Validator;
 
 class ProfessorController extends Controller 
 {
+    use UserToPerson;
+
     protected $professorRepository;
+    protected $professorDisciplinaRepository;
     protected $pessoaFisicaRepository;
+    protected $turmaDisciplinaRepository;
 
     public function __construct()
     {
         parent::__construct();   
         $this->professorRepository = new ProfessorRepository(); 
         $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
+        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
+        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
     }
 
     public function index(Request $request) 
@@ -158,5 +167,24 @@ class ProfessorController extends Controller
         }
 
         $this->professorRepository->deleteAll($professor);
+    }
+
+    public function indexTeacher(Request $request)
+    {
+        $pessoaAuth = $this->authUser();
+        
+        $professor = $this->professorRepository->teacherByPersonId($pessoaAuth->id);
+
+        $class_discipline = $this->turmaDisciplinaRepository
+            ->classDisciplinesByTeacherId(
+                $professor->id
+            );
+
+        return $this->router->view('/teacher/my-disciplines/index', 
+            [
+                'active' => 'teacher',  
+                'disciplinas' => $class_discipline
+            ]
+        );
     }
 }
