@@ -24,7 +24,13 @@ class AtividadeRepository {
     public function allActivities(array $params = [])
     {
         $sql = "SELECT 
-                a.*
+                a.*, JSON_OBJECT(
+                    'id', a.id,
+                    'uuid', a.uuid,
+                    'turma_disciplina_id', a.turma_disciplina_id,
+                    'tipo', a.tipo,
+                    'valor', a.valor
+                ) AS activies_details
             FROM atividade a";
     
         $conditions = [];

@@ -21,6 +21,7 @@ use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
+use App\Controllers\v1\Scores\NotaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -43,6 +44,7 @@ $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
 $frequenciaController = new FrequenciaController();
+$notaController = new NotaController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -184,6 +186,9 @@ $router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController,
 $router->create("GET", "/meus-componentes/", [$professorController, "indexTeacher"], $auth);
 $router->create('GET', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
 $router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'store'], $auth);
+$router->create('GET', "/meus-componentes/{id}/notas", [$notaController, 'indexTeacher'], $auth);
+$router->create('POST', "/meus-componentes/{id}/notas", [$notaController, 'store'], $auth);
+
 
 $router->create("GET", "/mensalidades", [$mensalidadeController, 'index'], $auth);
 $router->create("GET", "/mensalidade", [$mensalidadeController, 'create'], $auth);
