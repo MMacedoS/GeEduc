@@ -28,7 +28,7 @@ class Estudante {
         $estudante->id = $data['id'] ?? null;
         $estudante->uuid = $data['uuid'] ?? $this->generateUUID();
         $estudante->pessoa_fisica_id = $data['person_id'];
-        $estudante->pessoa_contato_id = $data['person_contact_id'];
+        $estudante->pessoa_contato_id = $data['legal_responsible_id'];
         $estudante->matricula = $data['matricula'] ?? null;
         $estudante->ativo = $data['active'] ?? null;     
         $estudante->updated_at = $data['updated_at'] ?? null;
@@ -40,7 +40,7 @@ class Estudante {
     {
         $estudante->pessoa_fisica_id = $data['person_id'] ?? $estudante->pessoa_fisica_id;
         $estudante->matricula = $data['matricula'] ?? $estudante->matricula;
-        $estudante->pessoa_contato_id = $data['person_contact_id'] ?? $estudante->pessoa_contato_id;
+        $estudante->pessoa_contato_id = $data['legal_responsible_id'] ?? $estudante->pessoa_contato_id;
         $estudante->ativo = $data['active'] ?? $estudante->ativo;
 
         return $estudante;

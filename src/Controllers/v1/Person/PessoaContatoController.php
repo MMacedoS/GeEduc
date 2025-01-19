@@ -117,9 +117,9 @@ class PessoaContatoController extends Controller
             ]);
         }
 
-        $data['usuario_id'] = $pessoa_fisica->usuario_id;
-        $data['pessoa_fisica_id'] = $pessoa_fisica->id;
-        $data['id'] = $pessoa_contato->id;
+        $data['usuario_id'] = (int)$pessoa_fisica->usuario_id;
+        $data['person_id'] = (int)$pessoa_fisica->id;
+        $data['id'] = (int)$pessoa_contato->id;
         $data['sector'] = 'responsavel_legal';
 
         $updated = $this->pessoaContatoRepository->updateAll($data);
@@ -134,7 +134,8 @@ class PessoaContatoController extends Controller
         return $this->router->redirect('pessoas/');
     }
 
-    public function destroy(Request $request, $id) {
+    public function destroy(Request $request, $id) 
+    {
         $pessoa_contato = $this->pessoaContatoRepository->findByUuid($id);
 
         if(is_null($pessoa_contato)){
@@ -147,6 +148,14 @@ class PessoaContatoController extends Controller
         $this->pessoaContatoRepository->deleteAll($pessoa_contato->id);
 
         echo json_encode("deletado com sucesso");
+        exit();
+    }
+
+    public function indexWithoutPagination(Request $request) 
+    {
+        $data = $request->getQueryParams();
+        $pessoas = $this->pessoaContatoRepository->allPersons($data);
+        echo json_encode($pessoas);
         exit();
     }
 }

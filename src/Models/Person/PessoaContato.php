@@ -10,9 +10,9 @@ class PessoaContato {
 
     public $id;
     public string $uuid;
-    public int $responsavel_legal;
-    public int $pessoa_fisica_id;
-    public int $ativo;
+    public string $responsavel_legal;
+    public string $pessoa_fisica_id;
+    public string $ativo;
     public $created_at;
     public $updated_at;
 
@@ -24,9 +24,9 @@ class PessoaContato {
         $pessoa_contato = new PessoaContato();
         $pessoa_contato->id = $data['id'] ?? null;
         $pessoa_contato->uuid = $data['uuid'] ?? $this->generateUUID();
-        $pessoa_contato->responsavel_legal = (int)$data['legal_responsive'];
+        $pessoa_contato->responsavel_legal = (int)$data['legal_responsive'] ?? 1;
         $pessoa_contato->pessoa_fisica_id = (int)$data['person_id'];
-        $pessoa_contato->ativo = (int)$data['active']; 
+        $pessoa_contato->ativo = (int)$data['active'] ?? 1; 
         $pessoa_contato->created_at = $data['created_at'] ?? null;
         $pessoa_contato->updated_at = $data['updated_at'] ?? null;
         return $pessoa_contato;

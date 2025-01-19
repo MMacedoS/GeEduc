@@ -48,9 +48,14 @@ class PessoaContatoRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['nome'])) {
+        if (isset($params['search'])) {
+            $conditions[] = "pf.nome LIKE :busca";
+            $bindings[':busca'] = '%' . $params['search'] . '%';
+        }
+
+        if (isset($params['name'])) {
             $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['nome'];
+            $bindings[':nome'] = $params['name'];
         }
 
         if (isset($params['email'])) {
@@ -166,24 +171,25 @@ class PessoaContatoRepository {
 
     }
 
-    public function updateAll(array $data){
-
+    public function updateAll(array $data) 
+    {
         if(empty($data)){
             return null;
         }
-
+        
         try{    
-            $user = $this->usuarioRepository->update($data, $data['usuario_id']);
+            $user = $this->usuarioRepository->update($data, (int)$data['usuario_id']);
             if(is_null($user)){
                 return null;
             }
 
-            $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
+            $person = $this->pessoaFisicaRepository->update($data, (int)$data['person_id']);
+
             if(is_null($person)){
                 return null;
             }
-            
-            $personContact = $this->update($data, $data['id']);
+
+            $personContact = $this->update($data, (int)$data['id']);
 
             if(is_null($personContact)){
                 return null;
@@ -209,17 +215,17 @@ class PessoaContatoRepository {
                 "UPDATE " . self::TABLE . "
                     set
                         responsavel_legal = :responsavel_legal,
-                        pessoa_fisica_id = :pessoa_fisica_id
-                        ativo = :ativo,
+                        pessoa_fisica_id = :pessoa_fisica_id,
+                        ativo = :ativo
                     WHERE id = :id
                     "
             );
 
             $updated = $stmt->execute([
-                ':responsavel_legal' => $person_contact->responsavel_legal,
+                ':responsavel_legal' => (int)$person_contact->responsavel_legal,
                 ':pessoa_fisica_id' => $person_contact->pessoa_fisica_id,
-                ':ativo' => $person_contact->ativo,
-                ':id' => $id
+                ':ativo' => (int)$person_contact->ativo,
+                ':id' => (int)$id
             ]);
 
             if(!$updated){

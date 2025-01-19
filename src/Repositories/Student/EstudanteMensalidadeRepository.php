@@ -96,9 +96,13 @@ class EstudanteMensalidadeRepository {
                 return null;
             }
 
+            $plano = $this->planoRepository->findById($monthly->plano_id);
+
             $monthly = $this->findByUuid($monthly->uuid);            
             $data['studante_monthly_id'] = $monthly->id;
-            $data['expiration_day'] = $monthly->dia_mensalidade;
+            $data['monthly_day'] = $monthly->dia_mensalidade;
+            $data['expiration_date'] = Date('Y-m-') . $monthly->dia_mensalidade;
+            $data['amount'] = $plano->valor;
             $monthlyfees = $this->mensalidadeRepository->create($data);
 
             if(is_null($monthlyfees)){

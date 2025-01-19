@@ -54,7 +54,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Numero documento</label>
-        <input type="text" class="form-control" name="doc" id="doc" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
+        <input type="text" class="form-control" name="doc" id="doc" maxlength="14" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
         <div class="invalid-feedback" id="doc_error"></div>
       </div>
     </div>
@@ -102,13 +102,12 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Situação</label>
-        <select name="active" class="form-control" id="">
-            <option value="0" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
-            <option value="1" <?php if(isset($pessoa_fisica->ativo) && $pessoa_fisica->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
-        </select>
+        <label class="form-label">Telefone de contato</label>
+        <input type="phone" class="form-control" name="phone" id="phone" maxlength="15" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
+        required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
+        <div class="invalid-feedback">Telefone inválido</div>
       </div>
-   </div>
+    </div>
   </div>
 </div>
 
@@ -116,12 +115,13 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Telefone de contato</label>
-        <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
-        required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
-        <div class="invalid-feedback">Telefone inválido</div>
+        <label class="form-label">Responsavel Legal</label>
+        <select name="legal_responsive" class="form-control" id="">
+            <option value="0" <?php if(isset($pessoa_contato->responsavel_legal) && $pessoa_contato->responsavel_legal == 0) { echo 'selected'; } ?>>Não</option>
+            <option value="1" <?php if(isset($pessoa_contato->responsavel_legal) && $pessoa_contato->responsavel_legal == 1) { echo 'selected'; } ?>>Sim</option>
+        </select>
       </div>
-    </div>
+   </div>
   </div>
 </div>
 
@@ -141,7 +141,7 @@
         <div class="card-body">
             <div class="d-flex flex-wrap gap-2 justify-content-end">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="\coordenadores\" class="btn btn-secondary">Cancelar</a>
+                <a href="\pessoas\" class="btn btn-secondary">Cancelar</a>
             </div>
         </div>
     </div>

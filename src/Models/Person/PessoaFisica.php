@@ -12,9 +12,9 @@ class PessoaFisica {
     public string $uuid;
     public string $nome;
     public string $email;
-    public int $usuario_id;
+    public string $usuario_id;
     public string $endereco;
-    public int $ativo;
+    public string $ativo;
     public string $nome_mae;
     public string $nome_pai;
     public string $doc;
@@ -42,7 +42,7 @@ class PessoaFisica {
         $pessoa_fisica->genero = $data['gender'] ?? null;     
         $pessoa_fisica->doc = $data['doc'];   
         $pessoa_fisica->tipo_doc = $data['type_doc'];   
-        $pessoa_fisica->ativo = $data['active']; 
+        $pessoa_fisica->ativo = (int)$data['active']; 
         $pessoa_fisica->created_at = $data['created_at'] ?? null;
         $pessoa_fisica->updated_at = $data['updated_at'] ?? null;
         return $pessoa_fisica;
