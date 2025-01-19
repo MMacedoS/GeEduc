@@ -11,9 +11,9 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\meus-componentes" class="text-decoration-none">Meus Compoenentes</a>
+                <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
             </li>
-            <li class="breadcrumb-item">Componente: <?=getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
+            <li class="breadcrumb-item">Componente: <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
@@ -58,7 +58,7 @@
                                     <div class="card-body">
                                         <div class="m-0">
                                             <label for="data-frequencia" class="form-label">Selecione a Data</label>
-                                            <input type="date" id="data-frequencia" name="data" class="form-control" required value="<?= Date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>">
+                                            <input type="date" id="data-frequencia" name="data" class="form-control" required value="<?= $dataFilter ?>" max="<?= date('Y-m-d') ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -71,7 +71,7 @@
                                             <label class="form-label">Bimestre</label>
                                             <select class="form-select" name="bimester_id" id="bimester_id">
                                                 <?php foreach ($bimestres as $key => $value) {?>
-                                                    <option value="<?=$value->id?>"><?=$value->bimestre?></option>
+                                                    <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->bimestre?></option>
                                                 <? } ?>
                                             </select>
                                         </div>
@@ -82,7 +82,7 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
-                                            <button type="button" id="buscar-estudantes" class="btn btn-primary w-100">Buscar</button>
+                                            <button type="button" id="search" class="btn btn-primary w-100">Buscar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -93,30 +93,25 @@
                         // Transformar o array de frequências em um índice rápido por ID do estudante
                         $frequenciasMap = [];
                         foreach ($frequencias as $frequencia) {                            
-                            $frequenciasMap['id'] = $frequencia->estudante_turma_id;
+                            $frequenciasMap[$frequencia->estudante_turma_id] = $frequencia->faltas;
                         }
-
                         foreach ($estudantes as $key => $estudante) {             
-                            $checked = $frequenciasMap['id'] == $estudante->id ? "checked" : "";
+                          
                         ?>
-                            <div class="row mb-3">
-                                <div class="col-7">
-                                    <span class="fs-4"><?= getParamsToJson($estudante->estudante)->nome ?>
-                                    ---
-                                    <?= getParamsToJson($estudante->turma)->nome ?></span>
+                            <div class="row mb-3 me-0">
+                                <div class="col-6">
+                                    <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
+                                    -
+                                    <?= getJsonToObject($estudante->turma)->nome ?></span>
                                 </div>
-                                <div class="col-5">
-                                    <div class="form-check form-switch form-check-reverse mr-2" style="padding-right: 5.5em;">
-                                        <input 
-                                            class="form-check-input fs-3" 
-                                            type="checkbox" 
-                                            role="switch" 
-                                            id="presenca-<?= $estudante->id ?>" 
-                                            name="class_student_id[]"
-                                            value="<?= $estudante->id ?>"
-                                            <?=$checked?>
-                                        />
-                                        <label class="form-check-label fs-3" for="presenca-<?= $estudante->id ?>">Não está Presente?</label>
+                                <div class="col-6">
+                                    <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">
+                                        <label class="form-check-label mt-2 me-2" style="width: 100px;" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
+                                        <select class="form-select" name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
+                                            <option value="0" <?= $frequenciasMap[$estudante->id] == 0 ? 'selected' : '' ?>>0</option>
+                                            <option value="1" <?= $frequenciasMap[$estudante->id] == 1 ? 'selected' : '' ?>>1</option>
+                                            <option value="2" <?= $frequenciasMap[$estudante->id] == 2 ? 'selected' : '' ?>>2</option>
+                                        </select>                                        
                                     </div>
                                 </div>
                             </div>     
@@ -140,3 +135,29 @@
 </div>
 
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
+
+<script>
+$(document).ready(function() {
+    $('#search').click(function() {
+        searchDate();       
+    });
+
+    $('#data-frequencia').change(function() {
+        searchDate();       
+    });
+
+    const searchDate = function() {
+         // Capturar valores do formulário
+         var data = $('#data-frequencia').val();
+        var bimester_id = $('#bimester_id').val();
+
+        // Montar a URL
+        var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/frequencia';
+        url += '?data=' + data + '&bimester_id=' + bimester_id;
+
+        // Redirecionar para a URL
+        window.location.href = url;
+    }
+});
+
+</script>

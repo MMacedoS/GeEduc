@@ -16,8 +16,7 @@ class EstudanteTurmaRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new EstudanteTurma();
     }
 
@@ -118,6 +117,8 @@ class EstudanteTurmaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -158,6 +159,8 @@ class EstudanteTurmaRepository {
             return $this->findById($id);
         } catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -173,5 +176,23 @@ class EstudanteTurmaRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function studentClassByStudentId(int $student_id){
+
+        $sql = "SELECT
+            et.*
+            FROM " . self::TABLE . " et
+            WHERE et.estudante_id = :id
+        ";
+
+        $sql .= " ORDER BY et.created_at DESC LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([':id' => $student_id]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        return $stmt->fetch();  
     }
 }

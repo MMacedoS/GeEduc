@@ -11,7 +11,7 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\meus-componentes" class="text-decoration-none">Meus Compoenentes</a>
+                <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
             </li>
             <li class="breadcrumb-item">Meus Componentes Curriculares</li>
         </ol>
@@ -70,9 +70,9 @@
                                     <tr>
                                         <td class="text-center"><?=$disciplina->id?></td>
                                         <td class="fw-bold text-center"> 
-                                            <?=getParamsToJson($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
                                             ---
-                                            <?=getParamsToJson($disciplina->turma)->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($disciplina->turma)->nome ?? 'não identificado'?>
                                         <td class="text-center"> <?=$disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>

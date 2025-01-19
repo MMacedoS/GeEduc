@@ -7,7 +7,7 @@
         <ol class="breadcrumb mb-3">
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\" class="text-decoration-none">Início</a>
+                <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
             <li class="breadcrumb-item">Estudantes</li>
         </ol>
@@ -16,7 +16,7 @@
     <? if (hasPermission('cadastrar estudantes')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-            <a href="\estudantes\criar" class="btn btn-outline-primary" > + </a>
+            <a href="\estudante" class="btn btn-outline-primary" > + </a>
             </div>
         </div>
     <? }?>
@@ -59,10 +59,10 @@
                                 ?>
                                     <tr>
                                         <td><?=$estudante->id?></td>
-                                        <td class="fw-bold"> <?=getParamsToJson($estudante->pessoa_fisica)->nome ?? 'não identificado'?>
+                                        <td class="fw-bold"> <?=getJsonToObject($estudante->pessoa_fisica)->nome ?? 'não identificado'?>
                                         </td>
                                         <td>
-                                        <?=getParamsToJson($estudante->pessoa_fisica)->email ?? 'não identificado'?>
+                                        <?=getJsonToObject($estudante->pessoa_fisica)->email ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
@@ -79,7 +79,7 @@
                                         <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes') || hasPermission('visualizar turmas estudantes')) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('editar estudantes')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/editar">
+                                                    <a class="mb-1 me-2 mt-1" href="/estudante/<?=$estudante->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
@@ -101,11 +101,11 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>Estudante: <?=getParamsToJson($estudante->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                                <p>Estudante: <?=getJsonToObject($estudante->pessoa_fisica)->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="button" onclick="deleteData('/estudantes/<?=$estudante->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                                <button type="button" onclick="deleteData('/estudante/<?=$estudante->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -21,7 +21,7 @@
                 <option 
                     value="<?=$value->id ?>" 
                     <?= isset($turma->coordenador_id) && $turma->coordenador_id == $value->id ? 'selected' : '' ?>>
-                    <?=getParamsToJson($value->pessoa_fisica)->nome?>
+                    <?=getJsonToObject($value->pessoa_fisica)->nome?>
                 </option>
             <?php } ?>
         </select>

@@ -54,8 +54,8 @@ if (!function_exists('getCustomers')) {
     }
 }
 
-if (!function_exists('getParamsToJson')) {    
-    function getParamsToJson($data) {
+if (!function_exists('getJsonToObject')) {    
+    function getJsonToObject($data) {
         return json_decode($data);
     }
 }
@@ -110,7 +110,9 @@ if (!function_exists('filterAvailableToursWithYear')) {
 
 if (!function_exists('dd')) {
     function dd($data) {
+        echo "<pre>";
         var_dump($data);
+        echo "</pre>";
         die;
     }
 }

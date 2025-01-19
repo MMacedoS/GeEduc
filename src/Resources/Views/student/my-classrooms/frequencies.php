@@ -7,7 +7,7 @@
         <ol class="breadcrumb mb-3">
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\" class="text-decoration-none">Início</a>
+                <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
@@ -42,15 +42,15 @@
                                     <tr>
                                         <td><?=$frequencias->id?></td>
                                         <td class="fw-bold text-center"> 
-                                            <?= brDateHora($frequencia->data) ?? 'não identificado'?>
+                                            <?= brDate($frequencia->data) ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?=getParamsToJson($frequencia->turma_disciplina_details)->professor_disciplina->disciplina->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->disciplina->nome ?? 'não identificado'?>
                                             --
-                                            <?=getParamsToJson($frequencia->turma_disciplina_details)->professor_disciplina->professor->nome ?? 'não identificado'?>
+                                            <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->professor->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?= getParamsToJson($frequencia->turma_disciplina_details)->bimestres->bimestre ?? 'não identificado'?>
+                                            <?= getJsonToObject($frequencia->turma_disciplina_details)->bimestres->bimestre ?? 'não identificado'?>
                                         </td>
                                     </tr>
                             <? } ?>
@@ -66,17 +66,45 @@
     </div>
 </div>
 
-<!-- <div class="row gx-3">
-    <div class="col-xl-12">
-        <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title">Area Chart</h5>
-            </div>
-            <div class="card-body">
-                <div id="areaChart" class="chart-height-xl"></div>
-            </div>
+<div class="row">
+    <div class="float-end">
+        <?=$data['links']?>
+    </div>
+</div>
+
+<div class="col-xl-6">
+    <div class="card mb-3">
+       <div class="card-header">
+            <h5 class="card-title">Gráficos de Faltas</h5>
+        </div>
+        <div class="card-body">
+           <div id="donutFormatter" class="chart-height-xl"></div>
         </div>
     </div>
-</div> -->
-
+</div>
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
+
+<script>
+    Morris.Donut({
+        element: "donutFormatter",
+        data: [
+            {
+                value: "<?php echo $total_faltas; ?>",
+                label: "Faltas",
+                formatted: "<?php echo $percentual_faltas; ?>%"
+            },
+            {
+                value: "<?php echo $presenca; ?>",
+                label: "Presença",
+                formatted: "<?php echo $percentual_presenca; ?>%"
+            }
+        ],
+        resize: true,
+        hideHover: "auto",
+        formatter: function (x, data) {
+            return data.formatted;
+        },
+        labelColor: "#507D0C",
+        colors: ["#e94235", "#34a853"]
+    });
+</script>

@@ -16,14 +16,39 @@ class DisciplinaRepository{
     protected $model;
 
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Disciplina();
     }
 
-    public function allDisciplines(){
-        $stmt = $this->conn->query("SELECT * FROM " . self::TABLE . " order by nome ASC");
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+    public function allDisciplines(array $params = []){
+        $sql = "SELECT 
+            d.* 
+            FROM " . self::TABLE . " d ";
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['search'])) {
+            $conditions[] = "d.nome LIKE :search ";
+            $bindings[':search'] = '%' . $params['search'] . '%';
+        }   
+
+        if (isset($params['active'])) {
+            $conditions[] = "d.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY d.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
     }
 
     public function create(array $data){
@@ -52,6 +77,8 @@ class DisciplinaRepository{
             return $this->findByUuid($disciplina->uuid);
         }catch (\Throwable $th) {
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -78,9 +105,11 @@ class DisciplinaRepository{
             }
 
             return $this->findById($id);
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo($th->getMessage());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

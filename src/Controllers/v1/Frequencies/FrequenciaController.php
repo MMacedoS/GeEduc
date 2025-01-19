@@ -3,12 +3,14 @@
 namespace App\Controllers\v1\Frequencies;
 
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\GenericTrait;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Frequencies\FrequenciaRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Repositories\Teacher\ProfessorDisciplinaRepository;
+use App\Repositories\Work_Load\CargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -16,6 +18,8 @@ use App\Utils\Validator;
 
 class FrequenciaController extends Controller 
 {
+    use GenericTrait;
+
     const TEN = 10;
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
@@ -23,6 +27,7 @@ class FrequenciaController extends Controller
     protected $estudanteTurmaRepository;
     protected $professorDisciplinaRepository;
     protected $bimestreRepository;
+    protected $cargaHorariaRepository;
 
     public function __construct()
     {
@@ -33,11 +38,12 @@ class FrequenciaController extends Controller
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
         $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
         $this->bimestreRepository = new BimestreRepository();
+        $this->cargaHorariaRepository = new CargaHorariaRepository();
     }
 
-    public function indexStudents(Request $request, string $class_discipline_id)
+    public function indexStudents(Request $request, string $studant_class_id)
     {
-        $student_class = $this->estudanteTurmaRepository->findByUuid($class_discipline_id);
+        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -47,10 +53,21 @@ class FrequenciaController extends Controller
                 ]
             );
 
+        $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
+
+        $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
+
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($frequencias, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
+
+        $total_faltas = $this->sumAbsences($frequencias); 
+        $carga = $carga_horaria->carga ?? 80;
+
+        $presenca = $carga - $total_faltas;
+        $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
+        $percentual_presenca = round(($presenca / $carga) * 100, 2);
 
         return $this->router->view(
             'student/my-classrooms/frequencies', 
@@ -58,6 +75,10 @@ class FrequenciaController extends Controller
                 'active' => 'students',
                 'estudante_turma' => $student_class,
                 'frequencias' => $paginatedBoards, 
+                'percentual_faltas' => $percentual_faltas,
+                'percentual_presenca' => $percentual_presenca,
+                'total_faltas' => $total_faltas,
+                'presenca' => $presenca,
                 'links' => $paginator->links()
             ]
         ); 
@@ -65,6 +86,8 @@ class FrequenciaController extends Controller
 
     public function indexTeacher(Request $request, string $class_discipline_id)
     {
+        $paramsURL = $request->getQueryParams();
+
         $turma_disciplina = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 ['uuid' => $class_discipline_id]
@@ -77,15 +100,24 @@ class FrequenciaController extends Controller
                     'school_year' => Date('Y')
                 ]
             );
+        
+        $data_presence = Date('Y-m-d');
+
+        if(isset($paramsURL['data']) && !empty($paramsURL['data'])) {
+            $data_presence = $paramsURL['data'];
+        }   
 
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
                 [
                     'class_discipline_id' => $turma_disciplina->id,
-                    'class_id' => $turma_disciplina->turma_id
+                    'class_id' => $turma_disciplina->turma_id,
+                    'data_presence' => $data_presence,
+                    'bimester_id' => $paramsURL['bimester_id'] ?? null
                 ]
             );
 
+            
         $bimestres = $this->bimestreRepository->allBimesters();
 
         return $this->router->view(
@@ -95,7 +127,9 @@ class FrequenciaController extends Controller
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'frequencias' => $frequencias,
-                'bimestres' => $bimestres
+                'bimestres' => $bimestres,
+                'dataFilter' => $data_presence,
+                'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
             ]
         ); 
     }
@@ -103,22 +137,25 @@ class FrequenciaController extends Controller
     public function store(Request $request, string $class_discipline_id)
     {
         $data = $request->getBodyParams();
-
+     
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
 
         $data['class_discipline_id'] = $turma_disciplina->id;
 
-        foreach ($data['class_student_id'] as $value) {
-            $data['class_student_id'] = $value;
-            
-            $created = $this->frequenciaRepository->create($data);
+       
+        if (isset($data['class_students_id'])) {
+            foreach ($data['class_students_id'] as $classStudentID => $attendance) {
+                $data['faltas'] = $attendance;
+                $data['class_student_id'] = $classStudentID;
+                $created = $this->frequenciaRepository->create($data);
+            }
         }
-        
+      
         if(is_null($created)){
             return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?error=422");
         }
-        
-        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia");
+       
+        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&bimester_id=$data[bimester_id]");
     }
 
     // $dataForChart = array_map(function ($frequencia) {

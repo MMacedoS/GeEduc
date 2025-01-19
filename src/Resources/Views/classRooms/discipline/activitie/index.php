@@ -19,7 +19,7 @@
             </li>
             <li class="breadcrumb-item">
                     <i class="icon-archive lh-1"></i>
-                    <a href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="text-decoration-none">Componente: <?=getParamsToJson($turmas_disciplinas[0]->professor_disciplina)->disciplina->nome?></a>
+                    <a href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="text-decoration-none">Componente: <?=getJsonToObject($turmas_disciplinas[0]->professor_disciplina)->disciplina->nome?></a>
             </li>
             <li class="breadcrumb-item">Atividades</li>
         </ol>

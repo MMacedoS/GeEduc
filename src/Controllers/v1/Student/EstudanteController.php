@@ -4,6 +4,7 @@ namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
+use App\Repositories\Person\PessoaContatoRepository;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Student\EstudanteRepository;
@@ -18,6 +19,7 @@ class EstudanteController extends Controller
 
     protected $estudanteRepository;
     protected $pessoaFisicaRepository;
+    protected $pessoaContatoRepository;
     protected $planosRepository;
     protected $estudanteTurmaRepository;
 
@@ -25,6 +27,7 @@ class EstudanteController extends Controller
         parent::__construct();
         $this->estudanteRepository = new EstudanteRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->pessoaContatoRepository = new PessoaContatoRepository();
         $this->planosRepository = new PlanoRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
     }
@@ -56,7 +59,8 @@ class EstudanteController extends Controller
         return $this->router->view('/student/create', ['active' => 'pedagogico', 'plans' => $planos]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request) 
+    {
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
@@ -67,7 +71,8 @@ class EstudanteController extends Controller
             'mother' => 'required',
             'doc' => 'required',
             'monthly_day' => 'required',
-            'plan_id' => 'required'
+            'plan_id' => 'required',
+            'legal_responsible_id' => 'required'
         ];
 
         if(!$validator->validate($rules)){
@@ -97,12 +102,17 @@ class EstudanteController extends Controller
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
 
+        $pessoa_contato = $this->pessoaContatoRepository->findById($estudante->pessoa_contato_id);
+        
+        $pessoa_fisica_contato = $this->pessoaFisicaRepository->findById($pessoa_contato->pessoa_fisica_id);
+
         return $this->router->view('student/edit', 
         [
             'active' => 'register', 
             'estudante' => $estudante, 
             'pessoa_fisica' => $pessoa_fisica,
-            'plans' => $planos
+            'plans' => $planos,
+            'pessoa_fisica_contato' => $pessoa_fisica_contato
         ]);
     }
 

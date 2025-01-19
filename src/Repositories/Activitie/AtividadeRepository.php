@@ -16,15 +16,20 @@ class AtividadeRepository {
     protected $model;
 
     public function __construct() {
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new Atividade();
     }
 
     public function allActivities(array $params = [])
     {
         $sql = "SELECT 
-                a.*
+                a.*, JSON_OBJECT(
+                    'id', a.id,
+                    'uuid', a.uuid,
+                    'turma_disciplina_id', a.turma_disciplina_id,
+                    'tipo', a.tipo,
+                    'valor', a.valor
+                ) AS activies_details
             FROM atividade a";
     
         $conditions = [];
@@ -90,6 +95,8 @@ class AtividadeRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -128,6 +135,8 @@ class AtividadeRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

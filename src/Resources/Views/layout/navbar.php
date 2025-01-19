@@ -104,7 +104,7 @@
                                     </li>
                                     <?php } if (hasPermission('visualizar mensalidades')) { ?>
                                     <li>
-                                        <a class="dropdown-item current-page" href="/consumos/diaria">
+                                        <a class="dropdown-item current-page" href="/mensalidades">
                                             <span>Mensalidade</span>
                                         </a>
                                     </li>
@@ -133,6 +133,11 @@
                                     <li>
                                         <a class="dropdown-item" href="/permissao/">
                                             <span>Permissões</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/pessoas/">
+                                            <span>Pessoa Contato</span>
                                         </a>
                                     </li>
                                 <?php } ?>
