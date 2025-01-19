@@ -33,15 +33,4 @@ class nota {
         $nota->created_at = $data['created_at'] ?? null;
         return $nota;
     }
-
-    // public function update(array $data, Note $note): Note
-    // {
-    //     $note->turma_disciplina_id = $data['class_discipline_id'] ?? $note->turma_disciplina_id;
-    //     $note->tipo = $data['type'] ?? $note->tipo;
-    //     $note->valor = floatval($data['value']) ?? $note->valor;
-    //     $note->ativo = $data['active'] ?? $note->ativo;
-
-    //     return $note;
-    // }
-
 }
