@@ -13,16 +13,15 @@ class SiteEventoRepository {
     const CLASS_NAME = SiteEvento::class;
     const TABLE = 'site_eventos';
 
-    use FindTrait;
-
     protected $conn;
     protected $model;
     protected $siteArquivoRepository;
 
+    use FindTrait;
+
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
         $this->model = new SiteEvento();
+        $this->conn = Database::getInstance()->getConnection();
         $this->siteArquivoRepository = new SiteArquivoRepository();
     }
 
@@ -32,22 +31,22 @@ class SiteEventoRepository {
         $conditions = [];
         $bindings = [];
 
-        if(isset($params['name'])){
+        if (isset($params['name'])) {
             $conditions[] = "name = :nome";
             $bindings[':nome'] = $params['name'];
         }
 
-        if(count($conditions) > 0){
+        if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $slq .= " ORDER BY name DESC";
+        $sql .= " ORDER BY created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME); 
     }
 
     public function saveAll(array $data, string $dir){
@@ -57,14 +56,15 @@ class SiteEventoRepository {
 
         try{
             $site_archive = $this->siteArquivoRepository->create($data, $dir);
-            
-            $site_eventoData = array_merge($data, ['site_arquivo_id' => $site_archive['id']]);
+            $site_eventoData = array_merge($data, ['site_arquivo_id' => $site_archive->id]);
             $site_evento = $this->create($site_eventoData);
 
             return $site_evento;
 
         }catch(\Throwable $th){
             return null;
+        }finally{
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -95,7 +95,9 @@ class SiteEventoRepository {
 
             return $this->findByUuid($site_evento->uuid);
         }catch(\Throwable $th){
-            echo $th->getMessage();
+            echo 'id' . $site_evento->site_arquivo_id;
+        }finally{
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -117,6 +119,8 @@ class SiteEventoRepository {
             return $site_evento;
         }catch(\Throwable $th){
             return null;
+        }finally{
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -149,6 +153,8 @@ class SiteEventoRepository {
             
         }catch(\Throwable $th){
             return null;
+        }finally{
+            Database::getInstance()->closeConnection();
         }
     }
 

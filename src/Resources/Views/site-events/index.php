@@ -97,7 +97,7 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>Estudante: <?=getParamsToJson($site_evento->pessoa_fisica)->nome ?? 'não identificado'?></p>
+                                                                <p>Estudante: <?=$site_evento->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

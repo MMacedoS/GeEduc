@@ -9,7 +9,7 @@ use App\Utils\LoggerHelper;
 
 class SiteArquivoRepository {
 
-    const CLASS_NAME = Turma::class;
+    const CLASS_NAME = SiteArquivo::class;
     const TABLE = 'site_arquivos';
 
     use FindTrait;
@@ -18,8 +18,7 @@ class SiteArquivoRepository {
     protected $model;
 
     public function __construct(){
-        $conn = new Database();
-        $this->conn = $conn->getConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->model = new SiteArquivo();
     }
 
@@ -83,6 +82,8 @@ class SiteArquivoRepository {
             return $archiveFromDb;
         }catch(\Throwable $th){
             return null;
+        }finally{
+            Database::getInstance()->closeConnection();
         }
     }
 
@@ -120,6 +121,8 @@ class SiteArquivoRepository {
             return $this->findByUuid($archive->uuid);
         }catch(\Throwable $th){
             return null;
+        }finally{
+            Database::getInstance()->closeConnection();
         }
     }
 
