@@ -19,7 +19,6 @@ use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
-use App\Controllers\v1\Coordination\CoordenacaoController;
 use App\Controllers\v1\SiteEvent\SiteEventoController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
@@ -221,3 +220,4 @@ $router->create('GET', '/pessoas-lista', [$pessoaContatoController, 'indexWithou
 $router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLittleGroup'], $auth);
 $router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
+$router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);

@@ -6,10 +6,9 @@ use App\Controllers\Controller;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Frequencies\FrequenciaRepository;
 use App\Repositories\Scores\NotaRepository;
+use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
 use App\Request\Request;
 
 class NotaController extends Controller 
@@ -18,6 +17,7 @@ class NotaController extends Controller
     protected $turmaDisciplinaRepository;
     protected $notaRepository;
     protected $estudanteTurmaRepository;
+    protected $estudanteRepository;
     protected $bimestreRepository;
 
     public function __construct()
@@ -26,6 +26,7 @@ class NotaController extends Controller
         $this->atividadeRepository = new AtividadeRepository();
         $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
+        $this->estudanteRepository = new EstudanteRepository();
         $this->bimestreRepository = new BimestreRepository();
         $this->notaRepository = new NotaRepository();
     }
@@ -38,7 +39,6 @@ class NotaController extends Controller
             ->allClassDisciplines(
                 ['uuid' => $class_discipline_id]
             )[0];
- 
 
         $estudantes = $this->estudanteTurmaRepository
             ->allClassStudents(
@@ -47,7 +47,6 @@ class NotaController extends Controller
                     'school_year' => Date('Y')
                 ]
             );
-            
 
         $atividades = $this->atividadeRepository->allActivities(['class_discipline_id' => $turma_disciplina->id]);
         
@@ -92,5 +91,31 @@ class NotaController extends Controller
         }
        
         return $this->router->redirect("meus-componentes/$class_discipline_id/notas?bimester_id=$data[bimester_id]");
+    }
+
+    public function indexResponsibleStudents(Request $request, string $student_id, string $studant_class_id) 
+    {    
+        $student = $this->estudanteRepository
+            ->studentWithPersonByUuid((string)$student_id);
+
+        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);            
+        
+        $notas = $this->notaRepository->allScoresByStudents([
+            'student_class_id' => $student_class->id, 
+            'bimester_id' => $paramsURL['bimester_id'] ?? null
+        ]);
+        
+        $bimestres = $this->bimestreRepository->allBimesters();
+
+        return $this->router->view(
+            '/my-little-group/student-class/scores', 
+            [
+                'active' => 'teacher',
+                'estudante' => $student,
+                'notas' => $notas,
+                'bimestres' => $bimestres,
+                'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
+            ]
+        );
     }
 }
