@@ -78,7 +78,7 @@ class EstudanteTurmaRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
     
-        $sql .= " ORDER BY et.created_at DESC";
+        $sql .= " ORDER BY et.id DESC";
     
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($bindings);
