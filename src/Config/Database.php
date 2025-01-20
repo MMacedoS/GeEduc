@@ -6,7 +6,7 @@ use PDO;
 
 class Database {
     private static $instance = null;
-    private ?PDO $pdo; // Permite null
+    private ?PDO $pdo; 
 
     private function __construct() {
         $this->pdo = new PDO(
@@ -18,7 +18,6 @@ class Database {
         $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     }
 
-    // Garante uma única instância
     public static function getInstance(): self {
         if (!self::$instance) {
             self::$instance = new Database();
@@ -26,13 +25,11 @@ class Database {
         return self::$instance;
     }
 
-    // Retorna a conexão
     public function getConnection(): ?PDO {
         return $this->pdo;
     }
 
-    // Fecha a conexão
     public function closeConnection(): void {
-        $this->pdo = null; // Agora é permitido
+        $this->pdo = null; 
     }
 }

@@ -208,3 +208,6 @@ $router->create('POST', '/pessoa/{id}/', [$pessoaContatoController, 'update'], $
 $router->create('DELETE', '/pessoa/{id}', [$pessoaContatoController, 'destroy'], $auth);
 
 $router->create('GET', '/pessoas-lista', [$pessoaContatoController, 'indexWithoutPagination'], $auth);
+$router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLittleGroup'], $auth);
+$router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
+$router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
