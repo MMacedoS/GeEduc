@@ -6,6 +6,7 @@ use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
 use App\Repositories\Person\PessoaContatoRepository;
 use App\Repositories\Person\PessoaFisicaRepository;
+use App\Repositories\Student\EstudanteRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -16,11 +17,13 @@ class PessoaContatoController extends Controller
 
     protected $pessoaContatoRepository;
     protected $pessoaFisicaRepository;
+    protected $estudanteRepository;
 
     public function __construct(){
         parent::__construct();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
         $this->pessoaContatoRepository = new PessoaContatoRepository();
+        $this->estudanteRepository = new EstudanteRepository();
     }
 
     public function index(Request $request){
@@ -32,7 +35,7 @@ class PessoaContatoController extends Controller
 
         return $this->router->view('/person/index', 
             [
-                'active' => 'cadastro',  
+                'active' => 'responsible_legal',  
                 'pessoas' => $paginatedBoards,
                 'links' => $paginator->links()
             ]
@@ -157,5 +160,36 @@ class PessoaContatoController extends Controller
         $pessoas = $this->pessoaContatoRepository->allPersons($data);
         echo json_encode($pessoas);
         exit();
+    }
+
+    public function indexMyLittleGroup(Request $request)
+    {
+        $personAuth = $this->authUser();
+
+        $pessoa_contato = $this->pessoaContatoRepository
+        ->findByContactPersonId(
+            [
+                'person_id' => $personAuth->id
+            ]
+        );
+
+        $estudantes = $this->estudanteRepository->allStudents(
+            [
+                'contact_person_id' => $pessoa_contato->id
+            ]
+        );
+
+        $perPage = 10;
+        $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($estudantes, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+
+        return $this->router->view('/my-little-group/index', 
+            [
+                'active' => 'responsible_legal',  
+                'estudantes' => $paginatedBoards,
+                'links' => $paginator->links()
+            ]
+        );
     }
 }

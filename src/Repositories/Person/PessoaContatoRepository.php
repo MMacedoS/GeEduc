@@ -6,6 +6,7 @@ use App\Config\Database;
 use App\Models\Person\PessoaContato;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
+use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
@@ -19,7 +20,6 @@ class PessoaContatoRepository {
     protected $model;
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
-    protected $estudanteMensalidadeRepository;
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();
@@ -134,7 +134,7 @@ class PessoaContatoRepository {
 
     public function create(array $data) 
     {
-        $existingPerson = $this->findByStudentId($data);
+        $existingPerson = $this->findByContactPersonId($data);
         if ($existingPerson) {
             return $existingPerson;
         }
@@ -269,7 +269,7 @@ class PessoaContatoRepository {
             return $updated;
     }
 
-    public function findByStudentId(array $criteria): ?array
+    public function findByContactPersonId(array $criteria): ?PessoaContato
     {
         try {
             $conditions = [];

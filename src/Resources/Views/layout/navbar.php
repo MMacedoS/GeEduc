@@ -163,7 +163,7 @@
                         <?php } ?>
                         <?php if (hasPermission('estudante')) { ?>
                             <li class="nav-item <?=$active === 'students' ? 'active-link': ''?>">
-                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Turma
+                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Minha Turma
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -176,6 +176,16 @@
                                 <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Minhas Disciplinas
                                 </a>
                             </li>
+                        <? } ?>
+                        <?php if (hasPermission('responsavel_legal')) { ?>
+                            <li class="nav-item <?=$active === 'responsible_legal' ? 'active-link': ''?>">
+                                <a class="nav-link" href="/minha-galerinha"><i class="icon-book-open"></i> Minha Galerinha
+                                </a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="/minha-galerinha/contratos"><i class="icon-supervised_user_circle"></i> Contrato
+                                </a>
+                            </li> -->
                         <? } ?>
                             <li class="nav-item">
                                 <a class="nav-link text-warning" href="/logout">Sair</a>
