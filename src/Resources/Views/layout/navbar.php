@@ -10,7 +10,7 @@
                     </div>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item dropdown <?=$active === 'dashboard' ? 'active-link': ''?>">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="icon-stacked_line_chart"></i> Dashboards
                             </a>
                             <ul class="dropdown-menu">
@@ -20,7 +20,7 @@
                                     </a>
                                 </li> -->
                                 <li>
-                                    <a class="dropdown-item current-page" href="/dashboard/facility">
+                                    <a class="dropdown-item current-page" href="/dashboard">
                                         <span>Facilidades</span>
                                     </a>
                                 </li>
