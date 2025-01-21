@@ -68,9 +68,9 @@ class EstudanteRepository {
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['ativo'])) {
+        if (isset($params['active'])) {
             $conditions[] = "e.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+            $bindings[':ativo'] = $params['active'];
         }
 
         if (count($conditions) > 0) {
