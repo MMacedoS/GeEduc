@@ -99,4 +99,61 @@ class SiteAlbumRepository{
             Database::getInstance()->closeConnection();
         }
     }
+
+    public function updateAll(array $data, string $dir){
+        if(empty($data)){
+            return null;
+        }
+
+        try{    
+            if(!empty($data['arquivo']['name'])){
+                $archive = $this->siteArquivoRepository->update($data, $dir, $data['site_arquivo_id']);
+            }
+
+            $site_album = $this->update($data, $data['id']);
+            if(is_null($site_album)){
+                return null;
+            }
+
+            return $site_album;
+
+        }catch(\Throwable $th){
+            return null;
+        }finally{
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function update(array $data, int $id){
+        $site_album = $this->model->create($data);
+
+        try{
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . "
+                    set 
+                        nome = :name,
+                        descricao = :description,
+                        ativo = :active
+                    WHERE id = :id
+                "
+            );
+
+            $updated = $stmt->execute([
+                ':name' => $site_album->nome,
+                ':description' => $site_album->descricao,
+                ':active' => $site_album->ativo,
+                ':id' => $id
+            ]);
+
+            if(!$updated){
+                return null;
+            }
+
+            return $this->findById($id);
+        }catch(\Throwable $th){
+            return null;
+        }finally{
+            Database::getInstance()->closeConnection();
+        }
+    }
 }

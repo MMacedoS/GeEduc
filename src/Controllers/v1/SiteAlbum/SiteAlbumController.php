@@ -80,9 +80,70 @@ class SiteAlbumController extends Controller {
         return $this->router->redirect('site-albuns/');
     }
 
-    public function edit(Request $request, $id){}
+    public function edit(Request $request, $id){
+        $site_album = $this->siteAlbumRepository->findByUuid($id);
 
-    public function update(Request $request, $id){}
+        if(is_null($site_album)){
+            return $this->router->view('site-albuns/', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->view('site-albuns/edit', [
+            'active' => 'register',
+            'site_album' => $site_album
+        ]);
+    }
+
+    public function update(Request $request, $id){
+        $data = $request->getBodyParams();
+
+        if(isset($_FILES['arquivo'])){
+            $data['arquivo'] = $_FILES['arquivo'];
+        }
+
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/albuns/';
+
+        $site_album = $this->siteAlbumRepository->findByUuid($id);
+
+        if(is_null($site_album)){
+            return $this->router->view('site-albuns/',[
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $site_arquivo = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100',
+            'description' => 'max:255'
+        ];
+
+        if(!$validator->validate($rules)){
+            return $this->router->view('site-albuns/edit', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $data['site_arquivo_id'] = $site_album->site_arquivo_id;
+        $data['id'] = $site_album->id;
+
+        $updated = $this->siteAlbumRepository->updateAll($data, $dir);
+
+        if(is_null($updated)){
+            return $this->router->view('site-albuns/edit', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->redirect('site-albuns');
+    }
 
     public function destroy(Request $request, $id){}
 }
