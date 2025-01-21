@@ -95,7 +95,7 @@ class SiteEventoRepository {
 
             return $this->findByUuid($site_evento->uuid);
         }catch(\Throwable $th){
-            echo 'id' . $site_evento->site_arquivo_id;
+            return null;
         }finally{
             Database::getInstance()->closeConnection();
         }

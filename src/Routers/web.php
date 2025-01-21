@@ -20,6 +20,7 @@ use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\SiteEvent\SiteEventoController;
+use App\Controllers\v1\SiteCarousel\SiteCarrosselController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Person\PessoaContatoController;
@@ -46,6 +47,7 @@ $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
 $siteEventoController = new SiteEventoController();
+$siteCarrosselController = new SiteCarrosselController();
 $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
@@ -221,3 +223,11 @@ $router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLi
 $router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
+
+//SiteCarrossel
+$router->create('GET', '/site-carrossel', [$siteCarrosselController, 'index'], $auth);
+$router->create('GET', '/site-carrossel/criar', [$siteCarrosselController, 'create'], $auth);
+$router->create('POST', '/site-carrossel/criar', [$siteCarrosselController, 'store'], $auth);
+$router->create('GET', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'edit'], $auth);
+$router->create('POST', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'update'], $auth);
+$router->create('DELETE', '/site-carrossel/{id}', [$siteCarrosselController, 'destroy'], $auth);
