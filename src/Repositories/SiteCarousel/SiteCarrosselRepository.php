@@ -105,4 +105,67 @@ class SiteCarrosselRepository {
         }
     }
 
+    public function updateAll(array $data, string $dir){
+        if(empty($data)){
+            return null;
+        }
+
+        try{
+            if(!empty($data['arquivo']['name'])){
+                $archive = $this->siteArquivoRepository->update($data, $dir, $data['site_arquivo_id']);
+            }
+
+            $site_carousel = $this->update($data, $data['id']);
+
+            if(is_null($site_carousel)){
+                return null;
+            }
+
+            return $site_carousel;
+        }catch(\Throwable $th){
+            return null;
+        }finally{
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+
+    public function update(array $data, int $id){
+        $site_carousel = $this->model->create($data);
+
+        try{
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . "
+                    SET
+                        nome = :name,
+                        descricao = :description,
+                        local = :local,
+                        ativo = :active,
+                        link = :link
+                    WHERE id = :id
+                "
+            );
+
+            $updated = $stmt->execute([
+                ':name' => $site_carousel->nome,
+                ':description' => $site_carousel->descricao,
+                ':local' => $site_carousel->local,
+                ':active' => $site_carousel->ativo,
+                ':link' => $site_carousel->link,
+                ':id' => $id
+            ]);
+
+            if(!$updated){
+                return null;
+            }
+
+            return $this->findById($id);
+
+        }catch(\Throwable $th){
+            return null;
+        }finally{
+            Database::getInstance()->closeConnection();
+        }
+    }
+
 }

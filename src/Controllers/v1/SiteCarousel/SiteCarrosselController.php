@@ -81,9 +81,71 @@ class SiteCarrosselController extends Controller {
         return $this->router->redirect('site-carrossel/');
     }
 
-    public function edit(Request $request, $id){}
+    public function edit(Request $request, $id){
+        $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
-    public function update(Request $request, $id){}
+        if(is_null($site_carousel)){
+            return $this->router->view('site-carousel/', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->view('site-carousel/edit', [
+            'active' => 'register',
+            'site_carousel' => $site_carousel
+        ]);
+    }
+
+    public function update(Request $request, $id){
+        $data = $request->getBodyParams();
+
+        if(isset($_FILES['arquivo'])){
+            $data['arquivo'] = $_FILES['arquivo'];
+        }
+
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/carousel/';
+
+        $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
+
+        if(is_null($site_carousel)){
+            return $this->router->view('site-carousel/',[
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $site_arquivo = $this->siteArquivoRepository->findById($site_carousel->site_arquivo_id);
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100',
+            'description' => 'max:255',
+            'local' => 'max:45'
+        ];
+
+        if(!$validator->validate($rules)){
+            return $this->router->view('site-carousel/edit', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $data['site_arquivo_id'] = $site_carousel->site_arquivo_id;
+        $data['id'] = $site_carousel->id;
+
+        $updated = $this->siteCarrosselRepository->updateAll($data, $dir);
+
+        if(is_null($updated)){
+            return $this->router->view('site-carousel/edit', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->redirect('site-carrossel');
+    }
 
     public function destroy(Request $request, $id){}
 
