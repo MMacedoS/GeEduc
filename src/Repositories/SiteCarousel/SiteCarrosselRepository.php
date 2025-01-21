@@ -168,4 +168,23 @@ class SiteCarrosselRepository {
         }
     }
 
+    public function deleteAll($site_carousel){
+        $site_archive = $this->siteArquivoRepository->findById($site_carousel->site_arquivo_id);
+
+        return $this->delete($site_carousel->id);
+    }
+
+    public function delete(int $id){
+        $stmt = $this->conn->prepare(
+            "UPDATE " . self::TABLE . "
+                SET
+                    ativo = 0
+                WHERE id = :id
+            "
+        );
+
+        $updated = $stmt->execute(['id' => $id]);
+
+        return $updated;
+    }
 }

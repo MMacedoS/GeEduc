@@ -147,6 +147,17 @@ class SiteCarrosselController extends Controller {
         return $this->router->redirect('site-carrossel');
     }
 
-    public function destroy(Request $request, $id){}
+    public function destroy(Request $request, $id){
+        $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
+
+        if(is_null($site_carousel)){
+            return $this->router->view('site-carousel/', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $this->siteCarrosselRepository->deleteAll($site_carousel);
+    }
 
 }
