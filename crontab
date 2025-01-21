@@ -1,0 +1,1 @@
+* * * * * www-data php /var/www/html/app1/src/Jobs/ProcessJob.php >> /var/log/cron.log 2>&1
