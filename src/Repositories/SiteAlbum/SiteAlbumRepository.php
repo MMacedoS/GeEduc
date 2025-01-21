@@ -156,4 +156,24 @@ class SiteAlbumRepository{
             Database::getInstance()->closeConnection();
         }
     }
+
+    public function deleteAll($site_album){
+        $site_archive = $this->siteArquivoRepository->findById($site_album->site_arquivo_id);
+
+        return $this->delete($site_album->id);
+    }
+
+    public function delete(int $id){
+        $stmt = $this->conn->prepare(
+            "UPDATE " . self::TABLE . "
+                SET
+                    ativo = 0
+                WHERE id = :id
+            "
+        );
+
+        $updated = $stmt->execute(['id' => $id]);
+
+        return $updated;
+    }
 }

@@ -145,5 +145,16 @@ class SiteAlbumController extends Controller {
         return $this->router->redirect('site-albuns');
     }
 
-    public function destroy(Request $request, $id){}
+    public function destroy(Request $request, $id){
+        $site_album = $this->siteAlbumRepository->findByUuid($id);
+
+        if(is_null($site_album)){
+            return $this->router->view('site-albuns/', [
+                'active' => 'register',
+                'danger' => true
+            ]);
+        }
+
+        $this->siteAlbumRepository->deleteAll($site_album);
+    }
 }
