@@ -58,6 +58,8 @@ class SiteAlbumRepository{
             $site_archive = $this->siteArquivoRepository->create($data, $dir);
             $site_albumData = array_merge($data, ['site_arquivo_id' => $site_archive->id]);
             $site_album = $this->create($site_albumData);
+
+            return $site_album;
         }catch(\Throwable $th){
             return null;
         }finally{

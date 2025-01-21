@@ -23,7 +23,7 @@ class SiteAlbum{
     public function create(
         array $data
     ) : SiteAlbum {
-        $site_album = new SiteAlbum;
+        $site_album = new SiteAlbum();
         $site_album->id = $data['id'] ?? null;
         $site_album->uuid = $data['uuid'] ?? $this->generateUUID();
         $site_album->nome = $data['name'] ?? null;

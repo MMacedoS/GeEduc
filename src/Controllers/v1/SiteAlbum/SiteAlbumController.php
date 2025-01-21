@@ -38,9 +38,47 @@ class SiteAlbumController extends Controller {
         ]);
     }
 
-    public function create(Request $request){}
+    public function create(Request $request){
+        return $this->router->view('/site-albuns/create', [
+            'active' => 'pedagogico'
+        ]);
+    }
 
-    public function store(Request $request){}
+    public function store(Request $request){
+        $data = $request->getBodyParams();
+
+        if(isset($_FILES['arquivo'])){
+            $data['arquivo'] = $_FILES['arquivo'];
+        }
+
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/albuns/';
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100',
+            'arquivo' => 'required',
+            'description' => 'max:255'
+        ];
+
+        if(!$validator->validate($rules)){
+            return $this->router->view('site-albuns/create', [
+                'active' => 'pedagogico',
+                'errors' => $validator->getErrors()
+            ]);
+        }
+
+        $created = $this->siteAlbumRepository->saveAll($data, $dir);
+
+        if(is_null($created)){
+            return $this->router->view('site-albuns/create', [
+                'active' => 'pedagogico', 
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->redirect('site-albuns/');
+    }
 
     public function edit(Request $request, $id){}
 
