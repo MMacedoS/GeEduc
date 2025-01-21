@@ -38,9 +38,48 @@ class SiteCarrosselController extends Controller {
         ]);
     }
 
-    public function create(Request $request){}
+    public function create(Request $request){
+        return $this->router->view('site-carousel/create', [
+            'active' => 'pedagogico',
+        ]);
+    }
 
-    public function store(Request $request){}
+    public function store(Request $request){
+        $data = $request->getBodyParams();
+
+        if(isset($_FILES['arquivo'])){
+            $data['arquivo'] = $_FILES['arquivo'];
+        }
+
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/carousel/';
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100',
+            'arquivo' => 'required',
+            'description' => 'max:255',
+            'local' => 'max:45'
+        ];
+
+        if(!$validator->validate($rules)){
+            return $this->router->view('site-carousel/create',[
+                'active' => 'pedagogico',
+                'errors' => $validator->getErrors()
+            ]);
+        }
+
+        $created = $this->siteCarrosselRepository->saveAll($data, $dir);
+
+        if(is_null($created)){
+            return $this->router->view('site-carousel/create', [
+                'active' => 'pedagogico',
+                'danger' => true
+            ]);
+        }
+
+        return $this->router->redirect('site-carrossel/');
+    }
 
     public function edit(Request $request, $id){}
 

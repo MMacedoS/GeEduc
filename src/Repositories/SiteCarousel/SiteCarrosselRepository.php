@@ -70,7 +70,7 @@ class SiteCarrosselRepository {
 
     public function create(array $data){
         $site_carousel = $this->model->create($data);
-
+        
         try{
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
@@ -79,7 +79,8 @@ class SiteCarrosselRepository {
                         nome = :name,
                         descricao = :description,
                         local = :local,
-                        link = :link
+                        link = :link,
+                        site_arquivo_id = :site_arquivo_id
                 "
             );
 
@@ -88,8 +89,13 @@ class SiteCarrosselRepository {
                 ':name' => $site_carousel->nome,
                 ':description' => $site_carousel->descricao,
                 ':local' => $site_carousel->local,
-                ':link' => $site_carousel->link
+                ':link' => $site_carousel->link,
+                ':site_arquivo_id' => $site_carousel->site_arquivo_id
             ]);
+
+            if(!$create){
+                return null;
+            }
 
             return $this->findByUuid($site_carousel->uuid);
         }catch(\Throwable $th){

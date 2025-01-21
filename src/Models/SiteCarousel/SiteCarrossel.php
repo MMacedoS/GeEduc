@@ -12,6 +12,7 @@ class SiteCarrossel {
     public $uuid;
     public $nome;
     public $descricao;
+    public $arquivo;
     public $site_arquivo_id;
     public $local;
     public $ativo;
@@ -27,8 +28,9 @@ class SiteCarrossel {
         $site_carousel = new SiteCarrossel();
         $site_carousel->id = $data['id'] ?? null;
         $site_carousel->uuid = $data['uuid'] ?? $this->generateUUID();
-        $site_carousel->nome = $data ['name'] ?? null;
-        $site_carousel->descricao = $data ['description'] ?? null;
+        $site_carousel->nome = $data['name'] ?? null;
+        $site_carousel->descricao = $data['description'] ?? null;
+        $site_carousel->arquivo = $data['arquivo'] ?? null;
         $site_carousel->site_arquivo_id = $data['site_arquivo_id'];
         $site_carousel->local = $data['local'] ?? null;
         $site_carousel->ativo = $data['active'] ?? null;
