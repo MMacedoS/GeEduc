@@ -114,7 +114,7 @@ class SiteAlbumController extends Controller {
             ]);
         }
 
-        $site_arquivo = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+        $site_arquivo = $this->siteArquivoRepository->findById($site_album->site_arquivo_id);
 
         $validator = new Validator($data);
 
