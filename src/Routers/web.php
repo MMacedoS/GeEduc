@@ -20,6 +20,7 @@ use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\SiteEvent\SiteEventoController;
+use App\Controllers\v1\SiteAlbum\SiteAlbumController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Person\PessoaContatoController;
@@ -46,6 +47,7 @@ $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
 $siteEventoController = new SiteEventoController();
+$siteAlbumController = new SiteAlbumController();
 $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
@@ -221,3 +223,12 @@ $router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLi
 $router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
+
+//site album
+//siteEvents
+$router->create('GET', '/site-albuns', [$siteAlbumController, 'index'], $auth);
+$router->create('GET', '/site-albuns/criar', [$siteAlbumController, 'create'], $auth);
+$router->create('POST', '/site-albuns/criar', [$siteAlbumController, 'store'], $auth);
+$router->create('GET', '/site-albuns/{id}/editar', [$siteAlbumController, 'edit'], $auth);
+$router->create('POST', '/site-albuns/{id}/editar', [$siteAlbumController, 'update'], $auth);
+$router->create('DELETE', '/site-albuns/{id}', [$siteAlbumController, 'destroy'], $auth);

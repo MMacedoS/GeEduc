@@ -30,6 +30,7 @@ class SiteAlbum{
         $site_album->arquivo = $data['arquivo'] ?? null;
         $site_album->site_arquivo_id = $data['site_arquivo_id'];
         $site_album->descricao = $data['description'] ?? null;
+        $site_album->ativo = $data['active'] ?? null;
         $site_album->created_at = $data['created_at'] ?? null;
         $site_album->updated_at = $data['updated_at'] ?? null;
         return $site_album;
