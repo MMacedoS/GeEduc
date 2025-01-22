@@ -30,14 +30,34 @@
     </head>
     <body class="bg-light">
     <div class="container my-5">
-        <h1 class="text-center mb-4">Grade de Notas Bimestrais</h1>
-        <div class="mb-3">
-            <strong>Professor:</strong> <?= getJsonToObject($turma_disciplina->professor_disciplina)->professor->nome ?><br>
-            <strong>Turma:</strong> <?= getJsonToObject($turma_disciplina->turma)->nome ?><br>
-            <strong>Disciplina:</strong> <?= getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome ?><br>
-            <strong>Carga horária:</strong> <?= getJsonToObject($turma_disciplina->carga_horaria)->carga_horaria ?> horas
-        </div>
-        
+    <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th colspan="6" class="text-center fs-2">
+                    <?= NAME_SCHOOL ?>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>End:</strong> <?= SCHOOL_ADDRESS ?></td>
+                    <td colspan="4"><strong>Cep:</strong> <?= SCHOOL_ZIP_CODE ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Professor:</strong> <?= getJsonToObject($turma_disciplina->professor_disciplina)->professor->nome ?></td>
+                    <td colspan="4"><strong>Turma:</strong> <?= getJsonToObject($turma_disciplina->turma)->nome ?></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered" style="margin-bottom: 0px;">
+            <thead>
+                <tr>
+                    <th colspan="6" class="text-center">
+                    Grades de Notas Bimestrais
+                    </th>
+                </tr>
+            </thead>
+        </table>
         <?php 
         $frequenciasMap = [];
         $notasMap = [];
