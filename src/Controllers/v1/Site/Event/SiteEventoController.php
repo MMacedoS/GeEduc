@@ -49,7 +49,7 @@ class SiteEventoController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/events/';
+        $dir = '/files/site/events/';
 
         $validator = new Validator($data);
 
@@ -101,7 +101,7 @@ class SiteEventoController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/events/';
+        $dir = '/files/site/events/';
 
         $site_evento = $this->siteEventoRepository->findByUuid($id);
 

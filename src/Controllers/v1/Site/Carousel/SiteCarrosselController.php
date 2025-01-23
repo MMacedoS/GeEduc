@@ -51,7 +51,7 @@ class SiteCarrosselController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/carousel/';
+        $dir = '/files/site/carousel/';
 
         $validator = new Validator($data);
 
@@ -104,7 +104,7 @@ class SiteCarrosselController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/carousel/';
+        $dir = '/files/site/carousel/';
 
         $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 

@@ -110,9 +110,12 @@ if (!function_exists('filterAvailableToursWithYear')) {
 
 if(!function_exists('publicPath')){
     function publicPath($file, $path){
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/Public' . $path;
+
         if(empty($file['name']) || empty($file['tmp_name'])){
-            echo 'Erro: Arquivo não enviado corretamente.';
+            return null;
         }
+
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $name = strtolower(pathinfo($file['name'], PATHINFO_FILENAME));
