@@ -52,6 +52,12 @@ class FrequenciaRepository {
                 'bimestres', JSON_OBJECT(
                     'id', b.id,
                     'bimestre', b.bimestre
+                ),
+                'total_faltas_aluno', (
+                    SELECT SUM(f2.faltas) 
+                    FROM frequencias f2 
+                    WHERE f2.estudante_turma_id = f.estudante_turma_id 
+                    AND f2.turma_disciplina_id = td.id
                 )
             ) AS turma_disciplina_details
         FROM frequencias f
@@ -63,6 +69,7 @@ class FrequenciaRepository {
         LEFT JOIN turmas t ON t.id = td.turma_id
         LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id         
         LEFT JOIN bimestres b ON b.id = f.bimestre_id ";
+
         
         $conditions = [];
         $bindings = [];

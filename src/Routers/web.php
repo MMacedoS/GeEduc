@@ -4,6 +4,7 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
+use App\Controllers\v1\GradeReport\GradeReportController;
 use App\Controllers\v1\ClassRooms\TurmaController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
@@ -51,6 +52,7 @@ $siteCarrosselController = new SiteCarrosselController();
 $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
+$gradeReportController = new GradeReportController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -231,3 +233,8 @@ $router->create('POST', '/site-carrossel/criar', [$siteCarrosselController, 'sto
 $router->create('GET', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'edit'], $auth);
 $router->create('POST', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'update'], $auth);
 $router->create('DELETE', '/site-carrossel/{id}', [$siteCarrosselController, 'destroy'], $auth);
+
+$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+
+$router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
+$router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);

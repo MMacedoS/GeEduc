@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title><?=APP_NAME?></title>
+        <meta name="description" content="Sistema de gestão escolar" />
+        <meta name="author" content="Mauricio Macedo" />
+        <meta property="og:url" content="https://www.geeduc.com.br">
+        <meta property="og:title" content="Mauricio Macedo - Sistemas de Gestão Escolar">>
         <link rel="shortcut icon" href="<?=URL_PREFIX_APP?>/Public/assets/images/ico-geeduc.png"/>
             <!-- *************
                 ************ CSS Files *************
@@ -27,6 +31,8 @@
 
         <!-- Include Select2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <!-- Dropzone CSS -->
+        <link rel="stylesheet" href="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.css" />
     </head>
     <body>
 
