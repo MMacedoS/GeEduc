@@ -4,6 +4,8 @@ namespace App\Controllers\v1\Profile;
 
 use App\Config\Auth;
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\UserToPerson;
+use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Request\Request;
@@ -13,14 +15,18 @@ use App\Utils\Validator;
 
 class UsuarioController extends Controller
 {
+    use UserToPerson;
+
     protected $usuarioRepository;
     protected $permissaoRepository;
+    protected $arquivoRepository;
 
     public function __construct()
     {   
         parent::__construct();
         $this->usuarioRepository = new UsuarioRepository();
         $this->permissaoRepository = new PermissaoRepository();
+        $this->arquivoRepository = new ArquivoRepository();
     }
 
     public function index(Request $request) {
@@ -159,7 +165,7 @@ class UsuarioController extends Controller
         $user = $this->usuarioRepository->getLogin($data['email'], $data['password']);
         $auth = new Auth();
 
-        if ($auth->login($user)) {       
+        if ($auth->login($user)) {    
             return $this->router->redirect('dashboard/');
         }
 
@@ -203,5 +209,31 @@ class UsuarioController extends Controller
         $permissao = $this->usuarioRepository->addPermissions($data, $usuario->id);
            
         return $this->router->redirect('usuario/'. $id .'/permissao');
+    }
+
+    public function profile(Request $request) 
+    {                
+        $personAuth = $this->authUser();
+        $arquivo = $_SESSION['files'];
+        return $this->router->view('profile/profile', ['active' => 'register', 'pessoa' => $personAuth, 'arquivo' => $arquivo]);
+    }
+
+    public function profileUploadPhoto(Request $request) 
+    {
+        $personAuth = $_SESSION['user'];
+        $data = $request->getBodyParams();
+
+        if(isset($_FILES['file'])){
+            $data['file'] = $_FILES['file'];
+        }
+
+        $dir = '/files/profile/';
+
+        $file = $this->usuarioRepository->updatePhoto($data, $dir, $personAuth->code);
+
+        $_SESSION['files'] = $file;
+        
+        echo json_encode("sucess!");
+        exit();
     }
 }

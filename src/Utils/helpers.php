@@ -108,31 +108,41 @@ if (!function_exists('filterAvailableToursWithYear')) {
     }
 }
 
-if(!function_exists('publicPath')){
-    function publicPath($file, $path){
-        if(empty($file['name']) || empty($file['tmp_name'])){
-            echo 'Erro: Arquivo não enviado corretamente.';
+if (!function_exists('publicPath')) {
+    function publicPath($file, $path)
+    {
+        if (empty($file['name']) || empty($file['tmp_name'])) {
+            return null;
         }
+
+        $path_full = rtrim($_SERVER['DOCUMENT_ROOT'] . '/Public' . $path, '/') . '/';
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $name = strtolower(pathinfo($file['name'], PATHINFO_FILENAME));
+
         $new_name = uniqid() . "_" . time() . "." . $ext;
 
-        if(!is_dir($path)){
-            mkdir($path, 0755, true);
+        if (!is_dir($path_full)) {
+            if (!mkdir($path_full, 0755, true)) {
+                return null;
+            }
         }
 
-        if(move_uploaded_file($file['tmp_name'], $path . $new_name)){
+        $destination = $path_full . $new_name;
+        if (move_uploaded_file($file['tmp_name'], $destination)) {
             return [
                 'name' => $name,
                 'new_name' => $new_name,
-                'ext' => $ext
+                'ext' => $ext,
+                'path' => $path . $new_name
             ];
-        }else{
-            return null;
-        }
+        } 
+        
+        return null;
     }
 }
+
+
 if (!function_exists('dd')) {
     function dd($data) {
         echo "<pre>";

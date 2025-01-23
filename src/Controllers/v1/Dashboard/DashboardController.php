@@ -67,6 +67,10 @@ class DashboardController extends Controller
             return $this->indexAdministrators();
         }
 
+        if ($painel == 'coordenador') {
+            return $this->indexAdministrators();
+        }
+
         return $this->router->view('dashboard/index', ['active' => 'dashboard']);
     }
 
@@ -76,6 +80,10 @@ class DashboardController extends Controller
 
         $estudante = $this->estudanteRepository
             ->studentByPersonId($pessoaAuth->id);
+
+        if (is_null($estudante)) {
+            return $this->router->view('dashboard/index', ['active' => 'dashboard']);
+        }
 
         $estudante_turma = $this->estudanteTurmaRepository
             ->studentClassByStudentId($estudante->id);

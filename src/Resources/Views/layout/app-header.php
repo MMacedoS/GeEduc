@@ -63,7 +63,7 @@
                     <div class="dropdown ms-3">
                       <a id="userSettings" class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                         <img src="<?=URL_PREFIX_APP?>/Public/assets/images/user2.png" class="rounded-2 img-3x" alt="Bootstrap Gallery" />
+                         <img src="<?=URL_PREFIX_APP . '/Public' . $_SESSION['files']->path?>" class="rounded-2 img-3x" alt="Perfil" />
                         <div class="ms-2 text-truncate d-lg-block d-none text-white">
                           <span class="d-flex opacity-50 small">
                             <?=$_SESSION['user']->nome?>
