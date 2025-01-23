@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories\SiteEvent;
+namespace App\Repositories\Site\Event;
 
 use App\Config\Database;
 use App\Models\Site\Event\SiteEvento;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 

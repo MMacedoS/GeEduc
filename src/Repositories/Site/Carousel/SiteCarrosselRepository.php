@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories\SiteCarousel;
+namespace App\Repositories\Site\Carousel;
 
 use App\Config\Database;
 use App\Models\Site\Carousel\SiteCarrossel;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 

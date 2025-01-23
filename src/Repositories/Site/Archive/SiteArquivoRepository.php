@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\SiteArchive;
+namespace App\Repositories\Site\Archive;
 
 use App\Config\Database;
 use App\Models\Site\Archive\SiteArquivo;

@@ -3,8 +3,8 @@
 namespace App\Controllers\v1\SiteEvent;
 
 use App\Controllers\Controller;
-use App\Repositories\SiteEvent\SiteEventoRepository;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Repositories\Site\Event\SiteEventoRepository;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
