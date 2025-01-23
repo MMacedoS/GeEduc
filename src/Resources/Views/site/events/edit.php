@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../layout/top.php'; ?>
 
 
 <!-- Row start -->
@@ -32,4 +32,4 @@
     </form>
 
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../../layout/bottom.php'; ?>

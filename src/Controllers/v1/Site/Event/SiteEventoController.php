@@ -32,14 +32,14 @@ class SiteEventoController extends Controller {
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('/site-events/index', [
+        return $this->router->view('/site/events/index', [
             'active' => 'pedagogico',
             'data' => $data
         ]);
     }
 
     public function create(Request $request){
-        return $this->router->view('/site-events/create', ['active' => 'pedagogico']);
+        return $this->router->view('/site/events/create', ['active' => 'pedagogico']);
     }
 
     public function store(Request $request){
@@ -60,7 +60,7 @@ class SiteEventoController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-events/create', [
+            return $this->router->view('site/events/create', [
                 'active' => 'pedagogico',
                 'errors' => $validator->getErrors()
             ]);
@@ -69,7 +69,7 @@ class SiteEventoController extends Controller {
         $created = $this->siteEventoRepository->saveAll($data, $dir);
 
         if(is_null($created)){
-            return $this->router->view('site-events/create', [
+            return $this->router->view('site/events/create', [
                 'active' => 'pedagogico', 
                 'danger' => true
             ]);
@@ -82,13 +82,13 @@ class SiteEventoController extends Controller {
         $site_evento = $this->siteEventoRepository->findByUuid($id);
 
         if(is_null($site_evento)){
-            return $this->router->view('site-events/', [
+            return $this->router->view('site/events/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->view('site-events/edit', [
+        return $this->router->view('site/events/edit', [
             'active' => 'register',
             'site_evento' => $site_evento
         ]);
@@ -106,7 +106,7 @@ class SiteEventoController extends Controller {
         $site_evento = $this->siteEventoRepository->findByUuid($id);
 
         if(is_null($site_evento)){
-            return $this->router->view('site-events/',[
+            return $this->router->view('site/events/',[
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -122,7 +122,7 @@ class SiteEventoController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-events/edit', [
+            return $this->router->view('site/events/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -134,7 +134,7 @@ class SiteEventoController extends Controller {
         $updated = $this->siteEventoRepository->updateAll($data, $dir);
 
         if(is_null($updated)){
-            return $this->router->view('site-events/edit', [
+            return $this->router->view('site/events/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -147,7 +147,7 @@ class SiteEventoController extends Controller {
         $site_evento = $this->siteEventoRepository->findByUuid($id);
 
         if(is_null($site_evento)){
-            return $this->router->view('site-events/', [
+            return $this->router->view('site/events/', [
                 'active' => 'register',
                 'danger' => true
             ]);

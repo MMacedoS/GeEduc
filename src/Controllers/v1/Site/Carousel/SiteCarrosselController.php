@@ -32,14 +32,14 @@ class SiteCarrosselController extends Controller {
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('/site-carousel/index', [
+        return $this->router->view('/site/carousel/index', [
             'active' => 'pedagogico',
             'data' => $data
         ]);
     }
 
     public function create(Request $request){
-        return $this->router->view('site-carousel/create', [
+        return $this->router->view('site/carousel/create', [
             'active' => 'pedagogico',
         ]);
     }
@@ -63,7 +63,7 @@ class SiteCarrosselController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-carousel/create',[
+            return $this->router->view('site/carousel/create',[
                 'active' => 'pedagogico',
                 'errors' => $validator->getErrors()
             ]);
@@ -72,7 +72,7 @@ class SiteCarrosselController extends Controller {
         $created = $this->siteCarrosselRepository->saveAll($data, $dir);
 
         if(is_null($created)){
-            return $this->router->view('site-carousel/create', [
+            return $this->router->view('site/carousel/create', [
                 'active' => 'pedagogico',
                 'danger' => true
             ]);
@@ -85,13 +85,13 @@ class SiteCarrosselController extends Controller {
         $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
         if(is_null($site_carousel)){
-            return $this->router->view('site-carousel/', [
+            return $this->router->view('site/carousel/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->view('site-carousel/edit', [
+        return $this->router->view('site/carousel/edit', [
             'active' => 'register',
             'site_carousel' => $site_carousel
         ]);
@@ -109,7 +109,7 @@ class SiteCarrosselController extends Controller {
         $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
         if(is_null($site_carousel)){
-            return $this->router->view('site-carousel/',[
+            return $this->router->view('site/carousel/',[
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -126,7 +126,7 @@ class SiteCarrosselController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-carousel/edit', [
+            return $this->router->view('site/carousel/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -138,7 +138,7 @@ class SiteCarrosselController extends Controller {
         $updated = $this->siteCarrosselRepository->updateAll($data, $dir);
 
         if(is_null($updated)){
-            return $this->router->view('site-carousel/edit', [
+            return $this->router->view('site/carousel/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -151,7 +151,7 @@ class SiteCarrosselController extends Controller {
         $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
         if(is_null($site_carousel)){
-            return $this->router->view('site-carousel/', [
+            return $this->router->view('site/carousel/', [
                 'active' => 'register',
                 'danger' => true
             ]);
