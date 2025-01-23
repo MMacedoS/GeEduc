@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\v1\SiteEvent;
+namespace App\Controllers\v1\Site\Event;
 
 use App\Controllers\Controller;
 use App\Repositories\Site\Event\SiteEventoRepository;

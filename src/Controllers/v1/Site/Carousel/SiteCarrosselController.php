@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\v1\SiteCarousel;
+namespace App\Controllers\v1\Site\Carousel;
 
 use App\Controllers\Controller;
 use App\Repositories\Site\Carousel\SiteCarrosselRepository;
