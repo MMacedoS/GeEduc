@@ -3,7 +3,7 @@
 namespace App\Repositories\SiteCarousel;
 
 use App\Config\Database;
-use App\Models\SiteCarousel\SiteCarrossel;
+use App\Models\Site\Carousel\SiteCarrossel;
 use App\Repositories\SiteArchive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;

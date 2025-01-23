@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\SiteCarousel;
+namespace App\Models\Site\Carousel;
 
 use App\Models\Traits\UuidTrait;
 
