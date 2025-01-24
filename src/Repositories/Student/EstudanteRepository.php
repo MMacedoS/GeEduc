@@ -86,8 +86,8 @@ class EstudanteRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
-    public function studentWithPersonByUuid(string $uuid){
-
+    public function studentWithPersonByUuid(string $uuid)
+    {
         $sql = "SELECT
             e.*,(
                 SELECT 
