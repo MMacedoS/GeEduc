@@ -44,6 +44,11 @@ class TurmaDisciplinaRepository {
                     'uuid', t.uuid
                 ) AS turma,
                 JSON_OBJECT(
+                    'id', d.id,
+                    'nome', d.nome,
+                    'uuid', d.uuid
+                ) AS disciplinas,
+                JSON_OBJECT(
                     'id', ch.id,
                     'carga_horaria', ch.carga
                 ) AS carga_horaria
