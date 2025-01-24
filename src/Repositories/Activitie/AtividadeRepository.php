@@ -31,26 +31,32 @@ class AtividadeRepository {
                     'valor', a.valor
                 ) AS activies_details
             FROM atividade a";
-    
+
         $conditions = [];
         $bindings = [];
-    
+
+        // Verifica condição de igualdade
         if (isset($params['class_discipline_id'])) {
             $conditions[] = 'a.turma_disciplina_id = :turma_disciplina_id';
             $bindings[':turma_disciplina_id'] = $params['class_discipline_id'];
         }
-    
+
         if (isset($params['active'])) {
             $conditions[] = 'a.ativo = :ativo';
             $bindings[':ativo'] = $params['active'];
         }
-    
+
+
+        if (isset($params['class_discipline_ids'])) { 
+            $conditions[] = "a.turma_disciplina_id IN ($params[class_discipline_ids])";
+        }
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-    
+
         $sql .= " ORDER BY a.created_at DESC";
-    
+
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
@@ -59,6 +65,7 @@ class AtividadeRepository {
             throw new \Exception("Database query error: " . $e->getMessage());
         }
     }
+
 
     public function create(array $params) 
     {
