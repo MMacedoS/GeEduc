@@ -70,6 +70,16 @@ if (!function_exists('brDate')) {
     }
 }
 
+if (!function_exists('usDate')) {    
+    function usDate($date) {
+        if (!is_null($date)) {
+            $date = implode('-', array_reverse(explode('/', $date)));
+            return $date;
+        }
+        return "Não identificado";
+    }
+}
+
 if (!function_exists('brDateHora')) {    
     function brDateHora($date) {
         if (!is_null($date)) {

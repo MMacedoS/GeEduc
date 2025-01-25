@@ -49,9 +49,9 @@ class FrequenciaRepository {
                     'id', ch.id,
                     'carga_horaria', ch.carga
                 ),
-                'bimestres', JSON_OBJECT(
+                'periodo', JSON_OBJECT(
                     'id', b.id,
-                    'bimestre', b.bimestre
+                    'periodo', b.periodo
                 ),
                 'total_faltas_aluno', (
                     SELECT SUM(f2.faltas) 
@@ -68,7 +68,7 @@ class FrequenciaRepository {
         LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
         LEFT JOIN turmas t ON t.id = td.turma_id
         LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id         
-        LEFT JOIN bimestres b ON b.id = f.bimestre_id ";
+        LEFT JOIN periodo b ON b.id = f.periodo_id ";
 
         
         $conditions = [];
@@ -80,7 +80,7 @@ class FrequenciaRepository {
         }
 
         if (isset($params['bimester_id'])) {
-            $conditions[] = 'f.bimestre_id = :bimester_id';
+            $conditions[] = 'f.periodo_id = :bimester_id';
             $bindings[':bimester_id'] = $params['bimester_id'];
         }
         
@@ -100,7 +100,7 @@ class FrequenciaRepository {
         }
         
         if (isset($params['bimester_id'])) {
-            $conditions[] = 'f.bimestre_id = :bimester_id';
+            $conditions[] = 'f.periodo_id = :bimester_id';
             $bindings[':bimester_id'] = $params['bimester_id'];
         }
         
@@ -108,7 +108,7 @@ class FrequenciaRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY f.data DESC, b.bimestre DESC";
+        $sql .= " ORDER BY f.data DESC, b.periodo DESC";
 
         try {
             $stmt = $this->conn->prepare($sql);
@@ -131,7 +131,7 @@ class FrequenciaRepository {
                 SET 
                     uuid = :uuid,
                     turma_disciplina_id = :turma_disciplina_id,
-                    bimestre_id = :bimestre_id,
+                    periodo_id = :periodo_id,
                     estudante_turma_id = :estudante_turma_id,
                     data = :data,
                     faltas = :faltas"
@@ -144,7 +144,7 @@ class FrequenciaRepository {
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
-                ':bimestre_id' => $class->bimestre_id,
+                ':periodo_id' => $class->periodo_id,
                 ':estudante_turma_id' => $class->turma_estudante_id,
                 ':data' => $class->data ?? null,
                 ':faltas' => $class->faltas,
@@ -164,11 +164,11 @@ class FrequenciaRepository {
 
     private function checkIfExistsFrequency($class) :?bool {
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
+            $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND periodo_id = :periodo_id");
             $select = $stmt->execute([
                 ':data' => $class->data,
                 ':turma_estudante_id' => $class->turma_estudante_id,
-                ':bimestre_id' => $class->bimester_id
+                ':periodo_id' => $class->bimester_id
             ]);
             if($select && $stmt->fetch()) {
                 return true;
@@ -183,11 +183,11 @@ class FrequenciaRepository {
     }
     private function removeFrequency($class) :?bool {
         try {
-            $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND bimestre_id = :bimestre_id");
+            $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND periodo_id = :periodo_id");
             $delete = $stmt->execute([
                 ':data' => $class->data,
                 ':turma_estudante_id' => $class->turma_estudante_id,
-                ':bimestre_id' => $class->bimester_id
+                ':periodo_id' => $class->bimester_id
             ]);
             if($delete) {
                 return true;
@@ -211,7 +211,7 @@ class FrequenciaRepository {
                 "UPDATE " . self::TABLE . " 
                 SET 
                     turma_disciplina_id = :turma_disciplina_id,
-                    bimestre_id = :bimestre_id,
+                    periodo_id = :periodo_id,
                     turma_estudante_id = :turma_estudante_id,
                     faltas = :faltas,
                     data = :data,
@@ -221,7 +221,7 @@ class FrequenciaRepository {
 
             $update = $stmt->execute([
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
-                ':bimestre_id' => $class->bimestre_id,
+                ':periodo_id' => $class->periodo_id,
                 ':turma_estudante_id' => $class->turma_estudante_id,
                 ':faltas' => $class->faltas ?? null,
                 ':data' => $class->data ?? null,
@@ -260,7 +260,7 @@ class FrequenciaRepository {
                     f.id,
                     f.uuid,
                     f.turma_disciplina_id,
-                    f.bimestre_id,
+                    f.periodo_id,
                     f.turma_estudante_id,
                     f.faltas,
                     f.data,

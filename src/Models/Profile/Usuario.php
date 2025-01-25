@@ -44,6 +44,20 @@ class Usuario
         return $user;
     }
 
+    public function update(array $data, bool $forceNewPassword = false, Usuario $usuario): Usuario
+    {
+        $usuario->nome = $data['name'] ?? $usuario->nome;
+        $usuario->email = $data['email'] ?? $usuario->email;
+        $usuario->painel = $data['sector'] ?? $usuario->painel;
+        $usuario->ativo = $data['active'] ?? $usuario->ativo;
+        $usuario->senha = $data['password'] ?? $usuario->senha;
+        $usuario->senha = $forceNewPassword
+            ? $this->generatePassword($data)
+            : $data['existing_password'];
+
+        return $usuario;
+    }
+
     private function generatePassword(array $data): string
     {
         $password = !empty($data['password']) ? $data['password'] : 'escola123';

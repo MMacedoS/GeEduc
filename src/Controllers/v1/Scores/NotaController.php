@@ -4,9 +4,10 @@ namespace App\Controllers\v1\Scores;
 
 use App\Controllers\Controller;
 use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
+use App\Repositories\Period\PeriodoRepository;
 use App\Repositories\Scores\NotaRepository;
+use App\Repositories\Scores\ParalelaRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Request\Request;
@@ -18,7 +19,8 @@ class NotaController extends Controller
     protected $notaRepository;
     protected $estudanteTurmaRepository;
     protected $estudanteRepository;
-    protected $bimestreRepository;
+    protected $periodoRepository;
+    protected $paralelaRepository;
 
     public function __construct()
     {
@@ -27,8 +29,9 @@ class NotaController extends Controller
         $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
         $this->estudanteRepository = new EstudanteRepository();
-        $this->bimestreRepository = new BimestreRepository();
+        $this->periodoRepository = new PeriodoRepository();
         $this->notaRepository = new NotaRepository();
+        $this->paralelaRepository = new ParalelaRepository();
     }
 
     public function indexTeacher(Request $request, string $class_discipline_id)
@@ -52,10 +55,15 @@ class NotaController extends Controller
         
         $notas = $this->notaRepository->allScores([
             'class_discipline_id' => $turma_disciplina->id, 
-            'bimester_id' => $paramsURL['bimester_id'] ?? null
+            'period_id' => $paramsURL['period_id'] ?? null
+        ]);
+
+        $paralela = $this->paralelaRepository->allScoresParallel([
+            'class_discipline_id' => $turma_disciplina->id, 
+            'period_id' => $paramsURL['period_id'] ?? null
         ]);
         
-        $bimestres = $this->bimestreRepository->allBimesters();
+        $periodos = $this->periodoRepository->all();
 
         return $this->router->view(
             'teacher/my-disciplines/score', 
@@ -64,9 +72,10 @@ class NotaController extends Controller
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'notas' => $notas,
-                'bimestres' => $bimestres,
+                'periodos' => $periodos,
                 'atividades' => $atividades,
-                'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
+                'periodFilter' => $paramsURL['period_id'] ?? null,
+                'paralelas' => $paralela
             ]
         );
     }
@@ -74,6 +83,11 @@ class NotaController extends Controller
     public function store(Request $request, string $class_discipline_id)
     {
         $data = $request->getBodyParams();
+        $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
+
+        if(is_null($turma_disciplina)) {
+            return $this->router->redirect("meus-componentes/$class_discipline_id/notas?error=422");
+        }
        
         if (isset($data['notas'])) {
             foreach ($data['notas'] as $scoreAndActivitieID => $score) {
@@ -83,6 +97,18 @@ class NotaController extends Controller
                 $data['atividade_id'] = $arrayScoreAndActivitieID[1];
                 
                 $created = $this->notaRepository->create($data);
+            }
+        }
+
+        if (isset($data['parallel'])) {
+            $data_parallel = [];
+            foreach ($data['parallel'] as $studantsID => $score) {
+                $data_parallel['nota'] = $score;
+                $data_parallel['class_student_id'] = $studantsID;
+                $data_parallel['class_discipline_id'] = $turma_disciplina->id;
+                $data_parallel['period_id'] = $data['period_id'];
+                
+                $this->paralelaRepository->create($data_parallel);
             }
         }
 
@@ -105,7 +131,7 @@ class NotaController extends Controller
             'bimester_id' => $paramsURL['bimester_id'] ?? null
         ]);
         
-        $bimestres = $this->bimestreRepository->allBimesters();
+        $periodos = $this->periodoRepository->all();
 
         return $this->router->view(
             '/my-little-group/student-class/scores', 
@@ -113,7 +139,7 @@ class NotaController extends Controller
                 'active' => 'teacher',
                 'estudante' => $student,
                 'notas' => $notas,
-                'bimestres' => $bimestres,
+                'periodos' => $periodos,
                 'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
             ]
         );

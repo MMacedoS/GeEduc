@@ -7,6 +7,7 @@ use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
 use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
+use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
@@ -18,6 +19,7 @@ class UsuarioController extends Controller
     use UserToPerson;
 
     protected $usuarioRepository;
+    protected $pessoaFisicaRepository;
     protected $permissaoRepository;
     protected $arquivoRepository;
 
@@ -26,7 +28,8 @@ class UsuarioController extends Controller
         parent::__construct();
         $this->usuarioRepository = new UsuarioRepository();
         $this->permissaoRepository = new PermissaoRepository();
-        $this->arquivoRepository = new ArquivoRepository();
+        $this->arquivoRepository = new ArquivoRepository();        
+        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
     }
 
     public function index(Request $request) {
@@ -101,7 +104,8 @@ class UsuarioController extends Controller
         return $this->router->view('profile/edit', ['active' => 'register', 'usuario' => $usuario]);
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id) 
+    {
         $usuario = $this->usuarioRepository->findByUuid($id);
 
         if (is_null($usuario)) {
@@ -135,6 +139,29 @@ class UsuarioController extends Controller
 
         return $this->router->redirect('usuario/');
     }
+
+    public function profileUpdate(Request $request)
+    {
+        $personAuth = $this->authUser();
+        $data = $request->getBodyParams();
+
+        $updatedPerson = $this->pessoaFisicaRepository->update($data, $personAuth->id);
+        $updated = $this->usuarioRepository->update($data, $personAuth->usuario_id);
+        
+        echo json_encode("sucess!");
+        exit();
+    } 
+
+    public function profilePasswordUpdate(Request $request)
+    {
+        $personAuth = $this->authUser();
+        $data = $request->getBodyParams();
+
+        $updated = $this->usuarioRepository->updatePassword($data, $personAuth->usuario_id);
+        
+        $arquivo = $_SESSION['files'];
+        return $this->router->view('profile/profile', ['active' => 'register', 'pessoa' => $personAuth, 'arquivo' => $arquivo]);
+    } 
 
     public function delete(Request $request, $id) 
     {

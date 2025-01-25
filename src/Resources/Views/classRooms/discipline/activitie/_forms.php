@@ -6,11 +6,10 @@
         <select class="form-control" name="type" id="type">
             <option value="">Selecione um componente</option>
             <option value="atividade" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'atividade') { echo 'selected'; } ?>>Atividade</option>
-            <option value="pesquisa" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'pesquisa') { echo 'selected'; } ?>>Pesquisa</option>
+            <option value="participacao" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'participacao') { echo 'selected'; } ?>>Participação</option>
             <option value="teste" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'teste') { echo 'selected'; } ?>>Teste</option>
             <option value="prova" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'prova') { echo 'selected'; } ?>>Prova</option>
-            <option value="portifolio" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'portifolio') { echo 'selected'; } ?>>Portifolio</option>
-            <option value="projeto" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'projeto') { echo 'selected'; } ?>>Projeto</option>
+            <option value="trabalho" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'trabalho') { echo 'selected'; } ?>>Trabalho</option>
         </select>
       </div>
     </div>

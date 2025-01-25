@@ -139,7 +139,7 @@ class UsuarioRepository {
 
         $data['existing_password'] = $existingUser->senha;
         $senha = (string)$data['password'];
-        $user = $this->model->create($data, !hash_equals($senha, $existingUser->senha));
+        $user = $this->model->update($data, !hash_equals($senha, $existingUser->senha), $existingUser);
 
         try {
             $stmt = $this->conn->prepare(
@@ -167,6 +167,7 @@ class UsuarioRepository {
             if (!$updated) {
                 return null;
             }
+            
             $userFromDb = $this->findById($id);
 
             $this->assignPermissionsToUser($userFromDb);
@@ -178,6 +179,20 @@ class UsuarioRepository {
         } finally {          
             Database::getInstance()->closeConnection();
         }
+    }
+
+    public function updatePassword(array $data, int $id) 
+    {
+        $existingUser = $this->findById($id);
+        if (!$existingUser) {
+            return null; 
+        }
+
+        if (!password_verify($data['password_old'], $existingUser->senha)) {
+            return null;
+        }
+
+        return $this->update($data, (int)$existingUser->id);
     }
 
     public function getLogin(string $email, string $senha)
@@ -279,15 +294,15 @@ class UsuarioRepository {
 
     private function assignPermissionsToUser(Usuario $userFromDb)
     {
-        $access = $userFromDb->painel !== 'administrativo' ? ['name' => $userFromDb->painel] : [];
+        $access = $userFromDb->painel !== 'administrativo' ? $userFromDb->painel : null;
         
-        $permissions = $this->permissioRepository->all($access);
+        $permissions = $this->permissionList($access);
 
-        if (empty($permissions)) {
+        if (is_null($permissions)) {
             return $userFromDb;
         }
 
-        $permissionIds = array_map(fn($permission) => $permission->id, $permissions);
+        $permissionIds = array_map(fn($permission) => $permission['id'], $permissions);
         
         $this->addPermissions(['permissions' => $permissionIds], $userFromDb->id);
 
@@ -308,5 +323,153 @@ class UsuarioRepository {
         $updated = $stmt->execute([':id' => $id_user, ':file_id' => $file->id]);
 
         return $file;
+    }
+
+    private function permissionList ($sector) 
+    {
+        if ($sector == 'administrativo') {
+            $permissao = array(
+                array('id' => '1', 'name' => 'visualizar usuários','description' => 'Visualizar todos os usuarios'),
+                array('id' => '2', 'name' => 'editar usuarios','description' => 'atualizar dados do usuários'),
+                array('id' => '3', 'name' => 'criar usuários','description' => 'cadastrar usuários'),
+                array('id' => '4', 'name' => 'deletar usuários','description' => 'excluir conta de usuários'),
+                array('id' => '5', 'name' => 'visualizar cadastro','description' => 'acesso ao cadastros '),
+                array('id' => '6', 'name' => 'visualizar turmas','description' => 'visualizar turmas geral'),
+                array('id' => '7', 'name' => 'visualizar professores','description' => 'visualizar professores'),
+                array('id' => '8', 'name' => 'visualizar estudantes','description' => 'visualizar estudantes'),
+                array('id' => '9', 'name' => 'visualizar disciplinas','description' => 'visualizar disciplinas'),
+                array('id' => '10', 'name' => 'visualizar planos','description' => 'visualizar planos'),
+                array('id' => '11', 'name' => 'visualizar turmas estudantes','description' => 'visualizar turma estudantes'),
+                array('id' => '12', 'name' => 'visualizar mensalidades','description' => 'visualizar mensalidades'),
+                array('id' => '13', 'name' => 'deletar professores','description' => 'deletar professore'),
+                array('id' => '14', 'name' => 'deletar estudantes','description' => 'deletar apartamento'),
+                array('id' => '15', 'name' => 'editar professores','description' => 'editar apartamento'),
+                array('id' => '16', 'name' => 'editar estudantes','description' => 'editar cliente'),
+                array('id' => '17', 'name' => 'cadastrar professores','description' => 'cadastrar cliente'),
+                array('id' => '18', 'name' => 'cadastrar estudantes','description' => 'cadastrar apartamento'),
+                array('id' => '19', 'name' => 'cadastrar turmas','description' => 'cadastrar dados de reservas'),
+                array('id' => '20', 'name' => 'editar turmas','description' => 'editar dados de reservas'),
+                array('id' => '21', 'name' => 'deletar turmas','description' => 'deleção de dados das reservas'),
+                array('id' => '22', 'name' => 'editar disciplinas','description' => 'editar produto'),
+                array('id' => '23', 'name' => 'visualizar conteudos','description' => 'visualizar produtos'),
+                array('id' => '24', 'name' => 'deletar conteudos','description' => 'deletar produtos'),
+                array('id' => '25', 'name' => 'cadastrar conteudos','description' => 'cadastrar produtos'),
+                array('id' => '26', 'name' => 'cadastrar planos','description' => 'cadastrar vendas'),
+                array('id' => '27', 'name' => 'visualizar pedagogico','description' => 'visualizar as ações para menu pedagogicos'),
+                array('id' => '28', 'name' => 'visualizar financeiro','description' => 'visualizar ações do bloco financeiro'),
+                array('id' => '29', 'name' => 'editar planos','description' => 'editar os planos'),
+                array('id' => '30', 'name' => 'deletar planos','description' => 'deletar planos de mensalidade'),
+                array('id' => '31', 'name' => 'visualizar contas bancarias','description' => 'acesso visualizar contas bancarias '),
+                array('id' => '32', 'name' => 'cadastrar contas','description' => ''),
+                array('id' => '33', 'name' => 'editar contas','description' => ''),
+                array('id' => '34', 'name' => 'deletar contas','description' => ''),
+                array('id' => '37', 'name' => 'visualizar turma e estudante','description' => 'visualizar turma e estudante'),
+                array('id' => '38', 'name' => 'vincular turmas e estudantes','description' => 'vincular turmas e estudantes'),
+                array('id' => '39', 'name' => 'editar turmas e estudantes','description' => 'editar turmas e estudantes'),
+                array('id' => '40', 'name' => 'cadastrar turmas e estudantes','description' => 'cadastrar turmas e estudantes'),
+                array('id' => '41', 'name' => 'inativar vinculos','description' => 'inativar vinculos'),
+                array('id' => '79', 'name' => 'cadastrar mensalidades','description' => 'cadastrar mensalidades'),
+                array('id' => '123', 'name' => 'editar mensalidade','description' => 'edição dos dados da mensalidade'),
+                array('id' => '124', 'name' => 'cancelar mensalidades','description' => 'alterar a situação da mensalidade para cancelado'),
+                array('id' => '125', 'name' => 'efetivar mensalidade','description' => 'alterar o status da mensalidade para pago'),
+                array('id' => '126', 'name' => 'visualizar cards dashboard','description' => 'visualizar cards dashboard'),
+                array('id' => '127', 'name' => 'editar turmas-disciplinas','description' => 'editar turmas-disciplinas'),
+                array('id' => '128', 'name' => 'deletar turmas-disciplinas','description' => 'deletar turmas-disciplinas'),
+                array('id' => '129', 'name' => 'vincular turmas-disciplinas','description' => 'vincular turmas-disciplinas'),
+                array('id' => '130', 'name' => 'visualizar atividades','description' => 'visualizar atividades'),
+                array('id' => '131', 'name' => 'cadastrar atividades','description' => 'cadastrar atividades'),
+                array('id' => '132', 'name' => 'cadastrar coordenadores','description' => 'cadastrar coordenadores'),
+                array('id' => '133', 'name' => 'editar coordenadores','description' => 'editar coordenadores'),
+                array('id' => '134', 'name' => 'visualizar coordenadores','description' => 'visualizar coordenadores'),
+                array('id' => '135', 'name' => 'deletar coordenadores','description' => 'deletar coordenadores'),
+                array('id' => '136', 'name' => 'visualizar bimestres','description' => 'visualizar bimestres'),
+                array('id' => '137', 'name' => 'cadastrar pessoa','description' => 'cadastrar pessoa'),
+                array('id' => '138', 'name' => 'editar pessoa','description' => 'editar pessoa'),
+                array('id' => '139', 'name' => 'deletar pessoa','description' => 'deletar pessoa'),
+                array('id' => '140', 'name' => 'visualizar pessoas','description' => 'visualizar pessoas'),
+                array('id' => '142', 'name' => 'visualizar carga_horaria','description' => 'visualizar cargas horarias'),
+                array('id' => '143', 'name' => 'visualizar periodos','description' => 'visualizar periodos'),
+                array('id' => '144', 'name' => 'editar periodo','description' => 'editar periodos'),
+                array('id' => '145', 'name' => 'cadastrar periodo','description' => 'cadastrar periodo'),
+                array('id' => '146', 'name' => 'deletar periodo','description' => 'deletar periodo'),
+              );
+            return $permissao;
+        }
+
+        if ($sector == 'coordenador') {
+            $permissao = array(
+                array('id' => '5', 'name' => 'visualizar cadastro','description' => 'acesso ao cadastros '),
+                array('id' => '6', 'name' => 'visualizar turmas','description' => 'visualizar turmas geral'),
+                array('id' => '7', 'name' => 'visualizar professores','description' => 'visualizar professores'),
+                array('id' => '8', 'name' => 'visualizar estudantes','description' => 'visualizar estudantes'),
+                array('id' => '9', 'name' => 'visualizar disciplinas','description' => 'visualizar disciplinas'),
+                array('id' => '10', 'name' => 'visualizar planos','description' => 'visualizar planos'),
+                array('id' => '11', 'name' => 'visualizar turmas estudantes','description' => 'visualizar turma estudantes'),
+                array('id' => '12', 'name' => 'visualizar mensalidades','description' => 'visualizar mensalidades'),
+                array('id' => '13', 'name' => 'deletar professores','description' => 'deletar professore'),
+                array('id' => '14', 'name' => 'deletar estudantes','description' => 'deletar apartamento'),
+                array('id' => '15', 'name' => 'editar professores','description' => 'editar apartamento'),
+                array('id' => '16', 'name' => 'editar estudantes','description' => 'editar cliente'),
+                array('id' => '17', 'name' => 'cadastrar professores','description' => 'cadastrar cliente'),
+                array('id' => '18', 'name' => 'cadastrar estudantes','description' => 'cadastrar apartamento'),
+                array('id' => '19', 'name' => 'cadastrar turmas','description' => 'cadastrar dados de reservas'),
+                array('id' => '20', 'name' => 'editar turmas','description' => 'editar dados de reservas'),
+                array('id' => '21', 'name' => 'deletar turmas','description' => 'deleção de dados das reservas'),
+                array('id' => '22', 'name' => 'editar disciplinas','description' => 'editar produto'),
+                array('id' => '23', 'name' => 'visualizar conteudos','description' => 'visualizar produtos'),
+                array('id' => '24', 'name' => 'deletar conteudos','description' => 'deletar produtos'),
+                array('id' => '25', 'name' => 'cadastrar conteudos','description' => 'cadastrar produtos'),
+                array('id' => '26', 'name' => 'cadastrar planos','description' => 'cadastrar vendas'),
+                array('id' => '27', 'name' => 'visualizar pedagogico','description' => 'visualizar as ações para menu pedagogicos'),
+                array('id' => '29', 'name' => 'editar planos','description' => 'editar os planos'),
+                array('id' => '37', 'name' => 'visualizar turma e estudante','description' => 'visualizar turma e estudante'),
+                array('id' => '38', 'name' => 'vincular turmas e estudantes','description' => 'vincular turmas e estudantes'),
+                array('id' => '39', 'name' => 'editar turmas e estudantes','description' => 'editar turmas e estudantes'),
+                array('id' => '40', 'name' => 'cadastrar turmas e estudantes','description' => 'cadastrar turmas e estudantes'),
+                array('id' => '41', 'name' => 'inativar vinculos','description' => 'inativar vinculos'),
+                array('id' => '126', 'name' => 'visualizar cards dashboard','description' => 'visualizar cards dashboard'),
+                array('id' => '127', 'name' => 'editar turmas-disciplinas','description' => 'editar turmas-disciplinas'),
+                array('id' => '128', 'name' => 'deletar turmas-disciplinas','description' => 'deletar turmas-disciplinas'),
+                array('id' => '129', 'name' => 'vincular turmas-disciplinas','description' => 'vincular turmas-disciplinas'),
+                array('id' => '130', 'name' => 'visualizar atividades','description' => 'visualizar atividades'),
+                array('id' => '131', 'name' => 'cadastrar atividades','description' => 'cadastrar atividades'),
+                array('id' => '132', 'name' => 'cadastrar coordenadores','description' => 'cadastrar coordenadores'),
+                array('id' => '133', 'name' => 'editar coordenadores','description' => 'editar coordenadores'),
+                array('id' => '134', 'name' => 'visualizar coordenadores','description' => 'visualizar coordenadores'),
+                array('id' => '135', 'name' => 'deletar coordenadores','description' => 'deletar coordenadores'),
+                array('id' => '136', 'name' => 'visualizar bimestres','description' => 'visualizar bimestres'),
+                array('id' => '137', 'name' => 'cadastrar pessoa','description' => 'cadastrar pessoa'),
+                array('id' => '138', 'name' => 'editar pessoa','description' => 'editar pessoa'),
+                array('id' => '139', 'name' => 'deletar pessoa','description' => 'deletar pessoa'),
+                array('id' => '140', 'name' => 'visualizar pessoas','description' => 'visualizar pessoas'),
+                array('id' => '142', 'name' => 'visualizar carga_horaria','description' => 'visualizar cargas horarias'),
+                array('id' => '143', 'name' => 'visualizar periodos','description' => 'visualizar periodos'),
+                array('id' => '144', 'name' => 'editar periodo','description' => 'editar periodos'),
+                array('id' => '145', 'name' => 'cadastrar periodo','description' => 'cadastrar periodo'),
+                array('id' => '146', 'name' => 'deletar periodo','description' => 'deletar periodo')
+              );
+            return $permissao;
+        }
+
+        if ($sector == 'professor') {
+            $permissao = array(                
+                array('id' => '36', 'name' => 'estudante','description' => 'permissao para acesso estudante')
+              );
+            return $permissao;
+        }
+        
+        if ($sector == 'estudante') {
+            $permissao = array(                
+                array('id' => '141', 'name' => 'responsavel_legal','description' => 'responsavel legal dos estudantes')
+              );
+            return $permissao;
+        }
+
+        if ($sector == 'responsavel_legal') {
+            $permissao = array(                
+                array('id' => '141', 'name' => 'responsavel_legal','description' => 'responsavel legal dos estudantes')
+              );
+            return $permissao;
+        }
     }
 }
