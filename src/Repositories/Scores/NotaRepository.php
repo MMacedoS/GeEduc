@@ -47,6 +47,10 @@ class NotaRepository {
             $conditions[] = 'a.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
         }
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
 
         if (isset($params['period_id'])) {
             $conditions[] = 'n.periodo_id = :period_id';

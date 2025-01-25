@@ -224,9 +224,14 @@ $router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLi
 $router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
-$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
 
 $router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
 $router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
+<<<<<<< HEAD
 $router->create('POST', '/perfil', [$usuarioController, 'profileUpdate'], $auth);
 $router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUpdate'], $auth);
+=======
+
+$router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
+$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+>>>>>>> develop
