@@ -7,11 +7,13 @@ use App\Controllers\v1\Traits\GenericTrait;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
+use App\Repositories\Discipline\DisciplinaRepository;
 use App\Repositories\Frequencies\FrequenciaRepository;
 use App\Repositories\Scores\NotaRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Request\Request;
+use App\Utils\Paginator;
 
 class GradeReportController extends Controller 
 {
@@ -23,6 +25,7 @@ class GradeReportController extends Controller
     protected $estudanteTurmaRepository;
     protected $bimestreRepository;
     protected $notaRepository;
+    protected $disciplinaRepository;
 
     public function __construct()
     {
@@ -34,6 +37,7 @@ class GradeReportController extends Controller
         $this->bimestreRepository = new BimestreRepository();
         $this->estudanteRepository = new EstudanteRepository();
         $this->notaRepository = new NotaRepository();
+        $this->disciplinaRepository = new DisciplinaRepository();
     }
 
 
@@ -80,4 +84,48 @@ class GradeReportController extends Controller
             ]
         ); 
     }
+
+    public function indexStudents(Request $request, string $student_class_id)
+    {
+        $studentClass = $this->estudanteTurmaRepository->findByUuid($student_class_id);
+
+        $allStudentClass = $this->estudanteTurmaRepository
+        ->allClassStudents(
+            ["student_id" => $studentClass->estudante_id]
+            )[0];
+      
+        $bimestres = $this->bimestreRepository->allBimesters();
+
+        $allDisciplines = $this->disciplinaRepository->findAllDisciplineByClassID($studentClass->turma_id);
+
+        $notas = $this->notaRepository->allScores([
+            'student_class_id' => $studentClass->id,
+        ]);
+
+        $frequencias = $this->frequenciaRepository
+            ->allFrequencies(
+                [
+                    'student_id' => $studentClass->id,
+                    'class_id' => $studentClass->turma_id
+                ]
+            );  
+
+        return $this->router->view(
+            'student/reports/bimesterGrades/index', 
+            [
+                'allStudentClass' => $allStudentClass,
+                'allDisciplines' => $allDisciplines,
+                'bimestres' => $bimestres,
+                'frequencias' => $frequencias,
+                'notas' => $notas,
+            ]
+        ); 
+    }
+
+    private function generateArrayIDsForWhere(array $params = []): string {
+        $ids = array_map(fn($param) => $param->id, $params);
+        return implode(',', $ids);
+    }
 }
+
+

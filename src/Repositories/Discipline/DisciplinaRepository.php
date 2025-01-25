@@ -126,4 +126,38 @@ class DisciplinaRepository{
 
         return $updated;
     }
+
+    public function findAllDisciplineByClassID($turma_id) {
+        try {
+            $sql = "SELECT t.*, JSON_OBJECT(
+                'turma_id', t.id,
+                'turma_nome', t.nome,
+                'disciplinas', JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'disciplina_id', d.id,
+                        'disciplina_nome', d.nome,
+                        'professor_disciplina_id', td.professor_disciplina_id,
+                        'turma_disciplina_id', td.id
+                    )
+                )
+            ) AS resultado
+            FROM turmas t
+            LEFT JOIN turma_disciplina td ON td.turma_id = t.id
+            LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
+            LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
+            WHERE t.id = $turma_id
+            GROUP BY t.id;
+            ";
+            
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->execute();
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
+            return null;
+        } finally {
+            Database::getInstance()->closeConnection();
+        }
+    }
 }
