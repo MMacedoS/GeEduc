@@ -76,6 +76,13 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>
+                                                <? if (hasPermission('estudante')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$turma->uuid?>/grade-notas">
+                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Grade de notas" target="_blank">
+                                                            <i class="icon-file fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>
                                             </td>
                                         <? }?>
                                     </tr>

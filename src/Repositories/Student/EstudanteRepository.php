@@ -36,7 +36,7 @@ class EstudanteRepository {
     public function allStudents(array $params = []){
 
         $sql = "SELECT
-            p.*,(
+            e.*,(
                 SELECT 
                     JSON_OBJECT(
                         'id', pf.id,
@@ -44,10 +44,10 @@ class EstudanteRepository {
                         'email', pf.email
                     )
                 FROM pessoa_fisica pf
-                WHERE pf.id = p.pessoa_fisica_id
+                WHERE pf.id = e.pessoa_fisica_id
             ) AS pessoa_fisica
             FROM " . self::TABLE . " 
-            p LEFT JOIN pessoa_fisica pf ON p.pessoa_fisica_id = pf.id
+            e LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
         ";
 
         $conditions = [];
@@ -58,14 +58,19 @@ class EstudanteRepository {
             $bindings[':nome'] = $params['nome'];
         }
 
+        if (isset($params['contact_person_id'])) {
+            $conditions[] = "e.pessoa_contato_id = :pessoa_contato_id";
+            $bindings[':pessoa_contato_id'] = $params['contact_person_id'];
+        }
+
         if (isset($params['email'])) {
             $conditions[] = "pf.email = :email";
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['ativo'])) {
-            $conditions[] = "p.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+        if (isset($params['active'])) {
+            $conditions[] = "e.ativo = :ativo";
+            $bindings[':ativo'] = $params['active'];
         }
 
         if (count($conditions) > 0) {
@@ -81,8 +86,8 @@ class EstudanteRepository {
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
-    public function studentWithPersonByUuid(string $uuid){
-
+    public function studentWithPersonByUuid(string $uuid)
+    {
         $sql = "SELECT
             e.*,(
                 SELECT 
@@ -305,7 +310,7 @@ class EstudanteRepository {
         }
     }
 
-    public function findByStudentId(array $criteria): ?array
+    public function findByStudentId(array $criteria): ?Estudante
     {
         try {
             $conditions = [];

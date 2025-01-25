@@ -132,4 +132,35 @@ class EstudanteTurmaController extends Controller
         exit();
         return;
     }
+
+    public function indexHistory(Request $request, string $id)
+    {
+        $student = $this->estudanteRepository
+            ->studentWithPersonByUuid((string)$id);
+
+        $student_class = $this->estudanteTurmaRepository
+            ->allClassStudents(
+                ['student_id' => $student->id]
+            );
+
+        $perPage = 10;
+        $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
+
+        $paginator = new Paginator(
+            $student_class, 
+            $perPage, 
+            $currentPage
+        );
+
+        $paginatedBoards = $paginator->getPaginatedItems();
+
+        return $this->router->view('/my-little-group/student-class/index', 
+            [
+                'active' => 'register', 
+                'estudante' => $student,
+                'estudante_turma' => $paginatedBoards,
+                'links' => $paginator->links()
+            ]
+        );
+    }
 }

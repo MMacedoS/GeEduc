@@ -36,7 +36,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Email de acesso</label>
-        <input type="email" class="form-control" name="email" placeholder="digite aqui" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <input type="email" class="form-control" name="email" id="email" placeholder="digite aqui" value="<?=$pessoa_fisica->email ?? ''?>" />
       </div>
     </div>
   </div>
@@ -235,3 +235,16 @@
     </div>
 </div>
 
+<script>
+  document.getElementById('email').addEventListener('input', function() {
+    const domain = '@escolacesp.com.br';
+    const currentValue = this.value;
+
+    if (currentValue.includes('@') && !currentValue.includes(domain)) {
+      this.value = currentValue.split('@')[0] + domain;
+      return;
+    } 
+      this.value = currentValue;
+      return;
+  });
+</script>

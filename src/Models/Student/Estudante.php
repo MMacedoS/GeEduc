@@ -2,12 +2,12 @@
 
 namespace App\Models\Student;
 
-use App\Models\Traits\uuidTrait;
+use App\Models\Traits\UuidTrait;
 use App\Utils\LoggerHelper;
 
 class Estudante {
 
-    use uuidTrait;
+    use UuidTrait;
 
     public $id;
     public $uuid;

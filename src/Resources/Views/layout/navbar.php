@@ -10,7 +10,7 @@
                     </div>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item dropdown <?=$active === 'dashboard' ? 'active-link': ''?>">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="icon-stacked_line_chart"></i> Dashboards
                             </a>
                             <ul class="dropdown-menu">
@@ -20,7 +20,7 @@
                                     </a>
                                 </li> -->
                                 <li>
-                                    <a class="dropdown-item current-page" href="/dashboard/facility">
+                                    <a class="dropdown-item current-page" href="/dashboard">
                                         <span>Facilidades</span>
                                     </a>
                                 </li>
@@ -117,6 +117,21 @@
                                     <? }?>
                                 </ul>
                             </li>
+                            <?php } if (hasPermission('visualizar financeiro')) {?>
+                            <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-now_widgets"></i> Site
+                                </a>
+                                <ul class="dropdown-menu"> 
+                                    <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="/site-eventos/">
+                                                <span>Eventos</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
                         <?php } if (hasPermission('visualizar cadastro')) { ?>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -148,7 +163,7 @@
                         <?php } ?>
                         <?php if (hasPermission('estudante')) { ?>
                             <li class="nav-item <?=$active === 'students' ? 'active-link': ''?>">
-                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Turma
+                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Minha Turma
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -161,6 +176,16 @@
                                 <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Minhas Disciplinas
                                 </a>
                             </li>
+                        <? } ?>
+                        <?php if (hasPermission('responsavel_legal')) { ?>
+                            <li class="nav-item <?=$active === 'responsible_legal' ? 'active-link': ''?>">
+                                <a class="nav-link" href="/minha-galerinha"><i class="icon-book-open"></i> Minha Galerinha
+                                </a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="/minha-galerinha/contratos"><i class="icon-supervised_user_circle"></i> Contrato
+                                </a>
+                            </li> -->
                         <? } ?>
                             <li class="nav-item">
                                 <a class="nav-link text-warning" href="/logout">Sair</a>

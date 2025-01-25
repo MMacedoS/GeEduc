@@ -3,6 +3,7 @@
 namespace App\Config;
 
 use App\Repositories\Balance\CaixaRepository;
+use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use Firebase\JWT\JWT;
 
@@ -34,6 +35,10 @@ class Auth {
         $permissaoRepository = new PermissaoRepository(); 
         $permissions = $permissaoRepository->allByUser((int)$username->code);
         $_SESSION['my_permissions'] = $permissions;
+        
+        $arquivoRepository = new ArquivoRepository();
+        $arquivo = $arquivoRepository->findById((int)$username->arquivo_id);   
+        $_SESSION['files'] = $arquivo ?? null;
     
         return true;
     }

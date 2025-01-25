@@ -4,6 +4,7 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
+use App\Controllers\v1\GradeReport\GradeReportController;
 use App\Controllers\v1\ClassRooms\TurmaController;
 use App\Controllers\v1\Dashboard\DashboardController;
 use App\Controllers\v1\Permission\PermissaoController;
@@ -19,6 +20,7 @@ use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
+use App\Controllers\v1\SiteEvent\SiteEventoController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Person\PessoaContatoController;
@@ -44,9 +46,11 @@ $estudanteMensalidadeController = new EstudanteMensalidadeController();
 $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
+$siteEventoController = new SiteEventoController();
 $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
+$gradeReportController = new GradeReportController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -180,6 +184,13 @@ $router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{
 $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
 
+//siteEvents
+$router->create('GET', '/site-eventos', [$siteEventoController, 'index'], $auth);
+$router->create('GET', '/site-eventos/criar', [$siteEventoController, 'create'], $auth);
+$router->create('POST', '/site-eventos/criar', [$siteEventoController, 'store'], $auth);
+$router->create('GET', '/site-eventos/{id}/editar', [$siteEventoController, 'edit'], $auth);
+$router->create('POST', '/site-eventos/{id}/editar', [$siteEventoController, 'update'], $auth);
+$router->create('DELETE', '/site-eventos/{id}', [$siteEventoController, 'destroy'], $auth);
 //minha-turma-estudantes
 $router->create("GET", "/minhas-turmas/", [$estudanteController, "indexStudents"], $auth);
 $router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController, 'indexStudents'], $auth);
@@ -208,3 +219,13 @@ $router->create('POST', '/pessoa/{id}/', [$pessoaContatoController, 'update'], $
 $router->create('DELETE', '/pessoa/{id}', [$pessoaContatoController, 'destroy'], $auth);
 
 $router->create('GET', '/pessoas-lista', [$pessoaContatoController, 'indexWithoutPagination'], $auth);
+$router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLittleGroup'], $auth);
+$router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
+$router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
+$router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
+
+$router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
+$router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
+
+$router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
+$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);

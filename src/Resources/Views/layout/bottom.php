@@ -5,7 +5,7 @@
 <!-- App footer start -->
 <div class="app-footer">
     <div class="container">
-     <span>© Sistema Reserva <?=date('Y')?> by <a href="https://github.com/MMacedoS" target="_blank">Mauricio Macedo</a></span>
+     <span>© <?=APP_NAME?> <?=date('Y')?> by <a href="https://github.com/MMacedoS" target="_blank">Mauricio Macedo</a></span>
     </div>
 </div>
       <!-- App footer end -->
@@ -72,6 +72,9 @@
       <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/morris/morris.min.js"></script>
 
       <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+      <!-- Dropzone JS -->
+      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.js"></script>
 
       <script>
         let isRequestInProgress = false;

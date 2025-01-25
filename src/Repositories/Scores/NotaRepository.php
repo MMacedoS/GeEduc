@@ -47,6 +47,10 @@ class NotaRepository {
             $conditions[] = 'a.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
         }
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
 
         if (isset($params['bimester_id'])) {
             $conditions[] = 'n.bimestre_id = :bimester_id';
@@ -147,6 +151,68 @@ class NotaRepository {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function allScoresByStudents(array $params = [])
+    {
+        $sql = "SELECT 
+                    d.nome AS disciplina,
+                    b.bimestre AS bimestre,
+                    GROUP_CONCAT(CONCAT(a.tipo, ': ', n.nota) SEPARATOR '</br> ') AS atividades_notas,
+                    pf.nome as professor
+                FROM 
+                    notas n
+                LEFT JOIN 
+                    estudante_turma et ON n.estudante_turma_id = et.id
+                LEFT JOIN 
+                    atividade a ON n.atividade_id = a.id
+                LEFT JOIN 
+                    turma_disciplina td ON a.turma_disciplina_id = td.id
+                LEFT JOIN 
+                    professor_disciplina pd ON td.professor_disciplina_id = pd.id
+                LEFT JOIN 
+                    professores p ON pd.professor_id = p.id
+                LEFT JOIN 
+                    pessoa_fisica pf ON p.pessoa_fisica_id = pf.id
+                LEFT JOIN 
+                    disciplinas d ON pd.disciplina_id = d.id
+                LEFT JOIN 
+                    bimestres b ON n.bimestre_id = b.id                
+            ";
+        
+        
+        $conditions = [];
+        $bindings = [];
+        
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
+
+        if (isset($params['bimester_id'])) {
+            $conditions[] = 'n.bimestre_id = :bimester_id';
+            $bindings[':bimester_id'] = $params['bimester_id'];
+        }
+        
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " GROUP BY 
+                    pf.nome, et.id, d.id, b.id
+                ORDER BY 
+                 d.nome, b.bimestre;";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            
+            return $stmt->fetchAll(PDO::FETCH_CLASS, self::CLASS_NAME);    
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
         } finally {          
             Database::getInstance()->closeConnection();
         }

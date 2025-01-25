@@ -91,6 +91,13 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                
+                                                <? if (hasPermission('realizar chamadas') || hasPermission('professor')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
+                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
+                                                            <i class="icon-file fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>                                                                                
                                             </td>
                                         <? }?>
                                     </tr>

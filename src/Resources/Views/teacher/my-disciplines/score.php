@@ -13,7 +13,7 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
             </li>
-            <li class="breadcrumb-item">Componente: <?=getParamsToJson($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
+            <li class="breadcrumb-item">Componente: <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
@@ -92,14 +92,14 @@
                         ?>
                             <div class="row mb-3 me-0">
                                 <div class="col-6">
-                                    <span class="fw-2 mt-2"><?= getParamsToJson($estudante->estudante)->nome ?>
+                                    <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
                                     -
-                                    <?= getParamsToJson($estudante->turma)->nome ?></span>
+                                    <?= getJsonToObject($estudante->turma)->nome ?></span>
                                 </div>
                                 <?php foreach($atividades as $atividade) { ?> 
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
-                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getParamsToJson($atividade->activies_details)->tipo ?>: </label>
+                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
                                         <input class="form-floating" type="number" name="notas[<?= "$estudante->id,$atividade->id"?>]" min="0" step="0.1" max="<?= $atividade->valor ?>" value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
                                     </div>
                                 </div>
