@@ -11,4 +11,4 @@ const SECRET_KEY_DAYLI = 'fbc761f5e0a5a34e5a1ec23ff671e1f87525e5a8756ed5fe14eab3
 const NAME_SCHOOL = "Instituto Social de Tucano";
 const SCHOOL_ADDRESS = "";
 const SCHOOL_ZIP_CODE = "";
-const MIN_SCORE = 5;
+const MIN_SCORE = 7;

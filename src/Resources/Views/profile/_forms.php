@@ -54,6 +54,7 @@
         <select name="sector" class="form-control" id="">
               <option value="estudante" selected <?php if(isset($usuario->painel) && $usuario->painel == 'estudante') { echo 'selected'; } ?>>Estudante</option>
               <option value="administrativo" <?php if(isset($usuario->painel) && $usuario->painel == 'administrativo') { echo 'selected'; } ?>>Administrativo</option>
+              <option value="coordenador" <?php if(isset($usuario->painel) && $usuario->painel == 'coordenador') { echo 'selected'; } ?>>Coordenador</option>
               <option value="professor" <?php if(isset($usuario->painel) && $usuario->painel == 'professor') { echo 'selected'; } ?>>Professor</option>
               <option value="secretaria" <?php if(isset($usuario->painel) && $usuario->painel == 'secretaria') { echo 'selected'; } ?>>Secretaria</option>
           </select>

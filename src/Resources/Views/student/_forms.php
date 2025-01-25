@@ -170,7 +170,8 @@
       <div class="m-0">
         <label class="form-label">Planos</label>
         <select name="plan_id" class="form-control" id="plan_id">
-            <?php foreach ($plans as $plan): ?>
+            <?php 
+              foreach ($plans as $plan): ?>
                 <option value="<?= htmlspecialchars($plan->id) ?>" 
                     <?= isset($monthly->plan_id) && $monthly->plan_id == $plan->id ? 'selected' : '' ?>>
                     <?= htmlspecialchars($plan->nome) ?>

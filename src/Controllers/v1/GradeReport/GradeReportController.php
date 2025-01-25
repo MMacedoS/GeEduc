@@ -5,10 +5,10 @@ namespace App\Controllers\v1\GradeReport;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Discipline\DisciplinaRepository;
 use App\Repositories\Frequencies\FrequenciaRepository;
+use App\Repositories\Period\PeriodoRepository;
 use App\Repositories\Scores\NotaRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
@@ -23,7 +23,7 @@ class GradeReportController extends Controller
     protected $estudanteRepository;
     protected $frequenciaRepository;
     protected $estudanteTurmaRepository;
-    protected $bimestreRepository;
+    protected $periodoRepository;
     protected $notaRepository;
     protected $disciplinaRepository;
 
@@ -34,7 +34,7 @@ class GradeReportController extends Controller
         $this->atividadeRepository = new AtividadeRepository();
         $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->bimestreRepository = new BimestreRepository();
+        $this->periodoRepository = new PeriodoRepository();
         $this->estudanteRepository = new EstudanteRepository();
         $this->notaRepository = new NotaRepository();
         $this->disciplinaRepository = new DisciplinaRepository();
@@ -62,7 +62,7 @@ class GradeReportController extends Controller
             'class_discipline_id' => $turma_disciplina->id, 
         ]);
 
-        $bimestres = $this->bimestreRepository->allBimesters();
+        $periodos = $this->periodoRepository->all();
 
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -78,7 +78,7 @@ class GradeReportController extends Controller
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'atividades' => $atividades,
-                'bimestres' => $bimestres,
+                'periodos' => $periodos,
                 'notas' => $notas,
                 'frequencias' => $frequencias
             ]

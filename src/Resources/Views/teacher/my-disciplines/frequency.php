@@ -68,10 +68,10 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
-                                            <label class="form-label">Bimestre</label>
-                                            <select class="form-select" name="bimester_id" id="bimester_id">
-                                                <?php foreach ($bimestres as $key => $value) {?>
-                                                    <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->bimestre?></option>
+                                            <label class="form-label">Trimestre</label>
+                                            <select class="form-select" name="period_id" id="bimester_id">
+                                                <?php foreach ($periodos as $key => $value) {?>
+                                                    <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>
                                                 <? } ?>
                                             </select>
                                         </div>

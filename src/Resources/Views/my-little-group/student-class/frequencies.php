@@ -37,12 +37,12 @@
                                     <th class="text-center">Data</th>
                                     <th class="text-center">Componentes Curricular</th>
                                     <th class="text-center">Qtd. Faltas</th>
-                                    <th class="text-center">Bimestre</th>
+                                    <th class="text-center">Trimestre</th>
                                 </tr>
                             </thead>
                             
                             <tbody>
-                            <? foreach ($frequencias as $frequencia) { 
+                            <? foreach ($frequencias as $frequencia) {                                 
                                 ?>
                                     <tr>
                                         <td><?=$frequencias->id?></td>
@@ -58,7 +58,7 @@
                                             <?= brDate($frequencia->faltas) ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?= getJsonToObject($frequencia->turma_disciplina_details)->bimestres->bimestre ?? 'não identificado'?>
+                                            <?= getJsonToObject($frequencia->turma_disciplina_details)->periodo->periodo ?? 'não identificado'?>º
                                         </td>
                                     </tr>
                             <? } ?>

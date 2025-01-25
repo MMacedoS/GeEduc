@@ -9,13 +9,13 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\dashboard" class="text-decoration-none">Início</a>
             </li>
-            <li class="breadcrumb-item">Bimestres</li>
+            <li class="breadcrumb-item">Periodos</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
     <div class="col-2 col-xl-6">
         <div class="float-end">
-         <a href="\bimestres\criar" class="btn btn-outline-primary" > + </a>
+         <a href="\periodos\criar" class="btn btn-outline-primary" > + </a>
         </div>
     </div>
 </div>
@@ -43,22 +43,22 @@
                            <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Bimestre</th>    
+                                    <th>Trimestre</th>    
                                 </tr>
                             </thead>
                             
                             <tbody>
-                            <? foreach ($data['bimestres'] as $bimestre) { ?>
+                            <? foreach ($periodos as $periodo) { ?>
                                     <tr>
-                                        <td><?=$bimestre->id?></td>
+                                        <td><?=$periodo->id?></td>
                                         <td class="fw-bold"> 
-                                            <?=$bimestre->bimestre ?>º bimestre
+                                            <?=$periodo->periodo ?>º periodo
                                         </td>
                                         <td>    
                                             
                                         </td>
                                         <td class="d-flex">
-                                        <a class="mb-1 me-2 mt-1" href="/bimestres/<?=$bimestre->uuid?>/editar">
+                                        <a class="mb-1 me-2 mt-1" href="/periodos/<?=$periodo->uuid?>/editar">
                                             <div class="border p-2 rounded-3">
                                                 <i class="icon-edit fs-5"></i>
                                             </div>
@@ -68,7 +68,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($data['bimestres'])?></b> registros
+                        Total <b><?=count($periodos)?></b> registros
                     </div>
                 </div>
             </div>

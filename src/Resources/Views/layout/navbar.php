@@ -32,10 +32,10 @@
                                 <i class="icon-add_task"></i> Pedagógico
                             </a>
                             <ul class="dropdown-menu">                             
-                            <?php if (hasPermission('visualizar bimestres')) { ?>
+                            <?php if (hasPermission('visualizar periodos')) { ?>
                                 <li>
-                                    <a class="dropdown-item" href="\bimestres\">
-                                        <span>Bimestres</span>
+                                    <a class="dropdown-item" href="\periodos\">
+                                        <span>Trimestres</span>
                                     </a>
                                 </li>
                             <?php } ?>
