@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\SiteAlbum;
+namespace App\Models\Site\Album;
 
 use App\Models\Traits\UuidTrait;
 

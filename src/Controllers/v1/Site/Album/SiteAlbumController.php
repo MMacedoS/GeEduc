@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controllers\v1\SiteAlbum;
+namespace App\Controllers\v1\Site\Album;
 
 use App\Controllers\Controller;
-use App\Repositories\SiteAlbum\SiteAlbumRepository;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Repositories\Site\Album\SiteAlbumRepository;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -32,14 +32,14 @@ class SiteAlbumController extends Controller {
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('/site-albuns/index', [
+        return $this->router->view('/site/albuns/index', [
             'active' => 'pedagogico',
             'data' => $data
         ]);
     }
 
     public function create(Request $request){
-        return $this->router->view('/site-albuns/create', [
+        return $this->router->view('/site/albuns/create', [
             'active' => 'pedagogico'
         ]);
     }
@@ -62,7 +62,7 @@ class SiteAlbumController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-albuns/create', [
+            return $this->router->view('site/albuns/create', [
                 'active' => 'pedagogico',
                 'errors' => $validator->getErrors()
             ]);
@@ -71,7 +71,7 @@ class SiteAlbumController extends Controller {
         $created = $this->siteAlbumRepository->saveAll($data, $dir);
 
         if(is_null($created)){
-            return $this->router->view('site-albuns/create', [
+            return $this->router->view('site/albuns/create', [
                 'active' => 'pedagogico', 
                 'danger' => true
             ]);
@@ -84,13 +84,13 @@ class SiteAlbumController extends Controller {
         $site_album = $this->siteAlbumRepository->findByUuid($id);
 
         if(is_null($site_album)){
-            return $this->router->view('site-albuns/', [
+            return $this->router->view('site/albuns/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->view('site-albuns/edit', [
+        return $this->router->view('site/albuns/edit', [
             'active' => 'register',
             'site_album' => $site_album
         ]);
@@ -108,7 +108,7 @@ class SiteAlbumController extends Controller {
         $site_album = $this->siteAlbumRepository->findByUuid($id);
 
         if(is_null($site_album)){
-            return $this->router->view('site-albuns/',[
+            return $this->router->view('site/albuns/',[
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -124,7 +124,7 @@ class SiteAlbumController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-albuns/edit', [
+            return $this->router->view('site/albuns/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -136,7 +136,7 @@ class SiteAlbumController extends Controller {
         $updated = $this->siteAlbumRepository->updateAll($data, $dir);
 
         if(is_null($updated)){
-            return $this->router->view('site-albuns/edit', [
+            return $this->router->view('site/albuns/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
@@ -149,7 +149,7 @@ class SiteAlbumController extends Controller {
         $site_album = $this->siteAlbumRepository->findByUuid($id);
 
         if(is_null($site_album)){
-            return $this->router->view('site-albuns/', [
+            return $this->router->view('site/albuns/', [
                 'active' => 'register',
                 'danger' => true
             ]);

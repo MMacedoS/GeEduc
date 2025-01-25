@@ -20,7 +20,7 @@ use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
 use App\Controllers\v1\SiteEvent\SiteEventoController;
-use App\Controllers\v1\SiteAlbum\SiteAlbumController;
+use App\Controllers\v1\Site\Album\SiteAlbumController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Person\PessoaContatoController;

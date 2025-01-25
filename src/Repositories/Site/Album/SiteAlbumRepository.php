@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories\SiteAlbum;
+namespace App\Repositories\Site\Album;
 
 use App\Config\Database;
-use App\Models\SiteAlbum\SiteAlbum;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Models\Site\Album\SiteAlbum;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
