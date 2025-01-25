@@ -72,6 +72,7 @@ class PessoaFisicaRepository {
                     nome_mae = :nome_mae,
                     nome_pai = :nome_pai,
                     genero = :genero,
+                    data_nascimento = :data_nascimento,
                     endereco = :endereco,
                     email = :email"
             );
@@ -86,6 +87,7 @@ class PessoaFisicaRepository {
                 ':nome_pai' => $pessoa_fisica->nome_pai,
                 ':nome_mae' => $pessoa_fisica->nome_mae,
                 ':genero' => $pessoa_fisica->genero,
+                ':data_nascimento' => $pessoa_fisica->data_nascimento,
                 ':endereco' => $pessoa_fisica->endereco,
                 ':email' => $pessoa_fisica->email
             ]);
@@ -105,10 +107,17 @@ class PessoaFisicaRepository {
 
     public function update(array $data, int $id)
     {
-        $pessoa_fisica = $this->model->create(
-            $data
-        );
+        $pessoa_fisica = $this->findById($id);
 
+        if (is_null($pessoa_fisica)) {
+            return null;
+        }
+
+        $pessoa_fisica = $this->model->update(
+            $data,
+            $pessoa_fisica
+        );
+        
         try {
             $stmt = $this->conn
             ->prepare(
@@ -124,6 +133,7 @@ class PessoaFisicaRepository {
                     endereco = :endereco,
                     ativo = :ativo,
                     email = :email,
+                    data_nascimento = :data_nascimento,
                     updated_at = NOW()
                 WHERE id = :id"
             );
@@ -139,6 +149,7 @@ class PessoaFisicaRepository {
                 ':telefone' => $pessoa_fisica->telefone,
                 ':endereco' => $pessoa_fisica->endereco,
                 ':ativo' => $pessoa_fisica->ativo,
+                ':data_nascimento' => $pessoa_fisica->data_nascimento,
                 ':email' => $pessoa_fisica->email
             ]);
 

@@ -74,7 +74,12 @@
       <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
       <!-- Dropzone JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.js"></script>
+      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.js"></script>    <!-- Moment JS -->
+      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/moment.min.js"></script>
+
+      <!-- Date Range JS -->
+      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/daterange.js"></script>
+      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/custom-daterange.js"></script>
 
       <script>
         let isRequestInProgress = false;

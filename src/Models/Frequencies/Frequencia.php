@@ -11,7 +11,7 @@ class Frequencia {
     public $id;
     public $uuid;
     public $turma_disciplina_id;
-    public $bimestre_id;
+    public $periodo_id;
     public $turma_estudante_id;
     public $faltas;
     public $data;
@@ -27,8 +27,8 @@ class Frequencia {
         $frequencia->id = $data['id'] ?? null;
         $frequencia->uuid = $data['uuid'] ?? $this->generateUUID();
         $frequencia->turma_disciplina_id = $data['class_discipline_id'];
-        $frequencia->bimestre_id = $data['bimester_id'] ?? null;
-        $frequencia->turma_estudante_id = $data['class_student_id'] ?? '0.0';     
+        $frequencia->periodo_id = $data['period_id'] ?? null;
+        $frequencia->turma_estudante_id = $data['class_student_id'];     
         $frequencia->faltas = (int)$data['faltas'] ?? 0;  
         $frequencia->data = $data['data'] ?? null;  
         $frequencia->updated_at = $data['updated_at'] ?? null;
@@ -39,7 +39,7 @@ class Frequencia {
     public function update(array $data, Frequencia $frequencia): Frequencia
     {
         $frequencia->turma_disciplina_id = $data['class_discipline_id'] ?? $frequencia->turma_disciplina_id;
-        $frequencia->bimestre_id = $data['bimester_id'] ?? $frequencia->bimestre_id;
+        $frequencia->periodo_id = $data['period_id'] ?? $frequencia->periodo_id;
         $frequencia->turma_estudante_id = $data['class_student_id'] ?? $frequencia->turma_estudante_id;
         $frequencia->faltas = $data['frequency'] ?? $frequencia->faltas;
         $frequencia->data = $data['data'] ?? $frequencia->data;
