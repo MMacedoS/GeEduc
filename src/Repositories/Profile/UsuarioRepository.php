@@ -4,6 +4,7 @@ namespace App\Repositories\Profile;
 
 use App\Config\Database;
 use App\Models\Profile\Usuario;
+use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
@@ -16,11 +17,13 @@ class UsuarioRepository {
     protected $conn;
     protected $model;
     private $permissioRepository;
+    protected $arquivoRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Usuario();
         $this->permissioRepository = new PermissaoRepository();
+        $this->arquivoRepository = new ArquivoRepository();
     }
 
     public function all(array $params = [])
@@ -184,7 +187,7 @@ class UsuarioRepository {
         }
     
         $stmt = $this->conn->prepare(
-            "SELECT id as code, senha, nome, email, painel, ativo, uuid as id 
+            "SELECT id as code, senha, nome, email, painel, ativo, arquivo_id, uuid as id 
              FROM " . self::TABLE . " 
              WHERE email = :email"
         );
@@ -216,7 +219,7 @@ class UsuarioRepository {
              WHERE id = :id"
         );
 
-        $updated = $stmt->execute(['id' => $id]);
+        $updated = $stmt->execute([':id' => $id]);
 
         return $updated;
     }
@@ -289,5 +292,21 @@ class UsuarioRepository {
         $this->addPermissions(['permissions' => $permissionIds], $userFromDb->id);
 
         return $userFromDb;
+    }
+
+    public function updatePhoto($file, $dir, $id_user)
+    {
+        $file = $this->arquivoRepository->create($file, $dir);
+
+        $stmt = $this->conn
+        ->prepare(
+            "UPDATE " . self::TABLE . " 
+             SET arquivo_id = :file_id 
+             WHERE id = :id"
+        );
+
+        $updated = $stmt->execute([':id' => $id_user, ':file_id' => $file->id]);
+
+        return $file;
     }
 }
