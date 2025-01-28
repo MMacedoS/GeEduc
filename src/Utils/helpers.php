@@ -76,7 +76,7 @@ if (!function_exists('usDate')) {
             $date = implode('-', array_reverse(explode('/', $date)));
             return $date;
         }
-        return "Não identificado";
+        return null;
     }
 }
 
