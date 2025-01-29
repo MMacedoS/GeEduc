@@ -26,6 +26,7 @@ use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Person\PessoaContatoController;
 use App\Controllers\v1\Scores\NotaController;
+use App\Controllers\v1\Site\Album\SiteAlbumController;
 
 $router = new Router();
 $auth = new Auth();
@@ -53,6 +54,7 @@ $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
 $gradeReportController = new GradeReportController();
+$siteAlbumController = new SiteAlbumController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -238,3 +240,10 @@ $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 
 
 $router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
 $router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
+
+$router->create('GET', '/site-albuns', [$siteAlbumController, 'index'], $auth);
+$router->create('GET', '/site-albuns/criar', [$siteAlbumController, 'create'], $auth);
+$router->create('POST', '/site-albuns/criar', [$siteAlbumController, 'store'], $auth);
+$router->create('GET', '/site-albuns/{id}/editar', [$siteAlbumController, 'edit'], $auth);
+$router->create('POST', '/site-albuns/{id}/editar', [$siteAlbumController, 'update'], $auth);
+$router->create('DELETE', '/site-albuns/{id}', [$siteAlbumController, 'destroy'], $auth);
