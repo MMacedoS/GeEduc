@@ -12,7 +12,6 @@ class Estudante {
     public $id;
     public $uuid;
     public $pessoa_fisica_id;
-    public $pessoa_fisica;
     public $pessoa_contato_id;
     public $matricula;
     public $ativo;
@@ -24,12 +23,13 @@ class Estudante {
     public function create(
         array $data
     ) : Estudante{
+        
         $estudante = new Estudante();
         $estudante->id = $data['id'] ?? null;
         $estudante->uuid = $data['uuid'] ?? $this->generateUUID();
         $estudante->pessoa_fisica_id = $data['person_id'];
         $estudante->pessoa_contato_id = $data['legal_responsible_id'];
-        $estudante->matricula = $data['matricula'] ?? null;
+        $estudante->matricula = $data['matricula'];
         $estudante->ativo = $data['active'] ?? null;     
         $estudante->updated_at = $data['updated_at'] ?? null;
         $estudante->created_at = $data['created_at'] ?? null;
