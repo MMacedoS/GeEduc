@@ -255,6 +255,53 @@ class PessoaContatoRepository {
         return $this->delete($person_contact_id);
     }
 
+    public function removeAll($id) :?bool 
+    {
+        $pessoa_contato = $this->findById((int)$id);
+
+        if (is_null($pessoa_contato)) {
+            return null;
+        }
+        
+        $this->remove($id);
+
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById((int)$pessoa_contato->pessoa_fisica_id);
+        if (is_null($pessoa_fisica)) {
+            return null;
+        }
+
+        $this->pessoaFisicaRepository->remove($pessoa_contato->pessoa_fisica_id);
+
+        return $this->usuarioRepository->remove($pessoa_fisica->usuario_id);
+    }
+
+    public function remove($id) :?bool 
+    {
+        $pessoa_contato = $this->findById((int)$id);
+
+        if (is_null($pessoa_contato)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
     public function delete(int $id){
         $stmt = $this->conn->prepare(
             "UPDATE " . self::TABLE . "

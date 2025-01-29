@@ -218,4 +218,32 @@ class PessoaFisicaRepository {
 
         return $updated;
     }
+
+    public function remove($id) :?bool 
+    {
+        
+        $pessoa_fisica = $this->findById((int)$id);
+       
+        if (is_null($pessoa_fisica)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            dd($th->getMessage());
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
 }

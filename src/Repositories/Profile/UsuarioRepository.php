@@ -239,6 +239,37 @@ class UsuarioRepository {
         return $updated;
     }
 
+    public function remove($id) :?bool 
+    {
+        
+        $usuario = $this->findById((int)$id);
+        
+        if (is_null($usuario)) {
+            return null;
+        }
+        
+        if(!$this->removePermissions($id)) {
+            return null;
+        };
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
     public function findPermissions(int $usuario_id) 
     {
         $stmt = $this->conn
