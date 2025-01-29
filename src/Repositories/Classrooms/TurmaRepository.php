@@ -142,6 +142,19 @@ class TurmaRepository {
         }
     }
 
+
+    public function findByName(string $name): ?array
+    {
+        $sql = "SELECT * FROM " . self::TABLE . " WHERE nome = :name";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $result ?: null;
+    }
+
     public function delete(int $id)
     {
         $stmt = $this->conn
