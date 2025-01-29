@@ -51,7 +51,7 @@ class SiteAlbumController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/albuns/';
+        $dir = '/files/site/albuns/';
 
         $validator = new Validator($data);
 
@@ -103,7 +103,7 @@ class SiteAlbumController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/albuns/';
+        $dir = 'files/site/albuns/';
 
         $site_album = $this->siteAlbumRepository->findByUuid($id);
 
