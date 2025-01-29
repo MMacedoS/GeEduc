@@ -128,8 +128,8 @@
                                             <a class="dropdown-item" href="/site-eventos/">
                                                 <span>Eventos</span>
                                             </a>
-                                            <a class="dropdown-item" href="/site-carrossel/">
-                                                <span>Carrossel</span>
+                                            <a class="dropdown-item" href="/site-albuns/">
+                                                <span>Albuns</span>
                                             </a>
                                         </li>
                                     <?php } ?>

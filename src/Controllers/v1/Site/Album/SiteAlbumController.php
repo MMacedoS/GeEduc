@@ -1,45 +1,47 @@
 <?php
 
-namespace App\Controllers\v1\Site\Event;
+namespace App\Controllers\v1\Site\Album;
 
 use App\Controllers\Controller;
-use App\Repositories\Site\Event\SiteEventoRepository;
+use App\Repositories\Site\Album\SiteAlbumRepository;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class SiteEventoController extends Controller {
+class SiteAlbumController extends Controller {
 
-    protected $siteEventoRepository;
+    protected $siteAlbumRepository;
     protected $siteArquivoRepository;
 
     public function __construct(){
         parent::__construct();
-        $this->siteEventoRepository = new SiteEventoRepository();
+        $this->siteAlbumRepository = new SiteAlbumRepository();
         $this->siteArquivoRepository = new SiteArquivoRepository();
     }
 
     public function index(Request $request){
-        $site_eventos = $this->siteEventoRepository->allSiteEvents();
+        $site_albuns = $this->siteAlbumRepository->allSiteAlbuns();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
-        $paginator = new Paginator($site_eventos, $perPage, $currentPage);
+        $paginator = new Paginator($site_albuns, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
         $data = [
-            'site_eventos' => $paginatedBoards,
+            'site_albuns' => $paginatedBoards,
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('/site/events/index', [
+        return $this->router->view('/site/albuns/index', [
             'active' => 'pedagogico',
             'data' => $data
         ]);
     }
 
     public function create(Request $request){
-        return $this->router->view('/site/events/create', ['active' => 'pedagogico']);
+        return $this->router->view('/site/albuns/create', [
+            'active' => 'pedagogico'
+        ]);
     }
 
     public function store(Request $request){
@@ -49,7 +51,7 @@ class SiteEventoController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = '/files/site/events/';
+        $dir = '/files/site/albuns/';
 
         $validator = new Validator($data);
 
@@ -60,37 +62,37 @@ class SiteEventoController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site/events/create', [
+            return $this->router->view('site/albuns/create', [
                 'active' => 'pedagogico',
                 'errors' => $validator->getErrors()
             ]);
         }
-        
-        $created = $this->siteEventoRepository->saveAll($data, $dir);
+
+        $created = $this->siteAlbumRepository->saveAll($data, $dir);
 
         if(is_null($created)){
-            return $this->router->view('site/events/create', [
+            return $this->router->view('site/albuns/create', [
                 'active' => 'pedagogico', 
                 'danger' => true
             ]);
         }
 
-        return $this->router->redirect('site-eventos/');
+        return $this->router->redirect('site-albuns/');
     }
 
     public function edit(Request $request, $id){
-        $site_evento = $this->siteEventoRepository->findByUuid($id);
+        $site_album = $this->siteAlbumRepository->findByUuid($id);
 
-        if(is_null($site_evento)){
-            return $this->router->view('site/events/', [
+        if(is_null($site_album)){
+            return $this->router->view('site/albuns/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->view('site/events/edit', [
+        return $this->router->view('site/albuns/edit', [
             'active' => 'register',
-            'site_evento' => $site_evento
+            'site_album' => $site_album
         ]);
     }
 
@@ -101,18 +103,18 @@ class SiteEventoController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = '/files/site/events/';
+        $dir = 'files/site/albuns/';
 
-        $site_evento = $this->siteEventoRepository->findByUuid($id);
+        $site_album = $this->siteAlbumRepository->findByUuid($id);
 
-        if(is_null($site_evento)){
-            return $this->router->view('site/events/',[
+        if(is_null($site_album)){
+            return $this->router->view('site/albuns/',[
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        $site_arquivo = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+        $site_arquivo = $this->siteArquivoRepository->findById($site_album->site_arquivo_id);
 
         $validator = new Validator($data);
 
@@ -122,38 +124,37 @@ class SiteEventoController extends Controller {
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site/events/edit', [
+            return $this->router->view('site/albuns/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        $data['site_arquivo_id'] = $site_evento->site_arquivo_id;
-        $data['id'] = $site_evento->id;
+        $data['site_arquivo_id'] = $site_album->site_arquivo_id;
+        $data['id'] = $site_album->id;
 
-        $updated = $this->siteEventoRepository->updateAll($data, $dir);
+        $updated = $this->siteAlbumRepository->updateAll($data, $dir);
 
         if(is_null($updated)){
-            return $this->router->view('site/events/edit', [
+            return $this->router->view('site/albuns/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->redirect('site-eventos');
+        return $this->router->redirect('site-albuns');
     }
 
     public function destroy(Request $request, $id){
-        $site_evento = $this->siteEventoRepository->findByUuid($id);
+        $site_album = $this->siteAlbumRepository->findByUuid($id);
 
-        if(is_null($site_evento)){
-            return $this->router->view('site/events/', [
+        if(is_null($site_album)){
+            return $this->router->view('site/albuns/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        $this->siteEventoRepository->deleteAll($site_evento);
+        $this->siteAlbumRepository->deleteAll($site_album);
     }
-
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Repositories\Site\Event;
+namespace App\Repositories\Site\Album;
 
 use App\Config\Database;
-use App\Models\Site\Event\SiteEvento;
+use App\Models\Site\Album\SiteAlbum;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteEventoRepository {
+class SiteAlbumRepository{
 
-    const CLASS_NAME = SiteEvento::class;
-    const TABLE = 'site_eventos';
+    const CLASS_NAME = SiteAlbum::class;
+    const TABLE = 'site_albuns';
 
     protected $conn;
     protected $model;
@@ -20,12 +20,12 @@ class SiteEventoRepository {
     use FindTrait;
 
     public function __construct(){
-        $this->model = new SiteEvento();
+        $this->model = new SiteAlbum();
         $this->conn = Database::getInstance()->getConnection();
         $this->siteArquivoRepository = new SiteArquivoRepository();
     }
 
-    public function allSiteEvents(array $params  = []){
+    public function allSiteAlbuns(array $params = []){
         $sql = "SELECT * FROM " . self::TABLE;
 
         $conditions = [];
@@ -56,11 +56,10 @@ class SiteEventoRepository {
 
         try{
             $site_archive = $this->siteArquivoRepository->create($data, $dir);
-            $site_eventoData = array_merge($data, ['site_arquivo_id' => $site_archive->id]);
-            $site_evento = $this->create($site_eventoData);
+            $site_albumData = array_merge($data, ['site_arquivo_id' => $site_archive->id]);
+            $site_album = $this->create($site_albumData);
 
-            return $site_evento;
-
+            return $site_album;
         }catch(\Throwable $th){
             return null;
         }finally{
@@ -69,7 +68,7 @@ class SiteEventoRepository {
     }
 
     public function create(array $data){
-        $site_evento = $this->model->create($data);
+        $site_album = $this->model->create($data);
 
         try{
             $stmt = $this->conn->prepare(
@@ -83,17 +82,17 @@ class SiteEventoRepository {
             );
 
             $create = $stmt->execute([
-                ':uuid' => $site_evento->uuid,
-                ':name' => $site_evento->nome,
-                ':description' => $site_evento->descricao,
-                ':site_arquivo_id' => $site_evento->site_arquivo_id
+                ':uuid' => $site_album->uuid,
+                ':name' => $site_album->nome,
+                ':description' => $site_album->descricao,
+                ':site_arquivo_id' => $site_album->site_arquivo_id
             ]);
             
             if(!$create){
                 return null;
             }
 
-            return $this->findByUuid($site_evento->uuid);
+            return $this->findByUuid($site_album->uuid);
         }catch(\Throwable $th){
             return null;
         }finally{
@@ -106,17 +105,18 @@ class SiteEventoRepository {
             return null;
         }
 
-        try{
+        try{    
             if(!empty($data['arquivo']['name'])){
                 $archive = $this->siteArquivoRepository->update($data, $dir, $data['site_arquivo_id']);
             }
 
-            $site_evento = $this->update($data, $data['id']);
-            if(is_null($site_evento)){
+            $site_album = $this->update($data, $data['id']);
+            if(is_null($site_album)){
                 return null;
             }
 
-            return $site_evento;
+            return $site_album;
+
         }catch(\Throwable $th){
             return null;
         }finally{
@@ -125,7 +125,7 @@ class SiteEventoRepository {
     }
 
     public function update(array $data, int $id){
-        $site_evento = $this->model->create($data);
+        $site_album = $this->model->create($data);
 
         try{
             $stmt = $this->conn->prepare(
@@ -139,9 +139,9 @@ class SiteEventoRepository {
             );
 
             $updated = $stmt->execute([
-                ':name' => $site_evento->nome,
-                ':description' => $site_evento->descricao,
-                ':active' => $site_evento->ativo,
+                ':name' => $site_album->nome,
+                ':description' => $site_album->descricao,
+                ':active' => $site_album->ativo,
                 ':id' => $id
             ]);
 
@@ -150,7 +150,6 @@ class SiteEventoRepository {
             }
 
             return $this->findById($id);
-            
         }catch(\Throwable $th){
             return null;
         }finally{
@@ -158,10 +157,10 @@ class SiteEventoRepository {
         }
     }
 
-    public function deleteAll($site_evento){
-        $site_archive = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+    public function deleteAll($site_album){
+        $site_archive = $this->siteArquivoRepository->findById($site_album->site_arquivo_id);
 
-        return $this->delete($site_evento->id);
+        return $this->delete($site_album->id);
     }
 
     public function delete(int $id){

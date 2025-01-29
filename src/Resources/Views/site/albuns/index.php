@@ -9,14 +9,14 @@
                 <i class="icon-house_siding lh-1"></i>
                 <a href="\" class="text-decoration-none">Início</a>
             </li>
-            <li class="breadcrumb-item">Eventos</li>
+            <li class="breadcrumb-item">Albuns</li>
         </ol>
        <!-- Breadcrumb end -->
     </div>
     <? if (hasPermission('cadastrar estudantes')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-            <a href="\site-eventos\criar" class="btn btn-outline-primary" > + </a>
+            <a href="\site-albuns\criar" class="btn btn-outline-primary" > + </a>
             </div>
         </div>
     <? }?>
@@ -54,19 +54,19 @@
                             </thead>
                             
                             <tbody>
-                            <? foreach ($data['site_eventos'] as $site_evento) { 
+                            <? foreach ($data['site_albuns'] as $site_album) { 
                                 ?>
                                     <tr>
-                                        <td><?=$site_evento->id?></td>
-                                        <td class="fw-bold"> <?=$site_evento->nome ?? 'não identificado'?>
+                                        <td><?=$site_album->id?></td>
+                                        <td class="fw-bold"> <?=$site_album->nome ?? 'não identificado'?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
-                                                <? if($site_evento->ativo == 0) { ?>
+                                                <? if($site_album->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
                                                     Impedido
                                                 <? } ?>
-                                                <? if($site_evento->ativo == 1) { ?>
+                                                <? if($site_album->ativo == 1) { ?>
                                                     <i class="icon-circle1 me-2 text-success fs-5"></i>
                                                     Disponivel
                                                 <? } ?>
@@ -75,20 +75,20 @@
                                         <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes') || hasPermission('visualizar turmas estudantes')) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('editar estudantes')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/site-eventos/<?=$site_evento->uuid?>/editar">
+                                                    <a class="mb-1 me-2 mt-1" href="/site-albuns/<?=$site_album->uuid?>/editar">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
                                                 <? if (hasPermission('deletar estudantes')) {?>                                                                           
-                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$site_evento->uuid?>">                                                     
+                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$site_album->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
                                                         </div>
                                                     </button>
                                                 <? }?>
-                                                <div class="modal fade" id="exampleModal_<?=$site_evento->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="exampleModal_<?=$site_album->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -97,11 +97,11 @@
                                                             </div>
                                                             <div class="modal-body">
                                                                 Tem certeza que deseja excluir este registro? 
-                                                                <p>Estudante: <?=$site_evento->nome ?? 'não identificado'?></p>
+                                                                <p>Estudante: <?=$site_album->nome ?? 'não identificado'?></p>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="button" onclick="deleteData('/site-eventos/<?=$site_evento->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                                <button type="button" onclick="deleteData('/site-albuns/<?=$site_album->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -114,7 +114,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($data['site_eventos'])?></b> registros
+                        Total <b><?=count($data['site_albuns'])?></b> registros
                     </div>
                 </div>
             </div>

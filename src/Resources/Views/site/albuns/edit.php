@@ -12,7 +12,7 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/site-eventos/" class="text-decoration-none">Eventos</a>
+                    <a href="/site-albuns/" class="text-decoration-none">Albuns</a>
                 </li>
                 <li class="breadcrumb-item">Atualizar</li>
             </ol>
@@ -20,14 +20,14 @@
         </div>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-                <a href="/site-eventos/" class="btn btn-outline-primary" > Voltar </a>
+                <a href="/site-albuns/" class="btn btn-outline-primary" > Voltar </a>
             </div>
         </div>
     </div>
     <!-- Row end -->
-    <form action="/site-eventos/<?=$site_evento->uuid?>/editar" method="post" enctype="multipart/form-data">   
+    <form action="/site-albuns/<?=$site_album->uuid?>/editar" method="post" enctype="multipart/form-data">   
         <div class="row gx-3">
-            <? include_once('_forms.php');?>
+            <?include_once('_forms.php');?>
         </div>
     </form>
 
