@@ -180,17 +180,19 @@ class CoordenadorRepository {
 
         try{    
             $this->conn->beginTransaction();
-            $user = $this->usuarioRepository->update($data, $data['usuario_id']);
+            $user = $this->usuarioRepository->update($data, (int)$data['usuario_id']);
+
             if(is_null($user)){
                 return null;
             }
 
-            $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
+            $person = $this->pessoaFisicaRepository->update($data, (int)$data['pessoa_fisica_id']);
+
             if(is_null($person)){
                 return null;
             }
             
-            $coordenador = $this->update($data, $data['id']);
+            $coordenador = $this->update($data, (int)$data['id']);
 
             if(is_null($coordenador)){
                 return null;
