@@ -13,7 +13,6 @@ use App\Controllers\v1\Profile\UsuarioController;
 use App\Controllers\v1\Teacher\ProfessorController;
 use App\Controllers\v1\Teacher\ProfessorDisciplinaController;
 use App\Controllers\v1\Discipline\DisciplinaController;
-use App\Controllers\v1\Bimester\BimestreController;
 use App\Controllers\v1\ClassRooms\TurmaDisciplinaController;
 use App\Controllers\v1\MonthlyFees\MensalidadeController;
 use App\Controllers\v1\Student\EstudanteController;
@@ -24,6 +23,7 @@ use App\Controllers\v1\Site\Event\SiteEventoController;
 use App\Controllers\v1\Site\Carousel\SiteCarrosselController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
+use App\Controllers\v1\Period\PeriodoController;
 use App\Controllers\v1\Person\PessoaContatoController;
 use App\Controllers\v1\Scores\NotaController;
 use App\Controllers\v1\Site\Album\SiteAlbumController;
@@ -41,7 +41,7 @@ $turmaController = new TurmaController();
 $contaBancariaController = new ContaBancariaController();
 $cargaHorariaController = new CargaHorariaController();
 $disciplinaController = new DisciplinaController();
-$bimestreController = new BimestreController();
+$periodoController = new PeriodoController();
 $estudanteTurmaController = new EstudanteTurmaController();
 $mensalidadeController = new MensalidadeController();
 $estudanteMensalidadeController = new EstudanteMensalidadeController();
@@ -161,11 +161,11 @@ $router->create('POST', '/coordenador/{id}/', [$coordenadorController, 'update']
 $router->create('DELETE', '/coordenador/{id}', [$coordenadorController, 'destroy'], $auth);
 
 //bimesters
-$router->create( "GET", "/bimestres", [$bimestreController, "index"], $auth);
-$router->create( "GET", "/bimestres/criar", [$bimestreController, "create"], $auth);
-$router->create( "POST", "/bimestres/criar", [$bimestreController, "store"], $auth);
-$router->create( "GET", "/bimestres/{id}/editar", [$bimestreController, "edit"], $auth);
-$router->create( "POST", "/bimestres/{id}/editar", [$bimestreController, "update"], $auth);
+$router->create( "GET", "/periodos", [$periodoController, "index"], $auth);
+$router->create( "GET", "/periodos/criar", [$periodoController, "create"], $auth);
+$router->create( "POST", "/periodos/criar", [$periodoController, "store"], $auth);
+$router->create( "GET", "/periodos/{id}/editar", [$periodoController, "edit"], $auth);
+$router->create( "POST", "/periodos/{id}/editar", [$periodoController, "update"], $auth);
 
 //teacher-disciplines
 $router->create( "GET", "/professores/{id}/disciplina", [$professorDisciplinaController, "teacherLinkDiscipline"], $auth);
@@ -195,6 +195,7 @@ $router->create('POST', '/site-eventos/criar', [$siteEventoController, 'store'],
 $router->create('GET', '/site-eventos/{id}/editar', [$siteEventoController, 'edit'], $auth);
 $router->create('POST', '/site-eventos/{id}/editar', [$siteEventoController, 'update'], $auth);
 $router->create('DELETE', '/site-eventos/{id}', [$siteEventoController, 'destroy'], $auth);
+
 //minha-turma-estudantes
 $router->create("GET", "/minhas-turmas/", [$estudanteController, "indexStudents"], $auth);
 $router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController, 'indexStudents'], $auth);
@@ -247,3 +248,11 @@ $router->create('POST', '/site-albuns/criar', [$siteAlbumController, 'store'], $
 $router->create('GET', '/site-albuns/{id}/editar', [$siteAlbumController, 'edit'], $auth);
 $router->create('POST', '/site-albuns/{id}/editar', [$siteAlbumController, 'update'], $auth);
 $router->create('DELETE', '/site-albuns/{id}', [$siteAlbumController, 'destroy'], $auth);
+
+$router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
+$router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
+$router->create('POST', '/perfil', [$usuarioController, 'profileUpdate'], $auth);
+$router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUpdate'], $auth);
+
+$router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
+$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);

@@ -58,10 +58,10 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
-                                            <label class="form-label">Bimestre</label>
-                                            <select class="form-select" name="bimester_id" id="bimester_id">
-                                                <?php foreach ($bimestres as $key => $value) {?>
-                                                    <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->bimestre?></option>
+                                            <label class="form-label">Trimestre</label>
+                                            <select class="form-select" name="period_id" id="period_id">
+                                                <?php foreach ($periodos as $key => $value) {?>
+                                                    <option value="<?=$value->id?>" <?= $periodFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>
                                                 <? } ?>
                                             </select>
                                         </div>
@@ -81,17 +81,22 @@
                         <hr>
                         <?php 
                         $notasMap = [];
+                        $paralelaMap = [];
                         
                         foreach ($notas as $nota) {                            
                             $notasMap["$nota->estudante_turma_id$nota->atividade_id"] = $nota->nota;
                             $notasMap[$nota->estudante_turma_id] += $nota->nota;
+                        }
+
+                        foreach ($paralelas as $paralela) {                            
+                            $paralelaMap["$paralela->estudante_turma_id"] = $paralela->nota;
                         }
                 
                         foreach ($estudantes as $key => $estudante) {             
                           
                         ?>
                             <div class="row mb-3 me-0">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
                                     -
                                     <?= getJsonToObject($estudante->turma)->nome ?></span>
@@ -100,14 +105,29 @@
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
-                                        <input class="form-floating" type="number" name="notas[<?= "$estudante->id,$atividade->id"?>]" min="0" step="0.1" max="<?= $atividade->valor ?>" value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
+                                        <input 
+                                            class="form-floating" 
+                                            type="number" 
+                                            name="notas[<?= "$estudante->id,$atividade->id"?>]" 
+                                            min="0" 
+                                            step="0.01" 
+                                            max="<?= $atividade->valor ?>" 
+                                            value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
                                     </div>
                                 </div>
                                 <?php } ?> 
+                                <?php if (isset($notasMap[$estudante->id]) && $notasMap[$estudante->id] < 6.9) {?>
+                                    <div class="col-1">
+                                        <div class="mr-2 d-flex flex-column pe-0">
+                                            <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="paralela">Paralela: </label>
+                                            <input type="number" min="0" step="0.01" max="2" name="parallel[<?= $estudante->id ?>]" value="<?= $paralelaMap[$estudante->id] ?>">                                   
+                                        </div>
+                                    </div>
+                                <?php } ?>
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
-                                        <input type="number" min="0" step="0.1" max="10" name="total[<?= $estudante->id ?>]" value="<?= $notasMap[$estudante->id] ?>" disabled>                                   
+                                        <input type="number" min="0" step="0.01" max="10" name="total[<?= $estudante->id ?>]" value="<?= $notasMap[$estudante->id] + $paralelaMap[$estudante->id]?>" disabled>                                   
                                     </div>
                                 </div>
                             </div>     
@@ -138,17 +158,17 @@ $(document).ready(function() {
         searchDate();       
     });
 
-    $('#bimester_id').change(function() {
+    $('#period_id').change(function() {
         searchDate();       
     });
 
     const searchDate = function() {
         // Capturar valores do formulário
-        var bimester_id = $('#bimester_id').val();
+        var period_id = $('#period_id').val();
 
         // Montar a URL
         var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/notas';
-        url += '?bimester_id=' + bimester_id;
+        url += '?period_id=' + period_id;
 
         // Redirecionar para a URL
         window.location.href = url;

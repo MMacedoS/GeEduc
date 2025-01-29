@@ -47,10 +47,14 @@ class NotaRepository {
             $conditions[] = 'a.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
         }
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
 
-        if (isset($params['bimester_id'])) {
-            $conditions[] = 'n.bimestre_id = :bimester_id';
-            $bindings[':bimester_id'] = $params['bimester_id'];
+        if (isset($params['period_id'])) {
+            $conditions[] = 'n.periodo_id = :period_id';
+            $bindings[':period_id'] = $params['period_id'];
         }
         
         if (count($conditions) > 0) {
@@ -80,7 +84,7 @@ class NotaRepository {
                 SET 
                     uuid = :uuid,
                     atividade_id = :atividade_id,
-                    bimestre_id = :bimestre_id,
+                    periodo_id = :periodo_id,
                     estudante_turma_id = :estudante_turma_id,
                     nota = :nota"
             );
@@ -93,7 +97,7 @@ class NotaRepository {
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
                 ':atividade_id' => $class->atividade_id,
-                ':bimestre_id' => $class->bimestre_id,
+                ':periodo_id' => $class->periodo_id,
                 ':estudante_turma_id' => $class->estudante_turma_id,
                 ':nota' => $class->nota
             ]);
@@ -114,10 +118,10 @@ class NotaRepository {
 
     private function checkIfExistsScore($class) :?String {
         try {
-            $stmt = $this->conn->prepare("SELECT id FROM notas WHERE estudante_turma_id = :estudante_turma_id AND bimestre_id = :bimestre_id AND atividade_id = :atividade_id");
+            $stmt = $this->conn->prepare("SELECT id FROM notas WHERE estudante_turma_id = :estudante_turma_id AND periodo_id = :periodo_id AND atividade_id = :atividade_id");
             $stmt->execute([
                 ':estudante_turma_id' => $class->estudante_turma_id,
-                ':bimestre_id' => $class->bimestre_id,
+                ':periodo_id' => $class->periodo_id,
                 ':atividade_id' => $class->atividade_id
             ]);
 
@@ -133,7 +137,14 @@ class NotaRepository {
         }
     }
 
-    private function removeScore($id) :?bool {
+    private function removeScore($id) :?bool 
+    {
+        $scores = $this->findById((int)$id);
+
+        if (is_null($scores)) {
+            return null;
+        }
+        
         try {
             $stmt = $this->conn->prepare("DELETE FROM notas WHERE id = :id");
             $delete = $stmt->execute([
@@ -156,7 +167,7 @@ class NotaRepository {
     {
         $sql = "SELECT 
                     d.nome AS disciplina,
-                    b.bimestre AS bimestre,
+                    b.periodo AS periodo,
                     GROUP_CONCAT(CONCAT(a.tipo, ': ', n.nota) SEPARATOR '</br> ') AS atividades_notas,
                     pf.nome as professor
                 FROM 
@@ -176,7 +187,7 @@ class NotaRepository {
                 LEFT JOIN 
                     disciplinas d ON pd.disciplina_id = d.id
                 LEFT JOIN 
-                    bimestres b ON n.bimestre_id = b.id                
+                    periodo b ON n.periodo_id = b.id                
             ";
         
         
@@ -188,9 +199,9 @@ class NotaRepository {
             $bindings[':student_class_id'] = $params['student_class_id'];
         }
 
-        if (isset($params['bimester_id'])) {
-            $conditions[] = 'n.bimestre_id = :bimester_id';
-            $bindings[':bimester_id'] = $params['bimester_id'];
+        if (isset($params['period_id'])) {
+            $conditions[] = 'n.periodo_id = :period_id';
+            $bindings[':period_id'] = $params['period_id'];
         }
         
         if (count($conditions) > 0) {
@@ -200,7 +211,7 @@ class NotaRepository {
         $sql .= " GROUP BY 
                     pf.nome, et.id, d.id, b.id
                 ORDER BY 
-                 d.nome, b.bimestre;";
+                 d.nome, b.periodo;";
 
         try {
             $stmt = $this->conn->prepare($sql);

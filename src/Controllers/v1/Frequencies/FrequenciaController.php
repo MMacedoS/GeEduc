@@ -5,17 +5,15 @@ namespace App\Controllers\v1\Frequencies;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Bimester\BimestreRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Frequencies\FrequenciaRepository;
+use App\Repositories\Period\PeriodoRepository;
 use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Repositories\Teacher\ProfessorDisciplinaRepository;
 use App\Repositories\Work_Load\CargaHorariaRepository;
 use App\Request\Request;
-use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
-use App\Utils\Validator;
 
 class FrequenciaController extends Controller 
 {
@@ -28,7 +26,7 @@ class FrequenciaController extends Controller
     protected $frequenciaRepository;
     protected $estudanteTurmaRepository;
     protected $professorDisciplinaRepository;
-    protected $bimestreRepository;
+    protected $periodoRepository;
     protected $cargaHorariaRepository;
 
     public function __construct()
@@ -39,7 +37,7 @@ class FrequenciaController extends Controller
         $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
         $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
         $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
-        $this->bimestreRepository = new BimestreRepository();
+        $this->periodoRepository = new PeriodoRepository();
         $this->cargaHorariaRepository = new CargaHorariaRepository();
         $this->estudanteRepository = new EstudanteRepository();
     }
@@ -163,12 +161,12 @@ class FrequenciaController extends Controller
                     'class_discipline_id' => $turma_disciplina->id,
                     'class_id' => $turma_disciplina->turma_id,
                     'data_presence' => $data_presence,
-                    'bimester_id' => $paramsURL['bimester_id'] ?? null
+                    'period_id' => $paramsURL['period_id'] ?? null
                 ]
             );
 
             
-        $bimestres = $this->bimestreRepository->allBimesters();
+        $periodos = $this->periodoRepository->all();
 
         return $this->router->view(
             'teacher/my-disciplines/frequency', 
@@ -177,9 +175,9 @@ class FrequenciaController extends Controller
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'frequencias' => $frequencias,
-                'bimestres' => $bimestres,
+                'periodos' => $periodos,
                 'dataFilter' => $data_presence,
-                'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
+                'bimestreFilter' => $paramsURL['period_id'] ?? null,
             ]
         ); 
     }
@@ -205,16 +203,6 @@ class FrequenciaController extends Controller
             return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?error=422");
         }
        
-        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&bimester_id=$data[bimester_id]");
+        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&period_id=$data[period_id]");
     }
-
-    // $dataForChart = array_map(function ($frequencia) {
-    //     return [
-    //         'y' => date('Y-m-d', strtotime($frequencia->data)), // Formatar a data
-    //         'frequencia' => intval($frequencia->frequencia), // Frequência como valor numérico
-    //     ];
-    // }, $frequencias);
-    
-    // // Exemplo de saída JSON para usar no gráfico
-    // echo json_encode($dataForChart, JSON_PRETTY_PRINT);
 }
