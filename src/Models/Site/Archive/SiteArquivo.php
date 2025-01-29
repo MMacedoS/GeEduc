@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\SiteArchive;
+namespace App\Models\Site\Archive;
 
 use App\Models\Traits\UuidTrait;
 

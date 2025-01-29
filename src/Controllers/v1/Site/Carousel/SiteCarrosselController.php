@@ -1,45 +1,47 @@
 <?php
 
-namespace App\Controllers\v1\SiteEvent;
+namespace App\Controllers\v1\Site\Carousel;
 
 use App\Controllers\Controller;
-use App\Repositories\SiteEvent\SiteEventoRepository;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Repositories\Site\Carousel\SiteCarrosselRepository;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class SiteEventoController extends Controller {
+class SiteCarrosselController extends Controller {
 
-    protected $siteEventoRepository;
+    protected $siteCarrosselRepository;
     protected $siteArquivoRepository;
 
     public function __construct(){
         parent::__construct();
-        $this->siteEventoRepository = new SiteEventoRepository();
+        $this->siteCarrosselRepository = new SiteCarrosselRepository();
         $this->siteArquivoRepository = new SiteArquivoRepository();
     }
 
     public function index(Request $request){
-        $site_eventos = $this->siteEventoRepository->allSiteEvents();
+        $site_carousel = $this->siteCarrosselRepository->allSiteCarousel();
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
-        $paginator = new Paginator($site_eventos, $perPage, $currentPage);
+        $paginator = new Paginator($site_carousel, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
         $data = [
-            'site_eventos' => $paginatedBoards,
+            'site_carousel' => $paginatedBoards,
             'links' => $paginator->links()
         ];
 
-        return $this->router->view('/site-events/index', [
+        return $this->router->view('/site/carousel/index', [
             'active' => 'pedagogico',
             'data' => $data
         ]);
     }
 
     public function create(Request $request){
-        return $this->router->view('/site-events/create', ['active' => 'pedagogico']);
+        return $this->router->view('site/carousel/create', [
+            'active' => 'pedagogico',
+        ]);
     }
 
     public function store(Request $request){
@@ -49,48 +51,49 @@ class SiteEventoController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/events/';
+        $dir = '/files/site/carousel/';
 
         $validator = new Validator($data);
 
         $rules = [
             'name' => 'required|min:1|max:100',
             'arquivo' => 'required',
-            'description' => 'max:255'
+            'description' => 'max:255',
+            'local' => 'max:45'
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-events/create', [
+            return $this->router->view('site/carousel/create',[
                 'active' => 'pedagogico',
                 'errors' => $validator->getErrors()
             ]);
         }
-        
-        $created = $this->siteEventoRepository->saveAll($data, $dir);
+
+        $created = $this->siteCarrosselRepository->saveAll($data, $dir);
 
         if(is_null($created)){
-            return $this->router->view('site-events/create', [
-                'active' => 'pedagogico', 
+            return $this->router->view('site/carousel/create', [
+                'active' => 'pedagogico',
                 'danger' => true
             ]);
         }
 
-        return $this->router->redirect('site-eventos/');
+        return $this->router->redirect('site-carrossel/');
     }
 
     public function edit(Request $request, $id){
-        $site_evento = $this->siteEventoRepository->findByUuid($id);
+        $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
-        if(is_null($site_evento)){
-            return $this->router->view('site-events/', [
+        if(is_null($site_carousel)){
+            return $this->router->view('site/carousel/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->view('site-events/edit', [
+        return $this->router->view('site/carousel/edit', [
             'active' => 'register',
-            'site_evento' => $site_evento
+            'site_carousel' => $site_carousel
         ]);
     }
 
@@ -101,59 +104,60 @@ class SiteEventoController extends Controller {
             $data['arquivo'] = $_FILES['arquivo'];
         }
 
-        $dir = $_SERVER['DOCUMENT_ROOT'] . '/Public/files/site/events/';
+        $dir = '/files/site/carousel/';
 
-        $site_evento = $this->siteEventoRepository->findByUuid($id);
+        $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
-        if(is_null($site_evento)){
-            return $this->router->view('site-events/',[
+        if(is_null($site_carousel)){
+            return $this->router->view('site/carousel/',[
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        $site_arquivo = $this->siteArquivoRepository->findById($site_evento->site_arquivo_id);
+        $site_arquivo = $this->siteArquivoRepository->findById($site_carousel->site_arquivo_id);
 
         $validator = new Validator($data);
 
         $rules = [
             'name' => 'required|min:1|max:100',
-            'description' => 'max:255'
+            'description' => 'max:255',
+            'local' => 'max:45'
         ];
 
         if(!$validator->validate($rules)){
-            return $this->router->view('site-events/edit', [
+            return $this->router->view('site/carousel/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        $data['site_arquivo_id'] = $site_evento->site_arquivo_id;
-        $data['id'] = $site_evento->id;
+        $data['site_arquivo_id'] = $site_carousel->site_arquivo_id;
+        $data['id'] = $site_carousel->id;
 
-        $updated = $this->siteEventoRepository->updateAll($data, $dir);
+        $updated = $this->siteCarrosselRepository->updateAll($data, $dir);
 
         if(is_null($updated)){
-            return $this->router->view('site-events/edit', [
+            return $this->router->view('site/carousel/edit', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        return $this->router->redirect('site-eventos');
+        return $this->router->redirect('site-carrossel');
     }
 
     public function destroy(Request $request, $id){
-        $site_evento = $this->siteEventoRepository->findByUuid($id);
+        $site_carousel = $this->siteCarrosselRepository->findByUuid($id);
 
-        if(is_null($site_evento)){
-            return $this->router->view('site-events/', [
+        if(is_null($site_carousel)){
+            return $this->router->view('site/carousel/', [
                 'active' => 'register',
                 'danger' => true
             ]);
         }
 
-        $this->siteEventoRepository->deleteAll($site_evento);
+        $this->siteCarrosselRepository->deleteAll($site_carousel);
     }
 
 }

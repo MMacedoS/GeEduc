@@ -125,9 +125,17 @@
                                 <ul class="dropdown-menu"> 
                                     <?php if (hasPermission('visualizar contas bancarias')) { ?>
                                         <li>
+                                            <a class="dropdown-item" href="/site-albuns/">
+                                                <span>Albuns</span>
+                                            </a>
+                                            <a class="dropdown-item" href="/site-carrossel/">
+                                                <span>Carrossel</span>
+                                            </a>
                                             <a class="dropdown-item" href="/site-eventos/">
                                                 <span>Eventos</span>
                                             </a>
+                                            
+
                                         </li>
                                     <?php } ?>
                                 </ul>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\SiteEvent;
+namespace App\Models\Site\Event;
 
 use App\Models\Traits\UuidTrait;
 
