@@ -88,8 +88,10 @@ $router->create("DELETE", "/professores/{id}", [$professorController, "destroy"]
 
 //students
 $router->create("GET", "/estudantes", [$estudanteController, "index"], $auth);
+$router->create('GET', "/estudante/excel", [$estudanteController, 'createExcel'], $auth);
 $router->create("GET", "/estudante", [$estudanteController, "create"], $auth);
 $router->create("POST", "/estudante",[$estudanteController, "store"], $auth);
+$router->create("POST", "/estudante/excel",[$estudanteController, "storeExcel"], $auth);
 $router->create("GET","/estudante/{id}", [$estudanteController, "edit"], $auth);
 $router->create("POST", "/estudante/{id}", [$estudanteController, "update"], $auth);
 $router->create("DELETE", "/estudante/{id}", [$estudanteController, "destroy"], $auth);
@@ -232,3 +234,6 @@ $router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUp
 
 $router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
 $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+
+
+
