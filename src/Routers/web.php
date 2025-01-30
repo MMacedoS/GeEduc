@@ -108,11 +108,11 @@ $router->create("DELETE", "/planos/{id}", [$planoController, "destroy"], $auth);
 
 //classrooms
 $router->create("GET", "/turmas", [$turmaController, "index"], $auth);
-$router->create("GET", "/turmas/criar", [$turmaController, "create"], $auth);
-$router->create("POST", "/turmas/criar", [$turmaController, "store"], $auth);
-$router->create( "GET", "/turmas/{id}/editar", [$turmaController, "edit"], $auth);
-$router->create( "POST", "/turmas/{id}/editar", [$turmaController, "update"], $auth);
-$router->create("DELETE", "/turmas/{id}", [$turmaController, "destroy"], $auth);
+$router->create("GET", "/turma", [$turmaController, "create"], $auth);
+$router->create("POST", "/turma", [$turmaController, "store"], $auth);
+$router->create( "GET", "/turma/{id}", [$turmaController, "edit"], $auth);
+$router->create( "POST", "/turma/{id}", [$turmaController, "update"], $auth);
+$router->create("DELETE", "/turma/{id}", [$turmaController, "destroy"], $auth);
 
 //work_load
 $router->create( "GET", "/carga-horaria", [$cargaHorariaController, "index"], $auth);

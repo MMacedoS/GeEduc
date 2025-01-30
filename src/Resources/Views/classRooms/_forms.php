@@ -15,13 +15,14 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Coordenador</label>
-        <select class="form-control form-select" name="coordinator_id" id="coordinator_id">
+        <!-- Select de coordenadores -->
+        <select class="form-control form-select js-example-basic-multiple" multiple="multiple" name="coordinator_id[]" id="coordinator_id">
             <option value="">Selecione um Coordenador</option>
             <?php foreach ($coordenadores as $key => $value) { ?>
                 <option 
-                    value="<?=$value->id ?>" 
-                    <?= isset($turma->coordenador_id) && $turma->coordenador_id == $value->id ? 'selected' : '' ?>>
-                    <?=getJsonToObject($value->pessoa_fisica)->nome?>
+                    value="<?= $value->id ?>" 
+                    <?= isset($coordenadores_inseridos) && in_array($value->id, $coordenadores_inseridos) ? 'selected' : '' ?>>
+                    <?= getJsonToObject($value->pessoa_fisica)->nome ?>
                 </option>
             <?php } ?>
         </select>
@@ -29,7 +30,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="col-lg-2 col-sm-6 col-12">
   <div class="card mb-3">

@@ -4,6 +4,7 @@ namespace App\Repositories\Classrooms;
 
 use App\Config\Database;
 use App\Models\Classrooms\Turma;
+use App\Repositories\Coordination\CoordenadorTurmaRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
@@ -14,23 +15,34 @@ class TurmaRepository {
     use FindTrait;
     protected $conn;
     protected $model;
+    protected $coordenadorTurmaRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Turma();
+        $this->coordenadorTurmaRepository = new CoordenadorTurmaRepository();
     }
 
     public function allClassRooms(array $params = [])
     {
         $sql = "SELECT 
-            t.*,
-            JSON_OBJECT(
-                    'nome', pf.nome,
-                    'email', pf.email
-                ) AS coordenador 
+                t.*,
+                JSON_OBJECT(
+                    'coordenadores', 
+                    COALESCE(
+                        JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'nome', pf.nome,
+                                'email', pf.email
+                            )
+                        ),
+                        JSON_ARRAY()
+                    )
+                ) AS details 
             FROM " . self::TABLE . " t 
-            LEFT JOIN coordenadores c ON c.id = t.coordenador_id AND c.ativo = 1
-            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id  
+            LEFT JOIN coordenador_as_turma ct ON ct.turma_id = t.id
+            LEFT JOIN coordenadores c ON ct.coordenador_id = c.id AND c.ativo = 1
+            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id
         ";
 
         $conditions = [];
@@ -55,7 +67,7 @@ class TurmaRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY t.created_at DESC";
+        $sql .= " GROUP BY t.id ORDER BY t.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -75,8 +87,7 @@ class TurmaRepository {
                     uuid = :uuid,
                     nome = :nome,
                     turno = :turno,
-                    ordem = :ordem,
-                    coordenador_id = :coordenador_id
+                    ordem = :ordem
                 "
             );
 
@@ -84,15 +95,18 @@ class TurmaRepository {
                 ':uuid' => $class->uuid,
                 ':nome' => $class->nome,
                 ':turno' => $class->turno,
-                ':ordem' => $class->ordem,
-                ':coordenador_id' => $class->coordenador_id
+                ':ordem' => $class->ordem
             ]);
 
             if (!$create) {
                 return null;
             }
 
-            return $this->findByUuid($class->uuid);
+            $created = $this->findByUuid($class->uuid);
+
+            $this->coordenadorTurmaRepository->saveAll($data, $created->id);
+
+            return $created;
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
@@ -113,8 +127,7 @@ class TurmaRepository {
                     nome = :nome,
                     turno = :turno,
                     ordem = :ordem,
-                    ativo = :ativo,
-                    coordenador_id = :coordenador_id
+                    ativo = :ativo
                 WHERE id = :id
                 "
             );
@@ -124,13 +137,14 @@ class TurmaRepository {
                 ':turno' => $class->turno,
                 ':ordem' => $class->ordem,
                 ':ativo' => $class->ativo,
-                ':coordenador_id' => $class->coordenador_id,
                 ':id' => $id
             ]);
 
             if (!$update) {
                 return null;
             }
+
+            $this->coordenadorTurmaRepository->saveAll($data, $id);
 
             return $this->findById($id);
         } catch (\Throwable $th) {

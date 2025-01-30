@@ -25,7 +25,7 @@
         </div>
     </div>
     <!-- Row end -->
-    <form action="/turmas/criar" method="post">
+    <form action="/turma" method="post">
         <div class="row gx-3">
             <? include_once('_forms.php');?>
         </div>

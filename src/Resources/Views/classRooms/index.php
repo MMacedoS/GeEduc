@@ -17,7 +17,7 @@
     <div class="col-2 col-xl-6">
         <div class="float-end">
         <? if (hasPermission('cadastrar turmas')) {?>
-         <a href="\turmas\criar" class="btn btn-outline-primary" > + </a>
+         <a href="\turma" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
     </div>
@@ -70,7 +70,7 @@
                                         <?=$turma->turno ?? 'não identificado'?>
                                         </td>
                                         <td>
-                                            <?=getJsonToObject($turma->coordenador)->nome ?? 'Não identificado'?>
+                                            <?=getCustomers(getJsonToObject($turma->details)->coordenadores)?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">
@@ -87,7 +87,7 @@
                                         <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
                                         <td class="d-flex">
                                         <? if (hasPermission('editar turmas')) {?>
-                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/editar">
+                                            <a class="mb-1 me-2 mt-1" href="/turma/<?=$turma->uuid?>">
                                                 <div class="border p-2 rounded-3">
                                                     <i class="icon-edit fs-5"></i>
                                                 </div>
@@ -120,7 +120,7 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                            <button type="button" onclick="deleteData('/turmas/<?=$turma->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
+                                                            <button type="button" onclick="deleteData('/turma/<?=$turma->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                         </div>
                                                     </div>
                                                 </div>
