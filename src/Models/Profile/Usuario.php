@@ -13,12 +13,14 @@ class Usuario
     use UuidTrait;
 
     public $id;
-    public $uuid;
-    public $nome;
-    public $email;
-    public $senha;
+    public ?string $uuid;
+    public ?string $nome;
+    public ?string $email;
+    public ?string $code;    
+    public ?string $arquivo_id;
+    public ?string $senha;
     public $ativo;
-    public $painel;
+    public ?string $painel;
     public $created_at;
     public $updated_at;
 
@@ -44,7 +46,7 @@ class Usuario
         return $user;
     }
 
-    public function update(array $data, bool $forceNewPassword = false, Usuario $usuario): Usuario
+    public function update(array $data, Usuario $usuario, bool $forceNewPassword = false): Usuario
     {
         $usuario->nome = $data['name'] ?? $usuario->nome;
         $usuario->email = $data['email'] ?? $usuario->email;

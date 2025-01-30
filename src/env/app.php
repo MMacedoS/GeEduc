@@ -3,7 +3,7 @@
 const APP_NAME = 'GeEduc - Gestor Educacional';
 const URL_PREFIX_APP = "http://app1.localhost:8080";
 const DB_HOST = 'mysql';
-const DB_NAME = 'escola';
+const DB_NAME = 'cesp-geeduc';
 const DB_USER = 'root';
 const DB_PASS = '12345';
 const SECRET_KEY = '1SDS-AKLSDK7.SDAK.33DSAK.SDAK';

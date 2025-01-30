@@ -25,6 +25,7 @@ class EstudanteRepository {
     protected $pessoaFisicaRepository;
     protected $pessoaContatoRepository;
     protected $estudanteMensalidadeRepository;
+    protected $estudanteTurmaRepository;
     protected $mensalidadeRepository;
     
 
