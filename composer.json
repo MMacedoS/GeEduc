@@ -11,6 +11,6 @@
     "require": {
         "firebase/php-jwt": "^6.10",
         "monolog/monolog": "^2.9",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpspreadsheet": "^3.9"
     }
 }
