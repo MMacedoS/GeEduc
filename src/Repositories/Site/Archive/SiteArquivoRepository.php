@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\SiteArchive;
+namespace App\Repositories\Site\Archive;
 
 use App\Config\Database;
-use App\Models\SiteArchive\SiteArquivo;
+use App\Models\Site\Archive\SiteArquivo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 

@@ -38,9 +38,9 @@ if (!function_exists('getCustomers')) {
     function getCustomers($data) {
         if (is_array($data)) {
             $names = '';
-            foreach ($data as $customer) {
-                $names.= $customer->name; 
-                if(count($data) > 1) {
+            foreach ($data as $key => $customer) {
+                $names.= $customer->nome; 
+                if($key < 1) {
                     $names .= ' | ';
                 }
             }

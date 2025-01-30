@@ -19,12 +19,14 @@ use App\Controllers\v1\Student\EstudanteController;
 use App\Controllers\v1\Work_Load\CargaHorariaController;
 use App\Controllers\v1\Student\EstudanteMensalidadeController;
 use App\Controllers\v1\Student\EstudanteTurmaController;
-use App\Controllers\v1\SiteEvent\SiteEventoController;
+use App\Controllers\v1\Site\Event\SiteEventoController;
+use App\Controllers\v1\Site\Carousel\SiteCarrosselController;
 use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Period\PeriodoController;
 use App\Controllers\v1\Person\PessoaContatoController;
 use App\Controllers\v1\Scores\NotaController;
+use App\Controllers\v1\Site\Album\SiteAlbumController;
 
 $router = new Router();
 $auth = new Auth();
@@ -47,10 +49,12 @@ $turmaDisciplinaController = new TurmaDisciplinaController();
 $coordenadorController = new CoordenadorController();
 $atividadeController = new AtividadeController();
 $siteEventoController = new SiteEventoController();
+$siteCarrosselController = new SiteCarrosselController();
 $frequenciaController = new FrequenciaController();
 $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
 $gradeReportController = new GradeReportController();
+$siteAlbumController = new SiteAlbumController();
 
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
@@ -106,11 +110,11 @@ $router->create("DELETE", "/planos/{id}", [$planoController, "destroy"], $auth);
 
 //classrooms
 $router->create("GET", "/turmas", [$turmaController, "index"], $auth);
-$router->create("GET", "/turmas/criar", [$turmaController, "create"], $auth);
-$router->create("POST", "/turmas/criar", [$turmaController, "store"], $auth);
-$router->create( "GET", "/turmas/{id}/editar", [$turmaController, "edit"], $auth);
-$router->create( "POST", "/turmas/{id}/editar", [$turmaController, "update"], $auth);
-$router->create("DELETE", "/turmas/{id}", [$turmaController, "destroy"], $auth);
+$router->create("GET", "/turma", [$turmaController, "create"], $auth);
+$router->create("POST", "/turma", [$turmaController, "store"], $auth);
+$router->create( "GET", "/turma/{id}", [$turmaController, "edit"], $auth);
+$router->create( "POST", "/turma/{id}", [$turmaController, "update"], $auth);
+$router->create("DELETE", "/turma/{id}", [$turmaController, "destroy"], $auth);
 
 //work_load
 $router->create( "GET", "/carga-horaria", [$cargaHorariaController, "index"], $auth);
@@ -226,6 +230,26 @@ $router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLi
 $router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
+
+//SiteCarrossel
+$router->create('GET', '/site-carrossel', [$siteCarrosselController, 'index'], $auth);
+$router->create('GET', '/site-carrossel/criar', [$siteCarrosselController, 'create'], $auth);
+$router->create('POST', '/site-carrossel/criar', [$siteCarrosselController, 'store'], $auth);
+$router->create('GET', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'edit'], $auth);
+$router->create('POST', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'update'], $auth);
+$router->create('DELETE', '/site-carrossel/{id}', [$siteCarrosselController, 'destroy'], $auth);
+
+$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+
+$router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
+$router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
+
+$router->create('GET', '/site-albuns', [$siteAlbumController, 'index'], $auth);
+$router->create('GET', '/site-albuns/criar', [$siteAlbumController, 'create'], $auth);
+$router->create('POST', '/site-albuns/criar', [$siteAlbumController, 'store'], $auth);
+$router->create('GET', '/site-albuns/{id}/editar', [$siteAlbumController, 'edit'], $auth);
+$router->create('POST', '/site-albuns/{id}/editar', [$siteAlbumController, 'update'], $auth);
+$router->create('DELETE', '/site-albuns/{id}', [$siteAlbumController, 'destroy'], $auth);
 
 $router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
 $router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);

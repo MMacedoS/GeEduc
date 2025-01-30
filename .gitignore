@@ -2,3 +2,7 @@ composer.lock
 vendor/**
 vendor/*
 vendor/composer/autoload_namespaces.php
+/src/env/**
+/src/env/app.php
+/Public/**
+logs/app.log

@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../layout/top.php'; ?>
 
 
 <!-- Row start -->
@@ -12,9 +12,9 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/site-eventos" class="text-decoration-none">Eventos</a>
+                    <a href="/site-eventos/" class="text-decoration-none">Eventos</a>
                 </li>
-                <li class="breadcrumb-item">Cadastrar</li>
+                <li class="breadcrumb-item">Atualizar</li>
             </ol>
             <!-- Breadcrumb end -->
         </div>
@@ -25,10 +25,11 @@
         </div>
     </div>
     <!-- Row end -->
-    <form action="/site-eventos/criar" method="POST" enctype="multipart/form-data">
+    <form action="/site-eventos/<?=$site_evento->uuid?>/editar" method="post" enctype="multipart/form-data">   
         <div class="row gx-3">
             <? include_once('_forms.php');?>
         </div>
     </form>
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+
+<?php require_once __DIR__ . '/../../layout/bottom.php'; ?>

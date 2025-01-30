@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories\SiteEvent;
+namespace App\Repositories\Site\Event;
 
 use App\Config\Database;
-use App\Models\SiteEvent\SiteEvento;
-use App\Repositories\SiteArchive\SiteArquivoRepository;
+use App\Models\Site\Event\SiteEvento;
+use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
@@ -95,7 +95,7 @@ class SiteEventoRepository {
 
             return $this->findByUuid($site_evento->uuid);
         }catch(\Throwable $th){
-            echo 'id' . $site_evento->site_arquivo_id;
+            return null;
         }finally{
             Database::getInstance()->closeConnection();
         }

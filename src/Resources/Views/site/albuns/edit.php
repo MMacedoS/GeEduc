@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../layout/top.php'; ?>
 
 
 <!-- Row start -->
@@ -12,24 +12,24 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/turmas" class="text-decoration-none">Turma</a>
+                    <a href="/site-albuns/" class="text-decoration-none">Albuns</a>
                 </li>
-                <li class="breadcrumb-item">Cadastrar</li>
+                <li class="breadcrumb-item">Atualizar</li>
             </ol>
             <!-- Breadcrumb end -->
         </div>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-                <a href="/turmas/" class="btn btn-outline-primary" > Voltar </a>
+                <a href="/site-albuns/" class="btn btn-outline-primary" > Voltar </a>
             </div>
         </div>
     </div>
     <!-- Row end -->
-    <form action="/turma" method="post">
+    <form action="/site-albuns/<?=$site_album->uuid?>/editar" method="post" enctype="multipart/form-data">   
         <div class="row gx-3">
-            <? include_once('_forms.php');?>
+            <?include_once('_forms.php');?>
         </div>
     </form>
 
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
