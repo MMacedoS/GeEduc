@@ -12,6 +12,7 @@ class PessoaContato {
     public string $uuid;
     public string $responsavel_legal;
     public string $pessoa_fisica_id;
+    public $pessoa_fisica;
     public string $ativo;
     public $created_at;
     public $updated_at;
