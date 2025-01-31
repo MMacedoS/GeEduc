@@ -31,18 +31,14 @@ class PessoaContatoRepository {
     public function allPersons(array $params = []){
 
         $sql = "SELECT
-            pc.*,(
-                SELECT 
-                    JSON_OBJECT(
+            pc.*,
+                JSON_OBJECT(
                         'id', pf.id,
                         'nome', pf.nome,
                         'email', pf.email
-                    )
-                FROM pessoa_fisica pf
-                WHERE pf.id = pc.pessoa_fisica_id
-            ) AS pessoa_fisica
-            FROM " . self::TABLE . " 
-            pc LEFT JOIN pessoa_fisica pf ON pc.pessoa_fisica_id = pf.id
+                    ) AS pessoa_fisica 
+            FROM " . self::TABLE . " pc 
+            LEFT JOIN pessoa_fisica pf ON pc.pessoa_fisica_id = pf.id
         ";
 
         $conditions = [];
