@@ -88,9 +88,8 @@ class EstudanteController extends Controller
 
                 $this->organizationTableExcel($spreadsheet, function ($sheetTitle, $studentRow) {
                     $student = $this->createStudentTableExcel($studentRow);
-                    $turma = $this->turmaRepository->findByName($studentRow["Turma"]);
-                    if(!is_null($turma)) {
-                        $this->createStudentClassTableExcel($turma->id, (int)$student);
+                    if(!is_null($studentRow["Turma"]) && !empty($studentRow["Turma"])) {
+                        $this->createStudentClassTableExcel((int)$studentRow["Turma"], (int)$student);
                     }
                 });
 

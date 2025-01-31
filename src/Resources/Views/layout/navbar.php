@@ -117,13 +117,13 @@
                                     <? }?>
                                 </ul>
                             </li>
-                            <?php } if (hasPermission('visualizar financeiro')) {?>
+                            <?php } if (hasPermission('visualizar site')) {?>
                             <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="icon-now_widgets"></i> Site
                                 </a>
                                 <ul class="dropdown-menu"> 
-                                    <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                                    <?php if (hasPermission('visualizar site')) { ?>
                                         <li>
                                             <a class="dropdown-item" href="/site-albuns/">
                                                 <span>Albuns</span>

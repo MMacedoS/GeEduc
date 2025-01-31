@@ -73,6 +73,7 @@ class PessoaFisicaRepository {
                     nome_pai = :nome_pai,
                     genero = :genero,
                     endereco = :endereco,
+                    data_nascimento = :data_nascimento,
                     email = :email"
             );
     
@@ -86,7 +87,7 @@ class PessoaFisicaRepository {
                 ':nome_pai' => $pessoa_fisica->nome_pai,
                 ':nome_mae' => $pessoa_fisica->nome_mae,
                 ':genero' => $pessoa_fisica->genero,
-                // ':data_nascimento' => $pessoa_fisica->data_nascimento,
+                ':data_nascimento' => $pessoa_fisica->data_nascimento,
                 ':endereco' => $pessoa_fisica->endereco,
                 ':email' => $pessoa_fisica->email
             ]);

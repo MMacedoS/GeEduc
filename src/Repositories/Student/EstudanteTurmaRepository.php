@@ -25,6 +25,8 @@ class EstudanteTurmaRepository {
         $sql = "SELECT 
                     et.*,
                     JSON_OBJECT(
+                        'id', t.uuid,
+                        'nome', t.nome,
                         'coordenadores', JSON_ARRAYAGG(
                             JSON_OBJECT(
                                 'nome', pf.nome,
