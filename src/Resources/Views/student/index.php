@@ -37,12 +37,48 @@
     <!-- Row start -->
 <div class="row gx-3">
     <div class="col-12">
+        <div class="card my-3">
+            <div class="card-body">
+                <form id="students-form" action="/estudantes" method="GET">
+                    <div class="row justify-content-center">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="m-0">
+                                        <input class="form-input form-control" type="text" name="name_email" id="name_email" required value="<?= $searchFilter ?>" placeholder="Digite nome ou email">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="m-0">
+                                        <select class="form-select form-control" name="situation" id="situation">
+                                            <option default>Selecione a situação</option>
+                                            <option value="1">Disponível</option>
+                                            <option value="0">Impedido</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button type="button" class="my-3 btn btn-primary w-100" id="search">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
         <div class="card mb-3">
             <div class="card-body">
                 <div class="table-outer">
                     <div class="table-responsive">
-
-                    
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
@@ -150,3 +186,26 @@
 </div>
 
 <?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+
+<script>
+
+    $(document).ready(function() {
+        $('#search').click(function() {
+            searchDate();       
+        });
+
+        const searchDate = function() {
+            // Capturar valores do formulário
+            let name_email = $('#name_email').val();
+            let situation = $('#situation').val();
+
+            // Montar a URL
+            let url = '/estudantes';
+            url += '?name_email=' + name_email + '&situation=' + situation;
+
+            // Redirecionar para a URL
+            window.location.href = url;
+        }
+    });
+
+</script>
