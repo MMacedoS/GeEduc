@@ -41,6 +41,8 @@
             <div class="card-body">
                 <div class="table-outer">
                     <div class="table-responsive">
+
+                    
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
