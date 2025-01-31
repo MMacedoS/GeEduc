@@ -42,12 +42,12 @@
   </div>
 </div>
 
-<div class="col-lg-2 col-sm-4 col-12">
+<div class="col-lg-2 col-sm-3 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Matricula</label>
-        <input type="text" class="form-control" name="matricula" placeholder="digite aqui" value="<?=$estudante->matricula ?? ''?>" />
+        <label class="form-label">Data Nascimento</label>
+        <input type="date"  class="form-control" name="birthday" placeholder="digite aqui" value="<?=$pessoa_fisica->data_nascimento ?? ''?>" />
       </div>
     </div>
   </div>

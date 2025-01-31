@@ -75,7 +75,7 @@
                       </a>
                       <div class="dropdown-menu dropdown-menu-end">
                         <div class="header-action-links">
-                          <a class="dropdown-item" href="/perfil/<?=$_SESSION['user']->uuid?>"><i
+                          <a class="dropdown-item" href="/perfil/<?=$_SESSION['user']->id?>"><i
                               class="icon-user border border-primary text-primary"></i>Perfil</a>
                           <!-- <a class="dropdown-item" href="settings.html"><i
                               class="icon-settings border border-danger text-danger"></i>Settings</a> -->

@@ -70,7 +70,7 @@
                                         <?=$turma->turno ?? 'não identificado'?>
                                         </td>
                                         <td>
-                                            <?=getCustomers(getJsonToObject($turma->details)->coordenadores)?>
+                                            <?=getCustomers(getJsonToObject($turma->detalhes)->coordenadores)?>
                                         </td>
                                         <td>    
                                             <div class="d-flex align-items-center">

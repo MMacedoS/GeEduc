@@ -138,8 +138,16 @@ class UsuarioRepository {
         }
 
         $data['existing_password'] = $existingUser->senha;
-        $senha = (string)$data['password'];
-        $user = $this->model->update($data, $existingUser, !hash_equals($senha, $existingUser->senha));
+        isset($data['password']) ? $senha = (string)$data['password'] : $senha = $existingUser->senha;
+        $user = $this->model
+            ->update(
+                $data, 
+                $existingUser, 
+                !hash_equals(
+                    $senha, 
+                    $existingUser->senha
+                )
+            );
 
         try {
             $stmt = $this->conn->prepare(

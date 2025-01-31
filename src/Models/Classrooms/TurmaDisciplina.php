@@ -15,6 +15,7 @@ class TurmaDisciplina {
     public $turma;
     public $carga_horaria_id;
     public $carga_horaria;
+    public $disciplinas;
     public $professor_disciplina_id;
     public $professor_disciplina;
     public $ativo;

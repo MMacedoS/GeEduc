@@ -251,7 +251,7 @@ $router->create('GET', '/site-albuns/{id}/editar', [$siteAlbumController, 'edit'
 $router->create('POST', '/site-albuns/{id}/editar', [$siteAlbumController, 'update'], $auth);
 $router->create('DELETE', '/site-albuns/{id}', [$siteAlbumController, 'destroy'], $auth);
 
-$router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
+$router->create('GET', '/perfil/{id}', [$usuarioController, 'profile'], $auth);
 $router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
 $router->create('POST', '/perfil', [$usuarioController, 'profileUpdate'], $auth);
 $router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUpdate'], $auth);

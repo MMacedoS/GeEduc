@@ -53,7 +53,7 @@ class PessoaFisicaRepository {
     public function create(array $data)
     {
         $existingPerson = $this->findPessoaFisica($data);
-        if ($existingPerson) {
+        if (!is_null($existingPerson)) {
             return $existingPerson;
         }
    
@@ -98,7 +98,6 @@ class PessoaFisicaRepository {
             return $this->findByUuid($pessoa_fisica->uuid);
         } catch (\Throwable $th) {
             LoggerHelper::logInfo($th->getMessage());
-            dd($th->getMessage());
             return null;
         } finally {          
             Database::getInstance()->closeConnection();
@@ -164,15 +163,14 @@ class PessoaFisicaRepository {
         }
     }
 
-    public function findPessoaFisica(array $criteria): ?array
+    public function findPessoaFisica(array $criteria): ?PessoaFisica
     {
         try {
             $conditions = [];
             $params = [];
-
-            if (!empty($criteria['nome'])) {
+            if (!empty($criteria['name'])) {
                 $conditions[] = "nome = :nome";
-                $params[':nome'] = $criteria['nome'];
+                $params[':nome'] = $criteria['name'];
             }
             if (!empty($criteria['email'])) {
                 $conditions[] = "email = :email";
@@ -194,9 +192,7 @@ class PessoaFisicaRepository {
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
             $result = $stmt->fetch();  
 
-            return $result ?: null; 
-
-            return $result ?: null; 
+            return $result; 
         } catch (\Throwable $th) {
             LoggerHelper::logInfo($th->getMessage());
             return null;

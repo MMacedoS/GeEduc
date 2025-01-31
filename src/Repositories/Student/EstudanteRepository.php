@@ -149,7 +149,6 @@ class EstudanteRepository {
             return $student;
     
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;

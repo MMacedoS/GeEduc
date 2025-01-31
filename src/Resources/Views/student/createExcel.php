@@ -29,7 +29,7 @@
       <div class="card mb-3">
         <div class="card-body">
           <div class="m-0">
-            <label for="arq-excel" class="form-label">Nome Completo</label>
+            <label for="arq-excel" class="form-label">Anexar arquivo</label>
             <input type="file" name="arq-excel" id="arq-excel" class="form-control" />
           </div>
         </div>

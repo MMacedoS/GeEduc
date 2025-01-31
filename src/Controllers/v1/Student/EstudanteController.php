@@ -13,8 +13,8 @@ use App\Repositories\Classrooms\TurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
-use PHPExcel_IOFactory;
 use Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class EstudanteController extends Controller 
 {
@@ -74,121 +74,79 @@ class EstudanteController extends Controller
     public function storeExcel(Request $request) 
     {
         $created = false;
-    
+
         if ($_FILES['arq-excel']['error'] === UPLOAD_ERR_OK) {
             try {
-                // Verifica o tipo do arquivo
+
                 $fileType = pathinfo($_FILES['arq-excel']['name'], PATHINFO_EXTENSION);
+                
                 if (!in_array($fileType, ['xlsx', 'xls'])) {
                     throw new Exception('Arquivo inválido. Por favor, envie um arquivo Excel (.xlsx ou .xls)');
                 }
-    
-                // Carrega o arquivo Excel
+
                 $inputFile = $_FILES['arq-excel']['tmp_name'];
-                $excel = PHPExcel_IOFactory::load($inputFile);
-               
-                $studentsData = $this->organizationTableExcel($excel);
+                $spreadsheet = IOFactory::load($inputFile);
 
-                // Processa os dados dos estudantes
-                foreach ($studentsData as $student) {
-                    $this->createReponsibleTableExcel($student);
-                    
-                    $this->createStudentTableExcel($student);
+                $this->organizationTableExcel($spreadsheet, function ($sheetTitle, $studentRow) {
+                    $student = $this->createStudentTableExcel($studentRow);
+                    $turma = $this->turmaRepository->findByName($studentRow["Turma"]);
+                    if(!is_null($turma)) {
+                        $this->createStudentClassTableExcel($turma->id, (int)$student);
+                    }
+                });
 
-                    $this->createStudentClassTableExcel($student);
-
-                    $created = true;
-                }
-
+                $created = true;
+            } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
+                return $this->handleExcelError(
+                    'Erro ao ler o arquivo Excel. Por favor, verifique o arquivo enviado.', 
+                    $e->getMessage()
+                );
             } catch (Exception $e) {
-                dd($e->getMessage());
-                error_log("Erro ao processar arquivo Excel: " . $e->getMessage());
-                return $this->router->view('student/create', [
-                    'active' => 'pedagogico',
-                    'danger' => true,
-                    'error' => $e->getMessage()
-                ]);
+                return $this->handleExcelError(
+                    'Erro ao processar o arquivo Excel.', 
+                    $e->getMessage()
+                );
             }
-        } else {
-            return $this->router->view('student/create', [
-                'active' => 'pedagogico',
-                'danger' => true,
-                'error' => 'Erro no upload do arquivo'
-            ]);
         }
-        
+
         if (!$created) {
             return $this->router->view('student/create', [
                 'active' => 'pedagogico',
-                'danger' => true
+                'danger' => true,
+                'error' => 'Nenhum registro foi criado. Verifique o arquivo enviado.'
             ]);
         }
-        
+
         return $this->router->redirect('estudantes/');
     }
-
-    private function organizationTableExcel($excel) {
-        // Array para armazenar os dados
-        $studentsData = [];
-
-        // Seleciona a primeira planilha
-        $worksheet = $excel->getActiveSheet();
-            
-        
-        // Pega o cabeçalho (primeira linha)
-        $headerRow = $worksheet->getRowIterator()->current();
-        
-        $cellIterator = $headerRow->getCellIterator();
-        $headers = [];
-        foreach ($cellIterator as $cell) {
-            $headers[] = $cell->getValue();
-        }
-        
-        // Itera sobre as linhas de dados (a partir da segunda linha)
-        $rowIterator = $worksheet->getRowIterator();
-        $rowIterator->next(); // Pula o cabeçalho
-        
-        while ($rowIterator->valid()) {
-            $row = $rowIterator->current();
-            $cellIterator = $row->getCellIterator();
-            
-            $studentRow = [];
-            $index = 0;
-            
-            foreach ($cellIterator as $cell) {
-                $studentRow[$headers[$index]] = $cell->getValue();
-                $index++;
+    private function organizationTableExcel($spreadsheet, callable $callback)
+    {
+        foreach ($spreadsheet->getAllSheets() as $worksheet) {
+            $headers = [];
+    
+            foreach ($worksheet->getRowIterator(1, 1)->current()->getCellIterator() as $cell) {
+                $headers[] = $cell->getValue();
             }
-            
-            if (!empty(array_filter($studentRow))) { // Ignora linhas vazias
-                $studentsData[] = $studentRow;
+    
+            foreach ($worksheet->getRowIterator(2) as $row) {
+                $studentRow = [];
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(true); 
+    
+                $index = 0;
+                foreach ($cellIterator as $cell) {
+                    if ($cell->getValue() !== null && trim($cell->getValue()) !== '') {
+                        $studentRow[$headers[$index]] = $cell->getValue();
+                    }
+                    $index++;
+                }
+    
+                if (!empty($studentRow)) {
+                    $callback($worksheet->getTitle(), $studentRow);
+                }
             }
-            
-            $rowIterator->next();
         }
-
-        return $studentsData;
-    }
-
-    private function createReponsibleTableExcel(&$student) {
-        $respData = [];
-        $respData['name'] = $student['Responsável pelo Estudante'];
-        $respData['type_doc'] = "CPF";
-        $respData['doc'] = $student['CPF do Responsável'];
-        $respData['email'] = $student['E-mail do Responsável'];
-        $respData['phone'] = $student['Telefone do Responsável'];
-        $respData['address'] = $student['Endereço do Estudante'];
-        $respData['legal_responsive'] = 1;
-        $respData['active'] = 1;
-
-        $responsavel = $this->pessoaContatoRepository->saveAll($respData); 
-        if($responsavel) {
-            $student['responsavel_id'] = $responsavel->id;
-
-            return true;
-        }
-        return false;
-    }
+    }    
 
     private function createStudentTableExcel(&$student) {
         $studentData = [];
@@ -199,29 +157,20 @@ class EstudanteController extends Controller
         $studentData['mother'] = $student['Mãe'];
         $studentData['father'] = $student['Pai'];
         $studentData['address'] = $student['Endereço do Estudante'];
-        $studentData['discont'] = $student['Desconto'];
-        $studentData['matricula'] = $student['Matricula'];
-        $studentData['monthly_day'] = $student['Dia da mensalidade'];
-        $studentData['plan_id'] = $student['Plano'];
-        $studentData['procees_monthylees'] = strtolower($student['Gerar Mensalidades']);
-        $studentData['phone'] = $student['Telefone do Responsável'];
         $studentData['active'] = 1;
-        $studentData['legal_responsible_id'] = $student['responsavel_id'];
+        $studentData['procees_monthylees'] = 'Não';
         $estudante = $this->estudanteRepository->saveAll($studentData);
 
-        if($estudante) {
-            $student['id'] = $estudante->id;
-
-            return true;
+        if(is_null($estudante)) {
+            return false;
         }
-        return false;
+        return $estudante->id;
     }
 
-    private function createStudentClassTableExcel(&$student) {
+    private function createStudentClassTableExcel(int $turma_id, int $id) {
         $estudanteTurma = [];
-        $turma = $this->turmaRepository->findByName($student["Turma"]);
-        $estudanteTurma['class_id'] = $turma["id"];
-        $estudanteTurma['student_id'] = $student['id'];
+        $estudanteTurma['class_id'] = $turma_id;
+        $estudanteTurma['student_id'] = $id;
         $estudanteTurma['school_year'] = date('Y');
         $newStudentClass = $this->estudanteTurmaRepository->create($estudanteTurma);
 
@@ -362,5 +311,14 @@ class EstudanteController extends Controller
                 'turmas' => $turmas_estudante
             ]
         );
+    }
+
+    private function handleExcelError(string $userMessage, string $logMessage)
+    {
+        return $this->router->view('student/create', [
+            'active' => 'pedagogico',
+            'danger' => true,
+            'error' => $userMessage
+        ]);
     }
 }

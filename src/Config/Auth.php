@@ -55,7 +55,6 @@ class Auth {
     public function check() 
     {           
         if (isset($_SESSION['user']) && isset($_SESSION['login_time']) && isset($_SESSION['last_activity'])) {
-            session_regenerate_id(true);
             if ((time() - $_SESSION['login_time']) > $this->sessionTimeout) {
                 $this->logout();
                 return false;

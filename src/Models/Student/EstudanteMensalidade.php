@@ -23,13 +23,19 @@ class EstudanteMensalidade {
     public function create(array $data): EstudanteMensalidade
     {
         $mensalidade = new EstudanteMensalidade();
-        $mensalidade->id = $data['id'] ?? null;
-        $mensalidade->uuid = $data['uuid'] ?? $this->generateUUID();
+        if (isset($data['id'])) {
+            $mensalidade->id = $data['id'];
+        }
+        if (isset($data['uuid'])) {
+            $mensalidade->uuid = $mensalidade->generateUUID();
+        }
+        if (isset($data['active'])) {
+            $mensalidade->ativo = $data['active'];
+        }
         $mensalidade->estudante_id = $data['student_id'];
         $mensalidade->desconto = $data['discont'];
         $mensalidade->dia_mensalidade = $data['monthly_day'];
         $mensalidade->plano_id = $data['plan_id'];
-        $mensalidade->ativo = $data['active'] ?? '1';
 
         return $mensalidade;
     }

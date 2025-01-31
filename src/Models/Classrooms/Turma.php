@@ -13,7 +13,7 @@ class Turma {
     public $nome;
     public $ordem;
     public $turno;
-    public $coordenador_id;
+    public $detalhes;
     public $ativo;
     public $created_at;
     public $updated_at;
@@ -29,7 +29,6 @@ class Turma {
         $classroom->nome = $data['name'];          
         $classroom->ordem = $data['order'];  
         $classroom->ativo = $data['active'] ?? null; 
-        $classroom->coordenador_id = $data['coordinator_id'];
         $classroom->turno = $data['shift'];        
         $classroom->created_at = $data['created_at'] ?? null;
         $classroom->updated_at = $data['updated_at'] ?? null;
