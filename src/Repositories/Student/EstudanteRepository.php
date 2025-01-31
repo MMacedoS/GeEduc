@@ -6,7 +6,9 @@ use App\Config\Database;
 use App\Models\Student\Estudante;
 use App\Repositories\Person\PessoaContatoRepository;
 use App\Repositories\Student\EstudanteMensalidadeRepository;
+use App\Repositories\MonthlyFees\MensalidadeRepository;
 use App\Repositories\Person\PessoaFisicaRepository;
+use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
@@ -23,14 +25,19 @@ class EstudanteRepository {
     protected $pessoaFisicaRepository;
     protected $pessoaContatoRepository;
     protected $estudanteMensalidadeRepository;
+    protected $estudanteTurmaRepository;
+    protected $mensalidadeRepository;
+    
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Estudante();
         $this->usuarioRepository = new UsuarioRepository();
         $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
         $this->pessoaContatoRepository = new PessoaContatoRepository();
         $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
+        $this->mensalidadeRepository = new MensalidadeRepository();
     }
 
     public function allStudents(array $params = []){
@@ -125,12 +132,12 @@ class EstudanteRepository {
                 'password' => 'escola123',
                 'sector' => 'estudante',
             ]);
-    
+            
             $user = $this->usuarioRepository->create($userData);
     
             $personData = array_merge($data, ['usuario_id' => $user->id]);
             $person = $this->pessoaFisicaRepository->create($personData);
-    
+            
             $studentData = array_merge($data, ['person_id' => $person->id]);
             $student = $this->create($studentData);
             
@@ -138,7 +145,7 @@ class EstudanteRepository {
                 $monthlyData = array_merge($data, ['student_id' => $student->id]);
                 $monthly = $this->estudanteMensalidadeRepository->create($monthlyData);
             }
-    
+            
             return $student;
     
         } catch (\Throwable $th) {
@@ -287,6 +294,60 @@ class EstudanteRepository {
         $this->pessoaContatoRepository->deleteAll($estudante->pessoa_contato_id);
 
         return $this->delete($estudante->id);
+    }
+
+    public function removeAll($id){
+        $estudante = $this->findById((int)$id);
+
+        if (is_null($estudante)) {
+            return null;
+        }
+        
+        $estudanteMensalidade = $this->estudanteMensalidadeRepository->allMonthlyfees(['student_id' => $id]);
+        $estudanteTurma = $this->estudanteTurmaRepository->allClassStudents(['student_id' => $id]);
+        $mensalidade = $this->mensalidadeRepository->allMonthlyfees(['student_monthlyfees_id' => $estudanteMensalidade[0]->id]);
+  
+        $this->mensalidadeRepository->remove((int)$mensalidade[0]->id);
+        $this->estudanteMensalidadeRepository->remove((int)$estudanteMensalidade[0]->id);
+        $this->estudanteTurmaRepository->remove((int)$estudanteTurma[0]->id);
+        $this->remove((int)$id);
+
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById((int)$estudante->pessoa_fisica_id);
+    
+        if (is_null($pessoa_fisica)) {
+            return null;
+        }
+
+        $removedPessoaFisica = $this->pessoaFisicaRepository->remove((int)$pessoa_fisica->id);
+
+        return $this->usuarioRepository->remove((int)$pessoa_fisica->usuario_id);
+    }
+
+    public function remove($id) :?bool 
+    {
+        $estudante = $this->findById((int)$id);
+
+        if (is_null($estudante)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 
     public function delete(int $id){

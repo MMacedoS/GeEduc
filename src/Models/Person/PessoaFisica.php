@@ -35,8 +35,8 @@ class PessoaFisica {
         $pessoa_fisica->uuid = $data['uuid'] ?? $this->generateUUID();
         $pessoa_fisica->nome = $data['name'];
         $pessoa_fisica->email = $data['email'];
-        $pessoa_fisica->endereco = $data['address'];
-        $pessoa_fisica->telefone = $data['phone'];   
+        $pessoa_fisica->endereco = $data['address'] ?? null;
+        $pessoa_fisica->telefone = $data['phone'] ?? null;   
         $pessoa_fisica->usuario_id = $data['usuario_id'];   
         $pessoa_fisica->data_nascimento = $data['birthday'] ?? null;
         $pessoa_fisica->nome_mae = $data['mother'] ?? null;   

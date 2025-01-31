@@ -12,8 +12,8 @@ class Estudante {
     public $id;
     public $uuid;
     public $pessoa_fisica_id;
-    public $pessoa_fisica;
     public $pessoa_contato_id;
+    public ?string $pessoa_fisica;
     public $matricula;
     public $ativo;
     public $updated_at;
@@ -24,15 +24,32 @@ class Estudante {
     public function create(
         array $data
     ) : Estudante{
+        
         $estudante = new Estudante();
-        $estudante->id = $data['id'] ?? null;
-        $estudante->uuid = $data['uuid'] ?? $this->generateUUID();
-        $estudante->pessoa_fisica_id = $data['person_id'];
-        $estudante->pessoa_contato_id = $data['legal_responsible_id'];
-        $estudante->matricula = $data['matricula'] ?? null;
-        $estudante->ativo = $data['active'] ?? null;     
-        $estudante->updated_at = $data['updated_at'] ?? null;
-        $estudante->created_at = $data['created_at'] ?? null;
+        if (isset($data['id'])) {
+            $estudante->id = $data['id'];
+        }
+        if (!isset($data['uuid'])) {
+            $estudante->uuid = $data['uuid'] ?? $this->generateUUID();
+        }
+        if (isset($data['person_id'])) {
+            $estudante->pessoa_fisica_id = $data['person_id'];
+        }
+        if (isset($data['legal_responsible_id'])) {
+            $estudante->pessoa_contato_id = $data['legal_responsible_id'];
+        }
+        if (isset($data['matricula'])) {
+            $estudante->matricula = $data['matricula'];
+        }
+        if (isset($data['active'])) {
+            $estudante->ativo = $data['active'] ?? null;   
+        }  
+        if (isset($data['updated_at'])) {
+            $estudante->updated_at = $data['updated_at'] ?? null;
+        }
+        if (isset($data['created_at'])) {
+            $estudante->created_at = $data['created_at'] ?? null;
+        }
         return $estudante;
     }
 

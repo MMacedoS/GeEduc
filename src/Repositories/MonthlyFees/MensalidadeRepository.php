@@ -24,6 +24,7 @@ class MensalidadeRepository {
     {
         $sql = "SELECT
                 m.estudante_mensalidade_id,
+                m.id,
                 JSON_OBJECT(
                     'id', em.id,
                     'uuid', em.uuid,
@@ -60,6 +61,11 @@ class MensalidadeRepository {
         $bindings[':situacao'] = $params['situation'];
         }
 
+        if (isset($params['student_monthlyfees_id'])) {
+        $conditions[] = "m.estudante_mensalidade_id = :estudante_mensalidade_id";
+        $bindings[':estudante_mensalidade_id'] = $params['student_monthlyfees_id'];
+        }
+
         if (isset($params['student_id'])) {
         $conditions[] = "em.estudante_id = :estudante_id";
         $bindings[':estudante_id'] = $params['student_id'];
@@ -75,7 +81,7 @@ class MensalidadeRepository {
         $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " GROUP BY m.estudante_mensalidade_id";
+        $sql .= " GROUP BY m.estudante_mensalidade_id, m.id";
         $sql .= " ORDER BY created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
@@ -179,6 +185,33 @@ class MensalidadeRepository {
             return $updated;
         } catch(\Throwable $th) {
             return false;
+        }
+    }
+
+    public function remove($id) :?bool 
+    {
+        $mensalidade = $this->findById((int)$id);
+
+        if (is_null($mensalidade)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
         }
     }
 

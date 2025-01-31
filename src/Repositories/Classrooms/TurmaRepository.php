@@ -38,7 +38,7 @@ class TurmaRepository {
                         ),
                         JSON_ARRAY()
                     )
-                ) AS details 
+                ) AS detalhes 
             FROM " . self::TABLE . " t 
             LEFT JOIN coordenador_as_turma ct ON ct.turma_id = t.id
             LEFT JOIN coordenadores c ON ct.coordenador_id = c.id AND c.ativo = 1
@@ -154,6 +154,23 @@ class TurmaRepository {
         } finally {          
             Database::getInstance()->closeConnection();
         }
+    }
+
+
+    public function findByName(string $name): ?Turma
+    {
+        $sql = "SELECT * FROM " . self::TABLE . " WHERE nome = :name";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+        $register = $stmt->fetch(); 
+        if (!$register) {
+            return null;
+        }
+    
+        return $register;
     }
 
     public function delete(int $id)

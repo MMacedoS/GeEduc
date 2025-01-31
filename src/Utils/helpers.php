@@ -1,9 +1,5 @@
 <?php
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}  
-
 if (!function_exists('isPermissionChecked')) {
     function isPermissionChecked($permissionId, $userPermissoes) {
         foreach ($userPermissoes as $userPermissao) {

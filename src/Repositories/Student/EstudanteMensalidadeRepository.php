@@ -55,6 +55,11 @@ class EstudanteMensalidadeRepository {
             $bindings[':end_date'] = $params['end_date'];
         }
 
+        if (isset($params['student_id'])) {
+            $conditions[] = "m.estudante_id = :estudante_id";
+            $bindings[':estudante_id'] = $params['student_id'];
+        }
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -175,6 +180,33 @@ class EstudanteMensalidadeRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function remove($id) :?bool 
+    {
+        $estudanteMensalidade = $this->findById((int)$id);
+
+        if (is_null($estudanteMensalidade)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 
     public function getMonthlyFee(array $params = []): ?EstudanteMensalidade

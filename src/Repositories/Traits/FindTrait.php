@@ -23,8 +23,8 @@ trait FindTrait{
             return null;
         }
     
-        $stmt = $this->conn->prepare("SELECT * FROM " . self::TABLE . " WHERE uuid = '$uuid'");
-        $stmt->bindValue(':uuid', $uuid);
+        $stmt = $this->conn->prepare("SELECT * FROM " . self::TABLE . " WHERE uuid = :uuid");
+        $stmt->bindValue(':uuid', $uuid, \PDO::PARAM_STR);
         $stmt->execute();
         
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);

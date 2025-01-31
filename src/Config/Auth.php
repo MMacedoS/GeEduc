@@ -12,9 +12,9 @@ class Auth {
     protected $renewTime = 600; 
 
     public function __construct() {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }        
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start(); 
+        } 
     }
 
     public function login($username) 
@@ -40,6 +40,7 @@ class Auth {
         $arquivo = $arquivoRepository->findById((int)$username->arquivo_id);   
         $_SESSION['files'] = $arquivo ?? null;
     
+        session_regenerate_id(true);
         return true;
     }
 

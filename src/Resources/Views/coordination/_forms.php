@@ -21,17 +21,16 @@
   </div>
 </div>
 
-<div class="col-lg-3 col-sm-4 col-12">
+<div class="col-lg-3 col-sm-3 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Graduação</label>
-        <input type="text" class="form-control" name="graduacao" placeholder="digite aqui" value="<?=$coordenador->graduacao ?? ''?>" />
+        <label class="form-label">Data Nascimento</label>
+        <input type="date"  class="form-control" name="birthday" max="<?=Date('Y-m-d')?>" placeholder="digite aqui" value="<?=$pessoa_fisica->data_nascimento ?? ''?>" />
       </div>
     </div>
   </div>
 </div>
-
 <div class="col-lg-2 col-sm-2 col-12">
   <div class="card mb-3">
     <div class="card-body">
@@ -120,6 +119,17 @@
         <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
         required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
         <div class="invalid-feedback">Telefone inválido</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-3 col-sm-4 col-12">
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="m-0">
+        <label class="form-label">Graduação</label>
+        <input type="text" class="form-control" name="graduacao" placeholder="digite aqui" value="<?=$coordenador->graduacao ?? ''?>" />
       </div>
     </div>
   </div>
