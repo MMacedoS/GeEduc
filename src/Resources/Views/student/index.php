@@ -56,7 +56,7 @@
                                 <div class="card-body">
                                     <div class="m-0">
                                         <select class="form-select form-control" name="situation" id="situation">
-                                            <option default>Selecione a situação</option>
+                                            <option selected value="1">Selecione a situação</option>
                                             <option value="1">Disponível</option>
                                             <option value="0">Impedido</option>
                                         </select>
