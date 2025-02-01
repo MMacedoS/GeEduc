@@ -64,7 +64,7 @@ class UsuarioRecuperarSenhaRepository {
 
             $message = $this->emailService->prepareMessageRecoveryPassword($userExists, $user->uuid);
             $this->emailService->sendEmail(
-                'reissoany@gmail.com',
+                $userExists->email,
                 'Recuperar Senha',
                 $message
             );
