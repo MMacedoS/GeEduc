@@ -37,46 +37,64 @@
     <!-- Row start -->
 <div class="row gx-3">
     <div class="col-12">
-        <form id="students-form" action="/estudantes" method="GET">
-            <div class="row justify-content-center">
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="m-0">
-                               <input 
-                                class="form-input form-control" 
-                                type="text" 
-                                name="name_email" 
-                                id="name_email" 
-                                value="<?= $searchFilter ?>" 
-                                placeholder="Digite nome ou email">
+        <form id="students-form" action="/estudantes" method="GET">            
+            <div class="accordion mt-2" id="accordionSpecialTitle">
+                <div class="accordion-item bg-transparent">
+                    <h2 class="accordion-header" id="headingSpecialTitleTwo">
+                    <button class=" bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" type="button" data-bs-toggle="collapse"
+                       data-bs-target="#filters-students" aria-expanded="false"
+                       aria-controls="collapseSpecialTitleTwo">
+                      <h5 class="m-0">Filtros</h5>
+                    </button>
+                    </h2>
+                    <div id="filters-students" class="accordion-collapse <?= isset($situation) || isset($searchFilter) ? '' : 'collapse'?>"
+                       aria-labelledby="headingSpecialTitleTwo" data-bs-parent="#accordionSpecialTitle">
+                      <div class="accordion-body">
+                        <div class="row justify-content-start">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="m-0">
+                                            <label class="form-label">Busca por nome ou email</label>
+                                            <input 
+                                                class="form-input form-control" 
+                                                type="text" 
+                                                name="name_email" 
+                                                id="name_email" 
+                                                value="<?= isset($searchFilter) ? $searchFilter : null ?>" 
+                                                placeholder="Digite nome ou email">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="m-0">
-                                <select class="form-select form-control" name="situation" id="situation">
-                                    <option selected value="1">Selecione a situação</option>
-                                    <option value="1" <?= $situation == 1 ? 'selected' : ''?>>Disponível</option>
-                                    <option value="0" <?= $situation == 0 ? 'selected' : ''?>>Impedido</option>
-                                </select>
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="m-0">
+                                            <label class="form-label">Situação</label>
+                                            <select class="form-select form-control" name="situation" id="situation">
+                                                <option <?= (isset($situation) && $situation == '') ? 'selected' : ''?> value="">Ambas</option>
+                                                <option value="1" <?= (isset($situation) && $situation == 1) ? 'selected' : ''?>>Disponível</option>
+                                                <option value="0" <?= (isset($situation) && $situation == 0) ? 'selected' : ''?>>Impedido</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-xxl-12">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                <a href="\estudantes" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) ? 'd-block' : 'd-none'?>">Limpar</a>
-                                <button type="submit" class="btn btn-primary">Buscar</button>
+                            <div class="col-xxl-12">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                            <a href="\estudantes" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) ? 'd-block' : 'd-none'?>">Limpar</a>
+                                            <button type="submit" class="btn btn-primary">Buscar</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                      </div>
                     </div>
                 </div>
             </div>
