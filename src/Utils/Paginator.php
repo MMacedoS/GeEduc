@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 class Paginator {
+    const FIVE = 5;
     protected $items;
     protected $perPage;
     protected $currentPage;
@@ -28,20 +29,30 @@ class Paginator {
         // Previous button
         if ($this->currentPage > 1) {
             $prevPage = $this->currentPage - 1;
-            $links .= "<li class='page-item'><a class='page-link' href='?page=$prevPage'>&laquo;</a></li>";
+            $links .= '<li class="page-item"><a class="page-link" href="?page='.$prevPage.'">&laquo;</a></li>';
         } 
         if ($this->currentPage <= 1) {
-            $links .= "<li class='page-item disabled'><a class='page-link' href=''>&laquo;</a></li>";
+            $links .= '<li class="page-item disabled"><a class="page-link" href="">&laquo;</a></li>';
         }
 
         // Page numbers
+        $isLimite = false;
         for ($i = 1; $i <= $this->totalPages; $i++) {
-            if ($i == $this->currentPage) {
-                $links .= "<li class='page-item active'><a class='page-link' href=''>$i</a></li>";
+            if ($i == $this->currentPage && $i <= self::FIVE) {
+                $links .= '<li class="page-item active"><a class="page-link" href="">'.$i.'</a></li>';
             } 
-            if ($i != $this->currentPage) {
-                $links .= "<li class='page-item'><a class='page-link' href='?page=$i'>$i</a></li>";
+            if ($i != $this->currentPage && $i <= self::FIVE) {
+                $links .= '<li class="page-item"><a class="page-link" href="?page='.$i.'">'.$i.'</a></li>';
+            }         
+            if (self::FIVE < $this->currentPage && $i > self::FIVE) {
+                $links .= '<li class="page-item active"><a class="page-link" href="">...</a></li>';
+                break;
             }
+            if (!$isLimite && $this->totalPages > self::FIVE && $i > self::FIVE) {
+                $isLimite = true;
+                $links .= '<li class="page-item"><a class="page-link" href="">...</a></li>';
+                break;
+            }               
         }
 
         // Next button
