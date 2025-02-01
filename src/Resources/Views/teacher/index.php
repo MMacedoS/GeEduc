@@ -53,8 +53,8 @@
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
-                                    <th>email</th>
-                                    <th>Situação</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">email</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
                                      <th>Ação</th>
                                      <? } ?>
@@ -68,10 +68,10 @@
                                         <td><?=$professor->id?></td>
                                         <td class="fw-bold"> <?=getJsonToObject($professor->pessoa_fisica)->nome ?? 'não identificado'?>
                                         </td>
-                                        <td>
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
                                         <?=getJsonToObject($professor->pessoa_fisica)->email ?? 'não identificado'?>
                                         </td>
-                                        <td>    
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
                                                 <? if($professor->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
@@ -84,28 +84,61 @@
                                             </div>
                                         </td>
                                         <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
-                                            <td class="d-flex">
-                                                 <? if (hasPermission('editar professores')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
-                                                        <div class="border p-2 rounded-3">
-                                                            <i class="icon-edit fs-5"></i>
+                                            <td >
+                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex">
+                                                    <? if (hasPermission('editar professores')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
+                                                            <div class="border p-2 rounded-3">
+                                                                <i class="icon-edit fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>  
+                                                    <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/disciplina">
+                                                            <div class="border p-2 rounded-3">
+                                                                <i class="icon-link fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?> 
+                                                    <? if (hasPermission('deletar professores')) {?>                                                                           
+                                                        <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
+                                                            <div class="border p-2 rounded-3">
+                                                                <span class="fs-5 text-danger icon-delete1"></span>
+                                                            </div>
+                                                        </button>
+                                                    <? }?>
+                                                </div>
+                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
+                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
+                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="icon-menu"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <div class="header-action-links float-end">
+                                                            <? if (hasPermission('editar professores')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
+                                                                    <div class="border p-2 rounded-3">
+                                                                        <i class="icon-edit fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>  
+                                                            <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                                <a class="mb-1 me-0 mt-1" href="/professores/<?=$professor->uuid?>/disciplina">
+                                                                    <div class="border p-2 rounded-3">
+                                                                        <i class="icon-link fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?> 
+                                                            <? if (hasPermission('deletar professores')) {?>                                                                           
+                                                                <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
+                                                                    <div class="border p-2 rounded-3">
+                                                                        <span class="fs-5 text-danger icon-delete1"></span>
+                                                                    </div>
+                                                                </button>
+                                                            <? }?>
                                                         </div>
-                                                    </a> 
-                                                <? } ?>  
-                                                <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/disciplina">
-                                                        <div class="border p-2 rounded-3">
-                                                            <i class="icon-link fs-5"></i>
-                                                        </div>
-                                                    </a> 
-                                                <? } ?> 
-                                                <? if (hasPermission('deletar professores')) {?>                                                                           
-                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
-                                                        <div class="border p-2 rounded-3">
-                                                            <span class="fs-5 text-danger icon-delete1"></span>
-                                                        </div>
-                                                    </button>
-                                                <? }?>
+                                                    </div>
+                                                </div>
                                                 <div class="modal fade" id="exampleModal_<?=$professor->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -124,8 +157,6 @@
                                                         </div>
                                                     </div>
                                                 </div>   
-                                                
-                                                 
                                             </td>
                                         <? }?>
                                     </tr>

@@ -58,9 +58,9 @@
                                 <tr>
                                     <th></th>
                                     <th class="text-center">Componente Curicular</th>
-                                    <th class="text-center">Professor</th>
-                                    <th class="text-center">Carga Horária</th>
-                                    <th>Situação</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Professor</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Carga Horária</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
                                     <th>Ação</th>
                                     <? } ?>
@@ -75,13 +75,13 @@
                                         <td class="text-center"> 
                                             <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
                                             <?=getJsonToObject($turma_disciplina->professor_disciplina)->professor->nome ?? 'não identificado'?>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
                                             <?=getJsonToObject($turma_disciplina->carga_horaria)->carga_horaria ?? 'não identificado'?> Horas
                                         </td>
-                                        <td>    
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
                                                 <? if($turma_disciplina->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
@@ -94,29 +94,63 @@
                                             </div>
                                         </td>
                                         <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
-                                        <td class="d-flex">
-                                            <? if (hasPermission('editar turmas-disciplinas')) {?>
-                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplina/<?=$turma_disciplina->uuid?>">
-                                                <div class="border p-2 rounded-3">
-                                                    <i class="icon-edit fs-5"></i>
+                                        <td>
+                                            <div class="d-none d-xl-flex d-lg-flex d-md-flex">
+                                                <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                                    <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplina/<?=$turma_disciplina->uuid?>">
+                                                        <div class="border p-2 rounded-3">
+                                                            <i class="icon-edit fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? }?> 
+                                                <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
+                                                        <div class="border p-2 rounded-3">
+                                                        <i class="icon-link fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>  
+                                                <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                                    <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
+                                                        <div class="border p-2 rounded-3">
+                                                            <span class="fs-5 text-danger icon-delete1"></span>
+                                                        </div>
+                                                    </button>
+                                                <? }?>
+                                            </div>
+                                            <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
+                                                <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
+                                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="icon-menu"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <div class="header-action-links float-end">
+                                                        <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplina/<?=$turma_disciplina->uuid?>">
+                                                                <div class="border p-2 rounded-3">
+                                                                    <i class="icon-edit fs-5"></i>
+                                                                </div>
+                                                            </a> 
+                                                        <? }?> 
+                                                        <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
+                                                                <div class="border p-2 rounded-3">
+                                                                <i class="icon-link fs-5"></i>
+                                                                </div>
+                                                            </a> 
+                                                        <? } ?>  
+                                                        <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
+                                                                <div class="border p-2 rounded-3">
+                                                                    <span class="fs-5 text-danger icon-delete1"></span>
+                                                                </div>
+                                                            </button>
+                                                        <? }?>
+                                                    </div>
                                                 </div>
-                                            </a> 
-                                        <? }?> 
-                                        <? if (hasPermission('visualizar atividades')) {?>                                     
-                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
-                                                <div class="border p-2 rounded-3">
-                                                   <i class="icon-link fs-5"></i>
-                                                </div>
-                                            </a> 
-                                        <? } ?>  
-                                        <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
-                                            <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
-                                                <div class="border p-2 rounded-3">
-                                                    <span class="fs-5 text-danger icon-delete1"></span>
-                                                </div>
-                                            </button>
-                                        <? }?>
-                                        <div class="modal fade" id="exampleModal_<?=$turma_disciplina->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            </div>
+
+                                            <div class="modal fade" id="exampleModal_<?=$turma_disciplina->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -124,8 +158,8 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Tem certeza que deseja excluir este registro? 
-                                                                <p>Turma <?=$turma->nome ?? 'não identificado'?></p>
+                                                            Tem certeza que deseja excluir este registro da Turma <?=$turma->nome ?? 'não identificado'?>? 
+                                                                <p>Disciplina <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?></p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

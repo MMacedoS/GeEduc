@@ -58,7 +58,7 @@
                                     <th></th>
                                     <th>Nome</th>
                                     <th>Ano Letivo</th>
-                                    <th>Situação</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
                                      <th>Ação</th>
                                      <? } ?>
@@ -75,7 +75,7 @@
                                         <td>
                                         <?=$turma_estudante->ano_letivo?>
                                         </td>
-                                        <td>    
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
                                                 <? if($turma_estudante->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
