@@ -48,11 +48,13 @@ class Router {
     public function view(string $viewName, array $data = []) {
         extract($data);
         require_once __DIR__ . '/../Resources/Views/' . $viewName . '.php';
+
+        exit();
     }
 
-    public function redirect($page, $delay = 0) {
+    public function redirect($page = '', $delay = 0) {
         $url = URL_PREFIX_APP . '/' .$page;
         echo "<meta http-equiv='refresh' content='{$delay};url={$url}'>";
-        exit;
+        exit();
     }
 }

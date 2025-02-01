@@ -158,7 +158,7 @@
   <?
   }
   ?>
-
+  
   <?php 
   if (hasPermission('estudante')) {?>
     <div class="row">

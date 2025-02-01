@@ -60,7 +60,7 @@
 						</div>
 
 						<div>
-							<a href="#" class="txt1">
+							<a href="\recuperar" class="txt1">
 								Esqueceu a senha?
 							</a>
 						</div>

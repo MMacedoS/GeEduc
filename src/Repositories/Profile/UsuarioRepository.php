@@ -68,7 +68,7 @@ class UsuarioRepository {
 
     public function create(array $data, bool $forceNewPassword = true)
     {   
-        $existingUser = $this->findByEmail($data['email'], $data['sector']);
+        $existingUser = $this->findByEmailAndSector($data['email'], $data['sector']);
         if ($existingUser) {
             return $existingUser;
         }
@@ -112,7 +112,25 @@ class UsuarioRepository {
         }
     }
 
-    public function findByEmail(string $email, string $sector)
+    public function findByEmail(string $email)
+    {
+        try {
+            $stmt = $this->conn->prepare(
+                "SELECT * FROM " . self::TABLE . " WHERE email = :email LIMIT 1"
+            );
+            $stmt->execute([':email' => $email]);
+            $stmt->setFetchMode(\PDO::FETCH_CLASS, self::CLASS_NAME);
+
+            return $stmt->fetch() ?: null;
+        } catch (\Throwable $th) {
+            LoggerHelper::logInfo($th->getMessage());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function findByEmailAndSector(string $email, string $sector)
     {
         try {
             $stmt = $this->conn->prepare(

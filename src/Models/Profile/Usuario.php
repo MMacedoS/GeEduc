@@ -4,10 +4,6 @@ namespace App\Models\Profile;
 
 use App\Models\Traits\UuidTrait;
 
-namespace App\Models\Profile;
-
-use App\Models\Traits\UuidTrait;
-
 class Usuario
 {
     use UuidTrait;

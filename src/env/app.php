@@ -12,3 +12,15 @@ const NAME_SCHOOL = "Instituto Social de Tucano";
 const SCHOOL_ADDRESS = "";
 const SCHOOL_ZIP_CODE = "";
 const MIN_SCORE = 7;
+
+//remetent
+
+const CONFIG_EMAIL = [
+    'host' => 'smtp.gmail.com', // Servidor SMTP
+    'port' => 587, // Porta do servidor
+    'username' => 'geeducsoftware@gmail.com', // E-mail do remetente
+    'password' => 'bfik kbbt oukv bfaz', // Senha do e-mail
+    'encryption' => 'tls', // Tipo de criptografia (tls/ssl)
+    'from_email' => 'contato@escolacesp.com.br', // E-mail do remetente
+    'from_name' => 'Gestor Educacional' // Nome do remetente
+];

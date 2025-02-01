@@ -25,6 +25,7 @@ use App\Controllers\v1\Coordination\CoordenadorController;
 use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Period\PeriodoController;
 use App\Controllers\v1\Person\PessoaContatoController;
+use App\Controllers\v1\Profile\RecuperarSenhaController;
 use App\Controllers\v1\Scores\NotaController;
 use App\Controllers\v1\Site\Album\SiteAlbumController;
 
@@ -55,7 +56,12 @@ $pessoaContatoController = new PessoaContatoController();
 $notaController = new NotaController();
 $gradeReportController = new GradeReportController();
 $siteAlbumController = new SiteAlbumController();
+$recuperarSenhaController = new RecuperarSenhaController();
 
+$router->create("GET", "/recuperar", [$recuperarSenhaController, "index"]);
+$router->create("POST", "/recuperar", [$recuperarSenhaController, "store"]);
+$router->create("GET", "/recuperar/{id}", [$recuperarSenhaController, "edit"]);
+$router->create("POST", "/recuperar/{id}", [$recuperarSenhaController, "update"]);
 $router->create("GET", "/", [$usuarioController, "login"], null);
 $router->create("POST", "/login", [$usuarioController, "auth"]);
 $router->create("GET", "/logout", [$usuarioController, "logout"], $auth);
@@ -258,6 +264,8 @@ $router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUp
 
 $router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
 $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+
+$router->create('GET', "/teste-email", [$dashboardController, 'testeEmail'], $auth);
 
 
 
