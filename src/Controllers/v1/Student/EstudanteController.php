@@ -51,7 +51,8 @@ class EstudanteController extends Controller
                 'active' => 'pedagogico',  
                 'estudantes' => $paginatedBoards,
                 'links' => $paginator->links(),
-                'searchFilter' => $params['name_email'] ?? null
+                'searchFilter' => $params['name_email'] ?? null,
+                'situation'=> $params['situation'] ?? null
             ]
         );
     }
