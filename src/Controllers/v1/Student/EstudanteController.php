@@ -38,21 +38,21 @@ class EstudanteController extends Controller
     }
 
     public function index(Request $request){
-        $estudantes = $this->estudanteRepository->allStudents();
+        $params = $request->getQueryParams();
+
+        $estudantes = $this->estudanteRepository->allStudents($params);
         $perPage = 10;
         $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($estudantes, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
-            'estudantes' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-
         return $this->router->view('/student/index', 
             [
                 'active' => 'pedagogico',  
-                'data' => $data
+                'estudantes' => $paginatedBoards,
+                'links' => $paginator->links(),
+                'searchFilter' => $params['name_email'] ?? null,
+                'situation'=> $params['situation'] ?? null
             ]
         );
     }

@@ -79,19 +79,19 @@ if(isset($success)){?>
                                     <!-- Form Field Start -->
                                     <div class="mb-3">
                                       <label for="fullName" class="form-label">Nome Completo</label>
-                                      <input type="text" class="form-control" id="fullName" name="name" value="<?=$pessoa->nome?>" placeholder="Nome completo" />
+                                      <input type="text" class="form-control" id="fullName" name="name" value="<?=$pessoa->nome ?? null?>" placeholder="Nome completo" />
                                     </div>
                                     <!-- Form Field Start -->
                                     <div class="mb-3">
                                       <label for="contactNumber" class="form-label">Contato</label>
-                                      <input type="text" class="form-control" name="phone" value="<?=$pessoa->telefone?>" id="contactNumber" placeholder="Contato" />
+                                      <input type="text" class="form-control" name="phone" value="<?=$pessoa->telefone ?? null?>" id="contactNumber" placeholder="Contato" />
                                     </div>
                                   </div>
                                   <div class="col-6">
                                     <!-- Form Field Start -->
                                     <div class="mb-3">
                                       <label for="emailId" class="form-label">Email</label>
-                                      <input type="email" class="form-control"  name="email" value="<?=$pessoa->email?>" id="emailId" placeholder="Email" />
+                                      <input type="email" class="form-control"  name="email" value="<?=$pessoa->email ?? null?>" id="emailId" placeholder="Email" />
                                     </div>
                                     <!-- Form Field Start -->
                                     <div class="mb-3">
