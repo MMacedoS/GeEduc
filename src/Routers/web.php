@@ -190,6 +190,14 @@ $router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{
 $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
 
+//activities-teacher
+$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
+$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "create"], $auth);
+$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "store"], $auth);
+$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
+$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
+$router->create( "DELETE", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+
 //siteEvents
 $router->create('GET', '/site-eventos', [$siteEventoController, 'index'], $auth);
 $router->create('GET', '/site-eventos/criar', [$siteEventoController, 'create'], $auth);
