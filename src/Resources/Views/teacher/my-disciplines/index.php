@@ -91,10 +91,17 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                
-                                                <? if (hasPermission('realizar chamadas') || hasPermission('professor')) {?>                                     
+                                                <? if (hasPermission('professor')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
                                                             <i class="icon-file fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>                                                                                
+                                                <? if (hasPermission('professor')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/meus-componentes/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
+                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                            <i class="icon-link fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                
