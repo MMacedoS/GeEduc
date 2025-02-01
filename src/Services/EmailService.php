@@ -41,4 +41,15 @@ class EmailService
             return false;
         }
     }
+
+    public function prepareMessageRecoveryPassword($user, $recovery) 
+    {
+        $message = '<h1>Olá! ' . $user->nome . ' </h1><p>Esta é o retorno de sua solicitação de recuperação de senha, por favor acesse o </p>';
+        $message .= '</br> <a href="'.URL_PREFIX_APP.'/recuperar/'. $recovery .'">link de recuperação</a>';
+        $message .= '</br></br>
+        <p>Para mais informações entre en contato!!</p>
+        </br></br>Att: Gestor Educacional - ' . URL_PREFIX_APP;
+
+        return $message;
+    }
 }

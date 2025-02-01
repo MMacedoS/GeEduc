@@ -158,7 +158,7 @@
   <?
   }
   ?>
-<a href="/teste-email">Envio email</a>
+  
   <?php 
   if (hasPermission('estudante')) {?>
     <div class="row">
