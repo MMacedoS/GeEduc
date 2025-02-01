@@ -58,7 +58,7 @@
                                     <th></th>
                                     <th>Componente Curricular</th>
                                     <th>Ano Letivo</th>
-                                    <th>Situação</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
                                      <th>Ação</th>
                                      <? } ?>
@@ -73,7 +73,7 @@
                                         <td class="fw-bold"> <?=getJsonToObject($professor_disciplina->disciplina)->nome ?? 'não identificado'?>
                                         <td class="fw-bold"> <?=$professor_disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
-                                        <td>    
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
                                                 <? if($professor_disciplina->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>

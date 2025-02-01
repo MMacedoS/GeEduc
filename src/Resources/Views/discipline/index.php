@@ -44,7 +44,7 @@
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
-                                    <th>Situação</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -55,7 +55,7 @@
                                         <td><?=$disciplina->id?></td>
                                         <td class="fw-bold"> <?=$disciplina->nome?>
                                         </td>
-                                        <td>    
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
                                                 <? if($disciplina->ativo == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
@@ -67,39 +67,60 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <td class="d-flex">
-                                        <a class="mb-1 me-2 mt-1" href="/disciplinas/<?=$disciplina->uuid?>/editar">
-                                            <div class="border p-2 rounded-3">
-                                                <i class="icon-edit fs-5"></i>
-                                            </div>
-                                        </a>                                           
+                                        <td >
+                                            <div class="d-none d-xl-flex d-lg-flex d-md-flex">
+                                                <a class="mb-1 me-2 mt-1" href="/disciplinas/<?=$disciplina->uuid?>/editar">
+                                                    <div class="border p-2 rounded-3">
+                                                        <i class="icon-edit fs-5"></i>
+                                                    </div>
+                                                </a>
                                                 <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$disciplina->uuid?>">                                                     
                                                     <div class="border p-2 rounded-3">
                                                         <span class="fs-5 text-danger icon-delete1"></span>
                                                     </div>
-                                                </button>
-                                                <div class="modal fade" id="exampleModal_<?=$disciplina->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
+                                                </button>                                                
+                                            </div>
+                                            <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
+                                                <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
+                                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="icon-menu"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <div class="header-action-links float-end">
+                                                        <a class="mb-1 me-2 mt-1" href="/disciplinas/<?=$disciplina->uuid?>/editar">
+                                                            <div class="border p-2 rounded-3">
+                                                                <i class="icon-edit fs-5"></i>
+                                                            </div>
+                                                        </a>
+                                                        <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$disciplina->uuid?>">                                                     
+                                                            <div class="border p-2 rounded-3">
+                                                                <span class="fs-5 text-danger icon-delete1"></span>
+                                                            </div>
+                                                        </button> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal fade" id="exampleModal_<?=$disciplina->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Tem certeza que deseja excluir este registro? 
-                                                                <p>Disciplina: <?=$disciplina->name?></p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="submit" onclick="deleteData('/disciplinas/<?=$disciplina->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
-                                                            </div>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Tem certeza que deseja excluir este registro? 
+                                                            <p>Disciplina: <?=$disciplina->nome?></p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                            <button type="submit" onclick="deleteData('/disciplinas/<?=$disciplina->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </a>
+                                            </div>
                                         </td>
                                     </tr>
-                            <? } ?>
+                                <? } ?>
                             </tbody>
                         </table>
                     </div>

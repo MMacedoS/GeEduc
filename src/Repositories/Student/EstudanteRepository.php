@@ -60,9 +60,9 @@ class EstudanteRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['nome'])) {
-            $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['nome'];
+        if (isset($params['name_email'])) {
+            $conditions[] = "(pf.nome LIKE :name_email OR pf.email LIKE :name_email)";
+            $bindings[':name_email'] = "%" . $params['name_email'] . "%";
         }
 
         if (isset($params['contact_person_id'])) {
@@ -75,9 +75,9 @@ class EstudanteRepository {
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['active'])) {
-            $conditions[] = "e.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation']) && !empty($params['situation'])) {
+            $conditions[] = "e.ativo = :situation";
+            $bindings[':situation'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {

@@ -31,15 +31,14 @@
     </div>
   </div>
 </div>
-
 <div class="col-lg-2 col-sm-3 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Situação</label>
         <select name="status" class="form-control" id="">
-            <option value="0" <?php if(isset($usuario->status) && $usuario->status == '0') { echo 'selected'; } ?>>Impedido</option>
-            <option value="1" selected <?php if(isset($usuario->status) && $usuario->status == '1') { echo 'selected'; } ?>>Disponivel</option>
+            <option value="0" <?php if(isset($usuario->ativo) && $usuario->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
+            <option value="1" <?php if(isset($usuario->ativo) && $usuario->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
         </select>
       </div>
    </div>
