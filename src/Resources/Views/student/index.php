@@ -37,41 +37,50 @@
     <!-- Row start -->
 <div class="row gx-3">
     <div class="col-12">
-        <div class="card my-3">
-            <div class="card-body">
-                <form id="students-form" action="/estudantes" method="GET">
-                    <div class="row justify-content-center">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="m-0">
-                                        <input class="form-input form-control" type="text" name="name_email" id="name_email" required value="<?= $searchFilter ?>" placeholder="Digite nome ou email">
-                                    </div>
-                                </div>
+        <form id="students-form" action="/estudantes" method="GET">
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="m-0">
+                               <input 
+                                class="form-input form-control" 
+                                type="text" 
+                                name="name_email" 
+                                id="name_email" 
+                                value="<?= $searchFilter ?>" 
+                                placeholder="Digite nome ou email">
                             </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="m-0">
-                                        <select class="form-select form-control" name="situation" id="situation">
-                                            <option selected value="1">Selecione a situação</option>
-                                            <option value="1">Disponível</option>
-                                            <option value="0">Impedido</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2">
-                            <button type="submit" class="my-3 btn btn-primary w-100">Buscar</button>
                         </div>
                     </div>
-                </form>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="m-0">
+                                <select class="form-select form-control" name="situation" id="situation">
+                                    <option selected value="1">Selecione a situação</option>
+                                    <option value="1" <?= $situation == 1 ? 'selected' : ''?>>Disponível</option>
+                                    <option value="0" <?= $situation == 0 ? 'selected' : ''?>>Impedido</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-12">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                <a href="\estudantes" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) ? 'd-block' : 'd-none'?>">Limpar</a>
+                                <button type="submit" class="btn btn-primary">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <div class="col-12">
