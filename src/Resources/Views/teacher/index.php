@@ -121,9 +121,9 @@
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>#</th>
                                     <th>Nome</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">email</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Email</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
                                      <th>Ação</th>

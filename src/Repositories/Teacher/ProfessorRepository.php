@@ -46,13 +46,13 @@ class ProfessorRepository {
 
         $conditions = [];
         $bindings = [];
-
+        
         if (isset($params['name_email'])) {
             $conditions[] = "(pf.nome LIKE :name_email OR pf.email LIKE :name_email)";
             $bindings[':name_email'] = "%" .  $params['name_email'] . "%";
         }
 
-        if (isset($params['situation'])) {
+        if (isset($params['situation']) && $params['situation'] != '') {
             $conditions[] = "p.ativo = :situation";
             $bindings[':situation'] = $params['situation'];
         }
