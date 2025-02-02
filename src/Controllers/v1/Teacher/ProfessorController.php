@@ -32,21 +32,25 @@ class ProfessorController extends Controller
 
     public function index(Request $request) 
     {
+        $params = $request->getQueryParams();
+
         if(!hasPermission('visualizar professores')) {
             return $this->router->redirect('professores?error=422');
         }
 
-        $professores = $this->professorRepository->allTeachers();
+        $professores = $this->professorRepository->allTeachers($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($professores, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
+        return $this->router->view('teacher/index', [
+            'active' => 'pedagogico', 
             'professores' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-        return $this->router->view('teacher/index', ['active' => 'pedagogico', 'data' => $data]); 
+            'links' => $paginator->links(),
+            'searchFilter' => $params['name_email'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ]); 
     }    
 
     public function create() 
