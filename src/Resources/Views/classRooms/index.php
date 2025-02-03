@@ -105,7 +105,7 @@
                                                 name="coordinator" 
                                                 id="coordinator" 
                                                 value="<?= isset($coordinator) ? $coordinator : null ?>" 
-                                                placeholder="Digite nome do coordenador">
+                                                placeholder="Digite o nome do coordenador">
                                         </div>
                                     </div>
                                 </div>
