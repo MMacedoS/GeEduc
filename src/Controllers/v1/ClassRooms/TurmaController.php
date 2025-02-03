@@ -34,10 +34,6 @@ class TurmaController extends Controller
         $paginator = new Paginator($classRooms, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
-            'turmas' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
         return $this->router->view('classRooms/index', [
             'active' => 'pedagogico',
             'turmas' => $paginatedBoards,

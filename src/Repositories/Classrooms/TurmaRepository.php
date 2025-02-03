@@ -48,19 +48,24 @@ class TurmaRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['search'])) {
-            $conditions[] = "(t.nome LIKE :search OR pf.nome LIKE :search)";
-            $bindings[':search'] = '%' . $params['search'] . '%';
+        if (isset($params['classroom'])) {
+            $conditions[] = "(t.nome LIKE :classroom)";
+            $bindings[':classroom'] = '%' . $params['classroom'] . '%';
         }   
 
-        if (isset($params['shift'])) {
-            $conditions[] = "t.turno = :turno";
-            $bindings[':turno'] = $params['shift'];
+        if (isset($params['shift']) && $params['shift'] != '') {
+            $conditions[] = "t.turno = :shift";
+            $bindings[':shift'] = $params['shift'];
         }
 
-        if (isset($params['active'])) {
-            $conditions[] = "t.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['coordinator'])) {
+            $conditions[] = "pf.nome LIKE :coordinator ";
+            $bindings[':coordinator'] = '%' . $params['coordinator'] . '%';
+        } 
+
+        if (isset($params['situation']) && $params['situation'] != '') {
+            $conditions[] = "t.ativo = :situation";
+            $bindings[':situation'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {
