@@ -130,7 +130,7 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                            <a href="\professores" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) ? 'd-block' : 'd-none'?>">Limpar</a>
+                                            <a href="\professores" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) || isset($shift) || isset($coordinator) ? 'd-block' : 'd-none'?>">Limpar</a>
                                             <button type="submit" class="btn btn-primary">Buscar</button>
                                         </div>
                                     </div>
