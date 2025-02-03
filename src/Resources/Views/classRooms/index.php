@@ -60,7 +60,7 @@
                         data-bs-parent="#accordionSpecialTitle">
                       <div class="accordion-body">
                         <div class="row justify-content-start">
-                            <div class="col-md-4">
+                            <div class="col-sm-6 col-md-4">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -77,7 +77,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 mb-2">
+                            <div class="col-sm-6 col-md-2 mb-2">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -94,7 +94,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-sm-6 col-md-4">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 mb-2">
+                            <div class="col-sm-6 col-md-2 mb-2">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -152,7 +152,7 @@
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>#</th>
                                     <th>Nome</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Coordenador</th>
