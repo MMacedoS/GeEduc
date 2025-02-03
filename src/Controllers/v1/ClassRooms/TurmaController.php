@@ -26,17 +26,23 @@ class TurmaController extends Controller
 
     public function index(Request $request) 
     {
-        $classRooms = $this->turmaRepository->allClassRooms();
+        $params = $request->getQueryParams();
+
+        $classRooms = $this->turmaRepository->allClassRooms($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($classRooms, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
+        return $this->router->view('classRooms/index', [
+            'active' => 'pedagogico',
             'turmas' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-        return $this->router->view('classRooms/index', ['active' => 'pedagogico', 'data' => $data]); 
+            'links' => $paginator->links(),
+            'searchFilter' => $params['classroom'] ?? null,
+            'shift' => $params['shift'] ?? null,
+            'coordinator' => $params['coordinator'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ]); 
     }
 
     public function create(Request $request)
