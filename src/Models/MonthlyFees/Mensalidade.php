@@ -12,6 +12,8 @@ class Mensalidade {
     public $uuid;
     public $estudante_mensalidade_id;
     public $estudante;
+    public $estudante_mensalidade;
+    public $mensalidades;
     public $valor;
     public $data_vencimento;
     public $dia_vencimento;

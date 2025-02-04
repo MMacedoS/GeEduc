@@ -147,7 +147,9 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=@count(getJsonToObject($estudante_mensalidades[0]->mensalidades))?></b> registros
+                        <?  if (!is_null($estudante_mensalidades) && !empty($estudante_mensalidades)) { ?>
+                        Total <b><?@count(getJsonToObject($estudante_mensalidades[0]->mensalidades))?></b> registros
+                        <? }?>
                     </div>
                 </div>
             </div>
