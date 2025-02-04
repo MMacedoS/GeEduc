@@ -37,18 +37,22 @@ class UsuarioController extends Controller
             return $this->router->redirect('dashboard?error=422');
         }
 
-        $usuario = $this->usuarioRepository->all();
+        $params = $request->getQueryParams();
+
+        $usuario = $this->usuarioRepository->all($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($usuario, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
+        return $this->router->view('profile/index', [
+            'active' => 'register',
             'usuarios' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-
-        return $this->router->view('profile/index', ['active' => 'register', 'data' => $data]);
+            'links' => $paginator->links(),
+            'searchFilter' => $params['name_email'],
+            'access' => $params['access'],
+            'situation' => $params['situation']
+        ]);
     }
 
     public function create() {
