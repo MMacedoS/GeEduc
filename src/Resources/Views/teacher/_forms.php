@@ -26,7 +26,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Data Nascimento</label>
-        <input type="date"  class="form-control" name="birthday" placeholder="digite aqui" value="<?=$pessoa_fisica->data_nascimento ?? ''?>" />
+        <input type="date"  class="form-control" name="birthday" placeholder="digite aqui" value="<?=$pessoa_fisica->data_nascimento ?? Date('Y-m-d')?>" />
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Numero documento</label>
-        <input type="text" class="form-control" name="doc" id="doc" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
+        <input type="text" class="form-control" name="doc" id="doc" placeholder="" maxlength="14" value="<?=$pessoa_fisica->doc ?? ''?>" />
         <div class="invalid-feedback" id="doc_error"></div>
       </div>
     </div>
@@ -117,7 +117,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Telefone de contato</label>
-        <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
+        <input type="phone" class="form-control" name="phone" id="phone" maxlength="15" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
         required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
         <div class="invalid-feedback">Telefone inválido</div>
       </div>
