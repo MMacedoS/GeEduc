@@ -121,7 +121,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Telefone</label>
-        <input type="phone" class="form-control" name="phone" id="phone" minlength="15" maxlength="16" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
+        <input type="phone" class="form-control" name="phone" id="phone" minlength="15" maxlength="16" placeholder="Ex.: (99) 99999-9999" value="<?=$pessoa_fisica->telefone ?? ''?>" 
         required/>
         <div class="invalid-feedback">Telefone inválido</div>
       </div>
