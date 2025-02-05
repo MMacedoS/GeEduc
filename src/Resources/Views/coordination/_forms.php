@@ -4,7 +4,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome Completo</label>
-        <input type="text" class="form-control" name="name" placeholder="Ex.: José dos Santos" value="<?=$pessoa_fisica->nome ?? ''?>" />
+        <input type="text" class="form-control" minlength="1" maxlength="100" id="name" name="name" required placeholder="Ex.: José dos Santos" value="<?=$pessoa_fisica->nome ?? ''?>" />
+        <div class="invalid-feedback" id="name_error"></div>
       </div>
     </div>
   </div>
@@ -15,7 +16,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Email de Acesso</label>
-        <input type="email" class="form-control" name="email" placeholder="Ex.: jose.santos@email.com" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <input type="email" class="form-control" required id="email" name="email" placeholder="Ex.: jose.santos@email.com" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <div class="invalid-feedback" id="email_error"></div>
       </div>
     </div>
   </div>
@@ -36,7 +38,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Tipo do Documento</label>
-        <select class="form-select" name="type_doc" id="type_doc">
+        <select class="form-select" name="type_doc" id="type_doc" required>
           <option value="CPF" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CPF') { echo 'selected';} ?>>CPF</option>
           <option value="CNH" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CNH') { echo 'selected';} ?>>CNH</option>
           <option value="RG" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'RG') { echo 'selected';} ?>>RG</option>
@@ -52,8 +54,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Nº do Documento</label>
-        <input type="text" class="form-control" name="doc" id="doc" placeholder="Ex.: 999-999-999-99" maxlength="14" value="<?=$pessoa_fisica->doc ?? ''?>" />
+        <label class="form-label" required>Nº do Documento</label>
+        <input type="text" class="form-control" name="doc" id="doc" placeholder="Ex.: 999.999.999-99" maxlength="14" value="<?=$pessoa_fisica->doc ?? ''?>" />
         <div class="invalid-feedback" id="doc_error"></div>
       </div>
     </div>
@@ -65,7 +67,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome da Mãe</label>
-        <input type="text" step="0" min="1" class="form-control" name="mother" placeholder="Ex.: Joana dos Santos" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <input type="text" step="0" min="1" minlength="1" maxlength="100" id="mother" class="form-control" name="mother" placeholder="Ex.: Joana dos Santos" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <div class="invalid-feedback" id="mother_error"></div>
       </div>
     </div>
   </div>
@@ -76,7 +79,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome do Pai</label>
-        <input type="text" step="0" min="1" class="form-control" name="father" placeholder="Ex.: João dos Santos" value="<?=$pessoa_fisica->nome_pai ?? ''?>" />
+        <input type="text" step="0" min="1" minlength="1" maxlength="100" id="father" class="form-control" name="father" placeholder="Ex.: João dos Santos" value="<?=$pessoa_fisica->nome_pai ?? ''?>" />
+        <div class="invalid-feedback" id="father_error"></div> 
       </div>
     </div>
   </div>
@@ -117,7 +121,7 @@
       <div class="m-0">
         <label class="form-label">Telefone</label>
         <input type="phone" class="form-control" name="phone" id="phone" placeholder="Ex.: (99) 99999-9999" value="<?=$pessoa_fisica->telefone ?? ''?>" 
-        required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$" minlength="15" maxlength="16"/>
+        required minlength="15" maxlength="16"/>
         <div class="invalid-feedback">Telefone inválido</div>
       </div>
     </div>
@@ -129,7 +133,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Graduação</label>
-        <input type="text" class="form-control" name="graduacao" placeholder="Ex.: Ciências Biológicas" value="<?=$coordenador->graduacao ?? ''?>" />
+        <input type="text" class="form-control" name="graduacao" required placeholder="Ex.: Ciências Biológicas" value="<?=$coordenador->graduacao ?? ''?>" />
       </div>
     </div>
   </div>
@@ -140,7 +144,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Endereço</label>
-        <input type="text" step="0" min="1" class="form-control" name="address" placeholder="Ex.: Rua Antônio Cornélio, 123" value="<?=$pessoa_fisica->endereco ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" required name="address" placeholder="Ex.: Rua Antônio Cornélio, 123" value="<?=$pessoa_fisica->endereco ?? ''?>" />
       </div>
     </div>
   </div>
@@ -156,4 +160,66 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const nameInput = $("#name");
+  const nameMotherInput = $("#mother");
+  const nameFatherInput = $("#father");
+  const emailInput = $("#email");
 
+  const clearError = (input) => {
+    $(input).removeClass("is-invalid");
+    $(input).addClass("is-valid");
+    $(`#${input.attr("id")}_error`).text("");
+  }
+
+  const validName = () => {
+    nameInput.on("blur", function () {
+      let value = $(this).val();
+
+      if(value.length < 1 || value.length > 100){
+        $(this).addClass("is-invalid");
+        $(`#${$(this).attr("id")}_error`).text("O nome deve ter entre 1 e 100 caracteres");
+        return;
+      }
+
+      clearError($(this));
+    })
+  }
+
+  const validNameMother = () => {
+    nameMotherInput.on("blur", function () {
+      let value = $(this).val();
+
+      if(value.length < 1 || value.length > 100){
+        $(this).addClass("is-invalid");
+        $(`#${$(this).attr("id")}_error`).text("O nome da mãe deve ter entre 1 e 100 caracteres");
+        return;
+      }
+
+      clearError($(this));
+    })
+  }
+
+  const validNameFather = () => {
+    nameFatherInput.on("blur", function () {
+      let value = $(this).val();
+
+      if(value.length < 1 || value.length > 100){
+        $(this).addClass("is-invalid");
+        $(`#${$(this).attr("id")}_error`).text("O nome do pai deve ter entre 1 e 100 caracteres");
+        return;
+      }
+
+      clearError($(this));
+    })
+  }
+
+  
+
+  $(document).ready(function () {
+    validName();
+    validNameMother();
+    validNameFather();
+  })
+</script>
