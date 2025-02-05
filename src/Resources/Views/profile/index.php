@@ -80,8 +80,10 @@
                                                 <option <?= (isset($access) && $access == '') ? 'selected' : ''?> value="">Ambos</option>
                                                 <option value="administrativo" <?= (isset($access) && $access == "administrativo") ? 'selected' : ''?>>Administrativo</option>
                                                 <option value="coordenador" <?= (isset($access) && $access == "coordenador") ? 'selected' : ''?>>Coordenador</option>
+                                                <option value="comunicacao" <?= (isset($access) && $access == "comunicacao") ? 'selected' : ''?>>Comunicação</option>
                                                 <option value="estudante" <?= (isset($access) && $access == "estudante") ? 'selected' : ''?>>Estudante</option>
                                                 <option value="professor" <?= (isset($access) && $access == "professor") ? 'selected' : ''?>>Professor</option>
+                                                <option value="responsavel_legal" <?= (isset($access) && $access == "responsavel_legal") ? 'selected' : ''?>>Responsável Legal</option>
                                                 <option value="secretaria" <?= (isset($access) && $access == "secretaria") ? 'selected' : ''?>>Secretaria</option>
                                             </select>
                                         </div>
