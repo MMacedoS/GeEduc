@@ -38,6 +38,7 @@
       <div class="m-0">
         <label class="form-label">Email de acesso</label>
         <input type="email" class="form-control" name="email" required id="email" placeholder="Ex.: jose.santos@escolacesp.com" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <div class="invalid-feedback" id="email_error"></div>
       </div>
     </div>
   </div>
@@ -47,7 +48,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Data Nascimento</label>
+        <label class="form-label">Data de Nascimento</label>
         <input type="date"  class="form-control" name="birthday" value="<?=$pessoa_fisica->data_nascimento ?? ''?>" />
       </div>
     </div>
@@ -76,7 +77,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Tipo documento</label>
+        <label class="form-label">Tipo do Documento</label>
         <select class="form-select" name="type_doc" id="type_doc">
           <option value="CPF" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CPF') { echo 'selected';} ?>>CPF</option>
           <option value="CNH" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CNH') { echo 'selected';} ?>>CNH</option>
@@ -106,7 +107,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome da Mãe</label>
-        <input type="text" step="0"id="mother"  min="1" required minlength="1" maxlength="100" class="form-control" name="mother" placeholder="Ex.: Joana dos Santos" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <input type="text" step="0"id="mother" min="1" required minlength="1" maxlength="100" class="form-control" name="mother" placeholder="Ex.: Joana dos Santos" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
         <div class="invalid-feedback" id="mother_error"></div>
       </div>
     </div>
