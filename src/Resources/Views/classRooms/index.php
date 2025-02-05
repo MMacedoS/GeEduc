@@ -46,7 +46,7 @@
                 <div class="accordion-item bg-transparent">
                     <h2 class="accordion-header" id="headingSpecialTitleTwo">
                         <button 
-                            class=" bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" 
+                            class="bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" 
                             type="button" data-bs-toggle="collapse"
                             data-bs-target="#filters-classrooms" 
                             aria-expanded="false"
