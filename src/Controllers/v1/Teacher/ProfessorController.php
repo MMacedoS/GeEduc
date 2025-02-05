@@ -184,11 +184,19 @@ class ProfessorController extends Controller
                 $professor->id
             );
 
-        return $this->router->view('/teacher/my-disciplines/index', 
-            [
-                'active' => 'teacher',  
-                'disciplinas' => $class_discipline
-            ]
-        );
+        $perPage = 10; 
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($class_discipline, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+
+        $data = [
+            'disciplinas' => $class_discipline,
+            'links' => $paginator->links(),
+            'active' => 'teacher',
+            'name_discipline' => $params['name_discipline'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ];
+
+        return $this->router->view('/teacher/my-disciplines/index', $data);
     }
 }
