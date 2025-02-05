@@ -33,7 +33,7 @@ class DisciplinaRepository{
             $bindings[':search'] = '%' . $params['search'] . '%';
         }   
 
-        if (isset($params['active'])) {
+        if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "d.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
         }

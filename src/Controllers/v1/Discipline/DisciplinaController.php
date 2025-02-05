@@ -17,11 +17,17 @@ class DisciplinaController extends Controller{
     }
 
     public function index(Request $request){
+        $params = $request->getQueryParams();
+        
         if(!hasPermission('visualizar disciplinas')){
             return $this->router->redirect('disciplinas?error=442');
         }
 
-        $disciplinas = $this->disciplinaRepository->allDisciplines();
+        $disciplinas = $this->disciplinaRepository->allDisciplines([
+            'search' => $params['name_discipline'] ?? null,
+            'active' => $params['situation'] ?? null
+        ]);
+        
         $perPage = 10; 
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($disciplinas, $perPage, $currentPage);
@@ -29,10 +35,13 @@ class DisciplinaController extends Controller{
 
         $data = [
             'disciplinas' => $paginatedBoards,
-            'links' => $paginator->links()
+            'links' => $paginator->links(),
+            'active' => 'pedagogico',
+            'name_discipline' => $params['name_discipline'] ?? null,
+            'situation' => $params['situation'] ?? null
         ];
 
-        return $this->router->view('discipline/index', ['active' => 'pedagogico', 'data' => $data]);
+        return $this->router->view('discipline/index', $data);
     }
 
     public function create(){
