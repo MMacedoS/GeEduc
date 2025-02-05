@@ -49,9 +49,9 @@ class UsuarioController extends Controller
             'active' => 'register',
             'usuarios' => $paginatedBoards,
             'links' => $paginator->links(),
-            'searchFilter' => $params['name_email'],
-            'access' => $params['access'],
-            'situation' => $params['situation']
+            'searchFilter' => $params['name_email'] ?? null,
+            'access' => $params['access'] ?? null,
+            'situation' => $params['situation'] ?? null
         ]);
     }
 
