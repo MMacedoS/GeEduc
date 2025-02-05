@@ -121,6 +121,7 @@ class EstudanteMensalidadeController extends Controller
                     "estudantes/$student_id/mensalidades?error=442"
                 );
             }
+            return $this->router->redirect("estudantes/$student_id/mensalidades");
         }
 
         $validator = new Validator($data);
@@ -138,18 +139,22 @@ class EstudanteMensalidadeController extends Controller
             ]);
         }
 
-        $data["studante_monthly_id"] = $student_mensalidade->id;
+        try {
+            $data["studante_monthly_id"] = $student_mensalidade->id;
 
-        $created = $this->mensalidadeRepository->create($data);
+            $created = $this->mensalidadeRepository->create($data);
 
-        if (is_null($created)) {
-            return $this->router->view("/student/student-monthly/create", [
-                "active" => "register",
-                "errors" => $validator->getErrors(),
-            ]);
+            if (is_null($created)) {
+                return $this->router->view("/student/student-monthly/create", [
+                    "active" => "register",
+                    "errors" => $validator->getErrors(),
+                ]);
+            }
+
+            return $this->router->redirect("estudantes/$student_id/mensalidades");
+        } catch (\Throwable $th) {
+            return $this->router->redirect("estudantes/$student_id/mensalidades");
         }
-
-        return $this->router->redirect("estudantes/$student_id/mensalidades");
     }
 
     public function edit(

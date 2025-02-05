@@ -26,7 +26,7 @@ class EstudanteMensalidade {
         if (isset($data['id'])) {
             $mensalidade->id = $data['id'];
         }
-        if (isset($data['uuid'])) {
+        if (!isset($data['uuid'])) {
             $mensalidade->uuid = $mensalidade->generateUUID();
         }
         if (isset($data['active'])) {
