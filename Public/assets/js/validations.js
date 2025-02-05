@@ -5,6 +5,9 @@ $(document).ready(function() {
 	const cnpjCompanyInput = $('#cnpj_company');
 	const phoneCompanyInput = $('#phone_company');
 	const emailInput = $("#email");
+	const nameInput = $("#name");
+  const nameMotherInput = $("#mother");
+  const nameFatherInput = $("#father");
 
 	const clearError = (input) => {
 		$(input).removeClass("is-invalid");
@@ -161,8 +164,8 @@ $(document).ready(function() {
 	
 	const validPhoneCompany = () => {
 		phoneCompanyInput.on('input', function() {
-				var telefone = $(this).val();
-				var regex = /^\(?([0-9]{2})\)?[-. ]?([0-9]{1})[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$/;
+			var telefone = $(this).val();
+			var regex = /^\(?([0-9]{2})\)?[-. ]?([0-9]{1})[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$/;
 			
 			if (!regex.test(telefone)) {
 				 $(this).addClass('is-invalid');
@@ -193,12 +196,57 @@ $(document).ready(function() {
     });
   }
 
+  const validName = () => {
+    nameInput.on("blur", function () {
+      let value = $(this).val();
+
+      if(value.length < 1 || value.length > 100){
+        $(this).addClass("is-invalid");
+        $(`#${$(this).attr("id")}_error`).text("O nome deve ter entre 1 e 100 caracteres");
+        return;
+      }
+
+      clearError($(this));
+    })
+  }
+
+  const validNameMother = () => {
+    nameMotherInput.on("blur", function () {
+      let value = $(this).val();
+
+      if(value.length < 1 || value.length > 100){
+        $(this).addClass("is-invalid");
+        $(`#${$(this).attr("id")}_error`).text("O nome da mãe deve ter entre 1 e 100 caracteres");
+        return;
+      }
+
+      clearError($(this));
+    })
+  }
+
+  const validNameFather = () => {
+    nameFatherInput.on("blur", function () {
+      let value = $(this).val();
+
+      if(value.length < 1 || value.length > 100){
+        $(this).addClass("is-invalid");
+        $(`#${$(this).attr("id")}_error`).text("O nome do pai deve ter entre 1 e 100 caracteres");
+        return;
+      }
+
+      clearError($(this));
+    })
+  }
+
 	validPhone();
 	validTypeDoc();
   validDoc();
 	validCnpjCompany();
 	validPhoneCompany();
 	validEmail();
+	validName();
+	validNameMother();
+	validNameFather();
 
 	$('#customers').select2();
 	  const bankMapping = {
