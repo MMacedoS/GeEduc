@@ -27,19 +27,26 @@ class PessoaContatoController extends Controller
     }
 
     public function index(Request $request){
-        $pessoas = $this->pessoaContatoRepository->allPersons();
+        $params = $request->getQueryParams();
+        $pessoas = $this->pessoaContatoRepository->allPersons([
+            'name_email' => $params['name_email'] ?? null,
+            'ativo' => $params['situation'] ?? null,
+        ]);
+
         $perPage = 10;
         $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($pessoas, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
+        
+        $data = [
+            'active' => 'responsible_legal',  
+            'pessoas' => $paginatedBoards,
+            'links' => $paginator->links(),
+            'name_email' => $params['name_email'] ?? null,
+            'situation' => $params['situation'] ?? null,
+        ];
 
-        return $this->router->view('/person/index', 
-            [
-                'active' => 'responsible_legal',  
-                'pessoas' => $paginatedBoards,
-                'links' => $paginator->links()
-            ]
-        );
+        return $this->router->view('/person/index', $data);
     }
 
     public function create(Request $request)

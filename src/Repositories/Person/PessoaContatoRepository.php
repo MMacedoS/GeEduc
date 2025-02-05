@@ -59,7 +59,12 @@ class PessoaContatoRepository {
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['ativo'])) {
+        if (isset($params['name_email'])) {
+            $conditions[] = "(pf.nome LIKE :name_email OR pf.email LIKE :name_email)";
+            $bindings[':name_email'] = "%" . $params['name_email'] . "%";
+        }
+
+        if (isset($params['ativo']) && $params['ativo'] != '') {
             $conditions[] = "pc.ativo = :ativo";
             $bindings[':ativo'] = $params['ativo'];
         }
