@@ -76,6 +76,9 @@ class DashboardController extends Controller
 
     private function indexStudents() 
     {
+        $data = [
+            'active' => 'dashboard',
+        ];  
         $pessoaAuth = $this->authUser();
 
         $estudante = $this->estudanteRepository
@@ -95,27 +98,28 @@ class DashboardController extends Controller
                     'class_id' => $estudante_turma->turma_id
                 ]
             );
+        
+        if(isset($frequencias) && !empty($frequencias)) {
+            $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
+    
+            $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
+    
+            $total_faltas = $this->sumAbsences($frequencias); 
+            $carga = $carga_horaria->carga ?? 80;
+    
+            $presenca = $carga - $total_faltas;
+            $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
+            $percentual_presenca = round(($presenca / $carga) * 100, 2);
 
-        $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
-
-        $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
-
-        $total_faltas = $this->sumAbsences($frequencias); 
-        $carga = $carga_horaria->carga ?? 80;
-
-        $presenca = $carga - $total_faltas;
-        $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
-        $percentual_presenca = round(($presenca / $carga) * 100, 2);
+            array_merge($data, ['percentual_faltas' => $percentual_faltas,
+            'percentual_presenca' => $percentual_presenca,
+            'total_faltas' => $total_faltas,
+            'presenca' => $presenca]);
+        }
 
         return $this->router->view(
             'dashboard/index',
-            [
-                'active' => 'dashboard',
-                'percentual_faltas' => $percentual_faltas,
-                'percentual_presenca' => $percentual_presenca,
-                'total_faltas' => $total_faltas,
-                'presenca' => $presenca,
-            ]
+            $data
         ); 
     }
 
