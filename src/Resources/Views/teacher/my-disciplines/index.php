@@ -55,12 +55,13 @@
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
-                                    <th class="text-center">Cod.</th>
-                                    <th class="text-center">Componente Curricular</th>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Disciplina</th>
+                                    <th class="text-center">Turma</th>
                                     <th class="text-center">Ano Letivo</th>
                                     <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>
-                                     <th>Ação</th>
-                                     <? } ?>
+                                    <th>Ação</th>
+                                    <? } ?>
                                 </tr>
                             </thead>
                             
@@ -71,8 +72,10 @@
                                         <td class="text-center"><?=$disciplina->id?></td>
                                         <td class="fw-bold text-center"> 
                                             <?=getJsonToObject($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
-                                            ---
+                                        </td>
+                                        <td class="fw-bold text-center"> 
                                             <?=getJsonToObject($disciplina->turma)->nome ?? 'não identificado'?>
+                                        </td>
                                         <td class="text-center"> <?=$disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>
