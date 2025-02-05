@@ -32,15 +32,13 @@ class CoordenadorController extends Controller{
             'active' => 'pedagogico',  
             'coordenadores' => $paginatedBoards,
             'links' => $paginator->links(),
-            'searchFilter'=> $params['name_email'],
-            'situation' => $params['situation']
+            'searchFilter'=> $params['name_email'] ?? null,
+            'situation' => $params['situation'] ?? null
         ]);
     }
 
     public function create(Request $request)
-    {
-        // $coordinators = $this->CoordenadorRepository->allCoordinator();
-        
+    {  
         return $this->router->view('/coordination/create', ['active' => 'pedagogico']);
     }
 
