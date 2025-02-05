@@ -3,7 +3,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Dia de Pagamento</label>
-        <input type="number" step="0" min="1" max="30" name="monthly_day" id="expiration_day" class="form-control" value="<?= $mensalidade->dia_vencimento ?? $estudante_mensalidade->dia_mensalidade ?>">
+        <input type="number" step="0" min="1" max="30" name="monthly_day" id="expiration_day" class="form-control" value="<?= $mensalidade->dia_vencimento ?? $estudante_mensalidade->dia_mensalidade ?? 15 ?>">
       </div>
     </div>
   </div>
