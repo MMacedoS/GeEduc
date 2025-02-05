@@ -41,19 +41,14 @@ class CoordenadorRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['nome'])) {
-            $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['nome'];
+        if (isset($params['name_email'])) {
+            $conditions[] = "(pf.nome LIKE :name_email or pf.email LIKE :name_email)";
+            $bindings[':name_email'] = '%' . $params['name_email'] . '%';
         }
 
-        if (isset($params['email'])) {
-            $conditions[] = "pf.email = :email";
-            $bindings[':email'] = $params['email'];
-        }
-
-        if (isset($params['ativo'])) {
-            $conditions[] = "c.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+        if (isset($params['situation']) && $params['situation'] != "") {
+            $conditions[] = "c.ativo = :situation";
+            $bindings[':situation'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {

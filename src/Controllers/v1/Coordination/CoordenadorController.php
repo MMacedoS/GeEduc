@@ -21,23 +21,20 @@ class CoordenadorController extends Controller{
     }
 
     public function index(Request $request){
-        $coordenadores = $this->coordenadorRepository->allCoordinators();
+        $params = $request->getQueryParams();
+        $coordenadores = $this->coordenadorRepository->allCoordinators($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($coordenadores, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
-
-        $data = [
-            'coordenadores' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
         
-        return $this->router->view('/coordination/index', 
-            [
-                'active' => 'pedagogico',  
-                'data' => $data
-            ]
-        );
+        return $this->router->view('/coordination/index', [
+            'active' => 'pedagogico',  
+            'coordenadores' => $paginatedBoards,
+            'links' => $paginator->links(),
+            'searchFilter'=> $params['name_email'],
+            'situation' => $params['situation']
+        ]);
     }
 
     public function create(Request $request)
