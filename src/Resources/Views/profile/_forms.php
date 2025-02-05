@@ -55,6 +55,7 @@
               <option value="administrativo" <?php if(isset($usuario->painel) && $usuario->painel == 'administrativo') { echo 'selected'; } ?>>Administrativo</option>
               <option value="coordenador" <?php if(isset($usuario->painel) && $usuario->painel == 'coordenador') { echo 'selected'; } ?>>Coordenador</option>
               <option value="professor" <?php if(isset($usuario->painel) && $usuario->painel == 'professor') { echo 'selected'; } ?>>Professor</option>
+              <option value="responsavel_legal" <?php if(isset($usuario->painel) && $usuario->painel == 'responsavel_legal') { echo 'selected'; } ?>>Responsavel Legal</option>
               <option value="secretaria" <?php if(isset($usuario->painel) && $usuario->painel == 'secretaria') { echo 'selected'; } ?>>Secretaria</option>
           </select>
         </div>
