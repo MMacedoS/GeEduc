@@ -153,7 +153,7 @@
                            <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nome</th>
+                                    <th>Turma</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Coordenador</th>
                                     <th>Situação</th>
@@ -170,7 +170,7 @@
                                         <td><?=$turma->id?></td>
                                         <td class="fw-bold"> <?=$turma->nome ?? 'não identificado'?>
                                         </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell text-capitalize">
                                         <?=$turma->turno ?? 'não identificado'?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">

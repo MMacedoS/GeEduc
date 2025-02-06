@@ -4,7 +4,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Plano</label>
-        <input type="text" class="form-control" name="name" placeholder="digite aqui" value="<?=$plano->nome ?? ''?>" />
+        <input type="text" class="form-control" required minlength="1" maxlength="100" name="name" placeholder="Ex.: Plano Premium" value="<?=$plano->nome ?? ''?>" />
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Valor</label>
-        <input type="number" step="0.01" min="0" class="form-control" name="amount" placeholder="digite aqui" value="<?=$plano->valor ?? '0.0'?>" />
+        <input type="number" step="0.01" min="0" class="form-control" name="amount" required placeholder="digite aqui" value="<?=$plano->valor ?? '0.0'?>" />
       </div>
     </div>
   </div>
@@ -26,7 +26,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Descrição</label>
-        <input type="text"  class="form-control" name="description" placeholder="digite aqui" value="<?=$plano->descricao ?? ''?>" />
+        <input type="text"  class="form-control" required name="description" placeholder="Ex.: Acesso a material didático, atividades extracurriculares e suporte pedagógico." value="<?=$plano->descricao ?? ''?>" />
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Situação</label>
-        <select name="active" class="form-control" id="">
+        <select name="active" required class="form-control">
             <option value="0" <?php if(isset($plano->ativo) && $plano->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
             <option value="1" selected <?php if(isset($plano->ativo) && $plano->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
         </select>

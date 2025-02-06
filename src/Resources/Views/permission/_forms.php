@@ -4,7 +4,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Permissão</label>
-        <input type="text" step="0" min="1" class="form-control" name="name" placeholder="digite aqui" value="<?=$permissao->name ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" id="name" name="name" required placeholder="Ex.: cadastrar notas" value="<?=$permissao->name ?? ''?>" />
+        <div class="invalid-feedback" id="name_error"></div>
       </div>
     </div>
   </div>
@@ -15,7 +16,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Descrição</label>
-        <input type="text" step="0" min="1" class="form-control" name="description" placeholder="digite aqui" value="<?=$permissao->description ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" name="description" required placeholder="Ex.: Essa permissão permite..." value="<?=$permissao->description ?? ''?>" />
       </div>
     </div>
   </div>

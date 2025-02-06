@@ -73,7 +73,6 @@ class ProfessorController extends Controller
             'email' => 'required',
             'mother' => 'required',
             'doc' => 'required',
-
         ];
 
         if (!$validator->validate($rules)) {
