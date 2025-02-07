@@ -3,24 +3,32 @@
 namespace App\Controllers\v1\MonthlyFees;
 
 use App\Controllers\Controller;
+use App\Repositories\Bank_account\ContaBancariaRepository;
 use App\Repositories\MonthlyFees\MensalidadeRepository;
 use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Student\EstudanteMensalidadeRepository;
 use App\Request\Request;
+use App\Services\BoletoBBService;
+use App\Utils\BoletoTrait;
+use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
 class MensalidadeController extends Controller
 {
+    use BoletoTrait;
+
     protected $mensalidadeRepository;
     protected $estudanteMensalidadeRepository;
     protected $planosRepository;
+    protected $contaBancariaRepository;
 
     public function __construct(){
         parent::__construct();
         $this->mensalidadeRepository = new MensalidadeRepository();
         $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
         $this->planosRepository = new PlanoRepository();
+        $this->contaBancariaRepository = new ContaBancariaRepository();
     }
 
     public function index(Request $request){
@@ -125,12 +133,25 @@ class MensalidadeController extends Controller
         if(!hasPermission('editar mensalidade')){
             return $this->router->redirect('mensalidades?error=442');
         }
+        
+        $mensalidade = $this->mensalidadeRepository->allMonthlyfees(['uuid' => $id]);
 
-        $mensalidade = $this->mensalidadeRepository->findByUuid($id);
+        $banco = $this->contaBancariaRepository->findById(1);
 
         if(is_null($mensalidade)) {
             return $this->router->redirect("mensalidades?error");
         }
+        
+        $boletoservice = new BoletoBBService();
+
+
+        $dados = $this->prepareTicketData($mensalidade[0], $banco);
+
+        $boleto = $boletoservice->emitirBoleto($dados);
+
+        LoggerHelper::logInfo(json_encode($boleto));
+
+        dd(json_encode($boleto));
 
         $student = $this->estudanteMensalidadeRepository->allMonthlyfees(['active' => 1]);
 

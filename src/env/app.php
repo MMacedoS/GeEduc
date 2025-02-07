@@ -24,3 +24,8 @@ const CONFIG_EMAIL = [
     'from_email' => 'contato@escolacesp.com.br', // E-mail do remetente
     'from_name' => 'Gestor Educacional' // Nome do remetente
 ];
+
+const TOKEN_URL_BB = 'https://oauth.sandbox.bb.com.br/oauth/token';
+const BASIC_TOKEN = 'Basic ZXlKcFpDSTZJbUV3T1dFek0ySXRZallpTENKamIyUnBaMjlRZFdKc2FXTmhaRzl5SWpvd0xDSmpiMlJwWjI5VGIyWjBkMkZ5WlNJNk1USTBNamsyTENKelpYRjFaVzVqYVdGc1NXNXpkR0ZzWVdOaGJ5STZNWDA6ZXlKcFpDSTZJbUl4WkROaU5qUmtMVFU0TXprdE5HUXdaUzFoWlRSakxUVXlPVE5sWXpFeVptUmhNaUlzSW1OdlpHbG5iMUIxWW14cFkyRmtiM0lpT2pBc0ltTnZaR2xuYjFOdlpuUjNZWEpsSWpveE1qUXlPVFlzSW5ObGNYVmxibU5wWVd4SmJuTjBZV3hoWTJGdklqb3hMQ0p6WlhGMVpXNWphV0ZzUTNKbFpHVnVZMmxoYkNJNk1Td2lZVzFpYVdWdWRHVWlPaUpvYjIxdmJHOW5ZV05oYnlJc0ltbGhkQ0k2TVRjek9EY3hNVEl6TVRjM00zMA==';
+const GW_APP_KEY = "5d3a0e9d39378f829daeb7fcea9a3239";
+const API_BB_URL = "https://api.hm.bb.com.br/cobrancas/v2/";

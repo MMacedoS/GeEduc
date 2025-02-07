@@ -23,35 +23,46 @@ class MensalidadeRepository {
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT
-                m.estudante_mensalidade_id,
-                m.id,
-                JSON_OBJECT(
-                    'id', em.id,
-                    'uuid', em.uuid,
-                    'estudante', JSON_OBJECT(
-                        'id', e.id,
-                        'uuid', e.uuid,
-                        'nome', pf.nome
-                    )
-                ) AS estudante_mensalidade,
-                JSON_ARRAYAGG(
+                    m.estudante_mensalidade_id,
+                    m.id,
                     JSON_OBJECT(
-                        'id', m.id,
-                        'uuid', m.uuid,
-                        'situacao', m.situacao,
-                        'valor', m.valor,
-                        'data_vencimento', m.data_vencimento,
-                        'created_at', m.created_at
-                    )
-                ) AS mensalidades,
-                MAX(m.data_vencimento) AS created_at
-            FROM " . self::TABLE . " m
-            LEFT JOIN estudante_mensalidade em 
-            ON em.id = m.estudante_mensalidade_id 
-            LEFT JOIN estudantes e
-            ON e.id = em.estudante_id 
-            LEFT JOIN pessoa_fisica pf 
-            ON e.pessoa_fisica_id = pf.id";
+                        'id', em.id,
+                        'uuid', em.uuid,
+                        'estudante', JSON_OBJECT(
+                            'id', e.id,
+                            'uuid', e.uuid,
+                            'nome', pf.nome
+                        ),
+                        'responsavel', JSON_OBJECT(
+                            'id', pf_responsavel.id,
+                            'uuid', pf_responsavel.uuid,
+                            'nome', pf_responsavel.nome,
+                            'cpf', pf_responsavel.doc
+                        )
+                    ) AS estudante_mensalidade,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', m.id,
+                            'uuid', m.uuid,
+                            'situacao', m.situacao,
+                            'valor', m.valor,
+                            'data_vencimento', m.data_vencimento,
+                            'created_at', m.created_at
+                        )
+                    ) AS mensalidades,
+                    MAX(m.data_vencimento) AS created_at
+                FROM " . self::TABLE . " m
+                LEFT JOIN estudante_mensalidade em 
+                    ON em.id = m.estudante_mensalidade_id 
+                LEFT JOIN estudantes e
+                    ON e.id = em.estudante_id 
+                LEFT JOIN pessoa_fisica pf 
+                    ON e.pessoa_fisica_id = pf.id
+                LEFT JOIN pessoa_contato pc 
+                    ON e.pessoa_contato_id = pc.id
+                LEFT JOIN pessoa_fisica pf_responsavel 
+                    ON pc.pessoa_fisica_id = pf_responsavel.id
+                GROUP BY m.estudante_mensalidade_id, m.id, em.id, e.id, pf.id, pf_responsavel.id;";
 
         $conditions = [];
         $bindings = [];
@@ -59,6 +70,11 @@ class MensalidadeRepository {
         if (isset($params['situation'])) {
         $conditions[] = "m.situacao = :situacao";
         $bindings[':situacao'] = $params['situation'];
+        }
+
+        if (isset($params['uuid'])) {
+            $conditions[] = "m.uuid = :uuid";
+            $bindings[':uuid'] = $params['uuid'];
         }
 
         if (isset($params['student_monthlyfees_id'])) {

@@ -110,7 +110,7 @@ class ContaBancariaRepository {
             return null;
         }
 
-        $conta->update($data);
+        $conta->update($data, $conta);
 
         try {
             $stmt = $this->conn->prepare(

@@ -98,9 +98,9 @@ class ContaBancariaController extends Controller
     {
         $data = $request->getBodyParams();
 
-        $turma = $this->contaBancariaRepository->findByUuid($id);
+        $bank = $this->contaBancariaRepository->findByUuid($id);
 
-        if (is_null($turma)) {
+        if (is_null($bank)) {
             return $this->router->view('bank-account/', ['active' => 'register', 'danger' => true]);
         }
 
@@ -124,7 +124,7 @@ class ContaBancariaController extends Controller
             );
         }
         
-        $updated = $this->contaBancariaRepository->update($data, $turma->id);
+        $updated = $this->contaBancariaRepository->update($data, $bank->id);
 
         if(is_null($updated)) {            
             return $this->router->view('bank-account/edit', ['active' => 'register', 'danger' => true]);

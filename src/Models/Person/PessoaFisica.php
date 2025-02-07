@@ -44,7 +44,7 @@ class PessoaFisica {
         $pessoa_fisica->genero = $data['gender'] ?? null;     
         $pessoa_fisica->doc = $data['doc'];   
         $pessoa_fisica->tipo_doc = $data['type_doc'];   
-        $pessoa_fisica->ativo = (int)$data['active']; 
+        $pessoa_fisica->ativo = (int)$data['active'] ?? 1; 
         $pessoa_fisica->created_at = $data['created_at'] ?? null;
         $pessoa_fisica->updated_at = $data['updated_at'] ?? null;
         return $pessoa_fisica;
