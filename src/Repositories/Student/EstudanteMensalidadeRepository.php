@@ -29,17 +29,27 @@ class EstudanteMensalidadeRepository {
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT 
-           m.*,
+           em.*,
             json_object(
             'id', e.id,
             'uuid', e.uuid,
             'nome', pf.nome
-            ) as 'estudantes'
-        FROM " . self::TABLE . " m 
+            ) as 'estudantes',
+            json_object(
+            'id', e.id,
+            'uuid', e.uuid,
+            'nome', pf.nome,
+            'doc', pf.doc,
+            'data_nascimento', pf.data_nascimento,
+            'dia_mensalidade', em.dia_mensalidade,
+            'valor', m.valor
+            ) as contrato_infos
+        FROM " . self::TABLE . " em 
         LEFT JOIN estudantes e
-        on e.id = m.estudante_id 
+        on e.id = em.estudante_id 
         LEFT JOIN pessoa_fisica pf 
         on e.pessoa_fisica_id = pf.id
+        LEFT JOIN mensalidades m on m.estudante_mensalidade_id = em.id
         ";
         $conditions = [];
         $bindings = [];
@@ -70,7 +80,7 @@ class EstudanteMensalidadeRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS);        
     }
 
     public function create(array $data)
