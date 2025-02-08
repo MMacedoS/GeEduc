@@ -115,6 +115,11 @@
                                         </a>
                                     </li>
                                     <? }?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/contratos">
+                                            <span>Contratos</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <?php } if (hasPermission('visualizar site')) {?>

@@ -4,6 +4,7 @@ use App\Config\Auth;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
+use App\Controllers\v1\Contracts\ContratoController;
 use App\Controllers\v1\GradeReport\GradeReportController;
 use App\Controllers\v1\ClassRooms\TurmaController;
 use App\Controllers\v1\Dashboard\DashboardController;
@@ -57,6 +58,7 @@ $notaController = new NotaController();
 $gradeReportController = new GradeReportController();
 $siteAlbumController = new SiteAlbumController();
 $recuperarSenhaController = new RecuperarSenhaController();
+$contratoController = new ContratoController();
 
 $router->create("GET", "/recuperar", [$recuperarSenhaController, "index"]);
 $router->create("POST", "/recuperar", [$recuperarSenhaController, "store"]);
@@ -273,6 +275,7 @@ $router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUp
 $router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
 $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
 
+$router->create('GET', '/contratos', [$contratoController, 'index'], $auth);
 
 return $router;
 
