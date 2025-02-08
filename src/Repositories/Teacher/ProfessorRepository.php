@@ -3,13 +3,14 @@
 namespace App\Repositories\Teacher;
 
 use App\Config\Database;
+use App\Interfaces\Teacher\IProfessorRepository;
 use App\Models\Teacher\Professor;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ProfessorRepository {
+class ProfessorRepository implements IProfessorRepository {
     const CLASS_NAME = Professor::class;
     const TABLE = 'professores';
     

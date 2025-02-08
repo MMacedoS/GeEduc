@@ -3,11 +3,12 @@
 namespace App\Repositories\Frequencies;
 
 use App\Config\Database;
+use App\Interfaces\Frequencies\IFrequenciaRepository;
 use App\Models\Frequencies\Frequencia;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class FrequenciaRepository {
+class FrequenciaRepository implements IFrequenciaRepository {
     const CLASS_NAME = Frequencia::class;
     const TABLE = 'frequencias';
 

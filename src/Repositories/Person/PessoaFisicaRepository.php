@@ -3,11 +3,12 @@
 namespace App\Repositories\Person;
 
 use App\Config\Database;
+use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Models\Person\PessoaFisica;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaFisicaRepository {
+class PessoaFisicaRepository implements IPessoaFisicaRepository {
     const CLASS_NAME = PessoaFisica::class;
     const TABLE = 'pessoa_fisica';
     

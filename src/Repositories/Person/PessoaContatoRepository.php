@@ -3,6 +3,7 @@
 namespace App\Repositories\Person;
 
 use App\Config\Database;
+use App\Interfaces\Person\IPessoaContatoRepository;
 use App\Models\Person\PessoaContato;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
@@ -10,7 +11,7 @@ use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaContatoRepository {
+class PessoaContatoRepository implements IPessoaContatoRepository {
 
     const CLASS_NAME = PessoaContato::class;
     const TABLE = 'pessoa_contato';

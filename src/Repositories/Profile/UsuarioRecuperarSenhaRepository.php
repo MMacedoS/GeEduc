@@ -3,12 +3,13 @@
 namespace App\Repositories\Profile;
 
 use App\Config\Database;
+use App\Interfaces\Profile\IUsuarioRecuperarSenhaRepository;
 use App\Models\Profile\UsuarioRecuperarSenha;
 use App\Repositories\Traits\FindTrait;
 use App\Services\EmailService;
 use App\Utils\LoggerHelper;
 
-class UsuarioRecuperarSenhaRepository {
+class UsuarioRecuperarSenhaRepository implements IUsuarioRecuperarSenhaRepository {
     const CLASS_NAME = UsuarioRecuperarSenha::class;
     const TABLE = 'usuario_recuperar_senha';
     

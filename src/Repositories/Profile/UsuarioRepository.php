@@ -3,13 +3,14 @@
 namespace App\Repositories\Profile;
 
 use App\Config\Database;
+use App\Interfaces\Profile\IUsuarioRepository;
 use App\Models\Profile\Usuario;
 use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class UsuarioRepository {
+class UsuarioRepository implements IUsuarioRepository {
     const CLASS_NAME = Usuario::class;
     const TABLE = 'usuarios';
     

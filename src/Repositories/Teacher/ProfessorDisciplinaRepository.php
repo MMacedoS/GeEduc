@@ -3,11 +3,12 @@
 namespace App\Repositories\Teacher;
 
 use App\Config\Database;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Models\Teacher\ProfessorDisciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ProfessorDisciplinaRepository {
+class ProfessorDisciplinaRepository implements IProfessorDisciplinaRepository {
 
     const CLASS_NAME = ProfessorDisciplina::class;
     const TABLE = 'professor_disciplina';
