@@ -3,9 +3,9 @@
 namespace App\Controllers\v1\Teacher;
 
 use App\Controllers\Controller;
-use App\Repositories\Discipline\DisciplinaRepository;
-use App\Repositories\Teacher\ProfessorRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
+use App\Interfaces\Discipline\IDisciplinaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Teacher\IProfessorRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -17,11 +17,15 @@ class ProfessorDisciplinaController extends Controller{
     protected $disciplinaRepository;
     protected $professorDisciplinaRepository;
 
-    public function __construct(){
+    public function __construct(
+        IProfessorRepository $professorRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository,
+        IDisciplinaRepository $disciplinaRepository
+    ) {
         parent::__construct();
-        $this->professorRepository = new ProfessorRepository();
-        $this->disciplinaRepository = new DisciplinaRepository();
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
+        $this->professorRepository = $professorRepository;
+        $this->disciplinaRepository = $disciplinaRepository;
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository;
     }
 
     public function teacherLinkDiscipline(Request $request, $teacher_id){

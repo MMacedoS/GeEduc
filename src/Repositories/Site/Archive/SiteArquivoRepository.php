@@ -3,11 +3,12 @@
 namespace App\Repositories\Site\Archive;
 
 use App\Config\Database;
+use App\Interfaces\Site\Archive\ISiteArquivoRepository;
 use App\Models\Site\Archive\SiteArquivo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteArquivoRepository {
+class SiteArquivoRepository implements ISiteArquivoRepository {
 
     const CLASS_NAME = SiteArquivo::class;
     const TABLE = 'site_arquivos';

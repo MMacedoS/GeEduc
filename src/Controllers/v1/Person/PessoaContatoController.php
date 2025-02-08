@@ -4,9 +4,9 @@ namespace App\Controllers\v1\Person;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
-use App\Repositories\Person\PessoaContatoRepository;
-use App\Repositories\Person\PessoaFisicaRepository;
-use App\Repositories\Student\EstudanteRepository;
+use App\Interfaces\Person\IPessoaContatoRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Student\IEstudanteRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -19,11 +19,16 @@ class PessoaContatoController extends Controller
     protected $pessoaFisicaRepository;
     protected $estudanteRepository;
 
-    public function __construct(){
+    public function __construct(
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        IPessoaContatoRepository $pessoaContatoRepository,
+        IEstudanteRepository $estudanteRepository
+    )
+    {
         parent::__construct();
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
-        $this->pessoaContatoRepository = new PessoaContatoRepository();
-        $this->estudanteRepository = new EstudanteRepository();
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository;
+        $this->pessoaContatoRepository = $pessoaContatoRepository;
+        $this->estudanteRepository = $estudanteRepository;
     }
 
     public function index(Request $request){

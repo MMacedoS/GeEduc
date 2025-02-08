@@ -3,6 +3,7 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Interfaces\Student\IEstudanteRepository;
 use App\Models\Student\Estudante;
 use App\Repositories\Person\PessoaContatoRepository;
 use App\Repositories\Student\EstudanteMensalidadeRepository;
@@ -13,7 +14,7 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteRepository {
+class EstudanteRepository implements IEstudanteRepository {
 
     const CLASS_NAME = Estudante::class;
     const TABLE = 'estudantes';

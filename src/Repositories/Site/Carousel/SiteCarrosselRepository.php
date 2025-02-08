@@ -3,12 +3,13 @@
 namespace App\Repositories\Site\Carousel;
 
 use App\Config\Database;
+use App\Interfaces\Site\Carousel\ISiteCarrosselRepository;
 use App\Models\Site\Carousel\SiteCarrossel;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteCarrosselRepository {
+class SiteCarrosselRepository implements ISiteCarrosselRepository {
 
     const CLASS_NAME = SiteCarrossel::class;
     const TABLE = 'site_carousel';

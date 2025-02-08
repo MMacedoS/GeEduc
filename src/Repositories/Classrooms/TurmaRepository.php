@@ -3,12 +3,13 @@
 namespace App\Repositories\Classrooms;
 
 use App\Config\Database;
+use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Models\Classrooms\Turma;
 use App\Repositories\Coordination\CoordenadorTurmaRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaRepository {
+class TurmaRepository implements ITurmaRepository{
     const CLASS_NAME = Turma::class;
     const TABLE = 'turmas';
 
