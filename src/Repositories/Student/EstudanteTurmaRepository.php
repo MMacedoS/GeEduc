@@ -3,11 +3,12 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Models\Student\EstudanteTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteTurmaRepository {
+class EstudanteTurmaRepository implements IEstudanteTurmaRepository {
     const CLASS_NAME = EstudanteTurma::class;
     const TABLE = 'estudante_turma';
 

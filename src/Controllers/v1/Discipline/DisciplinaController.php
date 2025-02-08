@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Discipline;
 
 use App\Controllers\Controller;
-use App\Repositories\Discipline\DisciplinaRepository;
+use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -11,9 +11,11 @@ use App\Utils\Validator;
 class DisciplinaController extends Controller{
     protected $disciplinaRepository;
 
-    public function __construct(){
+    public function __construct(
+        IDisciplinaRepository $disciplinaRepository
+    ){
         parent::__construct();
-        $this->disciplinaRepository = new DisciplinaRepository();
+        $this->disciplinaRepository = $disciplinaRepository;
     }
 
     public function index(Request $request){

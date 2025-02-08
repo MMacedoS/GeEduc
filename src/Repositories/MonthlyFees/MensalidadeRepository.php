@@ -3,11 +3,12 @@
 namespace App\Repositories\MonthlyFees;
 
 use App\Config\Database;
+use App\Interfaces\MonthlyFees\IMensalidadeRepository;
 use App\Models\MonthlyFees\Mensalidade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class MensalidadeRepository {
+class MensalidadeRepository implements IMensalidadeRepository {
     const CLASS_NAME = Mensalidade::class;
     const TABLE = 'mensalidades';
 

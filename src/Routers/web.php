@@ -1,6 +1,8 @@
 <?php
 
+use App\Config\AppServiceProvider;
 use App\Config\Auth;
+use App\Config\Container;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
@@ -32,34 +34,55 @@ use App\Controllers\v1\Site\Album\SiteAlbumController;
 
 $router = new Router();
 $auth = new Auth();
-$dashboardController = new DashboardController();
-$usuarioController = new UsuarioController();
-$professorController = new ProfessorController();
-$professorDisciplinaController = new ProfessorDisciplinaController();
-$estudanteController = new EstudanteController();
-$permissaoController = new PermissaoController();
-$planoController = new PlanoController();
-$turmaController = new TurmaController();
-$contaBancariaController = new ContaBancariaController();
-$cargaHorariaController = new CargaHorariaController();
-$disciplinaController = new DisciplinaController();
-$periodoController = new PeriodoController();
-$estudanteTurmaController = new EstudanteTurmaController();
-$mensalidadeController = new MensalidadeController();
-$estudanteMensalidadeController = new EstudanteMensalidadeController();
-$turmaDisciplinaController = new TurmaDisciplinaController();
-$coordenadorController = new CoordenadorController();
-$atividadeController = new AtividadeController();
-$siteEventoController = new SiteEventoController();
-$siteCarrosselController = new SiteCarrosselController();
-$frequenciaController = new FrequenciaController();
-$pessoaContatoController = new PessoaContatoController();
-$notaController = new NotaController();
-$gradeReportController = new GradeReportController();
-$siteAlbumController = new SiteAlbumController();
-$recuperarSenhaController = new RecuperarSenhaController();
-$contratoController = new ContratoController();
 
+$container = new Container();
+$appServiceProvider = new AppServiceProvider($container);
+$appServiceProvider->registerDependencies();
+
+/////created container
+
+$atividadeController = $container->get(AtividadeController::class);
+
+$coordenadorController = $container->get(CoordenadorController::class);
+$cargaHorariaController = $container->get(CargaHorariaController::class);
+$contaBancariaController = $container->get(ContaBancariaController::class);
+
+$dashboardController = $container->get(DashboardController::class);
+$disciplinaController = $container->get(DisciplinaController::class);
+$disciplinaController = $container->get(DisciplinaController::class);
+
+$estudanteController = $container->get(EstudanteController::class);
+$estudanteTurmaController = $container->get(EstudanteTurmaController::class);
+$estudanteMensalidadeController = $container->get(EstudanteMensalidadeController::class);
+
+$frequenciaController = $container->get(FrequenciaController::class);
+
+$gradeReportController = $container->get(GradeReportController::class);
+
+$mensalidadeController = $container->get(MensalidadeController::class);
+
+$notaController = $container->get(NotaController::class);
+
+$planoController = $container->get(PlanoController::class);
+$periodoController = $container->get(PeriodoController::class);
+$professorController = $container->get(ProfessorController::class);
+$permissaoController = $container->get(PermissaoController::class);
+$pessoaContatoController = $container->get(PessoaContatoController::class);
+$professorDisciplinaController = $container->get(ProfessorDisciplinaController::class);
+
+$recuperarSenhaController = $container->get(RecuperarSenhaController::class);
+
+$siteAlbumController = $container->get(SiteAlbumController::class);
+$siteEventoController = $container->get(SiteEventoController::class);
+$siteCarrosselController = $container->get(SiteCarrosselController::class);
+
+$turmaController = $container->get(TurmaController::class);
+$turmaDisciplinaController = $container->get(TurmaDisciplinaController::class);
+
+$usuarioController = $container->get(UsuarioController::class);
+$contratoController = $container->get(ContratoController::class);
+
+/////routes
 $router->create("GET", "/recuperar", [$recuperarSenhaController, "index"]);
 $router->create("POST", "/recuperar", [$recuperarSenhaController, "store"]);
 $router->create("GET", "/recuperar/{id}", [$recuperarSenhaController, "edit"]);
@@ -200,8 +223,8 @@ $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividad
 
 //activities-teacher
 $router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
-$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "create"], $auth);
-$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "store"], $auth);
+$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
+$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
 $router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
 $router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);

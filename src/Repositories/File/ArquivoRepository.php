@@ -3,11 +3,12 @@
 namespace App\Repositories\File;
 
 use App\Config\Database;
+use App\Interfaces\File\IArquivoRepository;
 use App\Models\File\Arquivo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ArquivoRepository {
+class ArquivoRepository implements IArquivoRepository {
 
     const CLASS_NAME = Arquivo::class;
     const TABLE = 'arquivos';

@@ -4,10 +4,10 @@ namespace App\Controllers\v1\Teacher;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Person\PessoaFisicaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
-use App\Repositories\Teacher\ProfessorRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Teacher\IProfessorRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -21,13 +21,17 @@ class ProfessorController extends Controller
     protected $pessoaFisicaRepository;
     protected $turmaDisciplinaRepository;
 
-    public function __construct()
-    {
+    public function __construct(
+        IProfessorRepository $professorRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository,
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository
+    ) {
         parent::__construct();   
-        $this->professorRepository = new ProfessorRepository(); 
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
+        $this->professorRepository = $professorRepository; 
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository; 
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
     }
 
     public function index(Request $request) 

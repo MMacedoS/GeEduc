@@ -3,13 +3,14 @@
 namespace App\Repositories\Coordination;
 
 use App\Config\Database;
+use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Models\Coordination\Coordenador;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorRepository {
+class CoordenadorRepository implements ICoordenadorRepository{
     const CLASS_NAME = Coordenador::class;
     const TABLE = 'coordenadores';
 

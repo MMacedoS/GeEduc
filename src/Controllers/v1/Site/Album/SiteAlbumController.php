@@ -3,8 +3,8 @@
 namespace App\Controllers\v1\Site\Album;
 
 use App\Controllers\Controller;
-use App\Repositories\Site\Album\SiteAlbumRepository;
-use App\Repositories\Site\Archive\SiteArquivoRepository;
+use App\Interfaces\Site\Album\ISiteAlbumRepository;
+use App\Interfaces\Site\Archive\ISiteArquivoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -14,10 +14,13 @@ class SiteAlbumController extends Controller {
     protected $siteAlbumRepository;
     protected $siteArquivoRepository;
 
-    public function __construct(){
+    public function __construct(
+        ISiteAlbumRepository $siteAlbumRepository,
+        ISiteArquivoRepository $siteArquivoRepository
+    ) {
         parent::__construct();
-        $this->siteAlbumRepository = new SiteAlbumRepository();
-        $this->siteArquivoRepository = new SiteArquivoRepository();
+        $this->siteAlbumRepository = $siteAlbumRepository;
+        $this->siteArquivoRepository = $siteArquivoRepository;
     }
 
     public function index(Request $request){

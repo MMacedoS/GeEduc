@@ -3,11 +3,12 @@
 namespace App\Repositories\Activitie;
 
 use App\Config\Database;
+use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Models\Activitie\Atividade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class AtividadeRepository {
+class AtividadeRepository implements IAtividadeRepository{
     const CLASS_NAME = Atividade::class;
     const TABLE = 'atividade';
 

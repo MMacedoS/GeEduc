@@ -3,12 +3,13 @@
 namespace App\Repositories\Site\Event;
 
 use App\Config\Database;
+use App\Interfaces\Site\Event\ISiteEventoRepository;
 use App\Models\Site\Event\SiteEvento;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteEventoRepository {
+class SiteEventoRepository implements ISiteEventoRepository {
 
     const CLASS_NAME = SiteEvento::class;
     const TABLE = 'site_eventos';

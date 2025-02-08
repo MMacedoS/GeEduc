@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Permission;
 
 use App\Controllers\Controller;
-use App\Repositories\Permission\PermissaoRepository;
+use App\Interfaces\Permission\IPermissaoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -12,9 +12,11 @@ class PermissaoController extends Controller
 {
     protected $permissaoRepository;
 
-    public function __construct() {
+    public function __construct(
+        IPermissaoRepository $permissaoRepository
+    ) {
         parent::__construct();
-        $this->permissaoRepository = new PermissaoRepository();
+        $this->permissaoRepository = $permissaoRepository;
     }
 
     public function index(Request $request) {

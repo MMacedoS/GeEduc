@@ -3,11 +3,12 @@
 namespace App\Repositories\Coordination;
 
 use App\Config\Database;
+use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Models\Coordination\CoordenadorTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorTurmaRepository {
+class CoordenadorTurmaRepository implements ICoordenadorTurmaRepository {
     const CLASS_NAME = CoordenadorTurma::class;
     const TABLE = 'coordenador_as_turma';
 

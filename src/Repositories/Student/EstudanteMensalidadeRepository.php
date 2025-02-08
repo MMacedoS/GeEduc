@@ -3,13 +3,14 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Interfaces\Student\IEstudanteMensalidadeRepository;
 use App\Models\Student\EstudanteMensalidade;
 use App\Repositories\MonthlyFees\MensalidadeRepository;
 use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteMensalidadeRepository {
+class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository {
     const CLASS_NAME = EstudanteMensalidade::class;
     const TABLE = 'estudante_mensalidade';
 

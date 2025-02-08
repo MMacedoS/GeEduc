@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Period;
 
 use App\Controllers\Controller;
-use App\Repositories\Period\PeriodoRepository;
+use App\Interfaces\Period\IPeriodoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator; 
@@ -11,9 +11,12 @@ use App\Utils\Validator;
 class PeriodoController extends Controller{
     protected $periodoRepository;
 
-    public function __construct(){
+    public function __construct(
+        IPeriodoRepository $periodoRepository
+    ) 
+    {
         parent::__construct();
-        $this->periodoRepository = new PeriodoRepository();   
+        $this->periodoRepository = $periodoRepository;   
     }
 
     public function index(Request $request){

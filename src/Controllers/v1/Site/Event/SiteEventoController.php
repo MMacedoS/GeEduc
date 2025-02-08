@@ -3,8 +3,8 @@
 namespace App\Controllers\v1\Site\Event;
 
 use App\Controllers\Controller;
-use App\Repositories\Site\Event\SiteEventoRepository;
-use App\Repositories\Site\Archive\SiteArquivoRepository;
+use App\Interfaces\Site\Archive\ISiteArquivoRepository;
+use App\Interfaces\Site\Event\ISiteEventoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -14,10 +14,13 @@ class SiteEventoController extends Controller {
     protected $siteEventoRepository;
     protected $siteArquivoRepository;
 
-    public function __construct(){
+    public function __construct(
+        ISiteEventoRepository $siteEventoRepository,
+        ISiteArquivoRepository $siteArquivoRepository
+    ) {
         parent::__construct();
-        $this->siteEventoRepository = new SiteEventoRepository();
-        $this->siteArquivoRepository = new SiteArquivoRepository();
+        $this->siteEventoRepository = $siteEventoRepository;
+        $this->siteArquivoRepository = $siteArquivoRepository;
     }
 
     public function index(Request $request){

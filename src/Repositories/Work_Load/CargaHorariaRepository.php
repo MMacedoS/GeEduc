@@ -3,11 +3,12 @@
 namespace App\Repositories\Work_Load;
 
 use App\Config\Database;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Models\Work_Load\CargaHoraria;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CargaHorariaRepository{
+class CargaHorariaRepository implements ICargaHorariaRepository {
 
     const CLASS_NAME = CargaHoraria::class;
     const TABLE = 'carga_horaria';
