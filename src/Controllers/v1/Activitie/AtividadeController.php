@@ -37,6 +37,10 @@ class AtividadeController extends Controller
                 $this->redirect = "turmas/$class_id/disciplinas/$class_discipline_id/atividades";
                 $this->routeView = 'classRooms/discipline/activitie';
                 break;
+            case 'administrativo':
+                    $this->redirect = "turmas/$class_id/disciplinas/$class_discipline_id/atividades";
+                    $this->routeView = 'classRooms/discipline/activitie';
+                    break;
             case 'professor':
                 $this->redirect = "meus-componentes/$class_id/disciplina/$class_discipline_id/atividades";
                 $this->routeView = 'teacher/my-disciplines/activitie';

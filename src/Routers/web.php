@@ -221,8 +221,8 @@ $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividad
 
 //activities-teacher
 $router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
-$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "create"], $auth);
-$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "store"], $auth);
+$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
+$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
 $router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
 $router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
