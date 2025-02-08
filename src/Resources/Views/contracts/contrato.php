@@ -68,7 +68,7 @@
             <tr>
                 <td>
                     <strong>Data Nascimento:</strong>
-                     <?= isset($data_nascimento) ? Date("d/m/Y", $data_nascimento) : "" ?> <strong>CPF: </strong><?= "$doc " ?>
+                     <?= isset($data_nascimento) ? Date("d/m/Y", strtotime($data_nascimento)) : "" ?> <strong>CPF: </strong><?= "$doc " ?>
                 </td>
             </tr>
         </table>
