@@ -41,6 +41,7 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
             'uuid', e.uuid,
             'nome', pf.nome,
             'doc', pf.doc,
+            'email', pf.email,
             'data_nascimento', pf.data_nascimento,
             'dia_mensalidade', em.dia_mensalidade,
             'valor', m.valor
