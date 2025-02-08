@@ -8,11 +8,20 @@ const DB_USER = 'root';
 const DB_PASS = '12345';
 const SECRET_KEY = '1SDS-AKLSDK7.SDAK.33DSAK.SDAK';
 const SECRET_KEY_DAYLI = 'fbc761f5e0a5a34e5a1ec23ff671e1f87525e5a8756ed5fe14eab3e1a97af274';
-const NAME_SCHOOL = "Instituto Social de Tucano";
-const SCHOOL_ADDRESS = "";
-const SCHOOL_ZIP_CODE = "";
+const NAME_SCHOOL = "Centro de Educação Souza Pimentel";
+const ACRONYM_SCHOOL = "CESP";
+const SCHOOL_ADDRESS = "RUA LUIZ FERNANDO DE QUEIROZ, Nº 235 - CENTRO - CALDAS DO JORRO/BA";
+const SCHOOL_ZIP_CODE = "48.793-000";
+const SCHOOL_CNPJ = "08.586.470/0001-90";
+const OPERATING_AUTHORIZATION = "004/00/12 D.O 22/09/2000";
+const ACCREDITATION = "nº 7.915/2013";
+const PHONES_SCHOOL = ["(75) 99140-6871", "(75)  99156-9651"];
 const MIN_SCORE = 7;
-
+const URL_AUTENTIQUE = "https://api.autentique.com.br/v2/graphql";
+const TOKEN_AUTENTIQUE = "1dcad248666932dc9ed237a0143888827966d4f3b7d1441f2247bbbf9f25b37c";
+const CONTRACT_START = "03/02/";
+const CONTRACT_END = "12/12/";
+const EMAIL_SCHOOL = "cespsecretaria2021@gmail.com";
 //remetent
 
 const CONFIG_EMAIL = [
