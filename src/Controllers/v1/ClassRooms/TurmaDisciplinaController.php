@@ -3,10 +3,10 @@
 namespace App\Controllers\v1\ClassRooms;
 
 use App\Controllers\Controller;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Classrooms\TurmaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
-use App\Repositories\Work_Load\CargaHorariaRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -19,13 +19,18 @@ class TurmaDisciplinaController extends Controller
     protected $cargaHorariaRepository;
     protected $professorDisciplinaRepository;
 
-    public function __construct()
+    public function __construct(
+        ITurmaRepository $turmaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        ICargaHorariaRepository $cargaHorariaRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository
+    )
     {
         parent::__construct();   
-        $this->turmaRepository = new TurmaRepository(); 
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository(); 
-        $this->cargaHorariaRepository = new CargaHorariaRepository(); 
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository(); 
+        $this->turmaRepository = $turmaRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository; 
+        $this->cargaHorariaRepository = $cargaHorariaRepository; 
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository; 
     }
 
     public function index(Request $request, $turma_id) 

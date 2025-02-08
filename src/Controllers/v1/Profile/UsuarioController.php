@@ -5,10 +5,10 @@ namespace App\Controllers\v1\Profile;
 use App\Config\Auth;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
-use App\Repositories\File\ArquivoRepository;
-use App\Repositories\Permission\PermissaoRepository;
-use App\Repositories\Person\PessoaFisicaRepository;
-use App\Repositories\Profile\UsuarioRepository;
+use App\Interfaces\File\IArquivoRepository;
+use App\Interfaces\Permission\IPermissaoRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Profile\IUsuarioRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -23,13 +23,18 @@ class UsuarioController extends Controller
     protected $permissaoRepository;
     protected $arquivoRepository;
 
-    public function __construct()
+    public function __construct(
+        IUsuarioRepository $usuarioRepository,
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        IPermissaoRepository $permissaoRepository,
+        IArquivoRepository $arquivoRepository
+    )
     {   
         parent::__construct();
-        $this->usuarioRepository = new UsuarioRepository();
-        $this->permissaoRepository = new PermissaoRepository();
-        $this->arquivoRepository = new ArquivoRepository();        
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->usuarioRepository = $usuarioRepository;
+        $this->permissaoRepository = $permissaoRepository;
+        $this->arquivoRepository = $arquivoRepository;        
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository;
     }
 
     public function index(Request $request) {

@@ -3,9 +3,9 @@
 namespace App\Controllers\v1\ClassRooms;
 
 use App\Controllers\Controller;
-use App\Repositories\Classrooms\TurmaRepository;
-use App\Repositories\Coordination\CoordenadorRepository;
-use App\Repositories\Coordination\CoordenadorTurmaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Coordination\ICoordenadorRepository;
+use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -16,12 +16,16 @@ class TurmaController extends Controller
     protected $coordenadorRepository;
     protected $coordenadorTurmaRepository;
 
-    public function __construct()
+    public function __construct(
+        ITurmaRepository $turmaRepository,
+        ICoordenadorRepository $coordenadorRepository,
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository
+    )
     {
         parent::__construct();   
-        $this->turmaRepository = new TurmaRepository(); 
-        $this->coordenadorRepository = new CoordenadorRepository();
-        $this->coordenadorTurmaRepository = new CoordenadorTurmaRepository();
+        $this->turmaRepository = $turmaRepository; 
+        $this->coordenadorRepository = $coordenadorRepository;
+        $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
     }
 
     public function index(Request $request) 

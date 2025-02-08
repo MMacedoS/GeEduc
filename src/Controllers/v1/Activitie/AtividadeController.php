@@ -3,9 +3,9 @@
 namespace App\Controllers\v1\Activitie;
 
 use App\Controllers\Controller;
-use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Classrooms\TurmaRepository;
+use App\Interfaces\Activitie\IAtividadeRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -20,12 +20,15 @@ class AtividadeController extends Controller
     protected $redirect;
     protected $routeView;
 
-    public function __construct()
-    {
+    public function __construct(
+        ITurmaRepository $turmaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        IAtividadeRepository $atividadeRepository
+    ) {
         parent::__construct();   
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository(); 
-        $this->atividadeRepository = new AtividadeRepository();
-        $this->turmaRepository = new TurmaRepository();
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository; 
+        $this->atividadeRepository = $atividadeRepository;
+        $this->turmaRepository = $turmaRepository;
     }
 
     private function defineRoutes($class_id, $class_discipline_id) {

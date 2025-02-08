@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Work_Load;
 
 use App\Controllers\Controller;
-use App\Repositories\Work_Load\CargaHorariaRepository;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -12,9 +12,11 @@ class CargaHorariaController extends Controller{
 
     protected $cargaHorariaRepository;
 
-    public function __construct(){
+    public function __construct(
+        ICargaHorariaRepository $cargaHorariaRepository
+    ){
         parent::__construct();
-        $this->cargaHorariaRepository = new CargaHorariaRepository();
+        $this->cargaHorariaRepository = $cargaHorariaRepository;
     }
 
     public function index(Request $request){

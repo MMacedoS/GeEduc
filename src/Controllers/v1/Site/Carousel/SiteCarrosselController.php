@@ -3,8 +3,8 @@
 namespace App\Controllers\v1\Site\Carousel;
 
 use App\Controllers\Controller;
-use App\Repositories\Site\Carousel\SiteCarrosselRepository;
-use App\Repositories\Site\Archive\SiteArquivoRepository;
+use App\Interfaces\Site\Archive\ISiteArquivoRepository;
+use App\Interfaces\Site\Carousel\ISiteCarrosselRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -14,10 +14,13 @@ class SiteCarrosselController extends Controller {
     protected $siteCarrosselRepository;
     protected $siteArquivoRepository;
 
-    public function __construct(){
+    public function __construct(
+        ISiteCarrosselRepository $siteCarrosselRepository,
+        ISiteArquivoRepository $siteArquivoRepository
+    ){
         parent::__construct();
-        $this->siteCarrosselRepository = new SiteCarrosselRepository();
-        $this->siteArquivoRepository = new SiteArquivoRepository();
+        $this->siteCarrosselRepository = $siteCarrosselRepository;
+        $this->siteArquivoRepository = $siteArquivoRepository;
     }
 
     public function index(Request $request){
