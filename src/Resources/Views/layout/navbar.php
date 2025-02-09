@@ -80,7 +80,14 @@
                                         <span>Turmas</span>
                                     </a>
                                 </li>
-                            <?php } ?>
+                      
+                                <?php } if (hasPermission('visualizar contratos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/contratos">
+                                            <span>Contratos</span>
+                                        </a>
+                                    </li>
+                                <?php }?>
                             </ul>
                         </li>
                         <?php } if (hasPermission('visualizar financeiro')) {?>
@@ -114,12 +121,7 @@
                                             <span>Planos</span>
                                         </a>
                                     </li>
-                                    <? }?>
-                                    <li>
-                                        <a class="dropdown-item current-page" href="/contratos">
-                                            <span>Contratos</span>
-                                        </a>
-                                    </li>
+                                    <? }?>>
                                 </ul>
                             </li>
                             <?php } if (hasPermission('visualizar site')) {?>

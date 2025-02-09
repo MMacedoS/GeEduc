@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <?php if (hasPermission('cadastrar estudantes')) {?>
+    <?php if (hasPermission('gerar contratos')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
             <a href="\contratos\gerar" class="btn btn-outline-primary" > Gerar contratos </a>
