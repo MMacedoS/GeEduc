@@ -41,26 +41,34 @@ class ContratoController extends Controller {
           $data = [
             "student_id" => $student->estudante_id,
             "school_year" => Date("Y"),
-            "public_id" => $idContract,
+            "document_id" => $idContract,
           ];
 
-          $created = $this->contratoRepository->create($data);
-          dd($created);
+          $this->contratoRepository->create($data);
         }
       }
     }
-
+    $this->deletePDF("/Resources/Views/contracts/contrato.pdf");
     return $this->router->redirect("contratos");
   }
 
   public function webhookAutentique(Request $request) {
+    $payload = $request->getJsonBody();
+    $headers = $request->getHeaders();
+    $event = $payload['event'];
 
-    LoggerHelper::logInfo("Payload JSON: " . json_encode($request->getJsonBody()));
-    
-    // Log dos headers para debug
-    LoggerHelper::logInfo("Headers: " . json_encode($request->getHeaders()));
-    
-    // Log do método da requisição
-    LoggerHelper::logInfo("Method: " . $request->getMethod());
+    $verify = $this->autentiqueService->verifySignature($headers, json_encode($payload), SECRET_AUTENTIQUE);
+    if($verify) {
+      switch ($event['type']) {
+        case 'signature.accepted':
+          $this->contratoRepository->updateSignature($event["data"]["document"]);
+          break;
+        default:
+          LoggerHelper::logError("Evento não identificado");
+      }
+      return;
+    }
+
+    LoggerHelper::logError("Erro: Assinatura não reconhecida!");
   }
 }
