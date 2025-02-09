@@ -40,10 +40,16 @@ class AutentiqueService
                 ],
                 "signers" => [
                     [
-                        "email" => "teste@teste.com",
+                        "email" => "kewenlinkedin@gmail.com",
                         // "email" => $studentContract->email,
                         "action" => "SIGN",
                         "name" => $studentContract->nome
+                    ],
+                    [
+                        "email" => "teste@teste.com",
+                        // "email" => $studentContract->email,
+                        "action" => "SIGN",
+                        "name" => "teste"
                     ]
                 ]
             ]
@@ -73,9 +79,11 @@ class AutentiqueService
         
             $response = curl_exec($curl);
             curl_close($curl);
+    
             if($response) {
                 return getJsonToObject($response)->data->createDocument->id;
             }
+            
             return null;
         } catch(Exception $e) {
             LoggerHelper::logError('Erro ao enviar o contrato: ' . $e->getMessage());
