@@ -44,7 +44,13 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
             'email', pf.email,
             'data_nascimento', pf.data_nascimento,
             'dia_mensalidade', em.dia_mensalidade,
-            'valor', m.valor
+            'valor', m.valor,
+            'contrato_details', json_object(
+                'id', c.id,
+                'uuid', c.uuid,
+                'url_contrato', c.url_contrato,
+                'url_contrato_assinado', c.url_contrato_assinado
+            )
             ) as contrato_infos
         FROM " . self::TABLE . " em 
         LEFT JOIN estudantes e
@@ -52,6 +58,7 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
         LEFT JOIN pessoa_fisica pf 
         on e.pessoa_fisica_id = pf.id
         LEFT JOIN mensalidades m on m.estudante_mensalidade_id = em.id
+        LEFT JOIN contratos c on c.estudante_id = e.id
         ";
         $conditions = [];
         $bindings = [];
@@ -59,6 +66,15 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
         if (isset($params['active'])) {
             $conditions[] = "m.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
+        }
+
+        if (isset($params['verify_contract'])) {
+            if($params['verify_contract']) {
+                $conditions[] = "c.id IS NULL";
+            }
+            if(!$params['verify_contract']) {
+                $conditions[] = "c.id IS NOT NULL";
+            }
         }
 
         if (isset($params['start_date']) && isset($params['end_date'])) {
