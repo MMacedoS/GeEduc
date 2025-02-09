@@ -9,7 +9,7 @@ use App\Repositories\Coordination\CoordenadorTurmaRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaRepository implements ITurmaRepository{
+class TurmaRepository implements ITurmaRepository {
     const CLASS_NAME = Turma::class;
     const TABLE = 'turmas';
 

@@ -30,17 +30,35 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT 
-           m.*,
+           em.*,
             json_object(
             'id', e.id,
             'uuid', e.uuid,
             'nome', pf.nome
-            ) as 'estudantes'
-        FROM " . self::TABLE . " m 
+            ) as 'estudantes',
+            json_object(
+            'id', e.id,
+            'uuid', e.uuid,
+            'nome', pf.nome,
+            'doc', pf.doc,
+            'email', pf.email,
+            'data_nascimento', pf.data_nascimento,
+            'dia_mensalidade', em.dia_mensalidade,
+            'valor', m.valor,
+            'contrato_details', json_object(
+                'id', c.id,
+                'uuid', c.uuid,
+                'document_id', c.document_id,
+                'quantidade_assinaturas', c.quantidade_assinaturas
+            )
+            ) as contrato_infos
+        FROM " . self::TABLE . " em 
         LEFT JOIN estudantes e
-        on e.id = m.estudante_id 
+        on e.id = em.estudante_id 
         LEFT JOIN pessoa_fisica pf 
         on e.pessoa_fisica_id = pf.id
+        LEFT JOIN mensalidades m on m.estudante_mensalidade_id = em.id
+        LEFT JOIN contratos c on c.estudante_id = e.id
         ";
         $conditions = [];
         $bindings = [];
@@ -48,6 +66,15 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
         if (isset($params['active'])) {
             $conditions[] = "m.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
+        }
+
+        if (isset($params['verify_contract'])) {
+            if($params['verify_contract']) {
+                $conditions[] = "c.id IS NULL";
+            }
+            if(!$params['verify_contract']) {
+                $conditions[] = "c.id IS NOT NULL";
+            }
         }
 
         if (isset($params['start_date']) && isset($params['end_date'])) {
@@ -71,7 +98,7 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS);        
     }
 
     public function create(array $data)

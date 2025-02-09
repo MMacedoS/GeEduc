@@ -6,6 +6,7 @@ use App\Config\Container;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
+use App\Controllers\v1\Contracts\ContratoController;
 use App\Controllers\v1\GradeReport\GradeReportController;
 use App\Controllers\v1\ClassRooms\TurmaController;
 use App\Controllers\v1\Dashboard\DashboardController;
@@ -79,6 +80,8 @@ $turmaController = $container->get(TurmaController::class);
 $turmaDisciplinaController = $container->get(TurmaDisciplinaController::class);
 
 $usuarioController = $container->get(UsuarioController::class);
+
+$contratoController = $container->get(ContratoController::class);
 
 /////routes
 $router->create("GET", "/recuperar", [$recuperarSenhaController, "index"]);
@@ -296,6 +299,9 @@ $router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUp
 $router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
 $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
 
+$router->create('GET', '/contratos', [$contratoController, 'index'], $auth);
+$router->create('GET', '/contratos/gerar', [$contratoController, 'generateAndSendContracts'], $auth);
+$router->create('POST', '/webhook/autentique', [$contratoController, 'webhookAutentique']);
 
 return $router;
 
