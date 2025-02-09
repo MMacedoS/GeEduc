@@ -31,7 +31,7 @@ class ContratoRepository implements IContratoRepository {
                     uuid = :uuid,
                     estudante_id = :estudante_id,
                     ano_letivo = :ano_letivo,
-                    public_id = :public_id,
+                    document_id = :document_id,
                     quantidade_assinaturas = :quantidade_assinaturas
                 "
             );
@@ -40,7 +40,7 @@ class ContratoRepository implements IContratoRepository {
                 ':uuid' => $class->uuid,
                 ':estudante_id' => $class->estudante_id,
                 ':ano_letivo' => $class->ano_letivo,
-                ':public_id' => $class->public_id,
+                ':document_id' => $class->document_id,
                 ':quantidade_assinaturas' => $class->quantidade_assinaturas ?? null
             ]);
 
@@ -60,38 +60,48 @@ class ContratoRepository implements IContratoRepository {
         }
     }
 
-    // public function update(array $data, int $id) 
-    // {
-    //     $class = $this->model->create($data);
+    public function updateSignature($document_id) 
+    {
+        try {
+            $stmt = $this->conn->prepare(
+                "UPDATE " . self::TABLE . " 
+                SET 
+                    quantidade_assinaturas = quantidade_assinaturas + 1
+                WHERE document_id = :document_id
+                "
+            );
 
-    //     try {
-    //         $stmt = $this->conn->prepare(
-    //             "UPDATE " . self::TABLE . " 
-    //             SET 
-    //                 url_contrato = :url_contrato,
-    //                 url_contrato_assinado = :url_contrato_assinado
-    //             WHERE id = :id
-    //             "
-    //         );
+            $update = $stmt->execute([
+                ':document_id' => $document_id
+            ]);
 
-    //         $update = $stmt->execute([
-    //             ':url_contrato' => $class->url_contrato,
-    //             ':url_contrato_assinado' => $class->url_contrato_assinado,
-    //             ':id' => $id
-    //         ]);
+            if (!$update) {
+                return null;
+            }
 
-    //         if (!$update) {
-    //             return null;
-    //         }
+            return $this->findByPublicID($document_id);
+        } catch (\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
 
-    //         return $this->findById($id);
-    //     } catch (\Throwable $th) {
-    //         LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
-    //         LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
-    //         return null;
-    //     } finally {          
-    //         Database::getInstance()->closeConnection();
-    //     }
-    // }
+    public function findByPublicID($document_id) {
+        try {
+            $sql = "SELECT * FROM " . self::TABLE . " WHERE document_id = :document_id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':document_id' => $document_id]);
 
+            $contract = $stmt->fetch(\PDO::FETCH_OBJ);
+
+            return $contract;
+        } catch(\Throwable $th) {
+            LoggerHelper::logError("Erro na consulta: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        }
+    }
 }

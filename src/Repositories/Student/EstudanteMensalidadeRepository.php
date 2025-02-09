@@ -48,7 +48,7 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
             'contrato_details', json_object(
                 'id', c.id,
                 'uuid', c.uuid,
-                'public_id', c.public_id,
+                'document_id', c.document_id,
                 'quantidade_assinaturas', c.quantidade_assinaturas
             )
             ) as contrato_infos
