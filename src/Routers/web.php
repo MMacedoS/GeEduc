@@ -301,6 +301,7 @@ $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 
 
 $router->create('GET', '/contratos', [$contratoController, 'index'], $auth);
 $router->create('GET', '/contratos/gerar', [$contratoController, 'generateAndSendContracts'], $auth);
+$router->create('POST', '/webhook/autentique', [$contratoController, 'webhookAutentique']);
 
 return $router;
 
