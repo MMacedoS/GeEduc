@@ -12,8 +12,8 @@ class Contrato {
     public $uuid;
     public $estudante_id;
     public $ano_letivo;
-    public $url_contrato;
-    public $url_contrato_assinado;
+    public $public_id;
+    public $quantidade_assinaturas;
     public $created_at;
     public $updated_at;
 
@@ -27,8 +27,8 @@ class Contrato {
         $contrato->uuid = $data['uuid'] ?? $this->generateUUID();
         $contrato->estudante_id = $data['student_id'];          
         $contrato->ano_letivo = $data['school_year'];  
-        $contrato->url_contrato = $data['contract_url'] ?? null; 
-        $contrato->url_contrato_assinado = $data['signed_contract_url'] ?? null;        
+        $contrato->public_id = $data['public_id']; 
+        $contrato->quantidade_assinaturas = $data['quantity_assigned'] ?? 0;    
         $contrato->created_at = $data['created_at'] ?? null;
         $contrato->updated_at = $data['updated_at'] ?? null;
         return $contrato;

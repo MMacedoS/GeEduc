@@ -48,8 +48,8 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
             'contrato_details', json_object(
                 'id', c.id,
                 'uuid', c.uuid,
-                'url_contrato', c.url_contrato,
-                'url_contrato_assinado', c.url_contrato_assinado
+                'public_id', c.public_id,
+                'quantidade_assinaturas', c.quantidade_assinaturas
             )
             ) as contrato_infos
         FROM " . self::TABLE . " em 
