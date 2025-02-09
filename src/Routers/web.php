@@ -80,6 +80,7 @@ $turmaController = $container->get(TurmaController::class);
 $turmaDisciplinaController = $container->get(TurmaDisciplinaController::class);
 
 $usuarioController = $container->get(UsuarioController::class);
+
 $contratoController = $container->get(ContratoController::class);
 
 /////routes
@@ -299,6 +300,7 @@ $router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 
 $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
 
 $router->create('GET', '/contratos', [$contratoController, 'index'], $auth);
+$router->create('GET', '/contratos/gerar', [$contratoController, 'generateAndSendContracts'], $auth);
 
 return $router;
 
