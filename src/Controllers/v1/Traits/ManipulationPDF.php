@@ -8,7 +8,6 @@ use Dompdf\Dompdf;
 trait ManipulationPDF {
     public function generatePDF($student, $viewPath, $filePath) :string | null   {
         try {
-            // $htmlFilePath = __DIR__ . "/../Resources/Views/contracts/contrato.php";
             $srcDir = dirname(__DIR__, 3);
             $htmlFilePath = "$srcDir$viewPath";
             if (!file_exists($htmlFilePath)) {
@@ -33,10 +32,17 @@ trait ManipulationPDF {
             }
 
             return $pdfPath;
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-            LoggerHelper::logError("Erro na geração do PDF: " . $e->getMessage());
+        } catch (\Throwable $th) {
+            LoggerHelper::logError("Erro na geração do PDF: " . $th->getMessage());
             return null;
+        }
+    }
+
+    public function deletePDF($filePath) {
+        $srcDir = dirname(__DIR__, 3);
+        $htmlFilePath = "$srcDir$filePath";
+        if (file_exists($htmlFilePath)) {
+            unlink($htmlFilePath);
         }
     }
 }
