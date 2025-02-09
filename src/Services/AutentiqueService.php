@@ -3,8 +3,6 @@ namespace App\Services;
 
 use App\Repositories\Student\EstudanteMensalidadeRepository;
 use App\Utils\LoggerHelper;
-use Exception;
-use Dompdf\Dompdf;
 
 class AutentiqueService
 {
@@ -40,16 +38,14 @@ class AutentiqueService
                 ],
                 "signers" => [
                     [
-                        "email" => "kewenlinkedin@gmail.com",
-                        // "email" => $studentContract->email,
+                        "email" => $studentContract->email,
                         "action" => "SIGN",
                         "name" => $studentContract->nome
                     ],
                     [
-                        "email" => "teste@teste.com",
-                        // "email" => $studentContract->email,
+                        "email" => EMAIL_SCHOOL,
                         "action" => "SIGN",
-                        "name" => "teste"
+                        "name" => NAME_SCHOOL
                     ]
                 ]
             ]
@@ -85,9 +81,21 @@ class AutentiqueService
             }
             
             return null;
-        } catch(Exception $e) {
+        } catch(\Throwable $e) {
             LoggerHelper::logError('Erro ao enviar o contrato: ' . $e->getMessage());
             return null;
         }
+    }
+
+    public function verifySignature(array $headers, string $payload, string $secret): bool
+    {
+        if (!isset($headers['X-Autentique-Signature'])) {
+            return false;
+        }
+
+        $signature = $headers['X-Autentique-Signature'];
+        $calculatedSignature = hash_hmac('sha256', $payload, $secret);
+
+        return hash_equals($calculatedSignature, $signature);
     }
 }
