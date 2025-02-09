@@ -48,7 +48,9 @@
                                 <tr>
                                     <th></th>
                                     <th>Nome</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">email</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Email</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Assinaturas</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Pendentes</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <th>Ações</th>
                                 </tr>
@@ -65,15 +67,19 @@
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
                                         <?=getJsonToObject($estudante->contrato_infos)->email ?? 'não identificado'?>
                                         </td>
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
+                                        <?= getJsonToObject($estudante->contrato_infos)->contrato_details->quantidade_assinaturas ?? 0 ?>
+                                        </td>
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
+                                        <?= max(0, 2 - getJsonToObject($estudante->contrato_infos)->contrato_details->quantidade_assinaturas) ?>
+                                        </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
-                                                <?php if(!isset(getJsonToObject($estudante->contrato_infos)->contrato_details->url_contrato_assinado)) { ?>
+                                                <?php if(getJsonToObject($estudante->contrato_infos)->contrato_details->quantidade_assinaturas < 2) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
-                                                    Não assinado
                                                 <?php } ?>
-                                                <?php if(isset(getJsonToObject($estudante->contrato_infos)->contrato_details->url_contrato_assinado)) { ?>
+                                                <?php if(getJsonToObject($estudante->contrato_infos)->contrato_details->quantidade_assinaturas == 2) { ?>
                                                     <i class="icon-circle1 me-2 text-success fs-5"></i>
-                                                    Assinado
                                                 <?php } ?>
                                             </div>
                                         </td>
