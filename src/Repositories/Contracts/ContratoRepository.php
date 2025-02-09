@@ -60,7 +60,7 @@ class ContratoRepository implements IContratoRepository {
         }
     }
 
-    public function updateSignature($document_id) 
+    public function updateSignature(string $document_id) 
     {
         try {
             $stmt = $this->conn->prepare(
