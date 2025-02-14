@@ -57,25 +57,31 @@ class MensalidadeRepository implements IMensalidadeRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['situation'])) {
-        $conditions[] = "m.situacao = :situacao";
-        $bindings[':situacao'] = $params['situation'];
+        if (isset($params['situation']) && !empty($params['situation'])) {
+            $conditions[] = "m.situacao = :situacao";
+            $bindings[':situacao'] = $params['situation'];
         }
 
         if (isset($params['student_monthlyfees_id'])) {
-        $conditions[] = "m.estudante_mensalidade_id = :estudante_mensalidade_id";
-        $bindings[':estudante_mensalidade_id'] = $params['student_monthlyfees_id'];
+            $conditions[] = "m.estudante_mensalidade_id = :estudante_mensalidade_id";
+            $bindings[':estudante_mensalidade_id'] = $params['student_monthlyfees_id'];
         }
 
         if (isset($params['student_id'])) {
-        $conditions[] = "em.estudante_id = :estudante_id";
-        $bindings[':estudante_id'] = $params['student_id'];
+            $conditions[] = "em.estudante_id = :estudante_id";
+            $bindings[':estudante_id'] = $params['student_id'];
+        }
+
+
+        if (isset($params['student_name'])) {
+            $conditions[] = "pf.nome like :estudante_nome";
+            $bindings[':estudante_nome'] = "%" . $params['student_name'] . "%";
         }
 
         if (isset($params['start_date']) && isset($params['end_date'])) {
-        $conditions[] = "m.created_at BETWEEN :start_date AND :end_date";
-        $bindings[':start_date'] = $params['start_date'];
-        $bindings[':end_date'] = $params['end_date'];
+            $conditions[] = "m.created_at BETWEEN :start_date AND :end_date";
+            $bindings[':start_date'] = $params['start_date'];
+            $bindings[':end_date'] = $params['end_date'];
         }
 
         if (count($conditions) > 0) {
@@ -83,7 +89,7 @@ class MensalidadeRepository implements IMensalidadeRepository {
         }
 
         $sql .= " GROUP BY m.estudante_mensalidade_id, m.id";
-        $sql .= " ORDER BY created_at DESC";
+        $sql .= " ORDER BY m.id DESC";
 
         $stmt = $this->conn->prepare($sql);
 

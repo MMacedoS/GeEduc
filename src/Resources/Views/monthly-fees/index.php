@@ -44,6 +44,78 @@
     <!-- Row start -->
 
 <div class="row gx-3">
+<div class="col-12">
+        <form id="users-form" action="/mensalidades" method="GET">            
+            <div class="accordion mt-2" id="accordionSpecialTitle">
+                <div class="accordion-item bg-transparent">
+                    <h2 class="accordion-header" id="headingSpecialTitleTwo">
+                        <button 
+                            class=" bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" 
+                            type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filters-users" 
+                            aria-expanded="false"
+                            aria-controls="collapseSpecialTitleTwo">
+                            <h5 class="m-0">Filtros</h5>
+                        </button>
+                    </h2>
+                    <div id="filters-users" 
+                        class="accordion-collapse <?= isset($situation) || isset($searchFilter) ? '' : 'collapse'?>"
+                        aria-labelledby="headingSpecialTitleTwo" 
+                        data-bs-parent="#accordionSpecialTitle">
+                      <div class="accordion-body">
+                        <div class="row justify-content-start">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="m-0">
+                                            <label class="form-label">Busca por nome ou cpf</label>
+                                            <input 
+                                                class="form-input form-control" 
+                                                type="text" 
+                                                name="student_name" 
+                                                id="name" 
+                                                value="<?= isset($searchFilter) ? $searchFilter : null ?>" 
+                                                placeholder="Digite o nome ou o email">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="m-0">
+                                            <label class="form-label">Situação</label>
+                                            <select class="form-select form-control" name="situation" id="situation">
+                                                <option <?= (isset($situation) && $situation == '') ? 'selected' : ''?> value="">Ambas</option>
+                                                <option value="atrasado" <?= (isset($situation) && $situation == 'atrasado') ? 'selected' : ''?>>Atrasada</option>
+                                                <option value="pago" <?= (isset($situation) && $situation == 'pago') ? 'selected' : ''?>>Pago</option>
+
+                                                <option value="cancelado" <?= (isset($situation) && $situation == 'cancelado') ? 'selected' : ''?>>cancelado</option>
+                                                <option value="pendente" <?= (isset($situation) && $situation == 'pendente') ? 'selected' : ''?>>pendente</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-12">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                            <a href="\mensalidades" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) || isset($shift) || isset($coordinator) ? 'd-block' : 'd-none'?>">Limpar</a>
+                                            <button type="submit" class="btn btn-primary">Buscar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-header">

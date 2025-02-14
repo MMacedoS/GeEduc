@@ -81,13 +81,7 @@
                                     </a>
                                 </li>
                       
-                                <?php } if (hasPermission('visualizar contratos')) { ?>
-                                    <li>
-                                        <a class="dropdown-item current-page" href="/contratos">
-                                            <span>Contratos</span>
-                                        </a>
-                                    </li>
-                                <?php }?>
+                                <?php } ?>
                             </ul>
                         </li>
                         <?php } if (hasPermission('visualizar financeiro')) {?>
@@ -121,7 +115,13 @@
                                             <span>Planos</span>
                                         </a>
                                     </li>
-                                    <? }?>>
+                                    <? } if (hasPermission('visualizar contratos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/contratos">
+                                            <span>Contratos</span>
+                                        </a>
+                                    </li>
+                                <?php }?>
                                 </ul>
                             </li>
                             <?php } if (hasPermission('visualizar site')) {?>

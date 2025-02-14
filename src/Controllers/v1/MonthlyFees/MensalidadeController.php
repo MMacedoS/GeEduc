@@ -32,7 +32,9 @@ class MensalidadeController extends Controller
             return $this->router->redirect('dashboard?error=442');
         }
 
-        $mensalidades = $this->mensalidadeRepository->allMonthlyfees();
+        $params = $request->getQueryParams();
+
+        $mensalidades = $this->mensalidadeRepository->allMonthlyfees($params);
 
         $perPage = 10;
         $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -49,7 +51,9 @@ class MensalidadeController extends Controller
             [
                 'active' => 'register', 
                 'mensalidades' => $paginatedBoards, 
-                'links' => $paginator->links()
+                'links' => $paginator->links(),
+                'searchFilter' => $params['student_name'] ?? null,
+                'situation'=> $params['situation'] ?? null
             ]
         );
     }

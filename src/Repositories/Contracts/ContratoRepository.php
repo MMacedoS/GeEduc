@@ -23,7 +23,7 @@ class ContratoRepository implements IContratoRepository {
 
     public function create(array $data)
     {
-        $class = $this->model->create($data);
+        $contract = $this->model->create($data);
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
@@ -32,23 +32,25 @@ class ContratoRepository implements IContratoRepository {
                     estudante_id = :estudante_id,
                     ano_letivo = :ano_letivo,
                     document_id = :document_id,
+                    conteudo = :content,
                     quantidade_assinaturas = :quantidade_assinaturas
                 "
             );
 
             $create = $stmt->execute([
-                ':uuid' => $class->uuid,
-                ':estudante_id' => $class->estudante_id,
-                ':ano_letivo' => $class->ano_letivo,
-                ':document_id' => $class->document_id,
-                ':quantidade_assinaturas' => $class->quantidade_assinaturas ?? null
+                ':uuid' => $contract->uuid,
+                ':estudante_id' => $contract->estudante_id,
+                ':ano_letivo' => $contract->ano_letivo,
+                ':document_id' => $contract->document_id,
+                ':content' => $contract->conteudo,
+                ':quantidade_assinaturas' => $contract->quantidade_assinaturas ?? null
             ]);
 
             if (!$create) {
                 return null;
             }
 
-            $created = $this->findByUuid($class->uuid);
+            $created = $this->findByUuid($contract->uuid);
             return $created;
         } catch (\Throwable $th) {
             dd($th->getMessage());
@@ -60,18 +62,20 @@ class ContratoRepository implements IContratoRepository {
         }
     }
 
-    public function updateSignature(string $document_id) 
+    public function updateSignature(string $document_id, string $contract) 
     {
         try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . " 
                 SET 
-                    quantidade_assinaturas = quantidade_assinaturas + 1
+                    quantidade_assinaturas = quantidade_assinaturas + 1,
+                    conteudo = :content
                 WHERE document_id = :document_id
                 "
             );
 
             $update = $stmt->execute([
+                ':content' => $contract,
                 ':document_id' => $document_id
             ]);
 
