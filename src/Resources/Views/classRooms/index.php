@@ -46,7 +46,7 @@
                 <div class="accordion-item bg-transparent">
                     <h2 class="accordion-header" id="headingSpecialTitleTwo">
                         <button 
-                            class=" bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" 
+                            class="bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" 
                             type="button" data-bs-toggle="collapse"
                             data-bs-target="#filters-classrooms" 
                             aria-expanded="false"
@@ -153,7 +153,7 @@
                            <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nome</th>
+                                    <th>Turma</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Coordenador</th>
                                     <th>Situação</th>
@@ -170,7 +170,7 @@
                                         <td><?=$turma->id?></td>
                                         <td class="fw-bold"> <?=$turma->nome ?? 'não identificado'?>
                                         </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell text-capitalize">
                                         <?=$turma->turno ?? 'não identificado'?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">

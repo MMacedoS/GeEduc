@@ -3,8 +3,8 @@
 namespace App\Controllers\v1\Coordination;
 
 use App\Controllers\Controller;
-use App\Repositories\Coordination\CoordenadorRepository;
-use App\Repositories\Person\PessoaFisicaRepository;
+use App\Interfaces\Coordination\ICoordenadorRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -14,36 +14,34 @@ class CoordenadorController extends Controller{
     protected $coordenadorRepository;
     protected $pessoaFisicaRepository;
 
-    public function __construct(){
+    public function __construct(
+        ICoordenadorRepository $coordenadorRepository,
+        IPessoaFisicaRepository $pessoaFisicaRepository
+    ){
         parent::__construct();
-        $this->coordenadorRepository = new CoordenadorRepository();
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->coordenadorRepository = $coordenadorRepository;
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository;
     }
 
     public function index(Request $request){
-        $coordenadores = $this->coordenadorRepository->allCoordinators();
+        $params = $request->getQueryParams();
+        $coordenadores = $this->coordenadorRepository->allCoordinators($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($coordenadores, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
-
-        $data = [
-            'coordenadores' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
         
-        return $this->router->view('/coordination/index', 
-            [
-                'active' => 'pedagogico',  
-                'data' => $data
-            ]
-        );
+        return $this->router->view('/coordination/index', [
+            'active' => 'pedagogico',  
+            'coordenadores' => $paginatedBoards,
+            'links' => $paginator->links(),
+            'searchFilter'=> $params['name_email'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ]);
     }
 
     public function create(Request $request)
-    {
-        // $coordinators = $this->CoordenadorRepository->allCoordinator();
-        
+    {  
         return $this->router->view('/coordination/create', ['active' => 'pedagogico']);
     }
 

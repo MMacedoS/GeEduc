@@ -3,12 +3,13 @@
 namespace App\Repositories\Scores;
 
 use App\Config\Database;
+use App\Interfaces\Scores\IParalelaRepository;
 use App\Models\Scores\Paralela;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class ParalelaRepository {
+class ParalelaRepository implements IParalelaRepository {
     const CLASS_NAME = Paralela::class;
     const TABLE = 'paralela';
 

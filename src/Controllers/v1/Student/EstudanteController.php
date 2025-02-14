@@ -4,12 +4,12 @@ namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
-use App\Repositories\Person\PessoaContatoRepository;
-use App\Repositories\Person\PessoaFisicaRepository;
-use App\Repositories\Plan\PlanoRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
-use App\Repositories\Classrooms\TurmaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Person\IPessoaContatoRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Plan\IPlanoRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -27,14 +27,21 @@ class EstudanteController extends Controller
     protected $estudanteTurmaRepository;
     protected $turmaRepository;
 
-    public function __construct(){
+    public function __construct(
+        IEstudanteRepository $estudanteRepository,
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        IPessoaContatoRepository $pessoaContatoRepository,
+        IPlanoRepository $planosRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        ITurmaRepository $turmaRepository
+    ){
         parent::__construct();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
-        $this->pessoaContatoRepository = new PessoaContatoRepository();
-        $this->planosRepository = new PlanoRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->turmaRepository = new TurmaRepository();
+        $this->estudanteRepository = $estudanteRepository;
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository;
+        $this->pessoaContatoRepository = $pessoaContatoRepository;
+        $this->planosRepository = $planosRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
+        $this->turmaRepository = $turmaRepository;
     }
 
     public function index(Request $request){

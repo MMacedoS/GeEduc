@@ -3,13 +3,14 @@
 namespace App\Repositories\Coordination;
 
 use App\Config\Database;
+use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Models\Coordination\Coordenador;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorRepository {
+class CoordenadorRepository implements ICoordenadorRepository{
     const CLASS_NAME = Coordenador::class;
     const TABLE = 'coordenadores';
 
@@ -41,19 +42,14 @@ class CoordenadorRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['nome'])) {
-            $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['nome'];
+        if (isset($params['name_email'])) {
+            $conditions[] = "(pf.nome LIKE :name_email or pf.email LIKE :name_email)";
+            $bindings[':name_email'] = '%' . $params['name_email'] . '%';
         }
 
-        if (isset($params['email'])) {
-            $conditions[] = "pf.email = :email";
-            $bindings[':email'] = $params['email'];
-        }
-
-        if (isset($params['ativo'])) {
-            $conditions[] = "c.ativo = :ativo";
-            $bindings[':ativo'] = $params['ativo'];
+        if (isset($params['situation']) && $params['situation'] != "") {
+            $conditions[] = "c.ativo = :situation";
+            $bindings[':situation'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {

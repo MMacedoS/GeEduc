@@ -4,14 +4,14 @@ namespace App\Controllers\v1\Frequencies;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
-use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Frequencies\FrequenciaRepository;
-use App\Repositories\Period\PeriodoRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
-use App\Repositories\Work_Load\CargaHorariaRepository;
+use App\Interfaces\Activitie\IAtividadeRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Frequencies\IFrequenciaRepository;
+use App\Interfaces\Period\IPeriodoRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 
@@ -29,17 +29,27 @@ class FrequenciaController extends Controller
     protected $periodoRepository;
     protected $cargaHorariaRepository;
 
-    public function __construct()
+    public function __construct(
+        IAtividadeRepository $atividadeRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        IEstudanteRepository $estudanteRepository,
+        IFrequenciaRepository $frequenciaRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository,
+        ICargaHorariaRepository $cargaHorariaRepository,
+        IPeriodoRepository $periodoRepository
+    )
     {
         parent::__construct();   
-        $this->frequenciaRepository = new FrequenciaRepository();
-        $this->atividadeRepository = new AtividadeRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
-        $this->periodoRepository = new PeriodoRepository();
-        $this->cargaHorariaRepository = new CargaHorariaRepository();
-        $this->estudanteRepository = new EstudanteRepository();
+        $this->frequenciaRepository = $frequenciaRepository;
+        $this->atividadeRepository = $atividadeRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository;
+        $this->periodoRepository = $periodoRepository;
+        $this->cargaHorariaRepository = $cargaHorariaRepository;
+        $this->estudanteRepository = $estudanteRepository;
+
     }
 
     public function indexStudents(Request $request, string $studant_class_id)

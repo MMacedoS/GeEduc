@@ -3,10 +3,10 @@
 namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
-use App\Repositories\MonthlyFees\MensalidadeRepository;
-use App\Repositories\Plan\PlanoRepository;
-use App\Repositories\Student\EstudanteMensalidadeRepository;
-use App\Repositories\Student\EstudanteRepository;
+use App\Interfaces\MonthlyFees\IMensalidadeRepository;
+use App\Interfaces\Plan\IPlanoRepository;
+use App\Interfaces\Student\IEstudanteMensalidadeRepository;
+use App\Interfaces\Student\IEstudanteRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -18,13 +18,17 @@ class EstudanteMensalidadeController extends Controller
     protected $estudanteMensalidadeRepository;
     protected $planosRepository;
 
-    public function __construct()
-    {
+    public function __construct(
+        IMensalidadeRepository $mensalidadeRepository,
+        IEstudanteRepository $estudanteRepository,
+        IEstudanteMensalidadeRepository $estudanteMensalidadeRepository,
+        IPlanoRepository $planosRepository
+    ) {
         parent::__construct();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->mensalidadeRepository = new MensalidadeRepository();
-        $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
-        $this->planosRepository = new PlanoRepository();
+        $this->estudanteRepository = $estudanteRepository;
+        $this->mensalidadeRepository = $mensalidadeRepository;
+        $this->estudanteMensalidadeRepository = $estudanteMensalidadeRepository;
+        $this->planosRepository = $planosRepository;
     }
 
     public function index(Request $request, $student_id)

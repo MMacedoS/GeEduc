@@ -3,13 +3,13 @@
 namespace App\Controllers\v1\Scores;
 
 use App\Controllers\Controller;
-use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Period\PeriodoRepository;
-use App\Repositories\Scores\NotaRepository;
-use App\Repositories\Scores\ParalelaRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
+use App\Interfaces\Activitie\IAtividadeRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Period\IPeriodoRepository;
+use App\Interfaces\Scores\INotaRepository;
+use App\Interfaces\Scores\IParalelaRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
 
 class NotaController extends Controller 
@@ -22,16 +22,23 @@ class NotaController extends Controller
     protected $periodoRepository;
     protected $paralelaRepository;
 
-    public function __construct()
-    {
+    public function __construct(
+        IAtividadeRepository $atividadeRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        IEstudanteRepository $estudanteRepository,
+        IPeriodoRepository $periodoRepository,
+        INotaRepository $notaRepository,
+        IParalelaRepository $paralelaRepository                        
+    ) {
         parent::__construct();   
-        $this->atividadeRepository = new AtividadeRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->periodoRepository = new PeriodoRepository();
-        $this->notaRepository = new NotaRepository();
-        $this->paralelaRepository = new ParalelaRepository();
+        $this->atividadeRepository = $atividadeRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
+        $this->estudanteRepository = $estudanteRepository;
+        $this->periodoRepository = $periodoRepository;
+        $this->notaRepository = $notaRepository;
+        $this->paralelaRepository = $paralelaRepository;
     }
 
     public function indexTeacher(Request $request, string $class_discipline_id)

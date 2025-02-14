@@ -1,10 +1,10 @@
-
 <div class="col-lg-4 col-sm-6 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome Completo</label>
-        <input type="text" step="0" min="1" class="form-control" name="name" placeholder="digite aqui" value="<?=$usuario->nome ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" id="name" name="name" required placeholder="Ex.: José Silva" value="<?=$usuario->nome ?? ''?>" />
+        <div class="invalid-feedback" id="name_error"></div>
       </div>
     </div>
   </div>
@@ -15,7 +15,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Email de acesso</label>
-        <input type="email" step="0" min="1" class="form-control" name="email" placeholder="digite aqui" value="<?=$usuario->email ?? ''?>" />
+        <input type="email" step="0" min="1" class="form-control" required id="email" name="email" placeholder="Ex.: jose.silva@email.com" value="<?=$usuario->email ?? ''?>" />
+        <div class="invalid-feedback" id="email_error"></div>
       </div>
     </div>
   </div>
@@ -26,7 +27,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Senha de acesso</label>
-        <input type="password" step="0" min="1" class="form-control" name="password" placeholder="digite aqui" value="<?=$usuario->senha ?? ''?>" />
+        <input type="password" step="0" min="1" required class="form-control" name="password" placeholder="Ex.: @josesenha" value="<?=$usuario->senha ?? ''?>" />
       </div>
     </div>
   </div>
@@ -68,7 +69,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Endereço</label>
-        <input type="text" step="0" min="1" class="form-control" name="address" placeholder="digite aqui" value="<?=$usuario->address ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" name="address"  placeholder="Ex.: Rua Antônio Cornélio, 123" value="<?=$usuario->address ?? ''?>" />
       </div>
     </div>
   </div>

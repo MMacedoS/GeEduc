@@ -3,11 +3,12 @@
 namespace App\Repositories\Discipline;
 
 use App\Config\Database;
+use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Models\Discipline\Disciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class DisciplinaRepository{
+class DisciplinaRepository implements IDisciplinaRepository {
     const CLASS_NAME = Disciplina::class;
     const TABLE = 'disciplinas';
 
@@ -33,7 +34,7 @@ class DisciplinaRepository{
             $bindings[':search'] = '%' . $params['search'] . '%';
         }   
 
-        if (isset($params['active'])) {
+        if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "d.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
         }

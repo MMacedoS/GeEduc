@@ -3,17 +3,19 @@
 namespace App\Controllers\v1\Profile;
 
 use App\Controllers\Controller;
-use App\Repositories\Profile\UsuarioRecuperarSenhaRepository;
+use App\Interfaces\Profile\IUsuarioRecuperarSenhaRepository;
 use App\Request\Request;
 
 class RecuperarSenhaController extends Controller
 {
     protected $usuarioRecuperaSenhaRepository;
 
-    public function __construct()
+    public function __construct(
+        IUsuarioRecuperarSenhaRepository $usuarioRecuperaSenhaRepository
+    )
     {   
         parent::__construct();
-        $this->usuarioRecuperaSenhaRepository = new UsuarioRecuperarSenhaRepository();
+        $this->usuarioRecuperaSenhaRepository = $usuarioRecuperaSenhaRepository;
     }
 
     public function index(Request $request) 

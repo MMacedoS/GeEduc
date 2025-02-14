@@ -3,13 +3,14 @@
 namespace App\Repositories\Plan;
 
 use App\Config\Database;
+use App\Interfaces\Plan\IPlanoRepository;
 use App\Models\Plan\Plano;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PlanoRepository {
+class PlanoRepository implements IPlanoRepository {
     const CLASS_NAME = Plano::class;
     const TABLE = 'planos';
 

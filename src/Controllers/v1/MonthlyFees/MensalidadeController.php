@@ -3,6 +3,9 @@
 namespace App\Controllers\v1\MonthlyFees;
 
 use App\Controllers\Controller;
+use App\Interfaces\MonthlyFees\IMensalidadeRepository;
+use App\Interfaces\Plan\IPlanoRepository;
+use App\Interfaces\Student\IEstudanteMensalidadeRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;

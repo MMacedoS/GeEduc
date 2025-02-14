@@ -3,12 +3,13 @@
 namespace App\Repositories\Site\Album;
 
 use App\Config\Database;
+use App\Interfaces\Site\Album\ISiteAlbumRepository;
 use App\Models\Site\Album\SiteAlbum;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteAlbumRepository{
+class SiteAlbumRepository implements ISiteAlbumRepository{
 
     const CLASS_NAME = SiteAlbum::class;
     const TABLE = 'site_albuns';

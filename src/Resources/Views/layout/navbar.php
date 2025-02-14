@@ -80,7 +80,8 @@
                                         <span>Turmas</span>
                                     </a>
                                 </li>
-                            <?php } ?>
+                      
+                                <?php } ?>
                             </ul>
                         </li>
                         <?php } if (hasPermission('visualizar financeiro')) {?>
@@ -114,7 +115,13 @@
                                             <span>Planos</span>
                                         </a>
                                     </li>
-                                    <? }?>
+                                    <? } if (hasPermission('visualizar contratos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/contratos">
+                                            <span>Contratos</span>
+                                        </a>
+                                    </li>
+                                <?php }?>
                                 </ul>
                             </li>
                             <?php } if (hasPermission('visualizar site')) {?>
@@ -140,10 +147,10 @@
                                     <?php } ?>
                                 </ul>
                             </li>
-                        <?php } if (hasPermission('visualizar cadastro')) { ?>
+                        <?php } if (hasPermission('criar usuários')) { ?>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="icon-add_task"></i>Parametros
+                                    <i class="icon-add_task"></i>Parâmetros
                                 </a>
                                 <ul class="dropdown-menu">
                                     

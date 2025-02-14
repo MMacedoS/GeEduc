@@ -3,13 +3,14 @@
 namespace App\Repositories\Profile;
 
 use App\Config\Database;
+use App\Interfaces\Profile\IUsuarioRepository;
 use App\Models\Profile\Usuario;
 use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class UsuarioRepository {
+class UsuarioRepository implements IUsuarioRepository {
     const CLASS_NAME = Usuario::class;
     const TABLE = 'usuarios';
     
@@ -33,24 +34,19 @@ class UsuarioRepository {
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['name'])) {
-            $conditions[] = "nome = :nome";
-            $bindings[':nome'] = $params['name'];
+        if (isset($params['name_email'])) {
+            $conditions[] = "(nome LIKE :name_email or email LIKE :name_email)";
+            $bindings[':name_email'] = '%' . $params['name_email'] . '%';
         }
 
-        if (isset($params['email'])) {
-            $conditions[] = "email = :email";
-            $bindings[':email'] = $params['email'];
+        if (isset($params['access']) && $params['access'] != '') {
+            $conditions[] = "painel = :access";
+            $bindings[':access'] = $params['access'];
         }
 
-        if (isset($params['sector'])) {
-            $conditions[] = "painel = :painel";
-            $bindings[':painel'] = $params['sector'];
-        }
-
-        if (isset($params['active'])) {
-            $conditions[] = "p.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation']) && $params['situation'] != '') {
+            $conditions[] = "ativo = :situation";
+            $bindings[':situation'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {

@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Bank_account;
 
 use App\Controllers\Controller;
-use App\Repositories\Bank_account\ContaBancariaRepository;
+use App\Interfaces\Bank_account\IContaBancariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -12,10 +12,12 @@ class ContaBancariaController extends Controller
 {
     protected $contaBancariaRepository;
 
-    public function __construct()
+    public function __construct(
+        IContaBancariaRepository $contaBancariaRepository
+    )
     {
         parent::__construct();   
-        $this->contaBancariaRepository = new ContaBancariaRepository();         
+        $this->contaBancariaRepository = $contaBancariaRepository;
     }
 
     public function index(Request $request) 

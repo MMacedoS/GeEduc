@@ -8,6 +8,7 @@ class Request {
     protected $queryParams;
     protected $bodyParams;
     protected $headers;
+    protected $jsonBody;
 
     public function __construct() {
         $this->method = $_SERVER['REQUEST_METHOD'];
@@ -15,6 +16,9 @@ class Request {
         $this->queryParams = $_GET;
         $this->bodyParams = $_POST;
         $this->headers = getallheaders();
+
+        $rawInput = file_get_contents('php://input');
+        $this->jsonBody = json_decode($rawInput, true) ?? [];
     }
 
     public function getMethod() {
@@ -39,5 +43,9 @@ class Request {
 
     public function getParam($key) {
         return $this->queryParams[$key] ?? $this->bodyParams[$key] ?? null;
+    }
+
+    public function getJsonBody() {
+        return $this->jsonBody;
     }
 }

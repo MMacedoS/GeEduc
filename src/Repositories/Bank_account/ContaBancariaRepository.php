@@ -3,11 +3,12 @@
 namespace App\Repositories\Bank_account;
 
 use App\Config\Database;
+use App\Interfaces\Bank_account\IContaBancariaRepository;
 use App\Models\Bank_account\ContaBancaria;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ContaBancariaRepository {
+class ContaBancariaRepository implements IContaBancariaRepository{
     const CLASS_NAME = ContaBancaria::class;
     const TABLE = 'contas_bancarias';
 
