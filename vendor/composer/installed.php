@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
+        'reference' => 'fc5aeaea1ec2b012615d2b90db412c0b734ffb0e',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
+            'reference' => 'fc5aeaea1ec2b012615d2b90db412c0b734ffb0e',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -223,7 +223,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
         'ralouphie/getallheaders' => array(
             'pretty_version' => '3.0.3',
             'version' => '3.0.3.0',
@@ -233,20 +232,21 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'symfony/deprecation-contracts' => array(
-            'pretty_version' => 'v3.5.1',
-            'version' => '3.5.1.0',
-            'reference' => '74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
-=======
         'sabberworm/php-css-parser' => array(
             'pretty_version' => 'v8.7.0',
             'version' => '8.7.0.0',
             'reference' => 'f414ff953002a9b18e3a116f5e462c56f21237cf',
             'type' => 'library',
             'install_path' => __DIR__ . '/../sabberworm/php-css-parser',
->>>>>>> develop
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'symfony/deprecation-contracts' => array(
+            'pretty_version' => 'v3.5.1',
+            'version' => '3.5.1.0',
+            'reference' => '74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

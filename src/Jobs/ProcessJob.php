@@ -10,6 +10,7 @@ use App\Repositories\Ticket\BoletoRepository;
 use App\Services\BoletoBBService;
 use App\Utils\BoletoTrait;
 use App\Utils\LoggerHelper;
+use GuzzleHttp\Client;
 
 class ProcessJob
 {
@@ -38,6 +39,7 @@ class ProcessJob
         }
         
         foreach ($mensalidades as $key => $value) {
+            $value = (object)$value;
             // Preparação dos dados do boleto
             $dados = $this->prepareTicketData($value, $banco);
             $boleto = $this->boletoservice->emitirBoleto($dados);
@@ -58,7 +60,7 @@ class ProcessJob
         
             // Registra o boleto no banco
             $this->boletoRepository->create([
-                'monthly_id' => $value->id,
+                'monthly_id' => (int)$value->id,
                 'bank_id' => $banco->id,
                 'data' => $value->data_vencimento,
                 'ticket' => $boleto,
@@ -68,17 +70,15 @@ class ProcessJob
             ]);
         
             // Atualiza a mensalidade para indicar que o boleto foi gerado
-            $this->mensalidadeRepository->updateGerouBoleto($value->id);
+            $this->mensalidadeRepository->updateGerouBoleto((int)$value->id);
         
             LoggerHelper::logInfo(Date('Y-m-d H:i:s') . " Boleto gerado e registrado para a mensalidade ID " . $value->id);
         }
         
     }
 
-    private function getLinhaDigitavelAndQRCode($json)
+    private function getLinhaDigitavelAndQRCode($data)
     {
-        $data = json_decode($json, true);
-
         if (isset($data['data']['linhaDigitavel']) && isset($data['data']['qrCode']['url'])) {
             return [
                 'linha_digitavel' => $data['data']['linhaDigitavel'],

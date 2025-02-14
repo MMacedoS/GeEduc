@@ -12,8 +12,6 @@ trait BoletoTrait
             return null;
         }
 
-        $mensalidade = (object)$mensalidade;
-
         $dataVencimento = new DateTime($mensalidade->data_vencimento);
         $dataEmissao = new DateTime($mensalidade->created_at);
 
@@ -40,7 +38,8 @@ trait BoletoTrait
             'valorDesconto' => 0.00, 
             'valorMulta' => $multa, 
             'valorJurosMora' => $jurosMora, 
-            'numeroTituloCliente' => '000' . $conta->convenio . str_pad($mensalidade[0]->id , 10 , '8' , STR_PAD_LEFT),
+            'numeroTituloCliente' => '000' . $conta->convenio . str_pad($mensalidade->id , 10 , '0' , STR_PAD_LEFT),
+            // 'numeroTituloCliente' => '000' . $conta->convenio . $mensalidade->id . '98998876',
             'pagador' => [
                 'tipoInscricao' => 1, // 1 para CPF, 2 para CNPJ
                 'numeroInscricao' => removeCaracteresEspeciais($mensalidade->responsavel_cpf), // CPF ou CNPJ
