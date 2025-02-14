@@ -64,9 +64,9 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
         $conditions = [];
         $bindings = [];
         
-        if (isset($params['active'])) {
-            $conditions[] = "m.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation'])) {
+            $conditions[] = "m.situacao = :situacao";
+            $bindings[':situacao'] = $params['situation'];
         }
 
         if (isset($params['verify_contract'])) {

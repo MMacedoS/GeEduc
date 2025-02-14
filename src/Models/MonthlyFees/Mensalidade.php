@@ -14,6 +14,7 @@ class Mensalidade {
     public $estudante;
     public $estudante_mensalidade;
     public $mensalidades;
+    public $gerou_boleto;
     public $valor;
     public $data_vencimento;
     public $dia_vencimento;
