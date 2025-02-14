@@ -31,30 +31,48 @@ class ProcessJob
     {
         $mensalidades = $this->mensalidadeRepository->monthleesByStudentForBoleto();
         $banco = $this->contaBancariaRepository->findById(1);
-
+        
         if (empty($mensalidades)) {
-            LoggerHelper::logInfo(Date('Y-m-d H:i:s') . " Erro ao gerar :" . count($mensalidades));
+            LoggerHelper::logInfo(Date('Y-m-d H:i:s') . " Erro ao gerar boletos: Nenhuma mensalidade encontrada.");
             return true;
         }
-
+        
         foreach ($mensalidades as $key => $value) {
+            // Preparação dos dados do boleto
             $dados = $this->prepareTicketData($value, $banco);
             $boleto = $this->boletoservice->emitirBoleto($dados);
-            $resBoleto = $this->getLinhaDigitavelAndQRCode($boleto);
-            if (!is_null($boleto)) {
-                $this->boletoRepository->create([
-                    'monthly_id' => $value->id,
-                    'bank_id' => $banco->id,
-                    'data' => $value->data_vencimento,
-                    'ticket' => $boleto,
-                    'amount' => $value->valor,
-                    'barcode' => $resBoleto['linha_digitavel'] ?? null,
-                    'pix' => $resBoleto['qrcode'] ?? null
-                ]);
-
-                $this->mensalidadeRepository->updateGerouBoleto($value->id);
+        
+            if (is_null($boleto)) {
+                LoggerHelper::logInfo(Date('Y-m-d H:i:s') . " Erro ao emitir boleto para a mensalidade ID " . $value->id);
+                continue; // Pula para a próxima mensalidade
             }
+        
+            // Extrai linha digitável e QR code
+            $resBoleto = $this->getLinhaDigitavelAndQRCode($boleto);
+        
+            // Verifica se o boleto tem os dados necessários
+            if (!isset($resBoleto['linha_digitavel']) || !isset($resBoleto['qrcode'])) {
+                LoggerHelper::logInfo(Date('Y-m-d H:i:s') . " Boleto sem linha digitável ou QR Code para a mensalidade ID " . $value->id);
+                continue; // Pula para a próxima mensalidade
+            }
+        
+            // Registra o boleto no banco
+            $this->boletoRepository->create([
+                'monthly_id' => $value->id,
+                'bank_id' => $banco->id,
+                'data' => $value->data_vencimento,
+                'ticket' => $boleto,
+                'amount' => $value->valor,
+                'barcode' => $resBoleto['linha_digitavel'],
+                'pix' => $resBoleto['qrcode']
+            ]);
+        
+            // Atualiza a mensalidade para indicar que o boleto foi gerado
+            $this->mensalidadeRepository->updateGerouBoleto($value->id);
+        
+            LoggerHelper::logInfo(Date('Y-m-d H:i:s') . " Boleto gerado e registrado para a mensalidade ID " . $value->id);
         }
+        
     }
 
     private function getLinhaDigitavelAndQRCode($json)
