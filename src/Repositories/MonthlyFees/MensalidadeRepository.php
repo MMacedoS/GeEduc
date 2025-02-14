@@ -263,4 +263,46 @@ class MensalidadeRepository {
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
+
+    public function monthleesByStudentForBoleto()
+    {
+        $sql = "SELECT
+                pf_responsavel.id AS responsavel_id,
+                pf_responsavel.uuid AS responsavel_uuid,
+                pf_responsavel.nome AS responsavel_nome,
+                pf_responsavel.doc AS responsavel_cpf,
+                m.id AS id,
+                m.uuid AS mensalidade_uuid,
+                m.situacao AS situacao,
+                m.valor AS valor,
+                m.data_vencimento AS data_vencimento,
+                m.created_at AS created_at
+            FROM mensalidades m
+            LEFT JOIN estudante_mensalidade em 
+                ON em.id = m.estudante_mensalidade_id 
+            LEFT JOIN estudantes e
+                ON e.id = em.estudante_id 
+            LEFT JOIN pessoa_fisica pf 
+                ON e.pessoa_fisica_id = pf.id
+            LEFT JOIN pessoa_contato pc 
+                ON e.pessoa_contato_id = pc.id
+            LEFT JOIN pessoa_fisica pf_responsavel 
+                ON pc.pessoa_fisica_id = pf_responsavel.id
+            WHERE m.gerou_boleto = 0
+            ORDER BY m.data_vencimento LIMIT 5";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute();
+    
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function updateGerouBoleto(int $mensalidadeId): void
+    {
+        $sql = "UPDATE mensalidades SET gerou_boleto = 1 WHERE id = :mensalidade_id";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':mensalidade_id' => $mensalidadeId]);
+    }
 }

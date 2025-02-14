@@ -2,36 +2,51 @@
 
 namespace App\Utils;
 
+use DateTime;
+
 trait BoletoTrait
 {
-    public function prepareTicketData(object $mensalidades, object $conta): array
+    public function prepareTicketData($mensalidade, object $conta): array
     {
-        $mensalidade = getJsonToObject($mensalidades->mensalidades) ?? null;
-
-        $estudante = getJsonToObject($mensalidades->estudante_mensalidade) ?? null;
-
         if (is_null($mensalidade)) {
             return null;
         }
+
+        $mensalidade = (object)$mensalidade;
+
+        $dataVencimento = new DateTime($mensalidade->data_vencimento);
+        $dataEmissao = new DateTime($mensalidade->created_at);
+
+        $jurosMora = [
+            'tipo' => 1, // 1 = Valor por dia de atraso
+            'valor' => 0.33 // Juros de 0.33 por dia
+        ];
+    
+        $multa = [
+            'tipo' => 2, // 2 = Percentual da Multa
+            'data' => $dataVencimento->modify('+1 day')->format('d.m.Y'), // Um dia após o vencimento
+            'porcentagem' => 2.00 // 2% de multa
+        ];
         
         $dadosBoleto = [
             'numeroConvenio' => $conta->convenio,
             'numeroCarteira' => 17,
             'numeroVariacaoCarteira' => 35,
             'codigoModalidade' => 1,
-            'dataEmissao' => brDate(date('Y-m-d')),
-            'dataVencimento' => brDate($mensalidade[0]->data_vencimento),
-            'valorOriginal' => $mensalidade[0]->valor,
+            'dataEmissao' => $dataEmissao->format('d.m.Y'),
+            'dataVencimento' => $dataVencimento->modify('-1 day')->format('d.m.Y'),
+            'valorOriginal' => $mensalidade->valor,
             'valorAbatimento' => 0.00, 
             'valorDesconto' => 0.00, 
-            'valorMulta' => 0.00, 
-            'valorJurosMora' => 0.00, 
-            'numeroTituloCliente' => '000' . $conta->convenio . str_pad($mensalidade[0]->id , 10 , '7' , STR_PAD_LEFT), 
+            'valorMulta' => $multa, 
+            'valorJurosMora' => $jurosMora, 
+            'numeroTituloCliente' => '000' . $conta->convenio . str_pad($mensalidade[0]->id , 10 , '8' , STR_PAD_LEFT),
             'pagador' => [
                 'tipoInscricao' => 1, // 1 para CPF, 2 para CNPJ
-                'numeroInscricao' => removeCaracteresEspeciais($estudante->responsavel->cpf), // CPF ou CNPJ
-                'nome' => $estudante->responsavel->nome
-            ]
+                'numeroInscricao' => removeCaracteresEspeciais($mensalidade->responsavel_cpf), // CPF ou CNPJ
+                'nome' => $mensalidade->responsavel_nome
+            ],
+            'indicadorPix' => 'S'
         ];
 
         return $dadosBoleto;
