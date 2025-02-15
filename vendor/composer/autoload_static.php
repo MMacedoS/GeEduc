@@ -30,6 +30,7 @@ class ComposerStaticInit7a5fbd8b5a8da14cb9093785c03b15e4
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Picqer\\Barcode\\' => 15,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
@@ -50,14 +51,23 @@ class ComposerStaticInit7a5fbd8b5a8da14cb9093785c03b15e4
             'FontLib\\' => 8,
             'Firebase\\JWT\\' => 13,
         ),
+        'E' => 
+        array (
+            'Endroid\\QrCode\\' => 15,
+        ),
         'D' => 
         array (
             'Dompdf\\' => 7,
+            'DASPRiD\\Enum\\' => 13,
         ),
         'C' => 
         array (
             'Composer\\Pcre\\' => 14,
             'Complex\\' => 8,
+        ),
+        'B' => 
+        array (
+            'BaconQrCode\\' => 12,
         ),
         'A' => 
         array (
@@ -94,6 +104,10 @@ class ComposerStaticInit7a5fbd8b5a8da14cb9093785c03b15e4
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'Picqer\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/picqer/php-barcode-generator/src',
         ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
@@ -135,9 +149,17 @@ class ComposerStaticInit7a5fbd8b5a8da14cb9093785c03b15e4
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
+        'Endroid\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/endroid/qr-code/src',
+        ),
         'Dompdf\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
+        ),
+        'DASPRiD\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
         ),
         'Composer\\Pcre\\' => 
         array (
@@ -146,6 +168,10 @@ class ComposerStaticInit7a5fbd8b5a8da14cb9093785c03b15e4
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
+        ),
+        'BaconQrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
         ),
         'App\\' => 
         array (

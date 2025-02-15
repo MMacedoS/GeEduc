@@ -15,6 +15,10 @@ class Boleto {
     public $valor;
     public $data;
     public $boleto;
+    public $nosso_numero;
+    public $data_pagamento;
+    public $valor_pago;
+    public $webhook;
     public $codigo_barras;
     public $pix;
     public $created_at;
@@ -32,6 +36,7 @@ class Boleto {
         $boleto->data = $data['data'];
         $boleto->boleto = $data['ticket'];
         $boleto->valor = $data['amount'];
+        $boleto->nosso_numero = $data['ournumber'];
         $boleto->codigo_barras = $data['barcode'];
         $boleto->pix = $data['pix'];
 

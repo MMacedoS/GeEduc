@@ -27,26 +27,36 @@ trait BoletoTrait
         ];
         
         $dadosBoleto = [
-            'numeroConvenio' => $conta->convenio,
-            'numeroCarteira' => 17,
-            'numeroVariacaoCarteira' => 35,
-            'codigoModalidade' => 1,
-            'dataEmissao' => $dataEmissao->format('d.m.Y'),
-            'dataVencimento' => $dataVencimento->modify('-1 day')->format('d.m.Y'),
-            'valorOriginal' => $mensalidade->valor,
-            'valorAbatimento' => 0.00, 
-            'valorDesconto' => 0.00, 
-            'valorMulta' => $multa, 
-            'valorJurosMora' => $jurosMora, 
-            'numeroTituloCliente' => '000' . $conta->convenio . str_pad($mensalidade->id , 10 , '0' , STR_PAD_LEFT),
-            // 'numeroTituloCliente' => '000' . $conta->convenio . $mensalidade->id . '98998876',
-            'pagador' => [
-                'tipoInscricao' => 1, // 1 para CPF, 2 para CNPJ
-                'numeroInscricao' => removeCaracteresEspeciais($mensalidade->responsavel_cpf), // CPF ou CNPJ
-                'nome' => $mensalidade->responsavel_nome
-            ],
-            'indicadorPix' => 'S'
-        ];
+                "numeroConvenio" => $conta->convenio,
+                "numeroCarteira" => 17,
+                "numeroVariacaoCarteira" => 19,
+                "codigoModalidade" => 1,
+                "dataEmissao" => $dataEmissao->format('d.m.Y'),
+                "dataVencimento" => $dataVencimento->modify('-1 day')->format('d.m.Y'),
+                "valorOriginal" => $mensalidade->valor,
+                "valorAbatimento" => 0,
+                "quantidadeDiasProtesto" => 5,
+                "quantidadeDiasNegativacao" => 90,
+                "orgaoNegativador" => 10,
+                "indicadorAceiteTituloVencido" => "S",
+                "numeroDiasLimiteRecebimento" => 0,
+                "codigoAceite" => "A",
+                "codigoTipoTitulo" => 99,
+                "descricaoTipoTitulo" => "Mensalidade Escolar",
+                "indicadorPermissaoRecebimentoParcial" => "N",
+                "numeroTituloBeneficiario" => "",
+                "campoUtilizacaoBeneficiario" => "",
+                "numeroTituloCliente" => '000' . $conta->convenio . str_pad($mensalidade->id , 10 , '0' , STR_PAD_LEFT),
+                "mensagemBloquetoOcorrencia" => "",                
+                "jurosMora" => $jurosMora,
+                "multa" => $multa,
+                "pagador" => [
+                  "tipoInscricao" => 1,
+                  "numeroInscricao" => removeCaracteresEspeciais($mensalidade->responsavel_cpf),
+                  "nome" => $mensalidade->responsavel_nome                  
+                ],                
+                "indicadorPix" => "S"
+            ];
 
         return $dadosBoleto;
     }

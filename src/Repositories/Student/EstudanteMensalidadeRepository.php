@@ -84,9 +84,9 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
             $bindings[':end_date'] = $params['end_date'];
         }
 
-        if (isset($params['student_id'])) {
-            $conditions[] = "m.estudante_id = :estudante_id";
-            $bindings[':estudante_id'] = $params['student_id'];
+        if (isset($params['student_monthly_id'])) {
+            $conditions[] = "m.estudante_mensalidade_id = :student_monthly_id";
+            $bindings[':student_monthly_id'] = $params['student_monthly_id'];
         }
 
         if (count($conditions) > 0) {

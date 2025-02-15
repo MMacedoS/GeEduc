@@ -18,33 +18,16 @@ class BoletoBBService
         $this->baseUri = API_BB_URL;
         $this->client = new Client(
             [
-                'base_uri' => $this->baseUri, 
+                'base_uri' => $this->baseUri,
                 'verify' => false,
             ]
         );
-        $this->loadToken();
     }
-
-    private function loadToken()
-    {
-        if (file_exists($this->tokenFile)) {
-            $data = json_decode(file_get_contents($this->tokenFile), true);
-
-            if (isset($data['token'], $data['expires_at']) && time() < $data['expires_at']) {
-                return $this->token = $data['token'];
-            } 
-            unlink($this->tokenFile); // Remove token expirado
-            return;
-        }
-    }
-
+    
     public function getToken()
-    {
-        if ($this->token) {
-            return $this->token;
-        }
-
+    {    
         try {
+            // Faz a requisição para obter o token
             $response = $this->client->post(TOKEN_URL_BB, [
                 'headers' => [
                     'Authorization' => BASIC_TOKEN,
@@ -55,25 +38,17 @@ class BoletoBBService
                     'scope' => 'cobrancas.boletos-info cobrancas.boletos-requisicao',
                 ],
             ]);
-
+    
+            // Decodifica a resposta e armazena o token
             $data = json_decode($response->getBody(), true);
             $this->token = $data['access_token'];
-
-            $data = json_decode($response->getBody(), true);
-            $this->token = $data['access_token'];
-
-            // Salva o token em arquivo com tempo de expiração de 1 hora
-            file_put_contents($this->tokenFile, json_encode([
-                'token' => $this->token,
-                'expires_at' => time() + 3600, // Expira em 1 hora
-            ]));
-
+    
             return $this->token;
         } catch (GuzzleException $e) {
             LoggerHelper::logInfo("Erro ao obter token: " . $e->getMessage());
             return null;
         }
-    }
+    }    
 
     private function getHeaders()
     {
@@ -97,6 +72,7 @@ class BoletoBBService
 
     public function emitirBoleto($dadosBoleto)
     {
+        LoggerHelper::logInfo(json_encode($dadosBoleto));
         try {
             $response = $this->client->post('boletos', [
                 'headers' => $this->getHeaders(),

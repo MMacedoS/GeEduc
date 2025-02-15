@@ -15,6 +15,7 @@ class Mensalidade {
     public $estudante_mensalidade;
     public $mensalidades;
     public $gerou_boleto;
+    public $nosso_numero;
     public $valor;
     public $data_vencimento;
     public $dia_vencimento;
@@ -33,6 +34,7 @@ class Mensalidade {
         $mensalidade->data_vencimento = $data['expiration_date'];
         $mensalidade->dia_vencimento = $data['monthly_day'];
         $mensalidade->valor = $data['amount'];
+        $mensalidade->nosso_numero = $data['our_number'];
         $mensalidade->situacao = $data['situation'] ?? 'pendente';
 
         return $mensalidade;

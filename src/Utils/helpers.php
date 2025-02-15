@@ -150,6 +150,10 @@ if (!function_exists('publicPath')) {
 
 if (!function_exists('removeCaracteresEspeciais')) {
     function removeCaracteresEspeciais($string) {
+        if(is_null($string)) {
+            return null;
+        }
+        
         return preg_replace('/\D/', '', $string);
     }    
 }
