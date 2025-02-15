@@ -148,6 +148,15 @@ if (!function_exists('publicPath')) {
     }
 }
 
+if (!function_exists('removeCaracteresEspeciais')) {
+    function removeCaracteresEspeciais($string) {
+        if(is_null($string)) {
+            return null;
+        }
+        
+        return preg_replace('/\D/', '', $string);
+    }    
+}
 
 if (!function_exists('dd')) {
     function dd($data) {

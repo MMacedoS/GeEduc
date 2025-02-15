@@ -24,78 +24,97 @@ class MensalidadeRepository implements IMensalidadeRepository {
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT
-                m.estudante_mensalidade_id,
-                m.id,
-                JSON_OBJECT(
-                    'id', em.id,
-                    'uuid', em.uuid,
-                    'estudante', JSON_OBJECT(
-                        'id', e.id,
-                        'uuid', e.uuid,
-                        'nome', pf.nome
-                    )
-                ) AS estudante_mensalidade,
-                JSON_ARRAYAGG(
+                    m.estudante_mensalidade_id,
+                    m.id,
                     JSON_OBJECT(
-                        'id', m.id,
-                        'uuid', m.uuid,
-                        'situacao', m.situacao,
-                        'valor', m.valor,
-                        'data_vencimento', m.data_vencimento,
-                        'created_at', m.created_at
-                    )
-                ) AS mensalidades,
-                MAX(m.data_vencimento) AS created_at
-            FROM " . self::TABLE . " m
-            LEFT JOIN estudante_mensalidade em 
-            ON em.id = m.estudante_mensalidade_id 
-            LEFT JOIN estudantes e
-            ON e.id = em.estudante_id 
-            LEFT JOIN pessoa_fisica pf 
-            ON e.pessoa_fisica_id = pf.id";
+                        'id', em.id,
+                        'uuid', em.uuid,
+                        'estudante', JSON_OBJECT(
+                            'id', e.id,
+                            'uuid', e.uuid,
+                            'nome', pf.nome
+                        ),
+                        'responsavel', JSON_OBJECT(
+                            'id', pf_responsavel.id,
+                            'uuid', pf_responsavel.uuid,
+                            'nome', pf_responsavel.nome,
+                            'cpf', pf_responsavel.doc
+                        )
+                    ) AS estudante_mensalidade,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', m.id,
+                            'uuid', m.uuid,
+                            'situacao', m.situacao,
+                            'gerou_boleto', m.gerou_boleto,
+                            'valor', m.valor,
+                            'data_vencimento', m.data_vencimento,
+                            'created_at', m.created_at
+                        )
+                    ) AS mensalidades,
+                    MAX(m.data_vencimento) AS created_at
+                FROM " . self::TABLE . " m
+                LEFT JOIN estudante_mensalidade em 
+                    ON em.id = m.estudante_mensalidade_id 
+                LEFT JOIN estudantes e
+                    ON e.id = em.estudante_id 
+                LEFT JOIN pessoa_fisica pf 
+                    ON e.pessoa_fisica_id = pf.id
+                LEFT JOIN pessoa_contato pc 
+                    ON e.pessoa_contato_id = pc.id
+                LEFT JOIN pessoa_fisica pf_responsavel 
+                    ON pc.pessoa_fisica_id = pf_responsavel.id";
 
-        $conditions = [];
-        $bindings = [];
+            $conditions = [];
+            $bindings = [];
 
-        if (isset($params['situation']) && !empty($params['situation'])) {
-            $conditions[] = "m.situacao = :situacao";
-            $bindings[':situacao'] = $params['situation'];
-        }
+            if (isset($params['situation']) && !empty($params['situation'])) {
+                $conditions[] = "m.situacao = :situacao";
+                $bindings[':situacao'] = $params['situation'];
+            }
 
-        if (isset($params['student_monthlyfees_id'])) {
-            $conditions[] = "m.estudante_mensalidade_id = :estudante_mensalidade_id";
-            $bindings[':estudante_mensalidade_id'] = $params['student_monthlyfees_id'];
-        }
+            if (isset($params['uuid'])) {
+                $conditions[] = "m.uuid = :uuid";
+                $bindings[':uuid'] = $params['uuid'];
+            }
 
-        if (isset($params['student_id'])) {
-            $conditions[] = "em.estudante_id = :estudante_id";
-            $bindings[':estudante_id'] = $params['student_id'];
-        }
+            if (isset($params['student_monthlyfees_id'])) {
+                $conditions[] = "m.estudante_mensalidade_id = :estudante_mensalidade_id";
+                $bindings[':estudante_mensalidade_id'] = $params['student_monthlyfees_id'];
+            }
 
+            if (isset($params['student_id'])) {
+                $conditions[] = "em.estudante_id = :estudante_id";
+                $bindings[':estudante_id'] = $params['student_id'];
+            }
 
-        if (isset($params['student_name'])) {
-            $conditions[] = "pf.nome like :estudante_nome";
-            $bindings[':estudante_nome'] = "%" . $params['student_name'] . "%";
-        }
+            if (isset($params['student_name'])) {
+                $conditions[] = "pf.nome LIKE :estudante_nome";
+                $bindings[':estudante_nome'] = "%" . $params['student_name'] . "%";
+            }
 
-        if (isset($params['start_date']) && isset($params['end_date'])) {
-            $conditions[] = "m.created_at BETWEEN :start_date AND :end_date";
-            $bindings[':start_date'] = $params['start_date'];
-            $bindings[':end_date'] = $params['end_date'];
-        }
+            if (
+                isset($params['start_date']) && 
+                isset($params['end_date']) &&
+                !empty($params['start_date']) && 
+                !empty($params['end_date'])                
+            ) {
+                $conditions[] = "m.data_vencimento BETWEEN :start_date AND :end_date";
+                $bindings[':start_date'] = $params['start_date'];
+                $bindings[':end_date'] = $params['end_date'];
+            }
 
-        if (count($conditions) > 0) {
-        $sql .= " WHERE " . implode(" AND ", $conditions);
-        }
+            if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
 
-        $sql .= " GROUP BY m.estudante_mensalidade_id, m.id";
-        $sql .= " ORDER BY m.id DESC";
+            $sql .= " GROUP BY m.estudante_mensalidade_id, m.id";
+            $sql .= " ORDER BY m.id DESC";
 
-        $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
 
-        $stmt->execute($bindings);
-
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
+            return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
 
     }
 
@@ -253,5 +272,60 @@ class MensalidadeRepository implements IMensalidadeRepository {
         $stmt->execute($bindings);
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+    }
+
+    public function monthleesByStudentForBoleto()
+    {
+        $sql = "SELECT
+                pf_responsavel.id AS responsavel_id,
+                pf_responsavel.uuid AS responsavel_uuid,
+                pf_responsavel.nome AS responsavel_nome,
+                pf_responsavel.doc AS responsavel_cpf,
+                m.id AS id,
+                m.uuid AS mensalidade_uuid,
+                m.situacao AS situacao,
+                m.valor AS valor,
+                m.data_vencimento AS data_vencimento,
+                m.created_at AS created_at
+            FROM mensalidades m
+            LEFT JOIN estudante_mensalidade em 
+                ON em.id = m.estudante_mensalidade_id 
+            LEFT JOIN estudantes e
+                ON e.id = em.estudante_id 
+            LEFT JOIN pessoa_fisica pf 
+                ON e.pessoa_fisica_id = pf.id
+            LEFT JOIN pessoa_contato pc 
+                ON e.pessoa_contato_id = pc.id
+            LEFT JOIN pessoa_fisica pf_responsavel 
+                ON pc.pessoa_fisica_id = pf_responsavel.id
+            WHERE m.gerou_boleto = 0 and m.situacao = 'pendente' 
+            ORDER BY m.data_vencimento LIMIT 5";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute();
+    
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function updateGerouBoleto(int $mensalidadeId, string $nosso_numero): void
+    {
+        $sql = "UPDATE mensalidades SET gerou_boleto = 1, nosso_numero = :nosso_numero WHERE id = :mensalidade_id";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':mensalidade_id' => $mensalidadeId, ':nosso_numero' => $nosso_numero]);
+    }
+
+    public function updateMonthly(string $nossoNumero, string $situacao)
+    {
+        $query = "UPDATE mensalidades SET situacao = :situacao WHERE nosso_numero = :nosso_numero";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([
+            ':situacao' => $situacao,
+            ':nosso_numero' => $nossoNumero
+        ]);
+
+        LoggerHelper::logInfo("Mensalidade atualizada: Nosso Número $nossoNumero, Situação $situacao");
     }
 }

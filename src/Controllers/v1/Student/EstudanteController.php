@@ -281,10 +281,7 @@ class EstudanteController extends Controller
         $updated = $this->estudanteRepository->updateAll($data);
 
         if(is_null($updated)){
-            return $this->router->view('student/edit', [
-                'active' => 'pedagogico', 
-                'danger' => true
-            ]);
+            return $this->router->redirect("estudantes?sem-sucesso");
         }
 
         return $this->router->redirect('estudantes/');
