@@ -24,8 +24,16 @@ class CoordenadorTurmaRepository implements ICoordenadorTurmaRepository {
     public function allCoordinatorClass(array $params = []) 
     {
         $sql = "SELECT 
-                ct.*
-            FROM " . self::TABLE . " ct             
+                ct.*, 
+                JSON_OBJECT(
+                    'id', t.id,
+                    'uuid', t.uuid,
+                    'nome', t.nome,
+                    'turno', t.turno,
+                    'ativo', t.ativo
+                ) AS turma_details
+            FROM " . self::TABLE . " ct
+            LEFT JOIN turmas t ON t.id = ct.turma_id
         ";
 
         $conditions = [];
@@ -34,6 +42,10 @@ class CoordenadorTurmaRepository implements ICoordenadorTurmaRepository {
         if (isset($params['class_id'])) {
             $conditions[] = "ct.turma_id = :turma_id";
             $bindings[':turma_id'] = $params['class_id'];
+        }
+        if (isset($params['coordenador_id'])) {
+            $conditions[] = "ct.coordenador_id = :coordenador_id";
+            $bindings[':coordenador_id'] = $params['coordenador_id'];
         }
 
         if (count($conditions) > 0) {
@@ -46,7 +58,7 @@ class CoordenadorTurmaRepository implements ICoordenadorTurmaRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+        return $stmt->fetchAll(\PDO::FETCH_CLASS);
     }
 
     public function saveAll(array $data, $turma_id)

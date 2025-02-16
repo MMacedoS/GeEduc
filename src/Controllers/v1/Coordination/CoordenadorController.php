@@ -4,7 +4,9 @@ namespace App\Controllers\v1\Coordination;
 
 use App\Controllers\Controller;
 use App\Interfaces\Coordination\ICoordenadorRepository;
+use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Profile\IUsuarioRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -13,14 +15,21 @@ class CoordenadorController extends Controller{
 
     protected $coordenadorRepository;
     protected $pessoaFisicaRepository;
+    protected $usuarioRepository;
+    protected $coordenadorTurmaRepository;
+    
 
     public function __construct(
         ICoordenadorRepository $coordenadorRepository,
-        IPessoaFisicaRepository $pessoaFisicaRepository
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        IUsuarioRepository $usuarioRepository,
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository
     ){
         parent::__construct();
         $this->coordenadorRepository = $coordenadorRepository;
         $this->pessoaFisicaRepository = $pessoaFisicaRepository;
+        $this->usuarioRepository = $usuarioRepository;
+        $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
     }
 
     public function index(Request $request){

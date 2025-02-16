@@ -28,7 +28,9 @@ class FrequenciaController extends Controller
     protected $professorDisciplinaRepository;
     protected $periodoRepository;
     protected $cargaHorariaRepository;
-
+    protected $active;
+    protected $routeView;
+    protected $redirect;
     public function __construct(
         IAtividadeRepository $atividadeRepository,
         ITurmaDisciplinaRepository $turmaDisciplinaRepository,
@@ -52,9 +54,29 @@ class FrequenciaController extends Controller
 
     }
 
-    public function indexStudents(Request $request, string $studant_class_id)
+    private function defineRoutes($class_discipline_id) {
+        switch($_SESSION["user"]->painel) {
+            case 'coordenador':
+                $this->routeView = 'coordination/my-coordination/discipline';
+                $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
+                $this->active = 'coordinator';
+                break;
+            case 'administrativo':
+                $this->routeView = 'coordination/my-coordination/discipline';
+                $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
+                $this->active = 'coordinator';
+                break;
+                case 'professor':
+                $this->routeView = 'teacher/my-disciplines/activitie';
+                $this->redirect = "meus-componentes/$class_discipline_id";
+                $this->active = 'teacher';
+                break;
+        }
+    }
+
+    public function indexStudents(Request $request, string $student_class_id)
     {
-        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
+        $student_class = $this->estudanteTurmaRepository->findByUuid($student_class_id);
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -95,12 +117,12 @@ class FrequenciaController extends Controller
         ); 
     }
 
-    public function indexResponsibleStudents(Request $request, string $student_id, string $studant_class_id)
+    public function indexResponsibleStudents(Request $request, string $student_id, string $student_class_id)
     {
         $student = $this->estudanteRepository
             ->studentWithPersonByUuid((string)$student_id);
 
-        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
+        $student_class = $this->estudanteTurmaRepository->findByUuid($student_class_id);
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -144,6 +166,7 @@ class FrequenciaController extends Controller
 
     public function indexTeacher(Request $request, string $class_discipline_id)
     {
+        $this->defineRoutes($class_discipline_id);
         $paramsURL = $request->getQueryParams();
 
         $turma_disciplina = $this->turmaDisciplinaRepository
@@ -179,9 +202,9 @@ class FrequenciaController extends Controller
         $periodos = $this->periodoRepository->all();
 
         return $this->router->view(
-            'teacher/my-disciplines/frequency', 
+            "$this->routeView/frequency", 
             [
-                'active' => 'teacher',
+                'active' => $this->active,
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'frequencias' => $frequencias,
@@ -210,9 +233,9 @@ class FrequenciaController extends Controller
         }
       
         if(is_null($created)){
-            return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?error=422");
+            return $this->router->redirect("$this->redirect/frequencia?error=422");
         }
        
-        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&period_id=$data[period_id]");
+        return $this->router->redirect("$this->redirect/frequencia?data=$data[data]&period_id=$data[period_id]");
     }
 }
