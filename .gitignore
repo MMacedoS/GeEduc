@@ -7,3 +7,4 @@ vendor/composer/autoload_namespaces.php
 /Public/**
 logs/app.log
 vendor/composer/autoload_files.php
+src/env/app.php
