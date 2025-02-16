@@ -58,7 +58,7 @@ class ParalelaRepository implements IParalelaRepository {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             
-            return $stmt->fetchAll(PDO::FETCH_CLASS, self::CLASS_NAME);    
+            return $stmt->fetchAll(PDO::FETCH_CLASS);    
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
         } finally {          
