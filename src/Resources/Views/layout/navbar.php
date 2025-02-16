@@ -192,6 +192,12 @@
                                 </a>
                             </li>
                         <? } ?>
+                        <?php if ($_SESSION['user']->painel == "coordenador") { ?>
+                            <li class="nav-item <?=$active === 'coordinator' ? 'active-link': ''?>">
+                                <a class="nav-link" href="/minha-coordenacao"><i class="icon-book-open"></i> Minha Coordenação
+                                </a>
+                            </li>
+                        <? } ?>
                         <?php if (hasPermission('responsavel_legal')) { ?>
                             <li class="nav-item <?=$active === 'responsible_legal' ? 'active-link': ''?>">
                                 <a class="nav-link" href="/minha-galerinha"><i class="icon-book-open"></i> Minha Galerinha
