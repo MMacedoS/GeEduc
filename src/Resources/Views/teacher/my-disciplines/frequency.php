@@ -108,9 +108,9 @@
                                     <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">
                                         <label class="form-check-label mt-2 me-2" style="width: 100px;" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
                                         <select class="form-select" name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
-                                            <option value="0" <?= $frequenciasMap[$estudante->id] == 0 ? 'selected' : '' ?>>0</option>
-                                            <option value="1" <?= $frequenciasMap[$estudante->id] == 1 ? 'selected' : '' ?>>1</option>
-                                            <option value="2" <?= $frequenciasMap[$estudante->id] == 2 ? 'selected' : '' ?>>2</option>
+                                        <option value="0" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 0 ? 'selected' : '') : 'selected' ?>>0</option>
+                                            <option value="1" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 1 ? 'selected' : '') : '' ?>>1</option>
+                                            <option value="2" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 2 ? 'selected' : '') : '' ?>>2</option>
                                         </select>                                        
                                     </div>
                                 </div>
