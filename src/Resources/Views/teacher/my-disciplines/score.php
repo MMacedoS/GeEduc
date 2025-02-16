@@ -85,12 +85,21 @@
                         
                         foreach ($notas as $nota) {                            
                             $notasMap["$nota->estudante_turma_id$nota->atividade_id"] = $nota->nota;
-                            $notasMap[$nota->estudante_turma_id] += $nota->nota;
+                            if (isset($notasMap[$nota->estudante_turma_id])) {
+                                $notasMap[$nota->estudante_turma_id] += $nota->nota ?? 0;
+                            } else {
+                                $notasMap[$nota->estudante_turma_id] = $nota->nota ?? 0;
+                            }
                         }
-
-                        foreach ($paralelas as $paralela) {                            
-                            $paralelaMap["$paralela->estudante_turma_id"] = $paralela->nota;
+    
+                        foreach ($paralelas as $paralela) {        
+                            if (isset($paralelaMap[$paralela->estudante_turma_id])) {
+                                $paralelaMap[$paralela->estudante_turma_id] += $paralela->nota ?? 0;
+                            } else {
+                                $paralelaMap[$paralela->estudante_turma_id] = $paralela->nota ?? 0;
+                            }                    
                         }
+                    
                 
                         foreach ($estudantes as $key => $estudante) {             
                           
@@ -104,7 +113,10 @@
                                 <?php foreach($atividades as $atividade) { ?> 
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
-                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
+                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" 
+                                            for="notas[<?= "$estudante->id,$atividade->id"?>]">
+                                            <?= getJsonToObject($atividade->activies_details)->tipo ?>: 
+                                        </label>
                                         <input 
                                             class="form-floating" 
                                             type="number" 
@@ -112,7 +124,9 @@
                                             min="0" 
                                             step="0.01" 
                                             max="<?= $atividade->valor ?>" 
-                                            value="<?= $notasMap["$estudante->id$atividade->id"] ? $notasMap["$estudante->id$atividade->id"] : 0?>">                                   
+                                            value="<?= $notasMap["$estudante->id$atividade->id"] 
+                                            ? $notasMap["$estudante->id$atividade->id"] 
+                                            : 0?>">                                   
                                     </div>
                                 </div>
                                 <?php } ?> 
@@ -120,14 +134,19 @@
                                     <div class="col-1">
                                         <div class="mr-2 d-flex flex-column pe-0">
                                             <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="paralela">Paralela: </label>
-                                            <input type="number" min="0" step="0.01" max="2" name="parallel[<?= $estudante->id ?>]" value="<?= $paralelaMap[$estudante->id] ?>">                                   
+                                            <input type="number" min="0" step="0.01" max="2" 
+                                            name="parallel[<?= $estudante->id ?>]" 
+                                            value="<?= $paralelaMap[$estudante->id] ?>">                                   
                                         </div>
                                     </div>
                                 <?php } ?>
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
-                                        <input type="number" min="0" step="0.01" max="10" name="total[<?= $estudante->id ?>]" value="<?= $notasMap[$estudante->id] + $paralelaMap[$estudante->id]?>" disabled>                                   
+                                        <input type="number" min="0" step="0.01" max="10" 
+                                        name="total[<?= $estudante->id ?>]" 
+                                        value="<?= $notasMap[$estudante->id] +($paralelaMap[$estudante->id] ?? 0)?>"
+                                        disabled>                                   
                                     </div>
                                 </div>
                             </div>     
