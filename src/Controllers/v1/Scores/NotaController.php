@@ -21,6 +21,9 @@ class NotaController extends Controller
     protected $estudanteRepository;
     protected $periodoRepository;
     protected $paralelaRepository;
+    protected $active;
+    protected $routeView;
+    protected $redirect;
 
     public function __construct(
         IAtividadeRepository $atividadeRepository,
@@ -41,8 +44,29 @@ class NotaController extends Controller
         $this->paralelaRepository = $paralelaRepository;
     }
 
+    private function defineRoutes($class_discipline_id) {
+        switch($_SESSION["user"]->painel) {
+            case 'coordenador':
+                $this->routeView = 'coordination/my-coordination/discipline';
+                $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
+                $this->active = 'coordinator';
+                break;
+            case 'administrativo':
+                $this->routeView = 'coordination/my-coordination/discipline';
+                $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
+                $this->active = 'coordinator';
+                break;
+                case 'professor':
+                $this->routeView = 'teacher/my-disciplines/activitie';
+                $this->redirect = "meus-componentes/$class_discipline_id";
+                $this->active = 'teacher';
+                break;
+        }
+    }
+
     public function indexTeacher(Request $request, string $class_discipline_id)
     {
+        $this->defineRoutes($class_discipline_id);
         $paramsURL = $request->getQueryParams();
      
         $turma_disciplina = $this->turmaDisciplinaRepository
@@ -73,9 +97,9 @@ class NotaController extends Controller
         $periodos = $this->periodoRepository->all();
 
         return $this->router->view(
-            'teacher/my-disciplines/score', 
+            "$this->routeView/score", 
             [
-                'active' => 'teacher',
+                'active' => $this->active,
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'notas' => $notas,
@@ -87,13 +111,14 @@ class NotaController extends Controller
         );
     }
 
-    public function store(Request $request, string $class_discipline_id)
+    public function store(Request $request, string $class_discipline_id, string $class_id = null)
     {
+        $this->defineRoutes($class_discipline_id);
         $data = $request->getBodyParams();
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
 
         if(is_null($turma_disciplina)) {
-            return $this->router->redirect("meus-componentes/$class_discipline_id/notas?error=422");
+            return $this->router->redirect("$this->redirect/notas?error=422");
         }
        
         if (isset($data['notas'])) {
@@ -120,10 +145,10 @@ class NotaController extends Controller
         }
 
         if(is_null($created)){
-            return $this->router->redirect("meus-componentes/$class_discipline_id/notas?error=422");
+            return $this->router->redirect("$this->redirect/notas?error=422");
         }
-       
-        return $this->router->redirect("meus-componentes/$class_discipline_id/notas?bimester_id=$data[bimester_id]");
+    
+        return $this->router->redirect("$this->redirect/notas?period_id=$data[period_id]");
     }
 
     public function indexResponsibleStudents(Request $request, string $student_id, string $studant_class_id) 

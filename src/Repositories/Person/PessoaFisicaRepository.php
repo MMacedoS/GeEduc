@@ -182,6 +182,10 @@ class PessoaFisicaRepository implements IPessoaFisicaRepository {
                 $conditions[] = "doc = :doc";
                 $params[':doc'] = $criteria['doc'];
             }
+            if (!empty($criteria['usuario_id'])) {
+                $conditions[] = "usuario_id = :usuario_id";
+                $params[':usuario_id'] = $criteria['usuario_id'];
+            }
 
             if (empty($conditions)) {
                 return null; 

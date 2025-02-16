@@ -193,7 +193,7 @@ class ProfessorController extends Controller
         $paginatedBoards = $paginator->getPaginatedItems();
 
         $data = [
-            'disciplinas' => $class_discipline,
+            'disciplinas' => $paginatedBoards,
             'links' => $paginator->links(),
             'active' => 'teacher',
             'name_discipline' => $params['name_discipline'] ?? null,

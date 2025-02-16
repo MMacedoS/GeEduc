@@ -194,7 +194,21 @@ $router->create('GET', '/coordenador/{id}/', [$coordenadorController, 'edit'], $
 $router->create('POST', '/coordenador/{id}/', [$coordenadorController, 'update'], $auth);
 $router->create('DELETE', '/coordenador/{id}', [$coordenadorController, 'destroy'], $auth);
 
-//bimesters
+// Minha turma - coordenador
+$router->create('GET', '/minha-coordenacao', [$turmaDisciplinaController, 'indexByCoordenador'], $auth);
+$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplinas/", [$turmaDisciplinaController, "indexClassRoomDisciplineByCoordenador"], $auth);
+$router->create('GET', "/minha-coordenacao/turma/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
+$router->create('POST', "/minha-coordenacao/turma/{id}/frequencia", [$frequenciaController, 'store'], $auth);
+$router->create('GET', "/minha-coordenacao/turma/{id}/notas", [$notaController, 'indexTeacher'], $auth);
+$router->create('POST', "/minha-coordenacao/turma/{id}/notas", [$notaController, 'store'], $auth);
+$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
+$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
+$router->create( "POST", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
+$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
+$router->create( "POST", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
+$router->create( "DELETE", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+
+//periods
 $router->create( "GET", "/periodos", [$periodoController, "index"], $auth);
 $router->create( "GET", "/periodos/criar", [$periodoController, "create"], $auth);
 $router->create( "POST", "/periodos/criar", [$periodoController, "store"], $auth);

@@ -19,6 +19,7 @@ class AtividadeController extends Controller
     protected $turmaRepository;
     protected $redirect;
     protected $routeView;
+    protected $active;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
@@ -34,16 +35,19 @@ class AtividadeController extends Controller
     private function defineRoutes($class_id, $class_discipline_id) {
         switch($_SESSION["user"]->painel) {
             case 'coordenador':
-                $this->redirect = "turmas/$class_id/disciplinas/$class_discipline_id/atividades";
-                $this->routeView = 'classRooms/discipline/activitie';
+                $this->redirect = "minha-coordenacao/turma/$class_id/disciplina/$class_discipline_id/atividades";
+                $this->routeView = 'coordination/my-coordination/discipline/activitie';
+                $this->active = "coordinator";
                 break;
             case 'administrativo':
-                    $this->redirect = "turmas/$class_id/disciplinas/$class_discipline_id/atividades";
-                    $this->routeView = 'classRooms/discipline/activitie';
+                    $this->redirect = "minha-coordenacao/turma/$class_id/disciplina/$class_discipline_id/atividades";
+                    $this->routeView = 'coordination/my-coordination/discipline/activitie';
+                    $this->active = "coordinator";
                     break;
             case 'professor':
                 $this->redirect = "meus-componentes/$class_id/disciplina/$class_discipline_id/atividades";
                 $this->routeView = 'teacher/my-disciplines/activitie';
+                $this->active = "teacher";
                 break;
         }
     }
@@ -71,7 +75,7 @@ class AtividadeController extends Controller
         return $this->router->view(
             "$this->routeView/index", 
             [
-                'active' => 'pedagogico', 
+                'active' => $this->active, 
                 'turma' => $classRooms, 
                 'turmas_disciplinas' => $class_disciplines,
                 'total_maximo' => $totalValue,
@@ -104,7 +108,7 @@ class AtividadeController extends Controller
         return $this->router->view(
             "$this->routeView/create", 
             [
-                'active' => 'pedagogico', 
+                'active' => $this->active, 
                 'turma' => $classRooms, 
                 'turmas_disciplinas' => $class_disciplines
             ]);  
@@ -144,7 +148,7 @@ class AtividadeController extends Controller
             return $this->router->view(
                 "$this->routeView/create", 
                 [
-                    'active' => 'pedagogico', 
+                    'active' => $this->active, 
                     'danger' => true,  
                     'turma' => $classRooms, 
                     'turmas_disciplinas' => $class_disciplines
@@ -160,7 +164,7 @@ class AtividadeController extends Controller
             return $this->router->view(
                "$this->routeView/create", 
                 [
-                    'active' => 'pedagogico', 
+                    'active' => $this->active, 
                     'danger' => true, 
                     'message' => 'não pode ser criado',
                     'turma' => $classRooms, 
@@ -188,7 +192,7 @@ class AtividadeController extends Controller
         return $this->router->view(
             "$this->routeView/edit", 
             [
-                'active' => 'pedagogico', 
+                'active' => $this->active, 
                 'turma' => $classRooms, 
                 'turmas_disciplinas' => $class_disciplines,
                 'atividade' => $activitie
@@ -217,18 +221,19 @@ class AtividadeController extends Controller
             'value' => 'required',
             'active' => 'required'
         ];
-        
+
         if (!$validator->validate($rules)) {
             return $this->router->view(
                 "$this->routeView/create", 
                 [
-                    'active' => 'pedagogico', 
+                    'active' => $this->active, 
                     'danger' => true,  
                     'turma' => $classRooms, 
                     'turmas_disciplinas' => $class_disciplines
                 ]
             );
         }
+        
         $activitie = $this->atividadeRepository->findByUuid($id);
 
         $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
@@ -238,7 +243,7 @@ class AtividadeController extends Controller
             return $this->router->view(
                 "$this->routeView/edit", 
                     [
-                        'active' => 'pedagogico', 
+                        'active' => $this->active, 
                         'danger' => true, 
                         'message' => 'Nota máxima excedida! Não pode ser atualizado',
                         'turma' => $classRooms, 
@@ -248,6 +253,7 @@ class AtividadeController extends Controller
                 );
         }
 
+
         $data['class_discipline_id'] = $class_disciplines[0]->id;
 
         $created = $this->atividadeRepository->update($data, (int)$activitie->id);
@@ -255,16 +261,16 @@ class AtividadeController extends Controller
             return $this->router->view(
             "$this->routeView/edit", 
                 [
-                    'active' => 'pedagogico', 
+                    'active' => $this->active, 
                     'danger' => true, 
-                    'message' => 'não pode ser atulizado',
+                    'message' => 'não pode ser atualizado',
                     'turma' => $classRooms, 
                     'turmas_disciplinas' => $class_disciplines,
                     'atividade' => $activitie
                 ]
             );
         }
-
+     
         return $this->router->redirect($this->redirect);
     }
 

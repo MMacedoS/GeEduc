@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/top.php'; ?>
 
 <!-- Row start -->
 <div class="row gx-3">
@@ -11,7 +11,11 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
+                <a href="\minha-coordenacao" class="text-decoration-none">Minha Coordenação</a>
+            </li>
+            <li class="breadcrumb-item">
+                <i class="icon-house_siding lh-1"></i>
+                <a href="/minha-coordenacao\turma\<?= getJsonToObject($turma_disciplina->turma)->uuid?>/disciplinas" class="text-decoration-none">Disciplinas Turma: <?= getJsonToObject($turma_disciplina->turma)->nome?></a>
             </li>
             <li class="breadcrumb-item">Componente: <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
         </ol>
@@ -51,7 +55,7 @@
         <div class="card mb-3">
             <div class="card-body">
                 <div class="container mt-4">   
-                    <form id="frequencia-form" action="/meus-componentes/<?=$turma_disciplina->uuid?>/frequencia" method="POST">
+                    <form id="frequencia-form" action="/minha-coordenacao/turma/<?=$turma_disciplina->uuid?>/frequencia" method="POST">
                         <div class="row mb-3">
                             <div class="col-md-4">                                           
                                 <div class="card mb-3">
@@ -95,6 +99,7 @@
                         foreach ($frequencias as $frequencia) {                            
                             $frequenciasMap[$frequencia->estudante_turma_id] = $frequencia->faltas;
                         }
+                        
                         foreach ($estudantes as $key => $estudante) {             
                           
                         ?>
@@ -108,7 +113,7 @@
                                     <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">
                                         <label class="form-check-label mt-2 me-2" style="width: 100px;" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
                                         <select class="form-select" name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
-                                        <option value="0" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 0 ? 'selected' : '') : 'selected' ?>>0</option>
+                                            <option value="0" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 0 ? 'selected' : '') : 'selected' ?>>0</option>
                                             <option value="1" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 1 ? 'selected' : '') : '' ?>>1</option>
                                             <option value="2" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 2 ? 'selected' : '') : '' ?>>2</option>
                                         </select>                                        
@@ -128,13 +133,7 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="float-end">
-        <?=$links?>
-    </div>
-</div>
-
-<?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/bottom.php'; ?>
 
 <script>
 $(document).ready(function() {
@@ -152,7 +151,7 @@ $(document).ready(function() {
         var bimester_id = $('#bimester_id').val();
 
         // Montar a URL
-        var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/frequencia';
+        var url = '/minha-coordenacao/turma/<?= $turma_disciplina->uuid ?>/frequencia';
         url += '?data=' + data + '&bimester_id=' + bimester_id;
 
         // Redirecionar para a URL

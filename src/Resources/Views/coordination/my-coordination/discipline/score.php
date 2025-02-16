@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/top.php'; ?>
 
 <!-- Row start -->
 <div class="row gx-3">
@@ -11,7 +11,11 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\meus-componentes" class="text-decoration-none">Meus Componentes</a>
+                <a href="\minha-coordenacao" class="text-decoration-none">Minha Coordenação</a>
+            </li>
+            <li class="breadcrumb-item">
+                <i class="icon-house_siding lh-1"></i>
+                <a href="/minha-coordenacao\turma\<?= getJsonToObject($turma_disciplina->turma)->uuid?>/disciplinas" class="text-decoration-none">Disciplinas Turma: <?= getJsonToObject($turma_disciplina->turma)->nome?></a>
             </li>
             <li class="breadcrumb-item">Componente: <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
         </ol>
@@ -20,7 +24,7 @@
     <? if (hasPermission('cadastrar turmas e estudantes')) {?>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-                <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
+                <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
             </div>
         </div>
     <? }?>
@@ -51,7 +55,7 @@
         <div class="card mb-3">
             <div class="card-body">
                 <div class="container mt-4">   
-                    <form id="frequencia-form" action="/meus-componentes/<?=$turma_disciplina->uuid?>/notas" method="POST">
+                    <form id="frequencia-form" action="/minha-coordenacao/turma/<?=$turma_disciplina->uuid?>/notas" method="POST">
                         <div class="row mb-3">
 
                             <div class="col-md-4">                    
@@ -113,10 +117,7 @@
                                 <?php foreach($atividades as $atividade) { ?> 
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
-                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" 
-                                            for="notas[<?= "$estudante->id,$atividade->id"?>]">
-                                            <?= getJsonToObject($atividade->activies_details)->tipo ?>: 
-                                        </label>
+                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
                                         <input 
                                             class="form-floating" 
                                             type="number" 
@@ -124,9 +125,7 @@
                                             min="0" 
                                             step="0.01" 
                                             max="<?= $atividade->valor ?>" 
-                                            value="<?= $notasMap["$estudante->id$atividade->id"] 
-                                            ? $notasMap["$estudante->id$atividade->id"] 
-                                            : 0?>">                                   
+                                            value="<?= $notasMap["$estudante->id$atividade->id"] ?? 0?>">                                   
                                     </div>
                                 </div>
                                 <?php } ?> 
@@ -145,8 +144,7 @@
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
                                         <input type="number" min="0" step="0.01" max="10" 
                                         name="total[<?= $estudante->id ?>]" 
-                                        value="<?= $notasMap[$estudante->id] +($paralelaMap[$estudante->id] ?? 0)?>"
-                                        disabled>                                   
+                                        value="<?= $notasMap[$estudante->id] +($paralelaMap[$estudante->id] ?? 0)?>" disabled>                                   
                                     </div>
                                 </div>
                             </div>     
@@ -163,13 +161,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="float-end">
-        <?=$links?>
-    </div>
-</div>
 
-<?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/bottom.php'; ?>
 
 <script>
 $(document).ready(function() {
@@ -186,7 +179,7 @@ $(document).ready(function() {
         var period_id = $('#period_id').val();
 
         // Montar a URL
-        var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/notas';
+        var url = '/minha-coordenacao/turma/<?= $turma_disciplina->uuid ?>/notas';
         url += '?period_id=' + period_id;
 
         // Redirecionar para a URL
