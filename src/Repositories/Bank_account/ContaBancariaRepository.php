@@ -111,7 +111,7 @@ class ContaBancariaRepository implements IContaBancariaRepository{
             return null;
         }
 
-        $conta->update($data);
+        $conta->update($data, $conta);
 
         try {
             $stmt = $this->conn->prepare(

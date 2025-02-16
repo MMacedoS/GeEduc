@@ -30,42 +30,43 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT 
-           em.*,
-            json_object(
-            'id', e.id,
-            'uuid', e.uuid,
-            'nome', pf.nome
-            ) as 'estudantes',
-            json_object(
-            'id', e.id,
-            'uuid', e.uuid,
-            'nome', pf.nome,
-            'doc', pf.doc,
-            'email', pf.email,
-            'data_nascimento', pf.data_nascimento,
-            'dia_mensalidade', em.dia_mensalidade,
-            'valor', m.valor,
-            'contrato_details', json_object(
-                'id', c.id,
-                'uuid', c.uuid,
-                'document_id', c.document_id,
-                'quantidade_assinaturas', c.quantidade_assinaturas
-            )
-            ) as contrato_infos
-        FROM " . self::TABLE . " em 
-        LEFT JOIN estudantes e
-        on e.id = em.estudante_id 
-        LEFT JOIN pessoa_fisica pf 
-        on e.pessoa_fisica_id = pf.id
-        LEFT JOIN mensalidades m on m.estudante_mensalidade_id = em.id
-        LEFT JOIN contratos c on c.estudante_id = e.id
-        ";
+                    em.*,
+                    json_object(
+                        'id', e.id,
+                        'uuid', e.uuid,
+                        'nome', pf.nome,
+                        'doc', pf.doc,
+                        'email', pf.email,
+                        'data_nascimento', pf.data_nascimento,
+                        'responsavel_nome', contato_pf.nome,
+                        'responsavel_doc', contato_pf.doc,
+                        'responsavel_email', contato_pf.email 
+                    ) as 'estudantes',
+                    json_object(
+                        'dia_mensalidade', em.dia_mensalidade,
+                        'valor', m.valor,
+                        'contrato_details', json_object(
+                                'id', c.id,
+                                'uuid', c.uuid,
+                                'document_id', c.document_id,
+                                'conteudo',c.conteudo,
+                                'quantidade_assinaturas', c.quantidade_assinaturas
+                            )
+                    ) as contrato_info
+                FROM " . self::TABLE . " em 
+                LEFT JOIN estudantes e ON e.id = em.estudante_id 
+                LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
+                LEFT JOIN pessoa_contato pc ON e.pessoa_contato_id = pc.id 
+                LEFT JOIN pessoa_fisica contato_pf ON pc.pessoa_fisica_id = contato_pf.id 
+                LEFT JOIN mensalidades m ON m.estudante_mensalidade_id = em.id
+                LEFT JOIN contratos c ON c.estudante_id = e.id
+            ";
         $conditions = [];
         $bindings = [];
         
-        if (isset($params['active'])) {
-            $conditions[] = "m.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation'])) {
+            $conditions[] = "m.situacao = :situacao";
+            $bindings[':situacao'] = $params['situation'];
         }
 
         if (isset($params['verify_contract'])) {
@@ -83,9 +84,9 @@ class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository 
             $bindings[':end_date'] = $params['end_date'];
         }
 
-        if (isset($params['student_id'])) {
-            $conditions[] = "m.estudante_id = :estudante_id";
-            $bindings[':estudante_id'] = $params['student_id'];
+        if (isset($params['student_monthly_id'])) {
+            $conditions[] = "m.estudante_mensalidade_id = :student_monthly_id";
+            $bindings[':student_monthly_id'] = $params['student_monthly_id'];
         }
 
         if (count($conditions) > 0) {

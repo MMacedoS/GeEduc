@@ -317,5 +317,9 @@ $router->create('GET', '/contratos', [$contratoController, 'index'], $auth);
 $router->create('GET', '/contratos/gerar', [$contratoController, 'generateAndSendContracts'], $auth);
 $router->create('POST', '/webhook/autentique', [$contratoController, 'webhookAutentique']);
 
+$router->create('POST', '/webhook/autentique', [$contratoController, 'webhookAutentique']);
+$router->create('POST', '/webhook/bb', [$mensalidadeController, 'webhookBB']);
+$router->create('GET', '/mensalidade/{uuid}/imprimir', [$mensalidadeController, 'print']);
+
 return $router;
 

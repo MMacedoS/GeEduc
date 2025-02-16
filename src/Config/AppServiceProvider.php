@@ -6,6 +6,7 @@ use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Interfaces\Bank_account\IContaBancariaRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Contracts\IContratoRepository;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Interfaces\Discipline\IDisciplinaRepository;
@@ -30,11 +31,13 @@ use App\Interfaces\Student\IEstudanteRepository;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Interfaces\Teacher\IProfessorRepository;
+use App\Interfaces\Ticket\IBoletoRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bank_account\ContaBancariaRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Classrooms\TurmaRepository;
+use App\Repositories\Contracts\ContratoRepository;
 use App\Repositories\Coordination\CoordenadorRepository;
 use App\Repositories\Coordination\CoordenadorTurmaRepository;
 use App\Repositories\Discipline\DisciplinaRepository;
@@ -59,6 +62,7 @@ use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Repositories\Teacher\ProfessorDisciplinaRepository;
 use App\Repositories\Teacher\ProfessorRepository;
+use App\Repositories\Ticket\BoletoRepository;
 use App\Repositories\Work_Load\CargaHorariaRepository;
 
 class AppServiceProvider 
@@ -244,6 +248,18 @@ class AppServiceProvider
             ->set(
                 IDisciplinaRepository::class,
                 new DisciplinaRepository()
+            );
+        
+        $this->container
+            ->set(
+                IContratoRepository::class,
+                new ContratoRepository()
+            );
+
+        $this->container
+            ->set(
+                IBoletoRepository::class,
+                new BoletoRepository()
             );
     }
 }

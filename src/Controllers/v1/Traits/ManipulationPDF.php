@@ -6,7 +6,7 @@ use App\Utils\LoggerHelper;
 use Dompdf\Dompdf;
 
 trait ManipulationPDF {
-    public function generatePDF($student, $viewPath, $filePath) :string | null   {
+    public function generatePDF($student, $viewPath, $filePath) :?string {
         try {
             $srcDir = dirname(__DIR__, 3);
             $htmlFilePath = "$srcDir$viewPath";
@@ -15,7 +15,8 @@ trait ManipulationPDF {
             }
 
             ob_start();
-            extract(json_decode($student->contrato_infos, true));
+            extract(json_decode($student->contrato_info, true));
+            extract(json_decode($student->estudantes, true));
             include $htmlFilePath;
             $html = ob_get_clean();
 

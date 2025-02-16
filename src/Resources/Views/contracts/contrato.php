@@ -46,44 +46,38 @@
             } ?>
         </p>
         <h4 style="margin: 20px 0; text-align: center;">CONTRATO DE PRESTAÇÃO DE SERVIÇOS EDUCACIONAIS</h4>
-        <p>Pelo presente instrumento particular de <b>contrato de prestação de serviços de educacionais</b>, 
+        <p style="text-align: justify;">Pelo presente instrumento particular de <b>contrato de prestação de serviços de educacionais</b>, 
         referente ao <b>ano letivo <?= Date('Y')?></b>, as partes devidamente identificadas também na Ficha de Matrícula, da 
         qual o presente documento é parte integrante na forma de Anexo I, resolvem celebrar o presente 
         contrato, conforme cláusulas e condições a seguir expostas. 
         CONTRATADO: <?= NAME_SCHOOL ?>, inscrito no <?= SCHOOL_CNPJ ?>. sob o número 
         <?= SCHOOL_CNPJ ?>, estabelecido à <?= SCHOOL_ADDRESS ?>.</p>
-        <table class="table table-borderless">
-            <tr>
-                <td>
-                    <strong>CONTRATADO:</strong> 
-                    <?= NAME_SCHOOL ?>, inscrito no <?= SCHOOL_CNPJ ?>. sob o número 
-                    <?= SCHOOL_CNPJ ?>, estabelecido à <?= SCHOOL_ADDRESS ?>.
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>CONTRATANTE:</strong> <?= $nome ?> 
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Data Nascimento:</strong>
-                     <?= isset($data_nascimento) ? Date("d/m/Y", strtotime($data_nascimento)) : "" ?> <strong>CPF: </strong><?= "$doc " ?>
-                </td>
-            </tr>
-        </table>
+        <p style="text-align: justify;">
+            <strong>CONTRATADO:</strong> 
+            <?= NAME_SCHOOL ?>, inscrito no CNPJ sob o número 
+            <?= SCHOOL_CNPJ ?>, estabelecido no endereço <?= SCHOOL_ADDRESS ?>.
+        </p>
+        <p style="text-align: justify;">
+            <strong>CONTRATANTE:</strong> <?= $responsavel_nome ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <strong>CPF: </strong><?= "$responsavel_doc" ?>
+        </p>
+
+        <p style="text-align: justify;">
+            <strong>ESTUDANTE(A): </strong><?= "$nome" ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <strong>CPF: </strong><?= "$doc" ?>
+        </p>
         
         <h3 style="text-transform: uppercase;"><b>Cláusula 1. Objeto</b></h3>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º:</b> Constitui objeto do presente contrato a prestação de serviços de educacionais, pelo 
             CONTRATADO, que se obriga a ministrar a instrução, por meio de aulas e demais atividades, de acordo 
             com suas características e peculiaridades. As aulas serão ministradas nas salas ou locais apropriados 
             que a CONTRATADA indicar e terão duração conforme previsto na <b>Ficha de Matrícula</b> e serão 
             ministradas nos dias e horários identificados na referida ficha. 
         </p>
-        <p><strong>Início:</strong> <?= CONTRACT_START . Date('Y') ?> &nbsp; | &nbsp; <strong>Término:</strong> <?= CONTRACT_END . Date('Y') ?></p>
+        <p style="text-align: justify;"><strong>Início:</strong> <?= CONTRACT_START . Date('Y') ?> &nbsp; | &nbsp; <strong>Término:</strong> <?= CONTRACT_END . Date('Y') ?></p>
         
-        <p>
+        <p style="text-align: justify;">
             <b>§2º:</b> A CONTRATADA é responsável pela orientação técnica dos serviços educacionais, incluindo a 
             definição de datas e locais para avaliações, a organização dos alunos em turmas e turnos, o 
             cumprimento da carga horária legalmente exigida, a seleção de professores, monitores e profissionais 
@@ -93,19 +87,19 @@
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 2. MATRÍCULA</b></h3>
-        <p>
+        <p style="text-align: justify;">
             O aluno poderá se matricular no ano letivo mencionado na Cláusula 1, desde que o CONTRATANTE 
             assine a adesão ao presente Contrato e apresente o comprovante de pagamento referente a matrícula. <br>
             <b>Caso o aluno inicie as aulas sem entregar este Contrato assinado pelo responsável, o 
             CONTRATADO assumirá que o CONTRATANTE conhece e está de acordo com todas as 
             cláusulas deste Contrato.</b>
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º:</b>  Caso o CONTRATANTE cancele a matrícula, que corresponde à primeira parcela, terá direito à 
             restituição de 70% (setenta por cento) do valor pago, desde que o pedido seja protocolado na 
             secretaria até 07 (sete) dias antes do início das aulas.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§2º:</b>  No caso de cancelamento de matrícula com pagamento anual, a restituição será de 95% 
             (noventa e cinco por cento) do valor pago, desde que o pedido seja feito até 07 (sete) dias antes do 
             início das aulas. Após o início do ano letivo, a devolução será proporcional, conforme o critério 
@@ -113,64 +107,64 @@
         </p>
         
         <h3 style="text-transform: uppercase;"><b>Cláusula 3. VALOR E VENCIMENTO DAS PARCELAS </b></h3>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b> Como contraprestação pelos serviços educacionais contratados, o CONTRATANTE deverá pagar 
             ao CONTRATADO o valor descrito na Ficha de Matrícula, nos prazos também ali descritos.
         </p>
         <table class="table table-borderless">
             <tr>
                 <td>
-                    <strong>Valor da Anuidade:</strong> 
-                    R$ <?= number_format($valor, 2, ',', '.') ?> 
+                    <strong>Valor da Anuidade:</strong>                    
+                    R$ <?= number_format($valor * 12, 2, ',', '.')  ?> 
                     <strong>Nº de Parcelas:</strong> 12
                 </td>
             </tr>
             <tr>
                 <td>
-                    <strong>Valor da Parcela:</strong> 
-                    R$ <?= number_format($valor * 12, 2, ',', '.')  ?> 
+                    <strong>Valor da Parcela:</strong>                      
+                    R$ <?= number_format($valor, 2, ',', '.') ?> 
                     <strong>Vencimento das Parcelas:</strong> 
                     dia <?= $dia_mensalidade ?? "" ?> de cada mês
                 </td>
             </tr>
         </table>
-        <p>
+        <p style="text-align: justify;">
             1 - As Parcelas devem ser pagas por meio de Boletos Bancários, PIX ou na secretária da escola.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§2º: </b>  Em caso de atraso no pagamento, o valor da parcela será acrescido de multa de 2% e mora diária 
             de 0,33%.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§3º :</b> O não pagamento do boleto referente a qualquer parcela pode implicar em protesto pelo Banco 
             após 10 dias da data de vencimento.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§4º: O valor total da anuidade é integralmente devido.</b> Caso, por solicitação do CONTRATANTE, o 
             vencimento de uma ou mais parcelas seja prorrogado para data posterior ao término do ano letivo, as 
             obrigações financeiras se estenderão até a data do vencimento da última parcela, independentemente 
             de o término das aulas ter ocorrido em data anterior, ficando o CONTRATANTE obrigado ao pagamento 
             das parcelas devidas.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§5º: </b> Os valores contratados compreendem exclusivamente a prestação de serviços decorrentes da 
             carga horária constante na Ficha de Matrícula, excluindo, para todos os fins de direito, a atividades 
             complementares, em caso de contratação posterior.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§6º: </b> Ao renovar a matrícula, o contrato permanecerá válido com o valor da anuidade conforme 
             definido no Edital ou ajustado entre as partes, documentado pela CONTRATADA.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§7º: </b> A ausência do Aluno nas atividades escolares não isenta o CONTRATANTE da obrigação de 
             pagar as parcelas acordadas, considerando a disponibilidade dos serviços oferecidos. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§8º: </b> Caso ocorra transferência ou desistência, o reembolso dos valores pagos antecipadamente 
             será calculado de acordo com a proporção dos meses restantes de serviço educacional, contados a 
             partir do protocolo do pedido na Secretaria. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§9º: </b> Em situações de suspensão ou interrupção das aulas por força maior, como calamidade 
             pública na área de saúde, o pagamento da anuidade não será alterado. A CONTRATADA definirá os 
             procedimentos e critérios para a reposição das aulas conforme regulamentações do MEC, Conselho 
@@ -179,18 +173,18 @@
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 4. INADIMPLEMENTO</b></h3>
-        <p>
+        <p style="text-align: justify;">
         O atraso no pagamento de qualquer parcela prevista neste contrato resultará na automática 
         constituição em mora do Responsável, ou do Aluno maior de 18 anos, conforme o Artigo 397 do Código 
         Civil. Isso gerará uma dívida líquida e certa, passível de cobrança judicial, além das atualizações 
         previstas no contrato. 
         </p>
-        <p>O CONTRATADO pode optar, cumulativamente ou não, pela: </p>
-        <p>
+        <p style="text-align: justify;">O CONTRATADO pode optar, cumulativamente ou não, pela: </p>
+        <p style="text-align: justify;">
         <b>I - Cobrança extrajudicial</b>, cabendo ao CONTRATANTE arcar com o pagamento dos encargos 
         resultantes da referida cobrança. 
         </p>
-        <p>
+        <p style="text-align: justify;">
         <b>II - Inclusão do nome do CONTRATANTE</b>, ou do Aluno maior de 18 anos, no Serviço Central de 
         Proteção ao Crédito (SCPC) ou do SERASA e a realização da Cobrança Judicial, devendo o 
         CONTRATANTE arcar com o pagamento dos honorários advocatícios da ordem de 20% (vinte por 
@@ -200,7 +194,7 @@
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 5. USO DE IMAGEM</b></h3>
-        <p>
+        <p style="text-align: justify;">
             O CONTRATADO, livre de quaisquer ônus para com o CONTRATANTE / ALUNO, poderá utilizar seu 
             nome e sua imagem para fins exclusivos de divulgação do CONTRATADO e de suas atividades, 
             podendo, para tanto, reproduzi-la ou divulgá-la junto à internet e quaisquer outros meios de 
@@ -209,8 +203,8 @@
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 6. EXTINÇÃO DO CONTRATO </b></h3>
-        <p>Este Contrato poderá ser rescindido nas seguintes situações:</p>
-        <p>
+        <p style="text-align: justify;">Este Contrato poderá ser rescindido nas seguintes situações:</p>
+        <p style="text-align: justify;">
             <b>a) Pelo CONTRATADO:</b><br>
             I. Por desarmonia entre as partes ou quando constatado que o aluno violou a lei ou as regras 
             do regimento interno, desrespeitando os princípios de comportamento e conduta éticos, morais 
@@ -220,95 +214,95 @@
             IV. Caso a instituição não tenha recebido matrículas suficientes para a formação 
             da turma CONTRATADA nos termos do edital. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>b) Pelo(a) CONTRATANTE: </b><br>
             I. Por Pedido de Desistência formal comunicada em requerimento junto à Secretaria. Não 
             havendo valor jurídico na comunicação verbal da desistência. <br>
             II. por transferência solicitada através de requerimento; 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b> Se o CONTRATANTE rescindir o contrato conforme o inciso I, alínea b, será aplicada 
             uma multa contratual equivalente ao valor de uma parcela escolar vigente no mês da 
             rescisão, se a desistência ocorrer durante o ano letivo
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§2º: </b> Em qualquer situação, o CONTRATANTE deve quitar as parcelas vencidas até o mês 
             do evento, inclusive quaisquer outros débitos apurados.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§3º: </b>  Não haverá devolução proporcional de valores em período inferior a um mês, ou seja, 
             contada em dias. 
         </p>
         
         <h3 style="text-transform: uppercase;"><b>Cláusula 7. </b></h3>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b>  Para avaliações em segunda chamada, será cobrada uma taxa de remarcação, exceto 
             se o Aluno apresentar atestado médico ou odontológico para justificar a ausência na primeira 
             chamada  
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§2º: </b>  O uso do uniforme escolar conforme padrão estabelecido pela CONTRATADA é 
             obrigatório. 
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 8. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         Em caso de necessidade de atendimento médico, o CONTRATANTE reconhece que a 
         CONTRATADA encaminhará o Aluno ao serviço público de emergência e informará a família 
         sobre a ocorrência em seguida. 
         </p>
-        <p>
+        <p style="text-align: justify;">
         Parágrafo Único: A CONTRATADA não é responsável pela administração de medicamentos 
         aos alunos, cabendo ao CONTRATANTE providenciar os meios necessários para isso.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b>  Para avaliações em segunda chamada, será cobrada uma taxa de remarcação, exceto 
             se o Aluno apresentar atestado médico ou odontológico para justificar a ausência na primeira 
             chamada  
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§2º: </b>  O uso do uniforme escolar conforme padrão estabelecido pela CONTRATADA é 
             obrigatório. 
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 9. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         A adoção do material didático respeita a Lei Federal nº 9.394/96 - LDB e a autonomia 
         pedagógica e administrativa das instituições privadas de ensino. O CONTRATANTE declara 
         estar ciente e concorda que a CONTRATADA utiliza material didático, incluindo recursos 
         digitais, conforme necessário na prestação de serviços educacionais. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b> O CONTRATANTE reconhece que o material didático é essencial para os serviços 
             educacionais, destinado exclusivamente ao Aluno e não transferível. Seu custo não está 
             incluso na anuidade escolar e será disponibilizado após o pagamento integral ou das 
             parcelas, se houver pagamento parcelado. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§2º: </b>O CONTRATANTE se compromete a providenciar todo o material didático 
             recomendado pela escola, tanto físico quanto digital, até 10 dias após o início do período 
             letivo, ciente de que o atraso prejudicará o desempenho escolar do aluno.
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§3º: </b> O CONTRATANTE está ciente de que os materiais didáticos são protegidos pela Lei 
             de Direitos Autorais (Lei Federal nº 9.610/98) e não podem ser fotocopiados. A violação desta 
             norma sujeita o Aluno e seus responsáveis a sanções legais. 
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 10. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         A CONTRATADA não está obrigada a renovar a matrícula do Aluno para o período letivo 
         subsequente, caso este não tenha cumprido rigorosamente as cláusulas do presente 
         Contrato, o Código de Ética e Disciplina e o Regimento Escolar. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b> A CONTRATADA se reserva o direito de definir o valor da anuidade, conforme a Lei 
             Federal nº 9.870/99, para cada período letivo, divulgando essa informação em edital 45 
             (quarenta e cinco) dias antes do fim do ano letivo em andamento.  
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 11. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         O CONTRATANTE declara ser responsável por danos causados ao patrimônio da 
         CONTRATADA, a exemplo dos edifícios, sanitários, mobiliário ou outros equipamentos, pelo 
         CONTRATANTE, Aluno ou acompanhante. Identificado o autor, deverá indenizar os 
@@ -317,12 +311,12 @@
         </p>
 
         <h3 style="text-transform: uppercase;"><b>Cláusula 12. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         A CONTRATADA não se responsabiliza pela guarda de objetos pessoais trazidos pelo Aluno, 
         como celulares, tablets, óculos, aparelhos auditivos, joias, dinheiro, cheques, cartões, 
         utensílios pessoais, livros não didáticos, ou qualquer outro bem particular. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b> O CONTRATANTE assume todo o risco e não terá direito a indenização em caso de 
             furto, roubo ou apropriação indevida desses objetos na instituição. No entanto, a 
             CONTRATADA se compromete a investigar os fatos e tomar medidas pedagógicas e 
@@ -330,19 +324,19 @@
         </p>
 
         <h3 class="text-uppercase"><b>Cláusula 13. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         O CONTRATANTE é responsável pelo acompanhamento educacional e disciplinar do Aluno, 
         devendo comparecer à instituição de ensino para se inteirar de ocorrências escolares e 
         adotar providências quando necessárias. 
         </p>
-        <p>
+        <p style="text-align: justify;">
             <b>§1º: </b>  Alunos menores de 18 anos apenas poderão sair da escola acompanhados por um 
             responsável devidamente autorizado, salvo que tenham autorização expressa registrada na 
             secretaria escolar para sair desacompanhados.
         </p>
 
         <h3 class="text-uppercase"><b>Cláusula 14. </b></h3>
-        <p>
+        <p style="text-align: justify;">
         O CONTRATANTE e o CONTRATADO reconhecem a validade jurídica do contrato assinado 
         eletronicamente ou digitalmente, considerando a manifestação de vontade das partes e a 
         autenticidade do documento, com efeitos legais para execução extrajudicial ou outras 
@@ -350,37 +344,29 @@
         </p>
 
         <h3 class="text-uppercase"><b>Cláusula 15. foro</b></h3>
-        <p>
+        <p style="text-align: justify;">
         Para dirimir questões oriundas do Contrato, fica eleito o foro da Cidade de Tucano. 
         </p>
-        <p>
+        <p style="text-align: justify;">
         E por estarem assim justas e CONTRATADAS, as partes assinam o presente 
         instrumento, após terem lido e acharem conforme contrataram, em duas vias de igual 
         teor e forma, para que produza, na melhor forma de direito, os efeitos legais pretendidos. 
         </p>
-        <p>
+        <p style="text-align: justify;">
         Este Contrato é parte integrante da Ficha de Matrícula preenchida e assinada pelo 
         CONTRATANTE. 
         </p>
 
         <table class="table table-borderless">
             <tr><td>Caldas do Jorro, Tucano, BA ____ de ________________ de <?= Date('Y')?></td></tr>
-        </table>
-        <div class="d-flex justify-content-between" style="">
-            <div class="signature">
-                <p><b>CONTRATADA: ESCOLA</b></p>
-            </div>
-            <div class="signature">
-                <p><b>CONTRATANTE</b></p>
-            </div>
-        </div>
+        </table>        
     </div>
     <div class="footer" style="text-align: center;">
-        <p><?= NAME_SCHOOL ?> - CNPJ: <?= SCHOOL_CNPJ ?><span class="page-number"></span></p>
-        <p>
+        <p style="text-align: justify;"><?= NAME_SCHOOL ?> - CNPJ: <?= SCHOOL_CNPJ ?><span class="page-number"></span></p>
+        <p style="text-align: justify;">
             <?= SCHOOL_ADDRESS ?>                                                                                 
         <span class="page-number"></span></p>
-        <p>                                                                                          
+        <p style="text-align: justify;">                                                                                          
         Email: <?= EMAIL_SCHOOL ?> 
         <span class="page-number"></span></p>
     </div>

@@ -17,7 +17,7 @@ class AutentiqueService
     {
         $filePathConcat = $filePath;
         $curl = curl_init();
-        $studentContract = getJsonToObject($student->contrato_infos);
+        $studentContract = getJsonToObject($student->estudantes);
 
         if (!file_exists($filePathConcat)) {
             return null;
@@ -77,7 +77,7 @@ class AutentiqueService
             curl_close($curl);
     
             if($response) {
-                return getJsonToObject($response)->data->createDocument->id;
+                return $response;
             }
             
             return null;

@@ -14,6 +14,7 @@ class Contrato {
     public $ano_letivo;
     public $document_id;
     public $quantidade_assinaturas;
+    public $conteudo;
     public $created_at;
     public $updated_at;
 
@@ -28,6 +29,7 @@ class Contrato {
         $contrato->estudante_id = $data['student_id'];          
         $contrato->ano_letivo = $data['school_year'];  
         $contrato->document_id = $data['document_id']; 
+        $contrato->conteudo = $data['content']; 
         $contrato->quantidade_assinaturas = $data['quantity_assigned'] ?? 0;    
         $contrato->created_at = $data['created_at'] ?? null;
         $contrato->updated_at = $data['updated_at'] ?? null;
