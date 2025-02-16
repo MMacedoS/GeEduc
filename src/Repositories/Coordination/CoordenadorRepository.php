@@ -52,6 +52,11 @@ class CoordenadorRepository implements ICoordenadorRepository{
             $bindings[':situation'] = $params['situation'];
         }
 
+        if (isset($params['pessoa_fisica_id']) && $params['pessoa_fisica_id'] != "") {
+            $conditions[] = "c.pessoa_fisica_id = :pessoa_fisica_id";
+            $bindings[':pessoa_fisica_id'] = $params['pessoa_fisica_id'];
+        }
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
