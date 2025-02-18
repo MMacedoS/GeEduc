@@ -8,7 +8,7 @@
 <? }?>
 <!-- Row start -->  
 <?php 
-  if (hasPermission('visualizar cards dashboard')) {?>
+  if (isset($type_visualization) && $type_visualization == 'admin') {?>
     <div class="row gx-3">
       <div class="col-sm-3 col-12">
         <a href="\estudantes">
@@ -160,7 +160,7 @@
   ?>
   
   <?php 
-  if (hasPermission('estudante')) {?>
+  if (isset($type_visualization) && $type_visualization == 'student') { ?>
     <div class="row">
       <div class="col-xl-6">
           <div class="card mb-3">
