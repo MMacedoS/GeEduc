@@ -33,8 +33,9 @@
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>#</th>
                                     <th class="text-center">Data</th>
+                                    <th class="text-center">Professor</th>
                                     <th class="text-center">Componentes Curricular</th>
                                     <th class="text-center">Qtd. Faltas</th>
                                     <th class="text-center">Trimestre</th>
@@ -45,14 +46,15 @@
                             <? foreach ($frequencias as $frequencia) {                                 
                                 ?>
                                     <tr>
-                                        <td><?=$frequencias->id?></td>
+                                        <td><?=$frequencia->id?></td>
                                         <td class="fw-bold text-center"> 
                                             <?= brDate($frequencia->data) ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center">
-                                            <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->disciplina->nome ?? 'não identificado'?>
-                                            --
                                             <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->professor->nome ?? 'não identificado'?>
+                                        </td>
+                                        <td class="text-center">
+                                            <?=getJsonToObject($frequencia->turma_disciplina_details)->professor_disciplina->disciplina->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="fw-bold text-center"> 
                                             <?= brDate($frequencia->faltas) ?? 'não identificado'?>

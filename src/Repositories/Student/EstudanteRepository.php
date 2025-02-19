@@ -71,6 +71,11 @@ class EstudanteRepository implements IEstudanteRepository {
             $bindings[':pessoa_contato_id'] = $params['contact_person_id'];
         }
 
+        if (isset($params['id'])) {
+            $conditions[] = "pf.id = :id";
+            $bindings[':id'] = $params['id'];
+        }
+
         if (isset($params['email'])) {
             $conditions[] = "pf.email = :email";
             $bindings[':email'] = $params['email'];

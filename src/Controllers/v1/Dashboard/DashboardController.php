@@ -71,6 +71,10 @@ class DashboardController extends Controller
             return $this->indexStudents();
         }
 
+        if($painel == 'professor') {
+            return $this->indexAdministrators();
+        }
+
         if($painel == 'administrativo') {
             return $this->indexAdministrators();
         }
@@ -125,6 +129,7 @@ class DashboardController extends Controller
             'presenca' => $presenca]);
         }
 
+        $data['type_visualization'] = 'student';
         return $this->router->view(
             'dashboard/index',
             $data
@@ -197,7 +202,8 @@ class DashboardController extends Controller
                 'estudante_turmas' => $estudante_turmas,
                 'discipline' => $discipline,
                 'teachers' => $professor,
-                'class' => $class
+                'class' => $class,
+                'type_visualization' => 'admin'
             ]
         ); 
     }

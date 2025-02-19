@@ -185,11 +185,8 @@ class PessoaContatoController extends Controller
             ]
         );
 
-        $estudantes = $this->estudanteRepository->allStudents(
-            [
-                'contact_person_id' => $pessoa_contato->id
-            ]
-        );
+        $params = isset($pessoa_contato) ? ['contact_person_id' => $pessoa_contato->id] : ["id" => $personAuth->id]; 
+        $estudantes = $this->estudanteRepository->allStudents($params);
 
         $perPage = 10;
         $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
