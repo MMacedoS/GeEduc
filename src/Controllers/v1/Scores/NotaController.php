@@ -11,6 +11,7 @@ use App\Interfaces\Scores\IParalelaRepository;
 use App\Interfaces\Student\IEstudanteRepository;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
+use App\Utils\Paginator;
 
 class NotaController extends Controller 
 {
@@ -165,12 +166,18 @@ class NotaController extends Controller
         
         $periodos = $this->periodoRepository->all();
 
+        $perPage = 10;
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($notas, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+
         return $this->router->view(
             '/my-little-group/student-class/scores', 
             [
                 'active' => 'teacher',
                 'estudante' => $student,
-                'notas' => $notas,
+                'notas' => $paginatedBoards,
+                'links' => $paginator->links(),
                 'periodos' => $periodos,
                 'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
             ]
