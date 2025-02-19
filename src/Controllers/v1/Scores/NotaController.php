@@ -58,7 +58,7 @@ class NotaController extends Controller
                 $this->active = 'coordinator';
                 break;
                 case 'professor':
-                $this->routeView = 'teacher/my-disciplines/activitie';
+                $this->routeView = 'teacher/my-disciplines';
                 $this->redirect = "meus-componentes/$class_discipline_id";
                 $this->active = 'teacher';
                 break;

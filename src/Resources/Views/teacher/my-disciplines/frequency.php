@@ -69,7 +69,7 @@
                                     <div class="card-body">
                                         <div class="m-0">
                                             <label class="form-label">Trimestre</label>
-                                            <select class="form-select" name="period_id" id="bimester_id">
+                                            <select class="form-select" name="period_id" id="period_id">
                                                 <?php foreach ($periodos as $key => $value) {?>
                                                     <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>
                                                 <? } ?>
@@ -130,7 +130,6 @@
 
 <div class="row">
     <div class="float-end">
-        <?=$links?>
     </div>
 </div>
 
@@ -149,11 +148,11 @@ $(document).ready(function() {
     const searchDate = function() {
          // Capturar valores do formulário
          var data = $('#data-frequencia').val();
-        var bimester_id = $('#bimester_id').val();
+        var period_id = $('#period_id').val();
 
         // Montar a URL
         var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/frequencia';
-        url += '?data=' + data + '&bimester_id=' + bimester_id;
+        url += '?data=' + data + '&period_id=' + period_id;
 
         // Redirecionar para a URL
         window.location.href = url;

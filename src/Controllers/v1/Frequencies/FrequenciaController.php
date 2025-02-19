@@ -31,6 +31,7 @@ class FrequenciaController extends Controller
     protected $active;
     protected $routeView;
     protected $redirect;
+
     public function __construct(
         IAtividadeRepository $atividadeRepository,
         ITurmaDisciplinaRepository $turmaDisciplinaRepository,
@@ -66,8 +67,8 @@ class FrequenciaController extends Controller
                 $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
                 $this->active = 'coordinator';
                 break;
-                case 'professor':
-                $this->routeView = 'teacher/my-disciplines/activitie';
+            case 'professor':
+                $this->routeView = 'teacher/my-disciplines';
                 $this->redirect = "meus-componentes/$class_discipline_id";
                 $this->active = 'teacher';
                 break;
@@ -217,6 +218,7 @@ class FrequenciaController extends Controller
 
     public function store(Request $request, string $class_discipline_id)
     {
+        $this->defineRoutes($class_discipline_id);
         $data = $request->getBodyParams();
      
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);

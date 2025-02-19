@@ -100,9 +100,9 @@ class FrequenciaRepository implements IFrequenciaRepository {
             $bindings[':data_presence'] = $params['data_presence'];
         }
         
-        if (isset($params['bimester_id'])) {
-            $conditions[] = 'f.periodo_id = :bimester_id';
-            $bindings[':bimester_id'] = $params['bimester_id'];
+        if (isset($params['period_id'])) {
+            $conditions[] = 'f.periodo_id = :period_id';
+            $bindings[':period_id'] = $params['period_id'];
         }
         
         if (count($conditions) > 0) {
@@ -146,7 +146,7 @@ class FrequenciaRepository implements IFrequenciaRepository {
                 ':uuid' => $class->uuid,
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
                 ':periodo_id' => $class->periodo_id,
-                ':estudante_turma_id' => $class->turma_estudante_id,
+                ':estudante_turma_id' => $class->estudante_turma_id,
                 ':data' => $class->data ?? null,
                 ':faltas' => $class->faltas,
             ]);
@@ -165,11 +165,11 @@ class FrequenciaRepository implements IFrequenciaRepository {
 
     private function checkIfExistsFrequency($class) :?bool {
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND periodo_id = :periodo_id");
+            $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :estudante_turma_id AND periodo_id = :periodo_id");
             $select = $stmt->execute([
                 ':data' => $class->data,
-                ':turma_estudante_id' => $class->turma_estudante_id,
-                ':periodo_id' => $class->bimester_id
+                ':estudante_turma_id' => $class->estudante_turma_id,
+                ':periodo_id' => $class->periodo_id
             ]);
             if($select && $stmt->fetch()) {
                 return true;
@@ -184,11 +184,11 @@ class FrequenciaRepository implements IFrequenciaRepository {
     }
     private function removeFrequency($class) :?bool {
         try {
-            $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :turma_estudante_id AND periodo_id = :periodo_id");
+            $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :estudante_turma_id AND periodo_id = :periodo_id");
             $delete = $stmt->execute([
                 ':data' => $class->data,
-                ':turma_estudante_id' => $class->turma_estudante_id,
-                ':periodo_id' => $class->bimester_id
+                ':estudante_turma_id' => $class->estudante_turma_id,
+                ':periodo_id' => $class->periodo_id
             ]);
             if($delete) {
                 return true;
@@ -213,7 +213,7 @@ class FrequenciaRepository implements IFrequenciaRepository {
                 SET 
                     turma_disciplina_id = :turma_disciplina_id,
                     periodo_id = :periodo_id,
-                    turma_estudante_id = :turma_estudante_id,
+                    estudante_turma_id = :estudante_turma_id,
                     faltas = :faltas,
                     data = :data,
                     ativo = :ativo
@@ -223,7 +223,7 @@ class FrequenciaRepository implements IFrequenciaRepository {
             $update = $stmt->execute([
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
                 ':periodo_id' => $class->periodo_id,
-                ':turma_estudante_id' => $class->turma_estudante_id,
+                ':estudante_turma_id' => $class->estudante_turma_id,
                 ':faltas' => $class->faltas ?? null,
                 ':data' => $class->data ?? null,
                 ':id' => $id
@@ -262,21 +262,21 @@ class FrequenciaRepository implements IFrequenciaRepository {
                     f.uuid,
                     f.turma_disciplina_id,
                     f.periodo_id,
-                    f.turma_estudante_id,
+                    f.estudante_turma_id,
                     f.faltas,
                     f.data,
                     f.created_at,
                     f.updated_at
                 FROM " . self::TABLE . " f
                 WHERE f.turma_disciplina_id = :turma_disciplina_id
-                AND f.turma_estudante_id = :turma_estudante_id";
+                AND f.estudante_turma_id = :estudante_turma_id";
 
         try {
             $stmt = $this->conn->prepare($sql);
 
             $stmt->execute([
                 ':turma_disciplina_id' => $turmaDisciplinaId,
-                ':turma_estudante_id' => $turmaEstudanteId
+                ':estudante_turma_id' => $turmaEstudanteId
             ]);
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
