@@ -44,6 +44,8 @@ class UsuarioController extends Controller
 
         $params = $request->getQueryParams();
 
+        $params['situation'] = (isset($params['situation']) && $params['situation'] != '') ? $params['situation'] : '1';
+
         $usuario = $this->usuarioRepository->all($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -205,7 +207,7 @@ class UsuarioController extends Controller
             return $this->router->redirect('dashboard/');
         }
 
-        return $this->router->redirect('login/');
+        return $this->router->redirect('?e=acesso_invalido');
     }
 
     public function logout() {
