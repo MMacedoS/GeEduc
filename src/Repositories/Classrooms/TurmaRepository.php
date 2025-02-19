@@ -162,7 +162,25 @@ class TurmaRepository implements ITurmaRepository {
         }
     }
 
-
+    public function allClassroomsByTeacherID(string|int $id) {
+        try {
+            $sql = "SELECT t.* 
+                    FROM " . self::TABLE ." t
+                    INNER JOIN turma_disciplina td ON td.turma_id = t.id
+                    INNER JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
+                    INNER JOIN professores p ON p.id = pd.professor_id
+                    WHERE p.id = :id";
+                    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute(['id' => $id]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);  
+        } catch (\Throwable $th) {
+            LoggerHelper::logError($th->getMessage());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }    
     public function findByName(string $name): ?Turma
     {
         $sql = "SELECT * FROM " . self::TABLE . " WHERE nome = :name";

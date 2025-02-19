@@ -24,7 +24,9 @@ class DisciplinaRepository implements IDisciplinaRepository {
     public function allDisciplines(array $params = []){
         $sql = "SELECT 
             d.* 
-            FROM " . self::TABLE . " d ";
+            FROM " . self::TABLE . " d 
+            LEFT JOIN professor_disciplina pd ON pd.disciplina_id = d.id
+            ";
 
         $conditions = [];
         $bindings = [];
@@ -37,6 +39,10 @@ class DisciplinaRepository implements IDisciplinaRepository {
         if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "d.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
+        }
+        if (isset($params['teacher_id'])) {
+            $conditions[] = "pd.professor_id = :professor_id";
+            $bindings[':professor_id'] = $params['teacher_id'];
         }
 
         if (count($conditions) > 0) {

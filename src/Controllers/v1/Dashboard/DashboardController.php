@@ -72,7 +72,7 @@ class DashboardController extends Controller
         }
 
         if($painel == 'professor') {
-            return $this->indexAdministrators();
+            return $this->indexTeacher();
         }
 
         if($painel == 'administrativo') {
@@ -129,7 +129,6 @@ class DashboardController extends Controller
             'presenca' => $presenca]);
         }
 
-        $data['type_visualization'] = 'student';
         return $this->router->view(
             'dashboard/index',
             $data
@@ -203,7 +202,78 @@ class DashboardController extends Controller
                 'discipline' => $discipline,
                 'teachers' => $professor,
                 'class' => $class,
-                'type_visualization' => 'admin'
+            ]
+        ); 
+    }
+    private function indexTeacher () 
+    {
+        $pessoaAuth = $this->authUser();
+        // dd($pessoaAuth);
+        $professor = $this->professorRepository
+            ->teacherWithPersonByID($pessoaAuth->id);
+        
+
+        $discipline = $this->disciplinaRepository
+            ->allDisciplines(
+                [
+                    'active' => 1,
+                    'teacher_id' => $professor["id"]
+                ]
+            );
+        
+        $turmas = $this->turmaRepository
+            ->allClassroomsByTeacherID($professor["id"]);
+        dd($turmas);
+        $class = $this->turmaRepository
+            ->allClassRooms(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $professor = $this->professorRepository
+            ->allTeachers(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $monthlyfees = $this->mensalidadeRepository->allMonthlyfeesGraph();
+        
+        $total_monthly = $this->sumMonthlyFees($monthlyfees); 
+
+        $late_monthly = $this->sumMonthlyFees($monthlyfees, 'atrasado'); 
+        
+        $canceled_monthly = $this->sumMonthlyFees($monthlyfees, 'cancelado'); 
+        
+        $paid_monthly = $this->sumMonthlyFees($monthlyfees, 'pago'); 
+        
+        $pending_monthly = $this->sumMonthlyFees($monthlyfees, 'pendente'); 
+
+        $percentual_pending = $this->calculatePercentage($pending_monthly, $total_monthly);
+        $percentual_late = $this->calculatePercentage($late_monthly, $total_monthly);
+        $percentual_paid = $this->calculatePercentage($paid_monthly, $total_monthly);        
+        $percentual_canceled = $this->calculatePercentage($canceled_monthly, $total_monthly);
+
+        $total_monthly -= $canceled_monthly; 
+
+        return $this->router->view(
+            'dashboard/index',
+            [
+                'active' => 'dashboard',
+                'percentual_pending' => $percentual_pending,
+                'pending_monthly' => $pending_monthly,
+                'percentual_late' => $percentual_late,
+                'late_monthly' => $late_monthly,
+                'percentual_paid' => $percentual_paid,
+                'paid_monthly' => $paid_monthly,
+                'percentual_canceled' => $percentual_canceled,
+                'canceled_monthly' => $canceled_monthly,
+                'total_monthly' => $total_monthly,
+                'estudante_turmas' => $estudante_turmas,
+                'discipline' => $discipline,
+                'teachers' => $professor,
+                'class' => $class,
             ]
         ); 
     }
