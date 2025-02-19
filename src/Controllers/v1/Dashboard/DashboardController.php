@@ -72,7 +72,7 @@ class DashboardController extends Controller
         }
 
         if($painel == 'professor') {
-            return $this->indexAdministrators();
+            return $this->indexTeacher();
         }
 
         if($painel == 'administrativo') {
@@ -129,7 +129,6 @@ class DashboardController extends Controller
             'presenca' => $presenca]);
         }
 
-        $data['type_visualization'] = 'student';
         return $this->router->view(
             'dashboard/index',
             $data
@@ -153,7 +152,7 @@ class DashboardController extends Controller
                 ]
             );
 
-        $class = $this->turmaRepository
+        $turmas = $this->turmaRepository
             ->allClassRooms(
                 [
                     'active' => 1
@@ -202,8 +201,33 @@ class DashboardController extends Controller
                 'estudante_turmas' => $estudante_turmas,
                 'discipline' => $discipline,
                 'teachers' => $professor,
-                'class' => $class,
-                'type_visualization' => 'admin'
+                'turmas' => $turmas,
+            ]
+        ); 
+    }
+    private function indexTeacher () 
+    {
+        $pessoaAuth = $this->authUser();
+        $professor = $this->professorRepository
+            ->teacherWithPersonByID($pessoaAuth->id);
+        
+        $discipline = $this->disciplinaRepository
+            ->allDisciplines(
+                [
+                    'active' => 1,
+                    'teacher_id' => $professor["id"]
+                ]
+            );
+        
+        $turmas = $this->turmaRepository
+            ->allClassroomsByTeacherID($professor["id"]);
+
+        return $this->router->view(
+            'dashboard/index',
+            [
+                'active' => 'dashboard',
+                'discipline' => $discipline,
+                'turmas' => $turmas,
             ]
         ); 
     }
