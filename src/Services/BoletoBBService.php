@@ -87,13 +87,16 @@ class BoletoBBService
         }
     }
 
-    public function atualizarBoleto($numeroBoleto, $dadosAtualizacao)
+    public function alterarBoleto($numeroBoleto, $numeroConvenio, array $dadosAlteracao)
     {
         try {
-            $response = $this->client->put("boletos/{$numeroBoleto}", [
+            $response = $this->client->patch("boletos/{$numeroBoleto}", [
                 'headers' => $this->getHeaders(),
-                'json' => $dadosAtualizacao
+                'json' => array_merge([
+                    'numeroConvenio' => $numeroConvenio,
+                ], $dadosAlteracao)
             ]);
+
             return [
                 'success' => true,
                 'data' => json_decode($response->getBody(), true)
@@ -119,12 +122,17 @@ class BoletoBBService
         }
     }
 
-    public function cancelarBoleto($numeroBoleto)
+    public function cancelarBoleto($numeroBoleto, $numeroConvenio)
     {
         try {
-            $response = $this->client->delete("boletos/{$numeroBoleto}", [
-                'headers' => $this->getHeaders()
+            $response = $this->client->post("boletos/{$numeroBoleto}/baixar", [
+                'headers' => $this->getHeaders(),
+                'json' => [
+                    'numeroConvenio' => $numeroConvenio,
+                    'codigoEstadoBaixaOperacional' => 10 
+                ]
             ]);
+
             return [
                 'success' => true,
                 'data' => json_decode($response->getBody(), true)
