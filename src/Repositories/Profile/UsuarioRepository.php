@@ -53,7 +53,7 @@ class UsuarioRepository implements IUsuarioRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY nome DESC";
+        $sql .= " ORDER BY nome ASC";
 
         $stmt = $this->conn->prepare($sql);
 

@@ -7,11 +7,14 @@ use App\Interfaces\MonthlyFees\IMensalidadeRepository;
 use App\Interfaces\Plan\IPlanoRepository;
 use App\Interfaces\Student\IEstudanteMensalidadeRepository;
 use App\Interfaces\Ticket\IBoletoRepository;
+use App\Repositories\Bank_account\ContaBancariaRepository;
 use App\Request\Request;
 use App\Services\BancoBrasilWebhookHandler;
+use App\Services\BoletoBBService;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
+use DateTime;
 
 class MensalidadeController extends Controller
 {
@@ -201,7 +204,27 @@ class MensalidadeController extends Controller
 
         $data['plan_id'] = is_null($planos) ? 1 : $planos->id;
            
-        $this->mensalidadeRepository->update($data, $mensalidade->id);    
+        $mensalidade = $this->mensalidadeRepository->update($data, $mensalidade->id);    
+        $dataVencimento = new DateTime($mensalidade->data_vencimento);
+        $alteracoes = [
+            'indicadorNovaDataVencimento' => 'S',
+            'alteracaoData' => [
+                'novaDataVencimento' => $dataVencimento->format('d.m.Y')
+            ],
+            'indicadorNovoValorNominal' => 'S',
+            'alteracaoValor' => [
+                'novoValorNominal' => $mensalidade->valor
+            ]
+        ];
+
+        if (is_null($mensalidade->nosso_numero)) {
+            $serveiceBB = new BoletoBBService();
+            $contaBancariaRepository = new ContaBancariaRepository();
+
+            $convenio = $contaBancariaRepository->findById(1);
+
+            $serveiceBB->alterarBoleto($mensalidade->nosso_numero, $convenio, $alteracoes);
+        }
 
         return $this->router->redirect("mensalidades?success");
     }
@@ -212,6 +235,15 @@ class MensalidadeController extends Controller
 
         if(is_null($mensalidade)) {
             return $this->router->redirect("mensalidades?error");
+        }
+
+        if (is_null($mensalidade->nosso_numero)) {
+            $serveiceBB = new BoletoBBService();
+            $contaBancariaRepository = new ContaBancariaRepository();
+
+            $convenio = $contaBancariaRepository->findById(1);
+
+            $serveiceBB->cancelarBoleto($mensalidade->nosso_numero, $convenio);
         }
 
         $this->mensalidadeRepository->delete($mensalidade->id);
