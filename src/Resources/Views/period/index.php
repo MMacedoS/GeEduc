@@ -43,7 +43,7 @@
                            <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Trimestre</th>    
+                                    <th>Bimestre</th>    
                                 </tr>
                             </thead>
                             

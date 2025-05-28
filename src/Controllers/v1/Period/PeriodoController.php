@@ -39,7 +39,7 @@ class PeriodoController extends Controller{
     }
 
     public function create(){
-        if(!hasPermission('visualizar periodos')){
+        if(!hasPermission('cadastrar periodos')){
             return $this->router->redirect('periodos?error=442');
         }
 
@@ -76,7 +76,7 @@ class PeriodoController extends Controller{
 
     public function edit(Request $request, $id){
         if(!hasPermission('editar periodos')){
-            return $this->router->redirect('periodos?error=422');
+            return $this->router->redirect('periodos?error=422&messagem=sem acesso');
         }
 
         $bimestre = $this->periodoRepository->findByUuid($id);

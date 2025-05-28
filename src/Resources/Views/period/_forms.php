@@ -4,7 +4,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Bimestre</label>
-        <input type="number" step="0" min="1" class="form-control" name="bimester" placeholder="digite aqui" value="<?=$bimestre->bimestre ?? ''?>" />
+        <input type="number" step="0" min="1" class="form-control" name="period" placeholder="digite aqui" value="<?=$periodo->periodo ?? ''?>" />
       </div>
     </div>
   </div>
