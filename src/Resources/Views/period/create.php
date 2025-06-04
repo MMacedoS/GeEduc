@@ -12,7 +12,7 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/bimestres/" class="text-decoration-none">Bimestres</a>
+                    <a href="/periodos/" class="text-decoration-none">Periodos</a>
                 </li>
                 <li class="breadcrumb-item">Cadastrar</li>
             </ol>
@@ -20,12 +20,12 @@
         </div>
         <div class="col-2 col-xl-6">
             <div class="float-end">
-                <a href="/bimestres/" class="btn btn-outline-primary" > Voltar </a>
+                <a href="/periodos/" class="btn btn-outline-primary" > Voltar </a>
             </div>
         </div>
     </div>
     <!-- Row end -->
-    <form action="/bimestres/criar" method="POST">
+    <form action="/periodos/criar" method="POST">
         <div class="row gx-3">
             <? include_once('_forms.php');?>
         </div>

@@ -22,7 +22,7 @@ class Periodo{
         $periodo = new Periodo();
         $periodo->id = $data['id'] ?? null;
         $periodo->uuid = $data['uuid'] ?? $this->generateUUID();
-        $periodo->periodo = $data['bimester'] ?? null;
+        $periodo->periodo = $data['period'] ?? null;
         $periodo->created_at = $data['created_at'] ?? null;
         $periodo->updated_at = $data['updated_at'] ?? null;
         return $periodo;
