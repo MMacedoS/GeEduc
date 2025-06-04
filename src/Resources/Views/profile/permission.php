@@ -30,24 +30,29 @@
             <div class="col-sm-12 col-12">
                 <div class="card mb-3">
                   <div class="card-body">
-                    <?php 
-                        foreach ($data['permissions'] as $permission) {
-                    ?>
-                        <div class="form-check form-check-inline">
-                            <input 
-                                class="form-check-input" 
-                                type="checkbox" 
-                                id="inlineCheckbox<?=$permission->id?>" 
-                                <?=isPermissionChecked($permission->id, $data['permissions_user']) ? 'checked' : ''?>
-                                name="permissions[]" 
-                                value="<?=$permission->id?>" />
-                            <label 
-                                class="form-check-label" 
-                                for="inlineCheckbox<?=$permission->id?>">
-                                <?=$permission->name?>
-                            </label>
-                        </div>                      
-                    <?php }?>
+                    <div class="d-flex justify-content-center py-3">
+                        <h2>Permissões</h2>
+                    </div>
+                    <div class="row">
+                        <?php 
+                            foreach ($data['permissions'] as $permission) {
+                        ?>
+                            <div class="col-sm-4 col-sm-6 col-md-6 col-lg-4 py-2 px-4 border form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    id="inlineCheckbox<?=$permission->id?>" 
+                                    <?=isPermissionChecked($permission->id, $data['permissions_user']) ? 'checked' : ''?>
+                                    name="permissions[]" 
+                                    value="<?=$permission->id?>" />
+                                <label 
+                                    class="form-check-label" 
+                                    for="inlineCheckbox<?=$permission->id?>">
+                                    <?=$permission->name?>
+                                </label>
+                            </div>      
+                        <?php } ?>
+                    </div>
                   </div>
                 </div>
             </div>

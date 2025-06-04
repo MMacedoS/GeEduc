@@ -5,17 +5,15 @@ namespace App\Controllers\v1\Dashboard;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Controllers\v1\Traits\UserToPerson;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Classrooms\TurmaRepository;
-use App\Repositories\Discipline\DisciplinaRepository;
-use App\Repositories\Frequencies\FrequenciaRepository;
-use App\Repositories\MonthlyFees\MensalidadeRepository;
-use App\Repositories\Product\ProdutoRepository;
-use App\Repositories\Reservate\ReservaRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
-use App\Repositories\Teacher\ProfessorRepository;
-use App\Repositories\Work_Load\CargaHorariaRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Discipline\IDisciplinaRepository;
+use App\Interfaces\Frequencies\IFrequenciaRepository;
+use App\Interfaces\MonthlyFees\IMensalidadeRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
+use App\Interfaces\Teacher\IProfessorRepository;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 
@@ -34,18 +32,28 @@ class DashboardController extends Controller
     protected $professorRepository;
     protected $disciplinaRepository;
 
-    public function __construct() {
+    public function __construct(
+        ICargaHorariaRepository $cargaHorariaRepository,
+        IFrequenciaRepository $frequenciaRepository,
+        ITurmaRepository $turmaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        IMensalidadeRepository $mensalidadeRepository,
+        IEstudanteRepository $estudanteRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        IProfessorRepository $professorRepository,
+        IDisciplinaRepository $disciplinaRepository
+    ) {
         parent::__construct();
 
-        $this->cargaHorariaRepository = new CargaHorariaRepository();
-        $this->frequenciaRepository = new FrequenciaRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->mensalidadeRepository = new MensalidadeRepository();
-        $this->turmaRepository = new TurmaRepository();
-        $this->professorRepository = new ProfessorRepository();
-        $this->disciplinaRepository = new DisciplinaRepository();
+        $this->cargaHorariaRepository = $cargaHorariaRepository;
+        $this->frequenciaRepository = $frequenciaRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
+        $this->estudanteRepository = $estudanteRepository;
+        $this->mensalidadeRepository = $mensalidadeRepository;
+        $this->turmaRepository = $turmaRepository;
+        $this->professorRepository = $professorRepository;
+        $this->disciplinaRepository = $disciplinaRepository;
     }
     
     public function index(Request $request) {
@@ -63,6 +71,10 @@ class DashboardController extends Controller
             return $this->indexStudents();
         }
 
+        if($painel == 'professor') {
+            return $this->indexTeacher();
+        }
+
         if($painel == 'administrativo') {
             return $this->indexAdministrators();
         }
@@ -76,6 +88,9 @@ class DashboardController extends Controller
 
     private function indexStudents() 
     {
+        $data = [
+            'active' => 'dashboard',
+        ];  
         $pessoaAuth = $this->authUser();
 
         $estudante = $this->estudanteRepository
@@ -95,27 +110,28 @@ class DashboardController extends Controller
                     'class_id' => $estudante_turma->turma_id
                 ]
             );
+        
+        if(isset($frequencias) && !empty($frequencias)) {
+            $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
+    
+            $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
+    
+            $total_faltas = $this->sumAbsences($frequencias); 
+            $carga = $carga_horaria->carga ?? 80;
+    
+            $presenca = $carga - $total_faltas;
+            $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
+            $percentual_presenca = round(($presenca / $carga) * 100, 2);
 
-        $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
-
-        $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
-
-        $total_faltas = $this->sumAbsences($frequencias); 
-        $carga = $carga_horaria->carga ?? 80;
-
-        $presenca = $carga - $total_faltas;
-        $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
-        $percentual_presenca = round(($presenca / $carga) * 100, 2);
+            array_merge($data, ['percentual_faltas' => $percentual_faltas,
+            'percentual_presenca' => $percentual_presenca,
+            'total_faltas' => $total_faltas,
+            'presenca' => $presenca]);
+        }
 
         return $this->router->view(
             'dashboard/index',
-            [
-                'active' => 'dashboard',
-                'percentual_faltas' => $percentual_faltas,
-                'percentual_presenca' => $percentual_presenca,
-                'total_faltas' => $total_faltas,
-                'presenca' => $presenca,
-            ]
+            $data
         ); 
     }
 
@@ -136,7 +152,7 @@ class DashboardController extends Controller
                 ]
             );
 
-        $class = $this->turmaRepository
+        $turmas = $this->turmaRepository
             ->allClassRooms(
                 [
                     'active' => 1
@@ -185,7 +201,33 @@ class DashboardController extends Controller
                 'estudante_turmas' => $estudante_turmas,
                 'discipline' => $discipline,
                 'teachers' => $professor,
-                'class' => $class
+                'turmas' => $turmas,
+            ]
+        ); 
+    }
+    private function indexTeacher () 
+    {
+        $pessoaAuth = $this->authUser();
+        $professor = $this->professorRepository
+            ->teacherWithPersonByID($pessoaAuth->id);
+        
+        $discipline = $this->disciplinaRepository
+            ->allDisciplines(
+                [
+                    'active' => 1,
+                    'teacher_id' => $professor["id"]
+                ]
+            );
+        
+        $turmas = $this->turmaRepository
+            ->allClassroomsByTeacherID($professor["id"]);
+
+        return $this->router->view(
+            'dashboard/index',
+            [
+                'active' => 'dashboard',
+                'discipline' => $discipline,
+                'turmas' => $turmas,
             ]
         ); 
     }

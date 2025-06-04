@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Plan;
 
 use App\Controllers\Controller;
-use App\Repositories\Plan\PlanoRepository;
+use App\Interfaces\Plan\IPlanoRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -12,10 +12,12 @@ class PlanoController extends Controller
 {
     protected $planoRepository;
 
-    public function __construct()
+    public function __construct(
+        IPlanoRepository $planoRepository
+    )
     {
         parent::__construct();   
-        $this->planoRepository = new PlanoRepository(); 
+        $this->planoRepository = $planoRepository; 
     }
 
     public function index(Request $request) 

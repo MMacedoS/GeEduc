@@ -36,6 +36,70 @@
 <? }?>
     <!-- Row start -->
 <div class="row gx-3">
+<div class="col-12">
+        <form id="person-form" action="/pessoas" method="GET">            
+            <div class="accordion mt-2" id="accordionSpecialTitle">
+                <div class="accordion-item bg-transparent">
+                    <h2 class="accordion-header" id="headingSpecialTitleTwo">
+                    <button class=" bg-transparent accordion-button <?= isset($situation) || isset($name_email) ? '' : 'collapsed'?>" type="button" data-bs-toggle="collapse"
+                       data-bs-target="#filters-person" aria-expanded="false"
+                       aria-controls="collapseSpecialTitleTwo">
+                      <h5 class="m-0">Filtros</h5>
+                    </button>
+                    </h2>
+                    <div id="filters-person" class="accordion-collapse <?= isset($situation) || isset($name_email) ? '' : 'collapse'?>"
+                       aria-labelledby="headingSpecialTitleTwo" data-bs-parent="#accordionSpecialTitle">
+                      <div class="accordion-body">
+                        <div class="row justify-content-start">
+                            <div class="col-md-7">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="m-0">
+                                            <label class="form-label">Busca por nome ou email</label>
+                                            <input 
+                                                class="form-input form-control" 
+                                                type="text" 
+                                                name="name_email" 
+                                                id="name_email" 
+                                                value="<?= isset($name_email) ? $name_email : null ?>" 
+                                                placeholder="Digite nome ou email">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="m-0">
+                                            <label class="form-label">Situação</label>
+                                            <select class="form-select form-control" name="situation" id="situation">
+                                                <option <?= (isset($situation) && $situation == '') ? 'selected' : ''?> value="">Ambas</option>
+                                                <option value="1" <?= (isset($situation) && $situation == 1) ? 'selected' : ''?>>Disponível</option>
+                                                <option value="0" <?= (isset($situation) && $situation == 0) ? 'selected' : ''?>>Impedido</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-12">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                            <a href="\estudantes" class="btn btn-secondary <?= isset($situation) || isset($name_email) ? 'd-block' : 'd-none'?>">Limpar</a>
+                                            <button type="submit" class="btn btn-primary">Buscar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-body">

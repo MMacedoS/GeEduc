@@ -4,14 +4,14 @@ namespace App\Controllers\v1\Frequencies;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
-use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Frequencies\FrequenciaRepository;
-use App\Repositories\Period\PeriodoRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
-use App\Repositories\Work_Load\CargaHorariaRepository;
+use App\Interfaces\Activitie\IAtividadeRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Frequencies\IFrequenciaRepository;
+use App\Interfaces\Period\IPeriodoRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 
@@ -28,23 +28,56 @@ class FrequenciaController extends Controller
     protected $professorDisciplinaRepository;
     protected $periodoRepository;
     protected $cargaHorariaRepository;
+    protected $active;
+    protected $routeView;
+    protected $redirect;
 
-    public function __construct()
+    public function __construct(
+        IAtividadeRepository $atividadeRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        IEstudanteRepository $estudanteRepository,
+        IFrequenciaRepository $frequenciaRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository,
+        ICargaHorariaRepository $cargaHorariaRepository,
+        IPeriodoRepository $periodoRepository
+    )
     {
         parent::__construct();   
-        $this->frequenciaRepository = new FrequenciaRepository();
-        $this->atividadeRepository = new AtividadeRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
-        $this->periodoRepository = new PeriodoRepository();
-        $this->cargaHorariaRepository = new CargaHorariaRepository();
-        $this->estudanteRepository = new EstudanteRepository();
+        $this->frequenciaRepository = $frequenciaRepository;
+        $this->atividadeRepository = $atividadeRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository;
+        $this->periodoRepository = $periodoRepository;
+        $this->cargaHorariaRepository = $cargaHorariaRepository;
+        $this->estudanteRepository = $estudanteRepository;
+
     }
 
-    public function indexStudents(Request $request, string $studant_class_id)
+    private function defineRoutes($class_discipline_id) {
+        switch($_SESSION["user"]->painel) {
+            case 'coordenador':
+                $this->routeView = 'coordination/my-coordination/discipline';
+                $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
+                $this->active = 'coordinator';
+                break;
+            case 'administrativo':
+                $this->routeView = 'coordination/my-coordination/discipline';
+                $this->redirect = "minha-coordenacao/turma/$class_discipline_id";
+                $this->active = 'coordinator';
+                break;
+            case 'professor':
+                $this->routeView = 'teacher/my-disciplines';
+                $this->redirect = "meus-componentes/$class_discipline_id";
+                $this->active = 'teacher';
+                break;
+        }
+    }
+
+    public function indexStudents(Request $request, string $student_class_id)
     {
-        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
+        $student_class = $this->estudanteTurmaRepository->findByUuid($student_class_id);
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -85,12 +118,12 @@ class FrequenciaController extends Controller
         ); 
     }
 
-    public function indexResponsibleStudents(Request $request, string $student_id, string $studant_class_id)
+    public function indexResponsibleStudents(Request $request, string $student_id, string $student_class_id)
     {
         $student = $this->estudanteRepository
             ->studentWithPersonByUuid((string)$student_id);
 
-        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);
+        $student_class = $this->estudanteTurmaRepository->findByUuid($student_class_id);
         
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -134,6 +167,7 @@ class FrequenciaController extends Controller
 
     public function indexTeacher(Request $request, string $class_discipline_id)
     {
+        $this->defineRoutes($class_discipline_id);
         $paramsURL = $request->getQueryParams();
 
         $turma_disciplina = $this->turmaDisciplinaRepository
@@ -169,9 +203,9 @@ class FrequenciaController extends Controller
         $periodos = $this->periodoRepository->all();
 
         return $this->router->view(
-            'teacher/my-disciplines/frequency', 
+            "$this->routeView/frequency", 
             [
-                'active' => 'teacher',
+                'active' => $this->active,
                 'turma_disciplina' => $turma_disciplina,
                 'estudantes' => $estudantes,
                 'frequencias' => $frequencias,
@@ -184,6 +218,7 @@ class FrequenciaController extends Controller
 
     public function store(Request $request, string $class_discipline_id)
     {
+        $this->defineRoutes($class_discipline_id);
         $data = $request->getBodyParams();
      
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
@@ -200,9 +235,9 @@ class FrequenciaController extends Controller
         }
       
         if(is_null($created)){
-            return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?error=422");
+            return $this->router->redirect("$this->redirect/frequencia?error=422");
         }
        
-        return $this->router->redirect("meus-componentes/$class_discipline_id/frequencia?data=$data[data]&period_id=$data[period_id]");
+        return $this->router->redirect("$this->redirect/frequencia?data=$data[data]&period_id=$data[period_id]");
     }
 }

@@ -11,6 +11,7 @@ class Atividade {
     public $id;
     public $uuid;
     public $turma_disciplina_id;
+    public $activies_details;
     public $tipo;
     public $valor;
     public $ativo;

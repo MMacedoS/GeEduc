@@ -3,10 +3,14 @@
 namespace App\Controllers\v1\ClassRooms;
 
 use App\Controllers\Controller;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Classrooms\TurmaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
-use App\Repositories\Work_Load\CargaHorariaRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Coordination\ICoordenadorRepository;
+use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Profile\IUsuarioRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -18,14 +22,31 @@ class TurmaDisciplinaController extends Controller
     protected $turmaDisciplinaRepository;
     protected $cargaHorariaRepository;
     protected $professorDisciplinaRepository;
+    protected $coordenadorRepository;
+    protected $pessoaFisicaRepository;
+    protected $usuarioRepository;
+    protected $coordenadorTurmaRepository;
 
-    public function __construct()
+    public function __construct(
+        ITurmaRepository $turmaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        ICargaHorariaRepository $cargaHorariaRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository,
+        ICoordenadorRepository $coordenadorRepository,
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        IUsuarioRepository $usuarioRepository,
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository
+    )
     {
         parent::__construct();   
-        $this->turmaRepository = new TurmaRepository(); 
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository(); 
-        $this->cargaHorariaRepository = new CargaHorariaRepository(); 
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository(); 
+        $this->turmaRepository = $turmaRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository; 
+        $this->cargaHorariaRepository = $cargaHorariaRepository; 
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository; 
+        $this->coordenadorRepository = $coordenadorRepository;
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository;
+        $this->usuarioRepository = $usuarioRepository;
+        $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
     }
 
     public function index(Request $request, $turma_id) 
@@ -52,6 +73,52 @@ class TurmaDisciplinaController extends Controller
                 'links' => $paginator->links()
             ]
         ); 
+    }
+    public function indexClassRoomDisciplineByCoordenador(Request $request, $turma_id) {
+        $classRoom = $this->turmaRepository->findByUuid($turma_id);
+  
+        $class_disciplines = $this->turmaDisciplinaRepository
+            ->allClassDisciplines(
+                [
+                    'class_id' => $classRoom->id
+                ]
+            );
+
+        $perPage = 10;
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($class_disciplines, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+
+        return $this->router->view(
+            'coordination/my-coordination/discipline/index', 
+            [
+                'turma' => $classRoom,
+                'disciplinas' => $paginatedBoards,
+                'links' => $paginator->links(),
+                'active' => 'coordinator',
+                'name_discipline' => $params['name_discipline'] ?? null,
+                'situation' => $params['situation'] ?? null
+            ]
+        ); 
+    }
+    public function indexByCoordenador(Request $request){
+        $params = $request->getQueryParams();
+        $usuario = $this->usuarioRepository->findByUuid($_SESSION["user"]->id);
+        $pessoaFisica = $this->pessoaFisicaRepository->findPessoaFisica(["usuario_id" => $usuario->id]);
+        $coordenador = $this->coordenadorRepository->allCoordinators(["pessoa_fisica_id" => $pessoaFisica->id]);
+        $turmas = $this->coordenadorTurmaRepository->allCoordinatorClass(["coordenador_id" => $coordenador[0]->id]);
+        $perPage = 10;
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($turmas, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+   
+        return $this->router->view('/coordination/my-coordination/index', [
+            'active' => 'coordinator',  
+            'turmas' => $paginatedBoards,
+            'links' => $paginator->links(),
+            'searchFilter'=> $params['name_email'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ]);
     }
 
     public function create(Request $request, string $class_id)
@@ -155,7 +222,7 @@ class TurmaDisciplinaController extends Controller
             ]
         );
     }
-
+    
     public function update(Request $request,string $class_id, string $id)
     {
         $class_disciplines = $this->turmaDisciplinaRepository->findByUuid($id);

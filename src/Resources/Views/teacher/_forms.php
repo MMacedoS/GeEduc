@@ -4,7 +4,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome Completo</label>
-        <input type="text" class="form-control" name="name" placeholder="digite aqui" value="<?=$pessoa_fisica->nome ?? ''?>" />
+        <input type="text" class="form-control" name="name" id="name" minlength="1" maxlength="100" required placeholder="Ex.: José dos Santos" value="<?=$pessoa_fisica->nome ?? ''?>" />
+        <div class="invalid-feedback" id="name_error"></div>
       </div>
     </div>
   </div>
@@ -15,7 +16,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Email de acesso</label>
-        <input type="email" class="form-control" name="email" placeholder="digite aqui" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <input type="email" class="form-control" name="email" id="email" required placeholder="Ex.: jose.santos@email.com" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <div class="invalid-feedback" id="email_error"></div>
       </div>
     </div>
   </div>
@@ -25,8 +27,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Graduação</label>
-        <input type="text"  class="form-control" name="graduation" placeholder="digite aqui" value="<?=$professor->graduacao ?? ''?>" />
+        <label class="form-label">Data de Nascimento</label>
+        <input type="date"  class="form-control" name="birthday" value="<?=$pessoa_fisica->data_nascimento ?? Date('Y-m-d')?>" />
       </div>
     </div>
   </div>
@@ -36,7 +38,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Tipo documento</label>
+        <label class="form-label">Tipo do Documento</label>
         <select class="form-select" name="type_doc" id="type_doc">
           <option value="CPF" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CPF') { echo 'selected';} ?>>CPF</option>
           <option value="CNH" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CNH') { echo 'selected';} ?>>CNH</option>
@@ -53,8 +55,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Numero documento</label>
-        <input type="text" class="form-control" name="doc" id="doc" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
+        <label class="form-label">Nº do Documento</label>
+        <input type="text" class="form-control" name="doc" id="doc" required placeholder="Ex.: 999.999.999-99" maxlength="14" value="<?=$pessoa_fisica->doc ?? ''?>" />
         <div class="invalid-feedback" id="doc_error"></div>
       </div>
     </div>
@@ -66,7 +68,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome da Mãe</label>
-        <input type="text" step="0" min="1" class="form-control" name="mother" placeholder="digite aqui" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" minlength="1" maxlength="100" id="mother" name="mother" required placeholder="Ex.: Joana dos Santos" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <div class="invalid-feedback" id="mother_error"></div>
       </div>
     </div>
   </div>
@@ -77,7 +80,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome do Pai</label>
-        <input type="text" step="0" min="1" class="form-control" name="father" placeholder="digite aqui" value="<?=$pessoa_fisica->nome_pai ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" minlength="1" maxlength="100" id="father" name="father" placeholder="Ex.: João dos Santos" value="<?=$pessoa_fisica->nome_pai ?? ''?>" />
+        <div class="invalid-feedback" id="father_error"></div>
       </div>
     </div>
   </div>
@@ -116,10 +120,21 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Telefone de contato</label>
-        <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" value="<?=$pessoa_fisica->telefone ?? ''?>" 
-        required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
+        <label class="form-label">Telefone</label>
+        <input type="phone" class="form-control" name="phone" id="phone" minlength="15" maxlength="16" placeholder="Ex.: (99) 99999-9999" value="<?=$pessoa_fisica->telefone ?? ''?>" 
+        required/>
         <div class="invalid-feedback">Telefone inválido</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-4 col-sm-3 col-12">
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="m-0">
+        <label class="form-label">Graduação</label>
+        <input type="text" class="form-control" name="graduation" placeholder="Ex.: Ciências Biológicas" value="<?=$professor->graduacao ?? ''?>" />
       </div>
     </div>
   </div>
@@ -130,7 +145,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Endereço</label>
-        <input type="text" step="0" min="1" class="form-control" name="address" placeholder="digite aqui" value="<?=$pessoa_fisica->endereco ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" name="address" placeholder="Ex.: Rua Antônio Cornélio, 123" value="<?=$pessoa_fisica->endereco ?? ''?>" />
       </div>
     </div>
   </div>

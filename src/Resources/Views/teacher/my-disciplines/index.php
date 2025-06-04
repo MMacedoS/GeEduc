@@ -55,12 +55,13 @@
                         <table class="table table-striped align-middle m-0">
                            <thead>
                                 <tr>
-                                    <th class="text-center">Cod.</th>
-                                    <th class="text-center">Componente Curricular</th>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Disciplina</th>
+                                    <th class="text-center">Turma</th>
                                     <th class="text-center">Ano Letivo</th>
                                     <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>
-                                     <th>Ação</th>
-                                     <? } ?>
+                                    <th>Ação</th>
+                                    <? } ?>
                                 </tr>
                             </thead>
                             
@@ -71,8 +72,10 @@
                                         <td class="text-center"><?=$disciplina->id?></td>
                                         <td class="fw-bold text-center"> 
                                             <?=getJsonToObject($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
-                                            ---
+                                        </td>
+                                        <td class="fw-bold text-center"> 
                                             <?=getJsonToObject($disciplina->turma)->nome ?? 'não identificado'?>
+                                        </td>
                                         <td class="text-center"> <?=$disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>
@@ -91,10 +94,17 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                
-                                                <? if (hasPermission('realizar chamadas') || hasPermission('professor')) {?>                                     
+                                                <? if (hasPermission('professor')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
                                                             <i class="icon-file fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>                                                                                
+                                                <? if (hasPermission('professor')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" href="/meus-componentes/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
+                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                            <i class="icon-link fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                

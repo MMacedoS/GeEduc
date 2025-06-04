@@ -3,8 +3,9 @@
 namespace App\Controllers\v1\ClassRooms;
 
 use App\Controllers\Controller;
-use App\Repositories\Classrooms\TurmaRepository;
-use App\Repositories\Coordination\CoordenadorRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Coordination\ICoordenadorRepository;
+use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -13,27 +14,39 @@ class TurmaController extends Controller
 {
     protected $turmaRepository;
     protected $coordenadorRepository;
+    protected $coordenadorTurmaRepository;
 
-    public function __construct()
+    public function __construct(
+        ITurmaRepository $turmaRepository,
+        ICoordenadorRepository $coordenadorRepository,
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository
+    )
     {
         parent::__construct();   
-        $this->turmaRepository = new TurmaRepository(); 
-        $this->coordenadorRepository = new CoordenadorRepository();
+        $this->turmaRepository = $turmaRepository; 
+        $this->coordenadorRepository = $coordenadorRepository;
+        $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
     }
 
     public function index(Request $request) 
     {
-        $classRooms = $this->turmaRepository->allClassRooms();
+        $params = $request->getQueryParams();
+
+        $classRooms = $this->turmaRepository->allClassRooms($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($classRooms, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
+        return $this->router->view('classRooms/index', [
+            'active' => 'pedagogico',
             'turmas' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-        return $this->router->view('classRooms/index', ['active' => 'pedagogico', 'data' => $data]); 
+            'links' => $paginator->links(),
+            'searchFilter' => $params['classroom'] ?? null,
+            'shift' => $params['shift'] ?? null,
+            'coordinator' => $params['coordinator'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ]); 
     }
 
     public function create(Request $request)
@@ -45,7 +58,7 @@ class TurmaController extends Controller
     public function store(Request $request)
     {
         $data = $request->getBodyParams();
-
+        
         $validator = new Validator($data);
 
         $rules = [
@@ -78,19 +91,20 @@ class TurmaController extends Controller
     public function edit(Request $request, string $id)
     {
         $turma = $this->turmaRepository->findByUuid($id);
+        $coordenatorsClass = $this->coordenadorTurmaRepository->allCoordinatorClass(['class_id' => $turma->id]);
+        $coordenatorsClass = $this->extractCoordenators($coordenatorsClass);
         $coordenators = $this->coordenadorRepository->allCoordinators(['active' => 1]);
 
         if (is_null($turma)) {
             return $this->router->view('classRooms/', ['active' => 'pedagogico', 'danger' => true]);
         }
         
-        return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'turma' => $turma, 'coordenadores' => $coordenators]);
+        return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'turma' => $turma, 'coordenadores' => $coordenators, 'coordenadores_inseridos' => $coordenatorsClass]);
     }
 
     public function update(Request $request, string $id)
     {
         $data = $request->getBodyParams();
-
         $turma = $this->turmaRepository->findByUuid($id);
 
         if (is_null($turma)) {
@@ -136,5 +150,12 @@ class TurmaController extends Controller
         $this->turmaRepository->delete($turma->id);
 
         return $this->router->redirect('turmas/');
+    }
+
+    private function extractCoordenators($coordenators) 
+    {   
+        return array_map(function($coordenator) {
+            return $coordenator->coordenador_id;
+        }, $coordenators);
     }
 }

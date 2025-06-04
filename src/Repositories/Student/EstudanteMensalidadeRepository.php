@@ -3,13 +3,14 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Interfaces\Student\IEstudanteMensalidadeRepository;
 use App\Models\Student\EstudanteMensalidade;
 use App\Repositories\MonthlyFees\MensalidadeRepository;
 use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteMensalidadeRepository {
+class EstudanteMensalidadeRepository implements IEstudanteMensalidadeRepository {
     const CLASS_NAME = EstudanteMensalidade::class;
     const TABLE = 'estudante_mensalidade';
 
@@ -29,30 +30,63 @@ class EstudanteMensalidadeRepository {
     public function allMonthlyfees(array $params = [])
     {
         $sql = "SELECT 
-           m.*,
-            json_object(
-            'id', e.id,
-            'uuid', e.uuid,
-            'nome', pf.nome
-            ) as 'estudantes'
-        FROM " . self::TABLE . " m 
-        LEFT JOIN estudantes e
-        on e.id = m.estudante_id 
-        LEFT JOIN pessoa_fisica pf 
-        on e.pessoa_fisica_id = pf.id
-        ";
+                    em.*,
+                    json_object(
+                        'id', e.id,
+                        'uuid', e.uuid,
+                        'nome', pf.nome,
+                        'doc', pf.doc,
+                        'email', pf.email,
+                        'data_nascimento', pf.data_nascimento,
+                        'responsavel_nome', contato_pf.nome,
+                        'responsavel_doc', contato_pf.doc,
+                        'responsavel_email', contato_pf.email 
+                    ) as 'estudantes',
+                    json_object(
+                        'dia_mensalidade', em.dia_mensalidade,
+                        'valor', m.valor,
+                        'contrato_details', json_object(
+                                'id', c.id,
+                                'uuid', c.uuid,
+                                'document_id', c.document_id,
+                                'conteudo',c.conteudo,
+                                'quantidade_assinaturas', c.quantidade_assinaturas
+                            )
+                    ) as contrato_info
+                FROM " . self::TABLE . " em 
+                LEFT JOIN estudantes e ON e.id = em.estudante_id 
+                LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
+                LEFT JOIN pessoa_contato pc ON e.pessoa_contato_id = pc.id 
+                LEFT JOIN pessoa_fisica contato_pf ON pc.pessoa_fisica_id = contato_pf.id 
+                LEFT JOIN mensalidades m ON m.estudante_mensalidade_id = em.id
+                LEFT JOIN contratos c ON c.estudante_id = e.id
+            ";
         $conditions = [];
         $bindings = [];
         
-        if (isset($params['active'])) {
-            $conditions[] = "m.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation'])) {
+            $conditions[] = "m.situacao = :situacao";
+            $bindings[':situacao'] = $params['situation'];
+        }
+
+        if (isset($params['verify_contract'])) {
+            if($params['verify_contract']) {
+                $conditions[] = "c.id IS NULL";
+            }
+            if(!$params['verify_contract']) {
+                $conditions[] = "c.id IS NOT NULL";
+            }
         }
 
         if (isset($params['start_date']) && isset($params['end_date'])) {
             $conditions[] = "m.created_at between :start_date and :end_date";
             $bindings[':start_date'] = $params['start_date'];
             $bindings[':end_date'] = $params['end_date'];
+        }
+
+        if (isset($params['student_monthly_id'])) {
+            $conditions[] = "m.estudante_mensalidade_id = :student_monthly_id";
+            $bindings[':student_monthly_id'] = $params['student_monthly_id'];
         }
 
         if (count($conditions) > 0) {
@@ -65,7 +99,7 @@ class EstudanteMensalidadeRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS);        
     }
 
     public function create(array $data)
@@ -175,6 +209,33 @@ class EstudanteMensalidadeRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function remove($id) :?bool 
+    {
+        $estudanteMensalidade = $this->findById((int)$id);
+
+        if (is_null($estudanteMensalidade)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 
     public function getMonthlyFee(array $params = []): ?EstudanteMensalidade

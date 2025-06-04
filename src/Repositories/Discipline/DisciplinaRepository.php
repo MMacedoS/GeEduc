@@ -3,11 +3,12 @@
 namespace App\Repositories\Discipline;
 
 use App\Config\Database;
+use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Models\Discipline\Disciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class DisciplinaRepository{
+class DisciplinaRepository implements IDisciplinaRepository {
     const CLASS_NAME = Disciplina::class;
     const TABLE = 'disciplinas';
 
@@ -23,7 +24,9 @@ class DisciplinaRepository{
     public function allDisciplines(array $params = []){
         $sql = "SELECT 
             d.* 
-            FROM " . self::TABLE . " d ";
+            FROM " . self::TABLE . " d 
+            LEFT JOIN professor_disciplina pd ON pd.disciplina_id = d.id
+            ";
 
         $conditions = [];
         $bindings = [];
@@ -33,9 +36,13 @@ class DisciplinaRepository{
             $bindings[':search'] = '%' . $params['search'] . '%';
         }   
 
-        if (isset($params['active'])) {
+        if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "d.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
+        }
+        if (isset($params['teacher_id'])) {
+            $conditions[] = "pd.professor_id = :professor_id";
+            $bindings[':professor_id'] = $params['teacher_id'];
         }
 
         if (count($conditions) > 0) {

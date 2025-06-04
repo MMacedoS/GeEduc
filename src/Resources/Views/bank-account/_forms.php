@@ -4,7 +4,7 @@
       <div class="m-0">
         <label class="form-label">Código do Banco</label>
         <select name="bank_code" id="bankCode" class="form-control" required>
-          <option value="">Selecione o codigo</option>
+          <option value="">Selecione o código</option>
           <option value="001" <?php if (isset($conta->codigo_banco) && $conta->codigo_banco == '001') { echo 'selected'; } ?>>001 - Banco do Brasil</option>
           <option value="104" <?php if (isset($conta->codigo_banco) && $conta->codigo_banco == '104') { echo 'selected'; } ?>>104 - Caixa Econômica Federal</option>
           <option value="237" <?php if (isset($conta->codigo_banco) && $conta->codigo_banco == '237') { echo 'selected'; } ?>>237 - Bradesco</option>
@@ -39,7 +39,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Agência</label>
-        <input type="text" class="form-control" name="branch" placeholder="Digite aqui" value="<?=$conta->agencia ?? ''?>" />
+        <input type="text" class="form-control" name="branch" required minlength="1" maxlength="10" placeholder="Ex.: 1234" value="<?=$conta->agencia ?? ''?>" />
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Conta</label>
-        <input type="text" class="form-control" name="account" placeholder="Digite aqui" value="<?=$conta->conta ?? ''?>" />
+        <input type="text" class="form-control" name="account" placeholder="Ex.: 56789-0" minlength="1" maxlength="20" required value="<?=$conta->conta ?? ''?>" />
       </div>
     </div>
   </div>
@@ -60,19 +60,19 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Convenio</label>
-        <input type="text" class="form-control" name="agreement" placeholder="Digite aqui" value="<?=$conta->convenio ?? ''?>" />
+        <label class="form-label">Convênio</label>
+        <input type="text" class="form-control" name="agreement" required  minlength="1" maxlength="45" placeholder="Digite o convênio" value="<?=$conta->convenio ?? ''?>" />
       </div>
     </div>
   </div>
 </div>
 
-<div class="col-lg-2 col-sm-3 col-12">
+<div class="col-lg-4 col-sm-3 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Situação</label>
-        <select name="active" class="form-control" id="">
+        <select name="active" class="form-control">
             <option value="0" <?php if(isset($conta->ativo) && $conta->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
             <option value="1" selected <?php if(isset($conta->ativo) && $conta->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
         </select>

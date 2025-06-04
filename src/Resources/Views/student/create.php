@@ -23,6 +23,8 @@
             </div>
         </div>
     </div>
+
+    <a  href="/estudante/excel" style="padding: 10px 10px;  border-radius: 10px; color: white; background: #40AA5C; margin: 10px 0; width: 280px; display: flex; gap: 20px;">Deseja cadastrar via planilha? Clique aqui!</a>
     <!-- Row end -->
     <form action="/estudante" method="POST">
         <div class="row gx-3">

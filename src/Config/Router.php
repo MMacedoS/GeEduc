@@ -8,14 +8,17 @@ class Router {
     protected $routers = [];    
     protected $auth = null; 
 
-    public function create(string $method, string $path, callable $callback, Auth $auth = null ) {
-        $this->auth = $auth;
+    public function create(
+        string $method, 
+        string $path, 
+        callable $callback, 
+        Auth $auth = null
+    ) {
         $normalizedPath = $this->normalizePath($path);
-        if (!is_null($this->auth) && !$this->auth->check()) {
-            return $this->view('login/login', ['message' => 'Deslogado', 'danger' => true]);
-        }
-        $this->routers[$method][$normalizedPath] = $callback;
-        $this->init();
+        $this->routers[$method][$normalizedPath] = [
+            'callback' => $callback,
+            'auth' => $auth
+        ];
     }
 
     public function init() {
@@ -26,19 +29,26 @@ class Router {
         $normalizedRequestUri = $this->normalizePath($requestUri);
 
         if (isset($this->routers[$httpMethod])) {
-
-            foreach ($this->routers[$httpMethod] as $path => $callback) {
-
+            foreach ($this->routers[$httpMethod] as $path => $route) {
                 $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([^/]+)', $path);
                 $pattern = '/^' . str_replace('/', '\/', $pattern) . '$/';
-                
+
                 if (preg_match($pattern, $normalizedRequestUri, $matches)) {
+                    // Verifica autenticação
+                    if (!is_null($route['auth']) && !$route['auth']->check()) {
+                        return $this->view('login/login', ['message' => 'Deslogado', 'danger' => true]);
+                    }
+
+                    // Executa o callback
                     array_shift($matches); 
-                    return call_user_func_array($callback, array_merge([$request], $matches));
+                    return call_user_func_array($route['callback'], array_merge([$request], $matches));
                 }
             }
         }
-        return;
+
+        // Nenhuma rota encontrada
+        http_response_code(404);
+        $this->redirect('not-found');
     }
 
     private function normalizePath($path) {
@@ -48,11 +58,18 @@ class Router {
     public function view(string $viewName, array $data = []) {
         extract($data);
         require_once __DIR__ . '/../Resources/Views/' . $viewName . '.php';
+        exit();
     }
 
-    public function redirect($page, $delay = 0) {
-        $url = URL_PREFIX_APP . '/' .$page;
-        echo "<meta http-equiv='refresh' content='{$delay};url={$url}'>";
-        exit;
+    public function redirect($page = '', $delay = 0) {
+        $url = URL_PREFIX_APP . '/' . $page;
+        if ($delay > 0) {
+            echo "<meta http-equiv='refresh' content='{$delay};url={$url}'>";
+            exit();
+        } 
+
+        header("Location: $url");
+        
+        exit();
     }
 }

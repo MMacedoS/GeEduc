@@ -63,7 +63,10 @@
                     <div class="dropdown ms-3">
                       <a id="userSettings" class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                         <img src="<?=URL_PREFIX_APP . '/Public' . $_SESSION['files']->path?>" class="rounded-2 img-3x" alt="Perfil" />
+                        <?php
+                          $path = $_SESSION['files']->path ?? "/assets/images/logo-geeduc-sem-fundo.png";
+                        ?>
+                         <img src="<?=URL_PREFIX_APP . '/Public' . @$path?>" class="rounded-2 img-3x" alt="Perfil" />
                         <div class="ms-2 text-truncate d-lg-block d-none text-white">
                           <span class="d-flex opacity-50 small">
                             <?=$_SESSION['user']->nome?>
@@ -75,7 +78,7 @@
                       </a>
                       <div class="dropdown-menu dropdown-menu-end">
                         <div class="header-action-links">
-                          <a class="dropdown-item" href="/perfil/<?=$_SESSION['user']->uuid?>"><i
+                          <a class="dropdown-item" href="/perfil/<?=$_SESSION['user']->id?>"><i
                               class="icon-user border border-primary text-primary"></i>Perfil</a>
                           <!-- <a class="dropdown-item" href="settings.html"><i
                               class="icon-settings border border-danger text-danger"></i>Settings</a> -->

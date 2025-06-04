@@ -3,10 +3,10 @@
 namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
-use App\Repositories\MonthlyFees\MensalidadeRepository;
-use App\Repositories\Plan\PlanoRepository;
-use App\Repositories\Student\EstudanteMensalidadeRepository;
-use App\Repositories\Student\EstudanteRepository;
+use App\Interfaces\MonthlyFees\IMensalidadeRepository;
+use App\Interfaces\Plan\IPlanoRepository;
+use App\Interfaces\Student\IEstudanteMensalidadeRepository;
+use App\Interfaces\Student\IEstudanteRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -18,13 +18,17 @@ class EstudanteMensalidadeController extends Controller
     protected $estudanteMensalidadeRepository;
     protected $planosRepository;
 
-    public function __construct()
-    {
+    public function __construct(
+        IMensalidadeRepository $mensalidadeRepository,
+        IEstudanteRepository $estudanteRepository,
+        IEstudanteMensalidadeRepository $estudanteMensalidadeRepository,
+        IPlanoRepository $planosRepository
+    ) {
         parent::__construct();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->mensalidadeRepository = new MensalidadeRepository();
-        $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
-        $this->planosRepository = new PlanoRepository();
+        $this->estudanteRepository = $estudanteRepository;
+        $this->mensalidadeRepository = $mensalidadeRepository;
+        $this->estudanteMensalidadeRepository = $estudanteMensalidadeRepository;
+        $this->planosRepository = $planosRepository;
     }
 
     public function index(Request $request, $student_id)
@@ -121,6 +125,7 @@ class EstudanteMensalidadeController extends Controller
                     "estudantes/$student_id/mensalidades?error=442"
                 );
             }
+            return $this->router->redirect("estudantes/$student_id/mensalidades");
         }
 
         $validator = new Validator($data);
@@ -138,18 +143,22 @@ class EstudanteMensalidadeController extends Controller
             ]);
         }
 
-        $data["studante_monthly_id"] = $student_mensalidade->id;
+        try {
+            $data["studante_monthly_id"] = $student_mensalidade->id;
 
-        $created = $this->mensalidadeRepository->create($data);
+            $created = $this->mensalidadeRepository->create($data);
 
-        if (is_null($created)) {
-            return $this->router->view("/student/student-monthly/create", [
-                "active" => "register",
-                "errors" => $validator->getErrors(),
-            ]);
+            if (is_null($created)) {
+                return $this->router->view("/student/student-monthly/create", [
+                    "active" => "register",
+                    "errors" => $validator->getErrors(),
+                ]);
+            }
+
+            return $this->router->redirect("estudantes/$student_id/mensalidades");
+        } catch (\Throwable $th) {
+            return $this->router->redirect("estudantes/$student_id/mensalidades");
         }
-
-        return $this->router->redirect("estudantes/$student_id/mensalidades");
     }
 
     public function edit(

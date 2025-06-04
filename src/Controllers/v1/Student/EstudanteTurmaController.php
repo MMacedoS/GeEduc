@@ -3,9 +3,9 @@
 namespace App\Controllers\v1\Student;
 
 use App\Controllers\Controller;
-use App\Repositories\Classrooms\TurmaRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
+use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
@@ -17,11 +17,15 @@ class EstudanteTurmaController extends Controller
     protected $turmaRepository;
     protected $estudanteTurmaRepository;
 
-    public function __construct(){
+    public function __construct(
+        IEstudanteRepository $estudanteRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        ITurmaRepository $turmaRepository
+    ){
         parent::__construct();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->turmaRepository = new TurmaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
+        $this->estudanteRepository = $estudanteRepository;
+        $this->turmaRepository = $turmaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
     }
 
     public function studentLinkClass(Request $request, $student_id) 

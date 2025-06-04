@@ -3,24 +3,37 @@
 namespace App\Controllers\v1\MonthlyFees;
 
 use App\Controllers\Controller;
-use App\Repositories\MonthlyFees\MensalidadeRepository;
-use App\Repositories\Plan\PlanoRepository;
-use App\Repositories\Student\EstudanteMensalidadeRepository;
+use App\Interfaces\MonthlyFees\IMensalidadeRepository;
+use App\Interfaces\Plan\IPlanoRepository;
+use App\Interfaces\Student\IEstudanteMensalidadeRepository;
+use App\Interfaces\Ticket\IBoletoRepository;
+use App\Repositories\Bank_account\ContaBancariaRepository;
 use App\Request\Request;
+use App\Services\BancoBrasilWebhookHandler;
+use App\Services\BoletoBBService;
+use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
+use DateTime;
 
 class MensalidadeController extends Controller
 {
     protected $mensalidadeRepository;
     protected $estudanteMensalidadeRepository;
     protected $planosRepository;
+    protected $boletoRepository;
 
-    public function __construct(){
+    public function __construct(
+        IMensalidadeRepository $mensalidadeRepository,
+        IEstudanteMensalidadeRepository $estudanteMensalidadeRepository,
+        IPlanoRepository $planosRepository,
+        IBoletoRepository $boletoRepository
+    ){
         parent::__construct();
-        $this->mensalidadeRepository = new MensalidadeRepository();
-        $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
-        $this->planosRepository = new PlanoRepository();
+        $this->mensalidadeRepository = $mensalidadeRepository;
+        $this->estudanteMensalidadeRepository = $estudanteMensalidadeRepository;
+        $this->planosRepository = $planosRepository;
+        $this->boletoRepository = $boletoRepository;
     }
 
     public function index(Request $request){
@@ -28,7 +41,9 @@ class MensalidadeController extends Controller
             return $this->router->redirect('dashboard?error=442');
         }
 
-        $mensalidades = $this->mensalidadeRepository->allMonthlyfees();
+        $params = $request->getQueryParams();
+
+        $mensalidades = $this->mensalidadeRepository->allMonthlyfees($params);
 
         $perPage = 10;
         $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
@@ -45,7 +60,11 @@ class MensalidadeController extends Controller
             [
                 'active' => 'register', 
                 'mensalidades' => $paginatedBoards, 
-                'links' => $paginator->links()
+                'links' => $paginator->links(),
+                'searchFilter' => $params['student_name'] ?? null,
+                'situation'=> $params['situation'] ?? null,
+                'start_date'=> $params['start_date'] ?? null,
+                'end_date'=> $params['end_date'] ?? null
             ]
         );
     }
@@ -185,7 +204,27 @@ class MensalidadeController extends Controller
 
         $data['plan_id'] = is_null($planos) ? 1 : $planos->id;
            
-        $this->mensalidadeRepository->update($data, $mensalidade->id);    
+        $mensalidade = $this->mensalidadeRepository->update($data, $mensalidade->id);    
+        $dataVencimento = new DateTime($mensalidade->data_vencimento);
+        $alteracoes = [
+            'indicadorNovaDataVencimento' => 'S',
+            'alteracaoData' => [
+                'novaDataVencimento' => $dataVencimento->format('d.m.Y')
+            ],
+            'indicadorNovoValorNominal' => 'S',
+            'alteracaoValor' => [
+                'novoValorNominal' => $mensalidade->valor
+            ]
+        ];
+
+        if (is_null($mensalidade->nosso_numero)) {
+            $serveiceBB = new BoletoBBService();
+            $contaBancariaRepository = new ContaBancariaRepository();
+
+            $convenio = $contaBancariaRepository->findById(1);
+
+            $serveiceBB->alterarBoleto($mensalidade->nosso_numero, $convenio, $alteracoes);
+        }
 
         return $this->router->redirect("mensalidades?success");
     }
@@ -198,8 +237,74 @@ class MensalidadeController extends Controller
             return $this->router->redirect("mensalidades?error");
         }
 
+        if (is_null($mensalidade->nosso_numero)) {
+            $serveiceBB = new BoletoBBService();
+            $contaBancariaRepository = new ContaBancariaRepository();
+
+            $convenio = $contaBancariaRepository->findById(1);
+
+            $serveiceBB->cancelarBoleto($mensalidade->nosso_numero, $convenio);
+        }
+
         $this->mensalidadeRepository->delete($mensalidade->id);
 
         return $this->router->redirect("mensalidades?success");
+    }
+
+    public function print(Request $request, $mensalidade_uuid) 
+    {
+        $mensalidade = $this->mensalidadeRepository->findByUuid($mensalidade_uuid);
+
+        if (is_null($mensalidade)) {
+            return $this->router->redirect("mensalidades?error");
+        }
+
+        $boleto = $this->boletoRepository->ticketByMonthlyId((int)$mensalidade->id);
+        $estudante_mensalidade = $this->estudanteMensalidadeRepository->allMonthlyfees(['student_monthly_id' => $mensalidade->estudante_mensalidade_id]);
+
+        if (empty($estudante_mensalidade) || is_null($boleto)) {
+            return $this->router->redirect("mensalidades?error");
+        }
+
+        return $this->router->view('/monthly-fees/boleto', 
+            [
+                'active' => 'register', 
+                'boleto' => $boleto, 
+                'estudante_mensalidade' => $estudante_mensalidade[0],
+                'mensalidade' => $mensalidade
+            ]
+        );
+    }
+
+    public function webhookBB(Request $request) 
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(["error" => "Método não permitido"]);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(["error" => "Método não permitido"]);
+            exit;
+        }
+
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["error" => "JSON inválido"]);
+            exit;
+        }
+
+        $webhookHandler = new BancoBrasilWebhookHandler();
+        $webhookHandler->handle($data);
+
+        // Retorna resposta de sucesso
+        http_response_code(200);
+        echo json_encode(["message" => "Webhook processado com sucesso"]);
+        exit;
     }
 }

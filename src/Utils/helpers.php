@@ -1,9 +1,5 @@
 <?php
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}  
-
 if (!function_exists('isPermissionChecked')) {
     function isPermissionChecked($permissionId, $userPermissoes) {
         foreach ($userPermissoes as $userPermissao) {
@@ -42,9 +38,9 @@ if (!function_exists('getCustomers')) {
     function getCustomers($data) {
         if (is_array($data)) {
             $names = '';
-            foreach ($data as $customer) {
-                $names.= $customer->name; 
-                if(count($data) > 1) {
+            foreach ($data as $key => $customer) {
+                $names.= $customer->nome; 
+                if($key < 1) {
                     $names .= ' | ';
                 }
             }
@@ -152,6 +148,15 @@ if (!function_exists('publicPath')) {
     }
 }
 
+if (!function_exists('removeCaracteresEspeciais')) {
+    function removeCaracteresEspeciais($string) {
+        if(is_null($string)) {
+            return null;
+        }
+        
+        return preg_replace('/\D/', '', $string);
+    }    
+}
 
 if (!function_exists('dd')) {
     function dd($data) {

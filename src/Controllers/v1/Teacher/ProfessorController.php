@@ -4,10 +4,10 @@ namespace App\Controllers\v1\Teacher;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\UserToPerson;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Person\PessoaFisicaRepository;
-use App\Repositories\Teacher\ProfessorDisciplinaRepository;
-use App\Repositories\Teacher\ProfessorRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Person\IPessoaFisicaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
+use App\Interfaces\Teacher\IProfessorRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -21,32 +21,40 @@ class ProfessorController extends Controller
     protected $pessoaFisicaRepository;
     protected $turmaDisciplinaRepository;
 
-    public function __construct()
-    {
+    public function __construct(
+        IProfessorRepository $professorRepository,
+        IProfessorDisciplinaRepository $professorDisciplinaRepository,
+        IPessoaFisicaRepository $pessoaFisicaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository
+    ) {
         parent::__construct();   
-        $this->professorRepository = new ProfessorRepository(); 
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
-        $this->professorDisciplinaRepository = new ProfessorDisciplinaRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
+        $this->professorRepository = $professorRepository; 
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository; 
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
     }
 
     public function index(Request $request) 
     {
+        $params = $request->getQueryParams();
+
         if(!hasPermission('visualizar professores')) {
             return $this->router->redirect('professores?error=422');
         }
 
-        $professores = $this->professorRepository->allTeachers();
+        $professores = $this->professorRepository->allTeachers($params);
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($professores, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $data = [
+        return $this->router->view('teacher/index', [
+            'active' => 'pedagogico', 
             'professores' => $paginatedBoards,
-            'links' => $paginator->links()
-        ];
-        return $this->router->view('teacher/index', ['active' => 'pedagogico', 'data' => $data]); 
+            'links' => $paginator->links(),
+            'searchFilter' => $params['name_email'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ]); 
     }    
 
     public function create() 
@@ -69,7 +77,6 @@ class ProfessorController extends Controller
             'email' => 'required',
             'mother' => 'required',
             'doc' => 'required',
-
         ];
 
         if (!$validator->validate($rules)) {
@@ -180,11 +187,19 @@ class ProfessorController extends Controller
                 $professor->id
             );
 
-        return $this->router->view('/teacher/my-disciplines/index', 
-            [
-                'active' => 'teacher',  
-                'disciplinas' => $class_discipline
-            ]
-        );
+        $perPage = 10; 
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($class_discipline, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+
+        $data = [
+            'disciplinas' => $paginatedBoards,
+            'links' => $paginator->links(),
+            'active' => 'teacher',
+            'name_discipline' => $params['name_discipline'] ?? null,
+            'situation' => $params['situation'] ?? null
+        ];
+
+        return $this->router->view('/teacher/my-disciplines/index', $data);
     }
 }

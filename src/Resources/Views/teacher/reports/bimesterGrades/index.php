@@ -63,20 +63,24 @@
         $notasMap = [];
 
         foreach ($frequencias as $frequencia) {                            
-            $frequenciasMap["$frequencia->estudante_turma_id$frequencia->bimestre_id"] = $frequencia->faltas;
+            $frequenciasMap["$frequencia->estudante_turma_id$frequencia->periodo_id"] = $frequencia->faltas;
         }
         
         foreach ($notas as $nota) {                            
-            $notasMap["$nota->estudante_turma_id$nota->atividade_id$nota->bimestre_id"] = $nota->nota;
-            $notasMap["$nota->estudante_turma_id$nota->bimestre_id"] += $nota->nota;
+            $notasMap["$nota->estudante_turma_id$nota->atividade_id$nota->periodo_id"] = $nota->nota;
+            if (isset($notasMap["$nota->estudante_turma_id$nota->periodo_id"])) {
+                $notasMap["$nota->estudante_turma_id$nota->periodo_id"] += $nota->nota ?? 0;
+            } else {
+                $notasMap["$nota->estudante_turma_id$nota->periodo_id"] = $nota->nota ?? 0;
+            }
         }
-        
-        foreach($bimestres as $bimestre) {?>
+
+        foreach($periodos as $periodo) {?>
         <table class="table table-bordered table-striped">
             <thead class="table-primary text-center">
                 <tr>
                     <th rowspan="2" class="align-middle">Alunos matriculados</th>
-                    <th colspan="<?= count($atividades) + 3?>"><?= $bimestre->bimestre; ?>º Bimestre</th>
+                    <th colspan="<?= count($atividades) + 3?>"><?= $periodo->periodo; ?>º Período</th>
                 </tr>
                 <tr>
                     <?php foreach($atividades as $atividade) {?>
@@ -96,13 +100,13 @@
                     <?php            
                     foreach($atividades as $atividade) {
                     ?>
-                        <td><?= $notasMap["$estudante->id$atividade->id$bimestre->id"] ?? "-" ?></td>
+                        <td><?= $notasMap["$estudante->id$atividade->id$periodo->id"] ?? "-" ?></td>
                     <?php
                     }
                     ?>
-                    <td><?= $notasMap["$estudante->id$bimestre->id"] ?? "0"?></td>
-                    <td><?= $frequenciasMap["$estudante->id$bimestre->id"] ?? "0" ?></td>
-                    <td><?= $notasMap["$estudante->id$bimestre->id"] >= MIN_SCORE ? "Aprovado" : "Reprovado" ?></td>
+                    <td><?= $notasMap["$estudante->id$periodo->id"] ?? "0"?></td>
+                    <td><?= $frequenciasMap["$estudante->id$periodo->id"] ?? "0" ?></td>
+                    <td><?= isset($notasMap["$estudante->id$periodo->id"]) ? ($notasMap["$estudante->id$periodo->id"] >= MIN_SCORE ? "Aprovado" : "Reprovado") : '-' ?></td>
                     </tr>
                 <?php
                 }
@@ -120,5 +124,4 @@ window.onload = function() {
     window.print();
     window.close();
 };
-
 </script>

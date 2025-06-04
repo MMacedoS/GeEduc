@@ -30,10 +30,18 @@
         <link rel="stylesheet" type="text/css" href="<?=URL_PREFIX_APP?>/Public/css/main.css">
     </head>
     <body style="background-color: #666666;">
+    
     <div class="limiter">
 		<div class="container-login100">
+            
 			<div class="wrap-login100">
 				<form class="login100-form validate-form" method="POST" action="/login">
+                <? if(isset($_GET['e'])){?>
+                    <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+                        <b>usuario ou senha invalidos!</b>.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <? }?>
 					<span class="login100-form-title p-b-43">
 						Acessar Sistema
 					</span>					
@@ -42,8 +50,7 @@
 						<input class="input100" type="text" name="email">
 						<span class="focus-input100"></span>
 						<span class="label-input100">Email</span>
-					</div>
-					
+					</div>					
 					
 					<div class="wrap-input100 validate-input" data-validate="senha é obrigatória">
 						<input class="input100" type="password" name="password">
@@ -60,7 +67,7 @@
 						</div>
 
 						<div>
-							<a href="#" class="txt1">
+							<a href="\recuperar" class="txt1">
 								Esqueceu a senha?
 							</a>
 						</div>

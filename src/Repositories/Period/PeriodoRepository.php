@@ -3,11 +3,12 @@
 namespace App\Repositories\Period;
 
 use App\Config\Database;
+use App\Interfaces\Period\IPeriodoRepository;
 use App\Models\Period\Periodo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper; 
 
-class PeriodoRepository{
+class PeriodoRepository implements IPeriodoRepository {
     const CLASS_NAME = Periodo::class;
     const TABLE = 'periodo';
 

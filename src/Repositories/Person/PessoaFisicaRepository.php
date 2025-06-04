@@ -3,11 +3,12 @@
 namespace App\Repositories\Person;
 
 use App\Config\Database;
+use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Models\Person\PessoaFisica;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaFisicaRepository {
+class PessoaFisicaRepository implements IPessoaFisicaRepository {
     const CLASS_NAME = PessoaFisica::class;
     const TABLE = 'pessoa_fisica';
     
@@ -53,12 +54,12 @@ class PessoaFisicaRepository {
     public function create(array $data)
     {
         $existingPerson = $this->findPessoaFisica($data);
-        if ($existingPerson) {
+        if (!is_null($existingPerson)) {
             return $existingPerson;
         }
-
+   
         $pessoa_fisica = $this->model->create($data);
-    
+        
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
@@ -72,8 +73,8 @@ class PessoaFisicaRepository {
                     nome_mae = :nome_mae,
                     nome_pai = :nome_pai,
                     genero = :genero,
-                    data_nascimento = :data_nascimento,
                     endereco = :endereco,
+                    data_nascimento = :data_nascimento,
                     email = :email"
             );
     
@@ -91,7 +92,7 @@ class PessoaFisicaRepository {
                 ':endereco' => $pessoa_fisica->endereco,
                 ':email' => $pessoa_fisica->email
             ]);
-    
+            
             if (!$create) {
                 return null;
             }
@@ -164,15 +165,14 @@ class PessoaFisicaRepository {
         }
     }
 
-    public function findPessoaFisica(array $criteria): ?array
+    public function findPessoaFisica(array $criteria): ?PessoaFisica
     {
         try {
             $conditions = [];
             $params = [];
-
-            if (!empty($criteria['nome'])) {
+            if (!empty($criteria['name'])) {
                 $conditions[] = "nome = :nome";
-                $params[':nome'] = $criteria['nome'];
+                $params[':nome'] = $criteria['name'];
             }
             if (!empty($criteria['email'])) {
                 $conditions[] = "email = :email";
@@ -181,6 +181,10 @@ class PessoaFisicaRepository {
             if (!empty($criteria['doc'])) {
                 $conditions[] = "doc = :doc";
                 $params[':doc'] = $criteria['doc'];
+            }
+            if (!empty($criteria['usuario_id'])) {
+                $conditions[] = "usuario_id = :usuario_id";
+                $params[':usuario_id'] = $criteria['usuario_id'];
             }
 
             if (empty($conditions)) {
@@ -194,9 +198,7 @@ class PessoaFisicaRepository {
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
             $result = $stmt->fetch();  
 
-            return $result ?: null; 
-
-            return $result ?: null; 
+            return $result; 
         } catch (\Throwable $th) {
             LoggerHelper::logInfo($th->getMessage());
             return null;
@@ -217,5 +219,33 @@ class PessoaFisicaRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function remove($id) :?bool 
+    {
+        
+        $pessoa_fisica = $this->findById((int)$id);
+       
+        if (is_null($pessoa_fisica)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            dd($th->getMessage());
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 }

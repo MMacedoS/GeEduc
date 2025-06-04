@@ -69,7 +69,7 @@
                                     <div class="card-body">
                                         <div class="m-0">
                                             <label class="form-label">Trimestre</label>
-                                            <select class="form-select" name="period_id" id="bimester_id">
+                                            <select class="form-select" name="period_id" id="period_id">
                                                 <?php foreach ($periodos as $key => $value) {?>
                                                     <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>
                                                 <? } ?>
@@ -108,9 +108,9 @@
                                     <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">
                                         <label class="form-check-label mt-2 me-2" style="width: 100px;" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
                                         <select class="form-select" name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
-                                            <option value="0" <?= $frequenciasMap[$estudante->id] == 0 ? 'selected' : '' ?>>0</option>
-                                            <option value="1" <?= $frequenciasMap[$estudante->id] == 1 ? 'selected' : '' ?>>1</option>
-                                            <option value="2" <?= $frequenciasMap[$estudante->id] == 2 ? 'selected' : '' ?>>2</option>
+                                        <option value="0" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 0 ? 'selected' : '') : 'selected' ?>>0</option>
+                                            <option value="1" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 1 ? 'selected' : '') : '' ?>>1</option>
+                                            <option value="2" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 2 ? 'selected' : '') : '' ?>>2</option>
                                         </select>                                        
                                     </div>
                                 </div>
@@ -130,7 +130,6 @@
 
 <div class="row">
     <div class="float-end">
-        <?=$links?>
     </div>
 </div>
 
@@ -149,11 +148,11 @@ $(document).ready(function() {
     const searchDate = function() {
          // Capturar valores do formulário
          var data = $('#data-frequencia').val();
-        var bimester_id = $('#bimester_id').val();
+        var period_id = $('#period_id').val();
 
         // Montar a URL
         var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/frequencia';
-        url += '?data=' + data + '&bimester_id=' + bimester_id;
+        url += '?data=' + data + '&period_id=' + period_id;
 
         // Redirecionar para a URL
         window.location.href = url;

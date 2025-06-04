@@ -3,6 +3,7 @@
 namespace App\Repositories\Person;
 
 use App\Config\Database;
+use App\Interfaces\Person\IPessoaContatoRepository;
 use App\Models\Person\PessoaContato;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
@@ -10,7 +11,7 @@ use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaContatoRepository {
+class PessoaContatoRepository implements IPessoaContatoRepository {
 
     const CLASS_NAME = PessoaContato::class;
     const TABLE = 'pessoa_contato';
@@ -31,18 +32,14 @@ class PessoaContatoRepository {
     public function allPersons(array $params = []){
 
         $sql = "SELECT
-            pc.*,(
-                SELECT 
-                    JSON_OBJECT(
+            pc.*,
+                JSON_OBJECT(
                         'id', pf.id,
                         'nome', pf.nome,
                         'email', pf.email
-                    )
-                FROM pessoa_fisica pf
-                WHERE pf.id = pc.pessoa_fisica_id
-            ) AS pessoa_fisica
-            FROM " . self::TABLE . " 
-            pc LEFT JOIN pessoa_fisica pf ON pc.pessoa_fisica_id = pf.id
+                    ) AS pessoa_fisica 
+            FROM " . self::TABLE . " pc 
+            LEFT JOIN pessoa_fisica pf ON pc.pessoa_fisica_id = pf.id
         ";
 
         $conditions = [];
@@ -63,7 +60,12 @@ class PessoaContatoRepository {
             $bindings[':email'] = $params['email'];
         }
 
-        if (isset($params['ativo'])) {
+        if (isset($params['name_email'])) {
+            $conditions[] = "(pf.nome LIKE :name_email OR pf.email LIKE :name_email)";
+            $bindings[':name_email'] = "%" . $params['name_email'] . "%";
+        }
+
+        if (isset($params['ativo']) && $params['ativo'] != '') {
             $conditions[] = "pc.ativo = :ativo";
             $bindings[':ativo'] = $params['ativo'];
         }
@@ -253,6 +255,53 @@ class PessoaContatoRepository {
         $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
 
         return $this->delete($person_contact_id);
+    }
+
+    public function removeAll($id) :?bool 
+    {
+        $pessoa_contato = $this->findById((int)$id);
+
+        if (is_null($pessoa_contato)) {
+            return null;
+        }
+        
+        $this->remove($id);
+
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById((int)$pessoa_contato->pessoa_fisica_id);
+        if (is_null($pessoa_fisica)) {
+            return null;
+        }
+
+        $this->pessoaFisicaRepository->remove($pessoa_contato->pessoa_fisica_id);
+
+        return $this->usuarioRepository->remove($pessoa_fisica->usuario_id);
+    }
+
+    public function remove($id) :?bool 
+    {
+        $pessoa_contato = $this->findById((int)$id);
+
+        if (is_null($pessoa_contato)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 
     public function delete(int $id){

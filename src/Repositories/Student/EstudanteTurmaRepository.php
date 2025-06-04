@@ -3,11 +3,12 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Models\Student\EstudanteTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteTurmaRepository {
+class EstudanteTurmaRepository implements IEstudanteTurmaRepository {
     const CLASS_NAME = EstudanteTurma::class;
     const TABLE = 'estudante_turma';
 
@@ -23,27 +24,29 @@ class EstudanteTurmaRepository {
     public function allClassStudents(array $params = [])
     {
         $sql = "SELECT 
-                et.*,
-                JSON_OBJECT(
-                    'id', t.id,
-                    'nome', t.nome,
-                    'turno', t.turno,
-                    'coordenador', JSON_OBJECT(
-                        'nome', pf.nome,
-                        'email', pf.email
-                    )
-                ) AS turma,
-                JSON_OBJECT(
-                    'id', e.id,
-                    'pessoa_fisica_id', e.pessoa_fisica_id,
-                    'nome', pfe.nome
-                ) AS estudante
-            FROM " . self::TABLE . " et
-            LEFT JOIN turmas t ON t.id = et.turma_id AND t.ativo = 1
-            LEFT JOIN coordenadores c ON c.id = t.coordenador_id
-            LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id
-            LEFT JOIN estudantes e ON e.id = et.estudante_id AND e.ativo = 1
-            LEFT JOIN pessoa_fisica pfe ON pfe.id = e.pessoa_fisica_id
+                    et.*,
+                    JSON_OBJECT(
+                        'id', t.uuid,
+                        'nome', t.nome,
+                        'coordenadores', JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'nome', pf.nome,
+                                'email', pf.email
+                            )
+                        )
+                    ) AS turma,
+                    JSON_OBJECT(
+                        'id', e.id,
+                        'pessoa_fisica_id', e.pessoa_fisica_id,
+                        'nome', pfe.nome
+                    ) AS estudante
+                FROM estudante_turma et
+                LEFT JOIN turmas t ON t.id = et.turma_id AND t.ativo = 1
+                LEFT JOIN coordenador_as_turma ct ON ct.turma_id = t.id
+                LEFT JOIN coordenadores c ON ct.coordenador_id = c.id
+                LEFT JOIN pessoa_fisica pf ON pf.id = c.pessoa_fisica_id
+                LEFT JOIN estudantes e ON e.id = et.estudante_id AND e.ativo = 1
+                LEFT JOIN pessoa_fisica pfe ON pfe.id = e.pessoa_fisica_id
         ";
     
         $conditions = [];
@@ -78,7 +81,7 @@ class EstudanteTurmaRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
     
-        $sql .= " ORDER BY et.id DESC";
+        $sql .= " GROUP BY et.id, e.id, pfe.id ORDER BY et.id DESC";
     
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($bindings);
@@ -176,6 +179,33 @@ class EstudanteTurmaRepository {
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function remove($id) :?bool 
+    {
+        $estudante = $this->findById((int)$id);
+
+        if (is_null($estudante)) {
+            return null;
+        }
+        
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
+            $delete = $stmt->execute([
+                ':id' => $id
+            ]);
+            
+            if($delete) {
+                return true;
+            }
+            return false;
+        } catch(\Throwable $th) {
+            LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
+            LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 
     public function studentClassByStudentId(int $student_id){

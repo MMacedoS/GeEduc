@@ -3,12 +3,13 @@
 namespace App\Repositories\Scores;
 
 use App\Config\Database;
+use App\Interfaces\Scores\INotaRepository;
 use App\Models\Scores\Nota;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class NotaRepository {
+class NotaRepository implements INotaRepository {
     const CLASS_NAME = Nota::class;
     const TABLE = 'notas';
 
@@ -67,7 +68,7 @@ class NotaRepository {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             
-            return $stmt->fetchAll(PDO::FETCH_CLASS, self::CLASS_NAME);    
+            return $stmt->fetchAll(PDO::FETCH_CLASS);    
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
         } finally {          
@@ -217,7 +218,7 @@ class NotaRepository {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             
-            return $stmt->fetchAll(PDO::FETCH_CLASS, self::CLASS_NAME);    
+            return $stmt->fetchAll(PDO::FETCH_CLASS);    
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
         } finally {          

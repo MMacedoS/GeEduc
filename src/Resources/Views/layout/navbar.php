@@ -80,7 +80,8 @@
                                         <span>Turmas</span>
                                     </a>
                                 </li>
-                            <?php } ?>
+                      
+                                <?php } ?>
                             </ul>
                         </li>
                         <?php } if (hasPermission('visualizar financeiro')) {?>
@@ -114,28 +115,42 @@
                                             <span>Planos</span>
                                         </a>
                                     </li>
-                                    <? }?>
+                                    <? } if (hasPermission('visualizar contratos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item current-page" href="/contratos">
+                                            <span>Contratos</span>
+                                        </a>
+                                    </li>
+                                <?php }?>
                                 </ul>
                             </li>
-                            <?php } if (hasPermission('visualizar financeiro')) {?>
+                            <?php } if (hasPermission('visualizar site')) {?>
                             <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="icon-now_widgets"></i> Site
                                 </a>
                                 <ul class="dropdown-menu"> 
-                                    <?php if (hasPermission('visualizar contas bancarias')) { ?>
+                                    <?php if (hasPermission('visualizar site')) { ?>
                                         <li>
+                                            <a class="dropdown-item" href="/site-albuns/">
+                                                <span>Albuns</span>
+                                            </a>
+                                            <a class="dropdown-item" href="/site-carrossel/">
+                                                <span>Carrossel</span>
+                                            </a>
                                             <a class="dropdown-item" href="/site-eventos/">
                                                 <span>Eventos</span>
                                             </a>
+                                            
+
                                         </li>
                                     <?php } ?>
                                 </ul>
                             </li>
-                        <?php } if (hasPermission('visualizar cadastro')) { ?>
+                        <?php } if (hasPermission('criar usuários')) { ?>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="icon-add_task"></i>Parametros
+                                    <i class="icon-add_task"></i>Parâmetros
                                 </a>
                                 <ul class="dropdown-menu">
                                     
@@ -174,6 +189,12 @@
                         <?php if (hasPermission('professor')) { ?>
                             <li class="nav-item <?=$active === 'teacher' ? 'active-link': ''?>">
                                 <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Minhas Disciplinas
+                                </a>
+                            </li>
+                        <? } ?>
+                        <?php if ($_SESSION['user']->painel == "coordenador") { ?>
+                            <li class="nav-item <?=$active === 'coordinator' ? 'active-link': ''?>">
+                                <a class="nav-link" href="/minha-coordenacao"><i class="icon-book-open"></i> Minha Coordenação
                                 </a>
                             </li>
                         <? } ?>

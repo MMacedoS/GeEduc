@@ -25,14 +25,31 @@ class EstudanteTurma {
         array $data
     ): EstudanteTurma {
         $estudante_turma = new EstudanteTurma();
-        $estudante_turma->id = $data['id'] ?? null;
-        $estudante_turma->uuid = $data['uuid'] ?? $estudante_turma->generateUUID();
-        $estudante_turma->turma_id = $data['class_id'];          
-        $estudante_turma->estudante_id = $data['student_id'];  
-        $estudante_turma->ativo = $data['active'] ?? null;    
-        $estudante_turma->ano_letivo = $data['school_year'];
-        $estudante_turma->created_at = $data['created_at'] ?? null;
-        $estudante_turma->updated_at = $data['updated_at'] ?? null;
+        if (isset($data['id'])) {
+            $estudante_turma->id = $data['id'];
+        }
+        if (!isset($data['uuid'])) {
+            $estudante_turma->uuid = $estudante_turma->generateUUID();
+        }
+        if (isset($data['class_id'])) {
+            $estudante_turma->turma_id = $data['class_id'];
+        }
+        if (isset($data['student_id'])) {
+            $estudante_turma->estudante_id = $data['student_id'];
+        }
+        if (isset($data['active'])) {
+            $estudante_turma->ativo = $data['active'];
+        }
+        if (isset($data['school_year'])) {
+            $estudante_turma->ano_letivo = $data['school_year'];
+        }
+        if (isset($data['created_at'])) {
+            $estudante_turma->created_at = $data['created_at'];
+        }
+        if (isset($data['updated_at'])) {
+            $estudante_turma->updated_at = $data['updated_at'];
+        }
+
         return $estudante_turma;
     }
 

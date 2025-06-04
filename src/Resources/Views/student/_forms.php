@@ -25,7 +25,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome Completo</label>
-        <input type="text" class="form-control" name="name" placeholder="digite aqui" value="<?=$pessoa_fisica->nome ?? ''?>" />
+        <input type="text" class="form-control" id="name" name="name" required placeholder="Ex.: José dos Santos" value="<?=$pessoa_fisica->nome ?? ''?>" />
+        <div class="invalid-feedback" id="name_error"></div>
       </div>
     </div>
   </div>
@@ -36,18 +37,19 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Email de acesso</label>
-        <input type="email" class="form-control" name="email" id="email" placeholder="digite aqui" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <input type="email" class="form-control" name="email" required id="email" placeholder="Ex.: jose.santos@escolacesp.com" value="<?=$pessoa_fisica->email ?? ''?>" />
+        <div class="invalid-feedback" id="email_error"></div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="col-lg-2 col-sm-4 col-12">
+<div class="col-lg-2 col-sm-3 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Matricula</label>
-        <input type="text" class="form-control" name="matricula" placeholder="digite aqui" value="<?=$estudante->matricula ?? ''?>" />
+        <label class="form-label">Data de Nascimento</label>
+        <input type="date"  class="form-control" name="birthday" value="<?=$pessoa_fisica->data_nascimento ?? ''?>" />
       </div>
     </div>
   </div>
@@ -57,10 +59,10 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Responsavel Legal</label>
+        <label class="form-label">Responsável Legal</label>
         <input type="hidden" id="responsible_id" name="legal_responsible_id" value="<?=$estudante->pessoa_contato_id ?? ''?>">
 
-        <input type="text" id="responsible_search" class="form-control" placeholder="Digite o nome do responsavel" value="<?=$pessoa_fisica_contato->nome ?? ''?>" autocomplete="off" />
+        <input type="text" id="responsible_search" class="form-control" placeholder="Digite o nome do responsável" value="<?=$pessoa_fisica_contato->nome ?? ''?>" autocomplete="off" />
         <ul 
           id="responsible_suggestions" 
           class="list-group" 
@@ -75,7 +77,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Tipo documento</label>
+        <label class="form-label">Tipo do Documento</label>
         <select class="form-select" name="type_doc" id="type_doc">
           <option value="CPF" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CPF') { echo 'selected';} ?>>CPF</option>
           <option value="CNH" <?php if (isset($pessoa_fisica->type_doc) && $pessoa_fisica->type_doc === 'CNH') { echo 'selected';} ?>>CNH</option>
@@ -92,8 +94,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Numero documento</label>
-        <input type="text" class="form-control" name="doc" id="doc" maxlength="14" placeholder="" value="<?=$pessoa_fisica->doc ?? ''?>" />
+        <label class="form-label">Nº do Documento</label>
+        <input type="text" class="form-control" name="doc" id="doc"placeholder="Ex.: 999.999.999-99" maxlength="14" value="<?=$pessoa_fisica->doc ?? ''?>" />
         <div class="invalid-feedback" id="doc_error"></div>
       </div>
     </div>
@@ -105,7 +107,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome da Mãe</label>
-        <input type="text" step="0" min="1" class="form-control" name="mother" placeholder="digite aqui" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <input type="text" step="0"id="mother" min="1" required minlength="1" maxlength="100" class="form-control" name="mother" placeholder="Ex.: Joana dos Santos" value="<?=$pessoa_fisica->nome_mae ?? ''?>" />
+        <div class="invalid-feedback" id="mother_error"></div>
       </div>
     </div>
   </div>
@@ -116,7 +119,8 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Nome do Pai</label>
-        <input type="text" step="0" min="1" class="form-control" name="father" placeholder="digite aqui" value="<?=$pessoa_fisica->nome_pai ?? ''?>" />
+        <input type="text" step="0" id="father" min="1" class="form-control" minlength="1" maxlength="100" name="father" placeholder="Ex.: João dos Santos" value="<?=$pessoa_fisica->nome_pai ?? ''?>" />
+        <div class="invalid-feedback" id="father_error"></div>
       </div>
     </div>
   </div>
@@ -155,9 +159,8 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
-        <label class="form-label">Telefone de contato</label>
-        <input type="phone" class="form-control" name="phone" id="phone" placeholder="digite aqui" maxlength="15" value="<?=$pessoa_fisica->telefone ?? ''?>" 
-        required pattern="^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$"/>
+        <label class="form-label">Telefone</label>
+        <input type="phone" class="form-control" name="phone" id="phone" placeholder="Ex.: (99) 99999-9999" minlength="15" maxlength="16" value="<?=$pessoa_fisica->telefone ?? ''?>" />
         <div class="invalid-feedback">Telefone inválido</div>
       </div>
     </div>
@@ -169,7 +172,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Planos</label>
-        <select name="plan_id" class="form-control" id="plan_id">
+        <select name="plan_id" class="form-control" id="plan_id" required>
             <?php 
               foreach ($plans as $plan): ?>
                 <option value="<?= htmlspecialchars($plan->id) ?>" 
@@ -199,7 +202,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Dia Mensalidade</label>
-        <select name="monthly_day" class="form-control" id="monthly_day">
+        <select name="monthly_day" class="form-control" id="monthly_day" required>
             <option value="1" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '1') { echo 'selected'; } ?>>01</option>
             <option value="5" selected <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '5') { echo 'selected'; } ?>>05</option>
             <option value="10" <?php if(isset($monthly->dia_mensalidade) && $monthly->dia_mensalidade == '10') { echo 'selected'; } ?>>10</option>
@@ -219,7 +222,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Endereço</label>
-        <input type="text" step="0" min="1" class="form-control" name="address" placeholder="digite aqui" value="<?=$pessoa_fisica->endereco ?? ''?>" />
+        <input type="text" step="0" min="1" class="form-control" name="address" placeholder="Ex.: Rua Antônio Cornélio, 123" value="<?=$pessoa_fisica->endereco ?? ''?>" />
       </div>
     </div>
   </div>

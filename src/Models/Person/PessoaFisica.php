@@ -35,8 +35,8 @@ class PessoaFisica {
         $pessoa_fisica->uuid = $data['uuid'] ?? $this->generateUUID();
         $pessoa_fisica->nome = $data['name'];
         $pessoa_fisica->email = $data['email'];
-        $pessoa_fisica->endereco = $data['address'];
-        $pessoa_fisica->telefone = $data['phone'];   
+        $pessoa_fisica->endereco = $data['address'] ?? null;
+        $pessoa_fisica->telefone = $data['phone'] ?? null;   
         $pessoa_fisica->usuario_id = $data['usuario_id'];   
         $pessoa_fisica->data_nascimento = $data['birthday'] ?? null;
         $pessoa_fisica->nome_mae = $data['mother'] ?? null;   
@@ -44,7 +44,7 @@ class PessoaFisica {
         $pessoa_fisica->genero = $data['gender'] ?? null;     
         $pessoa_fisica->doc = $data['doc'];   
         $pessoa_fisica->tipo_doc = $data['type_doc'];   
-        $pessoa_fisica->ativo = (int)$data['active']; 
+        $pessoa_fisica->ativo = (int)$data['active'] ?? 1; 
         $pessoa_fisica->created_at = $data['created_at'] ?? null;
         $pessoa_fisica->updated_at = $data['updated_at'] ?? null;
         return $pessoa_fisica;

@@ -12,6 +12,7 @@ class Coordenador {
     public $uuid;
     public $pessoa_fisica_id;
     public $graduacao;
+    public ?string $pessoa_fisica;
     public $ativo;
     public $created_at;
     public $updated_at;

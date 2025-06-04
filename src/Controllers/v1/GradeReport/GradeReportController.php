@@ -4,14 +4,14 @@ namespace App\Controllers\v1\GradeReport;
 
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
-use App\Repositories\Activitie\AtividadeRepository;
-use App\Repositories\Classrooms\TurmaDisciplinaRepository;
-use App\Repositories\Discipline\DisciplinaRepository;
-use App\Repositories\Frequencies\FrequenciaRepository;
-use App\Repositories\Period\PeriodoRepository;
-use App\Repositories\Scores\NotaRepository;
-use App\Repositories\Student\EstudanteRepository;
-use App\Repositories\Student\EstudanteTurmaRepository;
+use App\Interfaces\Activitie\IAtividadeRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Discipline\IDisciplinaRepository;
+use App\Interfaces\Frequencies\IFrequenciaRepository;
+use App\Interfaces\Period\IPeriodoRepository;
+use App\Interfaces\Scores\INotaRepository;
+use App\Interfaces\Student\IEstudanteRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 
@@ -27,17 +27,25 @@ class GradeReportController extends Controller
     protected $notaRepository;
     protected $disciplinaRepository;
 
-    public function __construct()
-    {
+    public function __construct(
+        IAtividadeRepository $atividadeRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        IEstudanteRepository $estudanteRepository,
+        IFrequenciaRepository $frequenciaRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository,
+        IDisciplinaRepository $disciplinaRepository,
+        IPeriodoRepository $periodoRepository,
+        INotaRepository $notaRepository
+    ) {
         parent::__construct();   
-        $this->frequenciaRepository = new FrequenciaRepository();
-        $this->atividadeRepository = new AtividadeRepository();
-        $this->turmaDisciplinaRepository = new TurmaDisciplinaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->periodoRepository = new PeriodoRepository();
-        $this->estudanteRepository = new EstudanteRepository();
-        $this->notaRepository = new NotaRepository();
-        $this->disciplinaRepository = new DisciplinaRepository();
+        $this->frequenciaRepository = $frequenciaRepository;
+        $this->atividadeRepository = $atividadeRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
+        $this->periodoRepository = $periodoRepository;
+        $this->estudanteRepository = $estudanteRepository;
+        $this->notaRepository = $notaRepository;
+        $this->disciplinaRepository = $disciplinaRepository;
     }
 
 
@@ -94,7 +102,7 @@ class GradeReportController extends Controller
             ["student_id" => $studentClass->estudante_id]
             )[0];
       
-        $bimestres = $this->bimestreRepository->allBimesters();
+        $periodos = $this->periodoRepository->all();
 
         $allDisciplines = $this->disciplinaRepository->findAllDisciplineByClassID($studentClass->turma_id);
 
@@ -115,7 +123,7 @@ class GradeReportController extends Controller
             [
                 'allStudentClass' => $allStudentClass,
                 'allDisciplines' => $allDisciplines,
-                'bimestres' => $bimestres,
+                'periodos' => $periodos,
                 'frequencias' => $frequencias,
                 'notas' => $notas,
             ]

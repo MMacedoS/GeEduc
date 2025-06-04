@@ -1,10 +1,14 @@
-
+<style>
+  .to-hide {
+    display: none;
+  }
+</style>
 <div class="col-lg-4 col-sm-6 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Turma</label>
-        <input type="text" class="form-control" name="name" placeholder="digite aqui" value="<?=$turma->nome ?? ''?>" />
+        <input type="text" class="form-control" minlength="1" maxlength="100" name="name" required placeholder="Digite o nome" value="<?=$turma->nome ?? ''?>" />
       </div>
     </div>
   </div>
@@ -15,13 +19,14 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Coordenador</label>
-        <select class="form-control form-select" name="coordinator_id" id="coordinator_id">
-            <option value="">Selecione um Coordenador</option>
+        <!-- Select de coordenadores -->
+        <select class="form-control form-select js-example-basic-multiple to-hide" multiple="multiple" id="multiple_form" name="coordinator_id[]" id="coordinator_id">
+            <!-- <option value="">Selecione um Coordenador</option> -->
             <?php foreach ($coordenadores as $key => $value) { ?>
                 <option 
-                    value="<?=$value->id ?>" 
-                    <?= isset($turma->coordenador_id) && $turma->coordenador_id == $value->id ? 'selected' : '' ?>>
-                    <?=getJsonToObject($value->pessoa_fisica)->nome?>
+                    value="<?= $value->id ?>" 
+                    <?= isset($coordenadores_inseridos) && in_array($value->id, $coordenadores_inseridos) ? 'selected' : '' ?>>
+                    <?= getJsonToObject($value->pessoa_fisica)->nome ?>
                 </option>
             <?php } ?>
         </select>
@@ -30,13 +35,12 @@
   </div>
 </div>
 
-
-<div class="col-lg-2 col-sm-6 col-12">
+<div class="col-lg-4 col-sm-6 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Ordem</label>
-        <input type="number" step="0" min="0" class="form-control" name="order" placeholder="digite aqui" value="<?=$turma->ordem ?? '1'?>" />
+        <input type="number" step="0" min="0" required class="form-control" name="order" placeholder="digite aqui" value="<?=$turma->ordem ?? '1'?>" />
       </div>
     </div>
   </div>
@@ -47,7 +51,7 @@
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Turno</label>
-          <select name="shift" class="form-control" id="">
+          <select name="shift" class="form-control" required>
               <option value="matutino" selected <?php if(isset($turma->turno) && $turma->turno == 'matutino') { echo 'selected'; } ?>>Matutino</option>
               <option value="vespertino" <?php if(isset($turma->turno) && $turma->turno == 'vespertino') { echo 'selected'; } ?>>Vespertino</option>
               <option value="noturno" <?php if(isset($turma->turno) && $turma->turno == 'noturno') { echo 'selected'; } ?>>Noturno</option>
@@ -58,12 +62,12 @@
   </div>
 </div>
 
-<div class="col-lg-2 col-sm-3 col-12">
+<div class="col-lg-4 col-sm-3 col-12">
   <div class="card mb-3">
     <div class="card-body">
       <div class="m-0">
         <label class="form-label">Situação</label>
-        <select name="active" class="form-control" id="">
+        <select name="active" required class="form-control">
             <option value="0" <?php if(isset($turma->ativo) && $turma->ativo == '0') { echo 'selected'; } ?>>Impedido</option>
             <option value="1" selected <?php if(isset($turma->ativo) && $turma->ativo == '1') { echo 'selected'; } ?>>Disponivel</option>
         </select>
@@ -82,4 +86,13 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const multipleSelect = document.querySelector('#multiple_form');
+  setTimeout(() => {
+    multipleSelect.classList.remove("to-hide")
+  }, 1000);
+});
+</script>
 

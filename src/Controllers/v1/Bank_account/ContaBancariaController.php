@@ -3,7 +3,7 @@
 namespace App\Controllers\v1\Bank_account;
 
 use App\Controllers\Controller;
-use App\Repositories\Bank_account\ContaBancariaRepository;
+use App\Interfaces\Bank_account\IContaBancariaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -12,10 +12,12 @@ class ContaBancariaController extends Controller
 {
     protected $contaBancariaRepository;
 
-    public function __construct()
+    public function __construct(
+        IContaBancariaRepository $contaBancariaRepository
+    )
     {
         parent::__construct();   
-        $this->contaBancariaRepository = new ContaBancariaRepository();         
+        $this->contaBancariaRepository = $contaBancariaRepository;
     }
 
     public function index(Request $request) 
@@ -98,9 +100,9 @@ class ContaBancariaController extends Controller
     {
         $data = $request->getBodyParams();
 
-        $turma = $this->contaBancariaRepository->findByUuid($id);
+        $bank = $this->contaBancariaRepository->findByUuid($id);
 
-        if (is_null($turma)) {
+        if (is_null($bank)) {
             return $this->router->view('bank-account/', ['active' => 'register', 'danger' => true]);
         }
 
@@ -124,7 +126,7 @@ class ContaBancariaController extends Controller
             );
         }
         
-        $updated = $this->contaBancariaRepository->update($data, $turma->id);
+        $updated = $this->contaBancariaRepository->update($data, $bank->id);
 
         if(is_null($updated)) {            
             return $this->router->view('bank-account/edit', ['active' => 'register', 'danger' => true]);

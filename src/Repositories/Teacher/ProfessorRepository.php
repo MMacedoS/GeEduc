@@ -3,13 +3,14 @@
 namespace App\Repositories\Teacher;
 
 use App\Config\Database;
+use App\Interfaces\Teacher\IProfessorRepository;
 use App\Models\Teacher\Professor;
 use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ProfessorRepository {
+class ProfessorRepository implements IProfessorRepository {
     const CLASS_NAME = Professor::class;
     const TABLE = 'professores';
     
@@ -46,20 +47,15 @@ class ProfessorRepository {
 
         $conditions = [];
         $bindings = [];
-
-        if (isset($params['name'])) {
-            $conditions[] = "pf.nome = :nome";
-            $bindings[':nome'] = $params['name'];
+        
+        if (isset($params['name_email'])) {
+            $conditions[] = "(pf.nome LIKE :name_email OR pf.email LIKE :name_email)";
+            $bindings[':name_email'] = "%" .  $params['name_email'] . "%";
         }
 
-        if (isset($params['email'])) {
-            $conditions[] = "pf.email = :email";
-            $bindings[':email'] = $params['email'];
-        }
-
-        if (isset($params['active'])) {
-            $conditions[] = "p.ativo = :ativo";
-            $bindings[':ativo'] = $params['active'];
+        if (isset($params['situation']) && $params['situation'] != '') {
+            $conditions[] = "p.ativo = :situation";
+            $bindings[':situation'] = $params['situation'];
         }
 
         if (count($conditions) > 0) {
@@ -76,33 +72,62 @@ class ProfessorRepository {
     }
 
     public function teacherWithPersonByUuid(string $uuid){
-
-        $sql = "SELECT
-            e.*,(
-                SELECT 
-                    JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    )
-                FROM pessoa_fisica pf
-                WHERE pf.id = e.pessoa_fisica_id
-            ) AS pessoa_fisica
-            FROM " . self::TABLE . " 
-            e LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
-            WHERE e.uuid = :id
-        ";
-
-        $sql .= " ORDER BY e.created_at DESC LIMIT 1";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([':id' => $uuid]);
-
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
+        try {
+            $sql = "SELECT
+                e.*,(
+                    SELECT 
+                        JSON_OBJECT(
+                            'id', pf.id,
+                            'nome', pf.nome,
+                            'email', pf.email
+                        )
+                    FROM pessoa_fisica pf
+                    WHERE pf.id = e.pessoa_fisica_id
+                ) AS pessoa_fisica
+                FROM " . self::TABLE . " 
+                e LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
+                WHERE e.uuid = :id
+            ";
+    
+            $sql .= " ORDER BY e.created_at DESC LIMIT 1";
+    
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->execute([':id' => $uuid]);
+    
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            return $stmt->fetch();  
+        }catch (\Throwable $th) {
+            LoggerHelper::logError($th->getMessage());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
     }
 
+    public function teacherWithPersonByID(string|int $id) {
+        try {
+            $sql = "SELECT p.*, 
+                    JSON_OBJECT(
+                        'id', p.id,
+                        'uuid', p.uuid,
+                        'nome', pf.nome
+                    ) AS professor_details
+                    FROM ". self::TABLE ." p
+                    LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
+                    WHERE pf.id = :id";
+                    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute(['id' => $id]);
+            return $stmt->fetch();  
+        } catch (\Throwable $th) {
+            LoggerHelper::logError($th->getMessage());
+            return null;
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+    
     public function saveAll(array $data) 
     {
         if (empty($data)) {

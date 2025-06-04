@@ -25,7 +25,7 @@
         </div>
     </div>
     <!-- Row end -->
-    <form action="/turmas/<?=$turma->uuid?>/editar" method="post" enctype="multipart/form-data">   
+    <form action="/turma/<?=$turma->uuid?>" method="post" enctype="multipart/form-data">   
         <div class="row gx-3">
             <? include_once('_forms.php');?>
         </div>
@@ -33,3 +33,19 @@
 
 
 <?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+<script>
+    $(document).ready(function() {
+   
+    // Atualiza o campo oculto com os IDs selecionados
+    $('#coordinator_id').on('change', function() {
+        var selectedIds = $(this).val(); // Pega os IDs selecionados
+        $('#coordinator_ids').val(selectedIds.join(',')); // Atualiza o campo oculto
+    });
+
+    // Pré-seleciona os valores no Select2 (se houver)
+    var initialIds = $('#coordinator_ids').val().split(','); // Pega os IDs do campo oculto
+    if (initialIds.length > 0 && initialIds[0] !== '') {
+        $('#coordinator_id').val(initialIds).trigger('change'); // Pré-seleciona os valores
+    }
+});
+</script>
