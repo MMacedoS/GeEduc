@@ -4,7 +4,7 @@ namespace App\Interfaces\Period;
 
 interface IPeriodoRepository{
 
-    public function all();
+    public function all(array $criteria = []);
 
     public function create(array $data);
 

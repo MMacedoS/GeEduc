@@ -95,7 +95,7 @@ class NotaController extends Controller
             'period_id' => $paramsURL['period_id'] ?? null
         ]);
         
-        $periodos = $this->periodoRepository->all();
+        $periodos = $this->periodoRepository->all(['active' => '1']);
 
         return $this->router->view(
             "$this->routeView/score", 
@@ -164,7 +164,7 @@ class NotaController extends Controller
             'bimester_id' => $paramsURL['bimester_id'] ?? null
         ]);
         
-        $periodos = $this->periodoRepository->all();
+        $periodos = $this->periodoRepository->all(['active' => '1']);
 
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;

@@ -70,7 +70,7 @@ class GradeReportController extends Controller
             'class_discipline_id' => $turma_disciplina->id, 
         ]);
 
-        $periodos = $this->periodoRepository->all();
+        $periodos = $this->periodoRepository->all(['active' => '1']);
 
         $frequencias = $this->frequenciaRepository
             ->allFrequencies(
@@ -102,7 +102,7 @@ class GradeReportController extends Controller
             ["student_id" => $studentClass->estudante_id]
             )[0];
       
-        $periodos = $this->periodoRepository->all();
+        $periodos = $this->periodoRepository->all(['active' => '1']);
 
         $allDisciplines = $this->disciplinaRepository->findAllDisciplineByClassID($studentClass->turma_id);
 

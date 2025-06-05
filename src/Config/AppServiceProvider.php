@@ -4,6 +4,7 @@ namespace App\Config;
 
 use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Interfaces\Bank_account\IContaBancariaRepository;
+use App\Interfaces\Classrooms\IAulaRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Contracts\IContratoRepository;
@@ -35,6 +36,7 @@ use App\Interfaces\Ticket\IBoletoRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bank_account\ContaBancariaRepository;
+use App\Repositories\Classrooms\AulaRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Classrooms\TurmaRepository;
 use App\Repositories\Contracts\ContratoRepository;
@@ -260,6 +262,12 @@ class AppServiceProvider
             ->set(
                 IBoletoRepository::class,
                 new BoletoRepository()
+            );
+
+        $this->container
+            ->set(
+                IAulaRepository::class,
+                new AulaRepository()
             );
     }
 }

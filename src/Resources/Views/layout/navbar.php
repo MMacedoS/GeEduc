@@ -178,7 +178,7 @@
                         <?php } ?>
                         <?php if (hasPermission('estudante')) { ?>
                             <li class="nav-item <?=$active === 'students' ? 'active-link': ''?>">
-                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Minha Turma
+                                <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Minhas Turmas
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -188,7 +188,7 @@
                         <? } ?>
                         <?php if (hasPermission('professor')) { ?>
                             <li class="nav-item <?=$active === 'teacher' ? 'active-link': ''?>">
-                                <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Minhas Disciplinas
+                                <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Meus Componentes
                                 </a>
                             </li>
                         <? } ?>

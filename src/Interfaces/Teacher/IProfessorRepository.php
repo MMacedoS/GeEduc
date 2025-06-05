@@ -24,5 +24,7 @@ interface IProfessorRepository {
 
     public function findByUuid(string $uuid);
 
+    public function teacherWithPersonByID(?int $id);
+
     public function findById(string $id);
 }

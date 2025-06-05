@@ -39,18 +39,20 @@ $container = new Container();
 $appServiceProvider = new AppServiceProvider($container);
 $appServiceProvider->registerDependencies();
 
-/////created container
-
+/////created container active
 $atividadeController = $container->get(AtividadeController::class);
 
+/////created container coodenador
 $coordenadorController = $container->get(CoordenadorController::class);
 $cargaHorariaController = $container->get(CargaHorariaController::class);
 $contaBancariaController = $container->get(ContaBancariaController::class);
 
+/////created container dash
 $dashboardController = $container->get(DashboardController::class);
 $disciplinaController = $container->get(DisciplinaController::class);
 $disciplinaController = $container->get(DisciplinaController::class);
 
+/////created container studants
 $estudanteController = $container->get(EstudanteController::class);
 $estudanteTurmaController = $container->get(EstudanteTurmaController::class);
 $estudanteMensalidadeController = $container->get(EstudanteMensalidadeController::class);
@@ -84,242 +86,72 @@ $usuarioController = $container->get(UsuarioController::class);
 $contratoController = $container->get(ContratoController::class);
 
 /////routes
-$router->create("GET", "/recuperar", [$recuperarSenhaController, "index"]);
-$router->create("POST", "/recuperar", [$recuperarSenhaController, "store"]);
-$router->create("GET", "/recuperar/{id}", [$recuperarSenhaController, "edit"]);
-$router->create("POST", "/recuperar/{id}", [$recuperarSenhaController, "update"]);
-$router->create("GET", "/", [$usuarioController, "login"], null);
-$router->create("POST", "/login", [$usuarioController, "auth"]);
-$router->create("GET", "/logout", [$usuarioController, "logout"], $auth);
+require_once "login/loginRouters.php";
 
-$router->create("GET", "/dashboard", [$dashboardController, "index"], $auth);
+require_once "dashboard/dashboardRouters.php";
 
 //users
-$router->create("POST", "/usuario/{id}/deletar",[$usuarioController, "delete"], $auth);
-$router->create("GET", "/usuario/{id}/editar",[$usuarioController, "edit"], $auth);
-$router->create("POST", "/usuario/{id}/upt", [$usuarioController, "update"], $auth);
-$router->create("GET", "/usuario/{id}/permissao", [$usuarioController, "permissao"], $auth);
-$router->create("POST", "/usuario/{id}/permissao", [$usuarioController, "add_permissao"], $auth);
-$router->create("POST", "/usuario/add/", [$usuarioController, "store"], $auth);
-$router->create("GET", "/usuario/criar", [$usuarioController, "create"], $auth);
-$router->create("GET", "/usuario/{request}", [$usuarioController, "index"], $auth);
-$router->create("GET", "/usuario/", [$usuarioController, "index"], $auth);
+require_once "user/usersRouters.php";
 
 //permissions
-$router->create("POST", "/permissao/{id}/deletar", [$permissaoController, "delete"], $auth);
-$router->create("GET", "/permissao/{id}/editar",[$permissaoController, "edit"], $auth);
-$router->create("POST", "/permissao/{id}/upt", [$permissaoController, "update"], $auth);
-$router->create("POST", "/permissao/add/", [$permissaoController, "store"], $auth);
-$router->create("GET", "/permissao/criar", [$permissaoController, "create"], $auth);
-$router->create("GET", "/permissao/{request}", [$permissaoController, "index"], $auth);
-$router->create("GET", "/permissao/", [$permissaoController, "index"], $auth);
+require_once "permission/permissionsRouters.php";
 
 //teachers
-$router->create("GET", "/professores", [$professorController, "index"], $auth);
-$router->create("GET", "/professores/criar", [$professorController, "create"], $auth);
-$router->create("POST","/professores/criar", [$professorController, "store"], $auth);
-$router->create("GET", "/professores/{id}/editar", [$professorController, "edit"], $auth);
-$router->create("POST", "/professores/{id}/editar", [$professorController, "update"], $auth);
-$router->create("DELETE", "/professores/{id}", [$professorController, "destroy"], $auth);
+require_once "teacher/teacherRouters.php";
 
 //students
-$router->create("GET", "/estudantes", [$estudanteController, "index"], $auth);
-$router->create('GET', "/estudante/excel", [$estudanteController, 'createExcel'], $auth);
-$router->create("GET", "/estudante", [$estudanteController, "create"], $auth);
-$router->create("POST", "/estudante",[$estudanteController, "store"], $auth);
-$router->create("POST", "/estudante/excel",[$estudanteController, "storeExcel"], $auth);
-$router->create("GET","/estudante/{id}", [$estudanteController, "edit"], $auth);
-$router->create("POST", "/estudante/{id}", [$estudanteController, "update"], $auth);
-$router->create("DELETE", "/estudante/{id}", [$estudanteController, "destroy"], $auth);
+require_once "student/studentsRouters.php";
 
 //plans
-$router->create("GET", "/planos", [$planoController, "index"], $auth);
-$router->create("GET", "/planos/criar", [$planoController, "create"], $auth);
-$router->create("POST", "/planos/criar", [$planoController, "store"], $auth);
-$router->create("GET", "/planos/{id}/editar", [$planoController, "edit"], $auth);
-$router->create( "POST", "/planos/{id}/editar", [$planoController, "update"], $auth);
-$router->create("DELETE", "/planos/{id}", [$planoController, "destroy"], $auth);
+require_once "plans/plansRouters.php";
 
 //classrooms
-$router->create("GET", "/turmas", [$turmaController, "index"], $auth);
-$router->create("GET", "/turma", [$turmaController, "create"], $auth);
-$router->create("POST", "/turma", [$turmaController, "store"], $auth);
-$router->create( "GET", "/turma/{id}", [$turmaController, "edit"], $auth);
-$router->create( "POST", "/turma/{id}", [$turmaController, "update"], $auth);
-$router->create("DELETE", "/turma/{id}", [$turmaController, "destroy"], $auth);
+require_once "classRoom/classRoomRouters.php";
 
 //work_load
-$router->create( "GET", "/carga-horaria", [$cargaHorariaController, "index"], $auth);
-$router->create( "GET", "/carga-horaria/criar", [$cargaHorariaController, "create"], $auth);
-$router->create( "POST", "/carga-horaria/criar", [$cargaHorariaController, "store"], $auth);
-$router->create( "GET", "/carga-horaria/{id}/editar", [$cargaHorariaController, "edit"], $auth);
-$router->create( "POST", "/carga-horaria/{id}/editar", [$cargaHorariaController, "update"], $auth);
-$router->create( "DELETE", "/carga-horaria/{id}", [$cargaHorariaController, "destroy"], $auth);
+require_once "workload/workloadsRouters.php";
 
 //banks
-$router->create("GET", "/bancos", [$contaBancariaController, "index"], $auth);
-$router->create( "GET", "/bancos/criar", [$contaBancariaController, "create"], $auth);
-$router->create( "POST", "/bancos/criar", [$contaBancariaController, "store"], $auth);
-$router->create( "GET", "/bancos/{id}/editar", [$contaBancariaController, "edit"], $auth);
-$router->create( "POST", "/bancos/{id}/editar", [$contaBancariaController, "update"], $auth);
-$router->create( "DELETE", "/bancos/{id}", [$contaBancariaController, "destroy"], $auth);
+require_once "bank/banksRouters.php";
 
 //disciplines
-$router->create("GET", "/disciplinas", [$disciplinaController, "index"], $auth);
-$router->create( "GET", "/disciplinas/criar", [$disciplinaController, "create"], $auth);
-$router->create( "POST", "/disciplinas/criar", [$disciplinaController, "store"], $auth);
-$router->create( "GET", "/disciplinas/{id}/editar", [$disciplinaController, "edit"], $auth);
-$router->create( "POST", "/disciplinas/{id}/editar", [$disciplinaController, "update"], $auth);
-$router->create( "DELETE", "/disciplinas/{id}", [$disciplinaController, "destroy"], $auth);
+require_once "discipline/disciplinesRouters.php";
 
 //student-class
-$router->create( "GET", "/estudantes/{id}/turma", [$estudanteTurmaController, "studentLinkClass"], $auth);
-$router->create( "POST", "/estudantes/{id}/turma/{id}", [$estudanteTurmaController, "store"], $auth);
-$router->create( "PUT", "/estudantes-class/{id}", [$estudanteTurmaController, "updateStatus"], $auth);
+require_once "student/studentsClassRouter.php";
 
 //student-monthlyfees
-$router->create( "GET", "/estudantes/{id}/mensalidades", [$estudanteMensalidadeController, "index"], $auth);
-$router->create( "GET", "/estudantes/{id}/mensalidade/", [$estudanteMensalidadeController, "create"], $auth);
-$router->create( "POST", "/estudantes/{id}/mensalidade/", [$estudanteMensalidadeController, "store"], $auth);
-$router->create( "GET", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$estudanteMensalidadeController, "edit"], $auth);
-$router->create( "POST", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$estudanteMensalidadeController, "update"], $auth);
-
-$router->create( "DELETE", "/estudantes/{id}/mensalidade/{mensalidade_id}/", [$estudanteMensalidadeController, "destroy"], $auth);
+require_once "student/studentsMonthylessRouters.php";
 
 // Coordenação
-$router->create('GET', '/coordenadores', [$coordenadorController, 'index'], $auth);
-$router->create('GET', '/coordenador', [$coordenadorController, 'create'], $auth);
-$router->create('POST', '/coordenador', [$coordenadorController, 'store'], $auth);
-$router->create('GET', '/coordenador/{id}/', [$coordenadorController, 'edit'], $auth);
-$router->create('POST', '/coordenador/{id}/', [$coordenadorController, 'update'], $auth);
-$router->create('DELETE', '/coordenador/{id}', [$coordenadorController, 'destroy'], $auth);
-
-// Minha turma - coordenador
-$router->create('GET', '/minha-coordenacao', [$turmaDisciplinaController, 'indexByCoordenador'], $auth);
-$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplinas/", [$turmaDisciplinaController, "indexClassRoomDisciplineByCoordenador"], $auth);
-$router->create('GET', "/minha-coordenacao/turma/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
-$router->create('POST', "/minha-coordenacao/turma/{id}/frequencia", [$frequenciaController, 'store'], $auth);
-$router->create('GET', "/minha-coordenacao/turma/{id}/notas", [$notaController, 'indexTeacher'], $auth);
-$router->create('POST', "/minha-coordenacao/turma/{id}/notas", [$notaController, 'store'], $auth);
-$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
-$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
-$router->create( "POST", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
-$router->create( "GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
-$router->create( "POST", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
-$router->create( "DELETE", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+require_once "coordination/coordinationsRouters.php";
 
 //periods
-$router->create( "GET", "/periodos", [$periodoController, "index"], $auth);
-$router->create( "GET", "/periodos/criar", [$periodoController, "create"], $auth);
-$router->create( "POST", "/periodos/criar", [$periodoController, "store"], $auth);
-$router->create( "GET", "/periodos/{id}/editar", [$periodoController, "edit"], $auth);
-$router->create( "POST", "/periodos/{id}/editar", [$periodoController, "update"], $auth);
-
-//teacher-disciplines
-$router->create( "GET", "/professores/{id}/disciplina", [$professorDisciplinaController, "teacherLinkDiscipline"], $auth);
-$router->create( "POST", "/professores/{id}/disciplina/{id}", [$professorDisciplinaController, "store"], $auth);
-$router->create( "PUT", "/professores-disciplina/{id}", [$professorDisciplinaController, "updateStatus"], $auth);
-
-//classRooms
-$router->create( "GET", "/turmas/{id}/disciplinas/", [$turmaDisciplinaController, "index"], $auth);
-$router->create( "GET", "/turmas/{id}/disciplina/", [$turmaDisciplinaController, "create"], $auth);
-$router->create( "POST", "/turmas/{id}/disciplina/", [$turmaDisciplinaController, "store"], $auth);
-$router->create( "GET", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "edit"], $auth);
-$router->create( "POST", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "update"], $auth);
-$router->create( "DELETE", "/turmas/{id}/disciplina/{turma_disciplina}", [$turmaDisciplinaController, "destroy"], $auth);
-
-//activities
-$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
-$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
-$router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
-$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
-$router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
-$router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+require_once "period/periodsRouters.php";
 
 //activities-teacher
-$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
-$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "create"], $auth);
-$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade", [$atividadeController, "store"], $auth);
-$router->create( "GET", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
-$router->create( "POST", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
-$router->create( "DELETE", "/meus-componentes/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+require_once "myComponent/myComponents.php";
 
-//siteEvents
-$router->create('GET', '/site-eventos', [$siteEventoController, 'index'], $auth);
-$router->create('GET', '/site-eventos/criar', [$siteEventoController, 'create'], $auth);
-$router->create('POST', '/site-eventos/criar', [$siteEventoController, 'store'], $auth);
-$router->create('GET', '/site-eventos/{id}/editar', [$siteEventoController, 'edit'], $auth);
-$router->create('POST', '/site-eventos/{id}/editar', [$siteEventoController, 'update'], $auth);
-$router->create('DELETE', '/site-eventos/{id}', [$siteEventoController, 'destroy'], $auth);
+//site
+require_once "site/siteEvents.php";
+require_once "site/siteCarousel.php";
 
 //minha-turma-estudantes
-$router->create("GET", "/minhas-turmas/", [$estudanteController, "indexStudents"], $auth);
-$router->create('GET', "/minhas-turmas/{id}/frequencia", [$frequenciaController, 'indexStudents'], $auth);
-
-//minha-turma-professor
-$router->create("GET", "/meus-componentes/", [$professorController, "indexTeacher"], $auth);
-$router->create('GET', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
-$router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'store'], $auth);
-$router->create('GET', "/meus-componentes/{id}/notas", [$notaController, 'indexTeacher'], $auth);
-$router->create('POST', "/meus-componentes/{id}/notas", [$notaController, 'store'], $auth);
+require_once "myClassRoom/myClassRoomsRouters.php";
 
 //mensalidades
-$router->create("GET", "/mensalidades", [$mensalidadeController, 'index'], $auth);
-$router->create("GET", "/mensalidade", [$mensalidadeController, 'create'], $auth);
-$router->create("POST", "/mensalidade", [$mensalidadeController, 'store'], $auth);
-$router->create("GET", "/mensalidade/{id}", [$mensalidadeController, 'edit'], $auth);
-$router->create("POST", "/mensalidade/{id}", [$mensalidadeController, 'update'], $auth);
-$router->create("DELETE", "/mensalidade/{id}", [$mensalidadeController, 'destroy'], $auth);
+require_once "monthylees/monthyleesRouters.php";
 
 // pessoa_contato
-$router->create('GET', '/pessoas', [$pessoaContatoController, 'index'], $auth);
-$router->create('GET', '/pessoa', [$pessoaContatoController, 'create'], $auth);
-$router->create('POST', '/pessoa', [$pessoaContatoController, 'store'], $auth);
-$router->create('GET', '/pessoa/{id}/', [$pessoaContatoController, 'edit'], $auth);
-$router->create('POST', '/pessoa/{id}/', [$pessoaContatoController, 'update'], $auth);
-$router->create('DELETE', '/pessoa/{id}', [$pessoaContatoController, 'destroy'], $auth);
+require_once "person/personRouters.php";
 
-$router->create('GET', '/pessoas-lista', [$pessoaContatoController, 'indexWithoutPagination'], $auth);
-$router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLittleGroup'], $auth);
-$router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
-$router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
-$router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
+require_once "reports/reportsRouters.php";
 
-//SiteCarrossel
-$router->create('GET', '/site-carrossel', [$siteCarrosselController, 'index'], $auth);
-$router->create('GET', '/site-carrossel/criar', [$siteCarrosselController, 'create'], $auth);
-$router->create('POST', '/site-carrossel/criar', [$siteCarrosselController, 'store'], $auth);
-$router->create('GET', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'edit'], $auth);
-$router->create('POST', '/site-carrossel/{id}/editar', [$siteCarrosselController, 'update'], $auth);
-$router->create('DELETE', '/site-carrossel/{id}', [$siteCarrosselController, 'destroy'], $auth);
+require_once "profile/profileRouters.php";
 
-$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+require_once "contract/contractsRouters.php";
 
-$router->create('GET', '/perfil', [$usuarioController, 'profile'], $auth);
-$router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
-
-$router->create('GET', '/site-albuns', [$siteAlbumController, 'index'], $auth);
-$router->create('GET', '/site-albuns/criar', [$siteAlbumController, 'create'], $auth);
-$router->create('POST', '/site-albuns/criar', [$siteAlbumController, 'store'], $auth);
-$router->create('GET', '/site-albuns/{id}/editar', [$siteAlbumController, 'edit'], $auth);
-$router->create('POST', '/site-albuns/{id}/editar', [$siteAlbumController, 'update'], $auth);
-$router->create('DELETE', '/site-albuns/{id}', [$siteAlbumController, 'destroy'], $auth);
-
-$router->create('GET', '/perfil/{id}', [$usuarioController, 'profile'], $auth);
-$router->create('POST', '/upload', [$usuarioController, 'profileUploadPhoto'], $auth);
-$router->create('POST', '/perfil', [$usuarioController, 'profileUpdate'], $auth);
-$router->create('POST', '/perfil-senha', [$usuarioController, 'profilePasswordUpdate'], $auth);
-
-$router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
-$router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
-
-$router->create('GET', '/contratos', [$contratoController, 'index'], $auth);
-$router->create('GET', '/contratos/gerar', [$contratoController, 'generateAndSendContracts'], $auth);
-$router->create('POST', '/webhook/autentique', [$contratoController, 'webhookAutentique']);
-
-$router->create('POST', '/webhook/autentique', [$contratoController, 'webhookAutentique']);
-$router->create('POST', '/webhook/bb', [$mensalidadeController, 'webhookBB']);
-$router->create('GET', '/mensalidade/{uuid}/imprimir', [$mensalidadeController, 'print']);
+require_once "integrations/integrationAutentique.php";
 
 return $router;
 

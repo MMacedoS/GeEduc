@@ -18,5 +18,7 @@ interface ITurmaRepository {
 
     public function findById(string $id);
 
+    public function allClassroomsByTeacherID(?int $id);
+
     public function delete(int $id);
 }

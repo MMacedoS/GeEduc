@@ -11,6 +11,7 @@ class Periodo{
     public $id;
     public $uuid;
     public $periodo;
+    public $ativo;
     public $created_at;
     public $updated_at;
 
@@ -25,6 +26,14 @@ class Periodo{
         $periodo->periodo = $data['period'] ?? null;
         $periodo->created_at = $data['created_at'] ?? null;
         $periodo->updated_at = $data['updated_at'] ?? null;
+        return $periodo;
+    }
+
+    public function update(array $data, Periodo $periodo): Periodo
+    {
+        $periodo->periodo = $data['periodo'] ?? $periodo->periodo;
+        $periodo->ativo = $data['active'] ?? $periodo->ativo;
+
         return $periodo;
     }
 }

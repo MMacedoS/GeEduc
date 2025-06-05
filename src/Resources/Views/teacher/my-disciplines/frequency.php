@@ -87,6 +87,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <div class="float-end text-end">
+                                    <a href="/meus-componentes" class="btn btn-outline-dark" > Voltar </a>
+                                </div>
+                            </div>
                         </div>        
                         <hr>
                         <?php 
