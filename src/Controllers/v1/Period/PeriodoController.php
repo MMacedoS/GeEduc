@@ -121,4 +121,21 @@ class PeriodoController extends Controller{
 
         return $this->router->redirect('periodos/');
     }
+
+    public function active(Request $request, string $id)
+    {
+        $bimestre = $this->periodoRepository->findByUuid($id);
+        
+        if(is_null($bimestre)){
+            return $this->router->view('period/', ['active' => 'pedagogico', 'danger' => true]);
+        }
+
+        $active = $bimestre->ativo == '0' ? '1' : '0';
+
+        $data['active'] = $active;
+
+        $updated = $this->periodoRepository->update($data, $bimestre->id);
+
+        return $this->router->redirect('periodos/');
+    }
 }

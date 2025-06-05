@@ -162,7 +162,11 @@ class TurmaRepository implements ITurmaRepository {
         }
     }
 
-    public function allClassroomsByTeacherID(string|int $id) {
+    public function allClassroomsByTeacherID(?int $id) {
+        if (is_null($id)) {
+            return null;
+        }
+        
         try {
             $sql = "SELECT t.* 
                     FROM " . self::TABLE ." t

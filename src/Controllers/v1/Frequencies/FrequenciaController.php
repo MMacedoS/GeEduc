@@ -200,7 +200,7 @@ class FrequenciaController extends Controller
             );
 
             
-        $periodos = $this->periodoRepository->all();
+        $periodos = $this->periodoRepository->all(['active' => '1']);
 
         return $this->router->view(
             "$this->routeView/frequency", 

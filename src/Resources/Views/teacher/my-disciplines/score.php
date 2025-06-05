@@ -77,6 +77,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-2 col-xl-6">
+                                <div class="float-end">
+                                    <a href="/meus-componentes" class="btn btn-outline-dark" > Voltar </a>
+                                </div>
+                            </div>
                         </div>        
                         <hr>
                         <?php 
@@ -163,11 +168,6 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="float-end">
-        <?=$links?>
-    </div>
-</div>
 
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
 

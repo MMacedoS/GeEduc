@@ -105,7 +105,11 @@ class ProfessorRepository implements IProfessorRepository {
         }
     }
 
-    public function teacherWithPersonByID(string|int $id) {
+    public function teacherWithPersonByID(?int $id) {
+        if (is_null($id)) {
+            return null;
+        }
+        
         try {
             $sql = "SELECT p.*, 
                     JSON_OBJECT(

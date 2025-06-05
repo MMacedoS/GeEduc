@@ -44,6 +44,8 @@
                                 <tr>
                                     <th></th>
                                     <th>Bimestre</th>    
+                                    <th>Situação</th>    
+                                    <th class="float-end me-4">Ações</th>    
                                 </tr>
                             </thead>
                             
@@ -55,14 +57,32 @@
                                             <?=$periodo->periodo ?>º periodo
                                         </td>
                                         <td>    
-                                            
-                                        </td>
-                                        <td class="d-flex">
-                                        <a class="mb-1 me-2 mt-1" href="/periodos/<?=$periodo->uuid?>/editar">
-                                            <div class="border p-2 rounded-3">
-                                                <i class="icon-edit fs-5"></i>
+                                            <div class="d-flex align-items-center">
+                                                <? if($periodo->ativo == 0) { ?>
+                                                    <i class="icon-circle1 me-2 text-danger fs-5"></i>
+                                                    Impedido
+                                                <? } ?>
+                                                <? if($periodo->ativo == 1) { ?>
+                                                    <i class="icon-circle1 me-2 text-success fs-5"></i>
+                                                    Disponivel
+                                                <? } ?>
                                             </div>
-                                        </a>                                           
+                                        </td>
+                                        <td>
+                                           <div class="float-end d-flex">
+                                           <a class="mb-1 me-2 mt-1" href="/periodos/<?=$periodo->uuid?>/editar">
+                                                <div class="border p-2 rounded-3">
+                                                    <i class="icon-edit fs-5"></i>
+                                                </div>
+                                            </a>  
+                                            <a class="mb-1 me-2 mt-1" href="/periodos/<?=$periodo->uuid?>/active">
+                                                <div class="border p-2 rounded-3">
+                                                    <i class="icon-circle1 text-danger fs-5"></i>
+                                                </div>
+                                            </a> 
+                                           </div> 
+                                        </td>
+                                    </tr>                                          
                             <? } ?>
                             </tbody>
                         </table>
