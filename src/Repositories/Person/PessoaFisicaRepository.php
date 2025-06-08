@@ -3,18 +3,18 @@
 namespace App\Repositories\Person;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Models\Person\PessoaFisica;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaFisicaRepository implements IPessoaFisicaRepository {
+class PessoaFisicaRepository extends SingletonInstance implements IPessoaFisicaRepository {
     const CLASS_NAME = PessoaFisica::class;
     const TABLE = 'pessoa_fisica';
     
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

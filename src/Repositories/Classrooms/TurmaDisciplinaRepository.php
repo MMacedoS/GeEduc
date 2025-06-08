@@ -3,18 +3,18 @@
 namespace App\Repositories\Classrooms;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Models\Classrooms\TurmaDisciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaDisciplinaRepository implements ITurmaDisciplinaRepository{
+class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisciplinaRepository{
     const CLASS_NAME = TurmaDisciplina::class;
     const TABLE = 'turma_disciplina';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

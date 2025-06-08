@@ -3,6 +3,7 @@
 namespace App\Repositories\Teacher;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Teacher\IProfessorRepository;
 use App\Models\Teacher\Professor;
 use App\Repositories\Person\PessoaFisicaRepository;
@@ -10,21 +11,20 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ProfessorRepository implements IProfessorRepository {
+class ProfessorRepository extends SingletonInstance implements IProfessorRepository {
     const CLASS_NAME = Professor::class;
     const TABLE = 'professores';
     
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Professor();
-        $this->usuarioRepository = new UsuarioRepository(); 
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
+        $this->usuarioRepository = UsuarioRepository::getInstance(); 
+        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance(); 
     }
 
     public function allTeachers(array $params = [])

@@ -141,10 +141,15 @@
 		  contentType: 'application/json',
 		  dataType: 'json'
 		}).catch(function(error){
-			console.error('Erro ao obter registro:', error);
+			showErrorMessage(error.message);
 			hideLoader();
-		}).then(() => {
-			showSuccessMessage('Registro excluído com sucesso!');			
+		}).then((res) => {
+			if(res.status >= 400) {
+				showErrorMessage(res.message);
+			}
+
+			showSuccessMessage(res.message);			
+			return ;
 		});
 	  }
 	
@@ -216,7 +221,7 @@
 		  confirmButtonColor: '#3085d6',
 		  confirmButtonText: 'Ok'
 		}).then(()=>{
-			hideLoader();
+			refreshPage();
 		});
 	  }
 	  

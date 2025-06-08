@@ -3,18 +3,17 @@
 namespace App\Repositories\Activitie;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Models\Activitie\Atividade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class AtividadeRepository implements IAtividadeRepository{
+class AtividadeRepository extends SingletonInstance implements IAtividadeRepository {
     const CLASS_NAME = Atividade::class;
     const TABLE = 'atividade';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

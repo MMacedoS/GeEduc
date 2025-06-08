@@ -3,18 +3,18 @@
 namespace App\Repositories\Frequencies;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Frequencies\IFrequenciaRepository;
 use App\Models\Frequencies\Frequencia;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class FrequenciaRepository implements IFrequenciaRepository {
+class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepository {
     const CLASS_NAME = Frequencia::class;
     const TABLE = 'frequencias';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

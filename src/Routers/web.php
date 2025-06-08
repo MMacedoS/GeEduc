@@ -6,6 +6,7 @@ use App\Config\Container;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
+use App\Controllers\v1\ClassRooms\AulaController;
 use App\Controllers\v1\Contracts\ContratoController;
 use App\Controllers\v1\GradeReport\GradeReportController;
 use App\Controllers\v1\ClassRooms\TurmaController;
@@ -42,10 +43,14 @@ $appServiceProvider->registerDependencies();
 /////created container active
 $atividadeController = $container->get(AtividadeController::class);
 
+$aulaController = $container->get(AulaController::class);
+
 /////created container coodenador
 $coordenadorController = $container->get(CoordenadorController::class);
 $cargaHorariaController = $container->get(CargaHorariaController::class);
 $contaBancariaController = $container->get(ContaBancariaController::class);
+
+$contratoController = $container->get(ContratoController::class);
 
 /////created container dash
 $dashboardController = $container->get(DashboardController::class);
@@ -82,8 +87,6 @@ $turmaController = $container->get(TurmaController::class);
 $turmaDisciplinaController = $container->get(TurmaDisciplinaController::class);
 
 $usuarioController = $container->get(UsuarioController::class);
-
-$contratoController = $container->get(ContratoController::class);
 
 /////routes
 require_once "login/loginRouters.php";

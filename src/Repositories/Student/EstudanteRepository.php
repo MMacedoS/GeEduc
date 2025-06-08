@@ -3,6 +3,7 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Student\IEstudanteRepository;
 use App\Models\Student\Estudante;
 use App\Repositories\Person\PessoaContatoRepository;
@@ -14,14 +15,13 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteRepository implements IEstudanteRepository {
+class EstudanteRepository extends SingletonInstance implements IEstudanteRepository {
 
     const CLASS_NAME = Estudante::class;
     const TABLE = 'estudantes';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
     protected $pessoaContatoRepository;
@@ -33,12 +33,12 @@ class EstudanteRepository implements IEstudanteRepository {
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Estudante();
-        $this->usuarioRepository = new UsuarioRepository();
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
-        $this->estudanteTurmaRepository = new EstudanteTurmaRepository();
-        $this->pessoaContatoRepository = new PessoaContatoRepository();
-        $this->estudanteMensalidadeRepository = new EstudanteMensalidadeRepository();
-        $this->mensalidadeRepository = new MensalidadeRepository();
+        $this->usuarioRepository = UsuarioRepository::getInstance();
+        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance();
+        $this->estudanteTurmaRepository = EstudanteTurmaRepository::getInstance();
+        $this->pessoaContatoRepository = PessoaContatoRepository::getInstance();
+        $this->estudanteMensalidadeRepository = EstudanteMensalidadeRepository::getInstance();
+        $this->mensalidadeRepository = MensalidadeRepository::getInstance();
     }
 
     public function allStudents(array $params = []){

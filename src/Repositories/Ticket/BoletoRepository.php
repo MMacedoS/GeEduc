@@ -3,18 +3,18 @@
 namespace App\Repositories\Ticket;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Ticket\IBoletoRepository;
 use App\Models\Ticket\Boleto;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class BoletoRepository implements IBoletoRepository {
+class BoletoRepository extends SingletonInstance implements IBoletoRepository {
     const CLASS_NAME = Boleto::class;
     const TABLE = 'boletos';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

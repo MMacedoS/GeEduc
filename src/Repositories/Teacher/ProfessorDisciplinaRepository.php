@@ -3,20 +3,20 @@
 namespace App\Repositories\Teacher;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Models\Teacher\ProfessorDisciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ProfessorDisciplinaRepository implements IProfessorDisciplinaRepository {
+class ProfessorDisciplinaRepository extends SingletonInstance implements IProfessorDisciplinaRepository {
 
     const CLASS_NAME = ProfessorDisciplina::class;
     const TABLE = 'professor_disciplina';
 
     use FindTrait;
 
-    protected $conn;
-    protected $model;
+
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();

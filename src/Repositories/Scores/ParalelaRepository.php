@@ -3,19 +3,19 @@
 namespace App\Repositories\Scores;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Scores\IParalelaRepository;
 use App\Models\Scores\Paralela;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class ParalelaRepository implements IParalelaRepository {
+class ParalelaRepository extends SingletonInstance implements IParalelaRepository {
     const CLASS_NAME = Paralela::class;
     const TABLE = 'paralela';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

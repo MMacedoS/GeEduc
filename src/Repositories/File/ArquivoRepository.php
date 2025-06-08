@@ -3,20 +3,20 @@
 namespace App\Repositories\File;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\File\IArquivoRepository;
 use App\Models\File\Arquivo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ArquivoRepository implements IArquivoRepository {
+class ArquivoRepository extends SingletonInstance implements IArquivoRepository {
 
     const CLASS_NAME = Arquivo::class;
     const TABLE = 'arquivos';
 
     use FindTrait;
 
-    protected $conn;
-    protected $model;
+
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();

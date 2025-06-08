@@ -22,3 +22,11 @@ $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade"
 $router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
 $router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
+
+//activities
+$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/aulas", [$aulaController, "index"], $auth);
+$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/aula", [$aulaController, "create"], $auth);
+$router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/aula", [$aulaController, "store"], $auth);
+$router->create( "GET", "/turmas/{id}/disciplinas/{turma_disciplina}/aula/{aula_id}", [$aulaController, "edit"], $auth);
+$router->create( "POST", "/turmas/{id}/disciplinas/{turma_disciplina}/aula/{aula_id}", [$aulaController, "update"], $auth);
+$router->create( "DELETE", "/turmas/{id}/disciplinas/{turma_disciplina}/aula/{aula_id}", [$aulaController, "destroy"], $auth);

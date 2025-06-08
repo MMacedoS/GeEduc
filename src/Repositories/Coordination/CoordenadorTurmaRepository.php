@@ -3,18 +3,18 @@
 namespace App\Repositories\Coordination;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Models\Coordination\CoordenadorTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorTurmaRepository implements ICoordenadorTurmaRepository {
+class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenadorTurmaRepository {
     const CLASS_NAME = CoordenadorTurma::class;
     const TABLE = 'coordenador_as_turma';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

@@ -10,7 +10,7 @@ interface IAulaRepository {
 
     public function update(array $data, int $id);
 
-    public function delete(int $id);
+    public function delete(string $uuid);
 
     public function classByTeacherDisciplineId(int $teacherDisciplineId);
 

@@ -11,7 +11,7 @@ class Aula {
 
     public $id;
     public $uuid;
-    public $professor_disciplina_id;
+    public $turma_disciplina_id;
     public $detalhes;
     public $dia_id;
     public $dia;
@@ -26,8 +26,8 @@ class Aula {
         $day = new Aula();
         $day->id = $data['id'] ?? null;
         $day->uuid = $data['uuid'] ?? $this->generateUUID();
-        $day->professor_disciplina_id = $data['teacher_discipline_id'] ?? null;     
-        $day->dia_id = $data['day_id'] ?? null;     
+        $day->turma_disciplina_id = $data['classroom_discipline_id'] ?? null;     
+        $day->dia_id = $data['days_id'] ?? null;     
         $day->updated_at = $data['updated_at'] ?? null;
         $day->created_at = $data['created_at'] ?? null;
         return $day;
@@ -35,8 +35,8 @@ class Aula {
 
     public function update(array $data, Aula $day): Aula
     {
-        $day->dia_id = $data['day_id'] ?? $day->dia_id;
-        $day->professor_disciplina_id = $data['teacher_discipline_id'] ?? $day->professor_disciplina_id;
+        $day->dia_id = $data['days_id'] ?? $day->dia_id;
+        $day->turma_disciplina_id = $data['classroom_discipline_id'] ?? $day->turma_disciplina_id;
 
         return $day;
     }

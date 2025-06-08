@@ -3,20 +3,20 @@
 namespace App\Repositories\Site\Archive;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Site\Archive\ISiteArquivoRepository;
 use App\Models\Site\Archive\SiteArquivo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteArquivoRepository implements ISiteArquivoRepository {
+class SiteArquivoRepository extends SingletonInstance implements ISiteArquivoRepository {
 
     const CLASS_NAME = SiteArquivo::class;
     const TABLE = 'site_arquivos';
 
     use FindTrait;
 
-    protected $conn;
-    protected $model;
+
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();

@@ -3,18 +3,18 @@
 namespace App\Repositories\MonthlyFees;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\MonthlyFees\IMensalidadeRepository;
 use App\Models\MonthlyFees\Mensalidade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class MensalidadeRepository implements IMensalidadeRepository {
+class MensalidadeRepository extends SingletonInstance implements IMensalidadeRepository {
     const CLASS_NAME = Mensalidade::class;
     const TABLE = 'mensalidades';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

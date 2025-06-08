@@ -3,15 +3,15 @@
 namespace App\Repositories\Permission;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Permission\IPermissaoRepository;
 use App\Models\Permission\Permissao;
 use App\Repositories\Traits\FindTrait;
 
-class PermissaoRepository implements IPermissaoRepository {
+class PermissaoRepository extends SingletonInstance implements IPermissaoRepository {
     const CLASS_NAME = Permissao::class;
     const TABLE = 'permissao';
-    protected $conn;
-    protected $model;
+
     
     use FindTrait;
 

@@ -33,6 +33,7 @@ use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Interfaces\Teacher\IProfessorRepository;
 use App\Interfaces\Ticket\IBoletoRepository;
+use App\Interfaces\Weekday\IDiaSemanaRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bank_account\ContaBancariaRepository;
@@ -65,6 +66,7 @@ use App\Repositories\Student\EstudanteTurmaRepository;
 use App\Repositories\Teacher\ProfessorDisciplinaRepository;
 use App\Repositories\Teacher\ProfessorRepository;
 use App\Repositories\Ticket\BoletoRepository;
+use App\Repositories\Weekday\DiaSemanaRepository;
 use App\Repositories\Work_Load\CargaHorariaRepository;
 
 class AppServiceProvider 
@@ -268,6 +270,12 @@ class AppServiceProvider
             ->set(
                 IAulaRepository::class,
                 new AulaRepository()
+            );
+
+        $this->container
+            ->set(
+                IDiaSemanaRepository::class,
+                new DiaSemanaRepository()
             );
     }
 }

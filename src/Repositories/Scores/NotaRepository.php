@@ -3,19 +3,19 @@
 namespace App\Repositories\Scores;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Scores\INotaRepository;
 use App\Models\Scores\Nota;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class NotaRepository implements INotaRepository {
+class NotaRepository extends SingletonInstance implements INotaRepository {
     const CLASS_NAME = Nota::class;
     const TABLE = 'notas';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

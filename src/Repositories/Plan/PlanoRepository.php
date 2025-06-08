@@ -3,6 +3,7 @@
 namespace App\Repositories\Plan;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Plan\IPlanoRepository;
 use App\Models\Plan\Plano;
 use App\Repositories\Person\PessoaFisicaRepository;
@@ -10,21 +11,20 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PlanoRepository implements IPlanoRepository {
+class PlanoRepository extends SingletonInstance implements IPlanoRepository {
     const CLASS_NAME = Plano::class;
     const TABLE = 'planos';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Plano();
-        $this->usuarioRepository = new UsuarioRepository(); 
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository(); 
+        $this->usuarioRepository = UsuarioRepository::getInstance(); 
+        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance(); 
     }
 
     public function allPlans(array $params = [])

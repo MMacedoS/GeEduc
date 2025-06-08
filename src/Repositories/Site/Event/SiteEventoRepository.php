@@ -3,19 +3,19 @@
 namespace App\Repositories\Site\Event;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Site\Event\ISiteEventoRepository;
 use App\Models\Site\Event\SiteEvento;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteEventoRepository implements ISiteEventoRepository {
+class SiteEventoRepository extends SingletonInstance implements ISiteEventoRepository {
 
     const CLASS_NAME = SiteEvento::class;
     const TABLE = 'site_eventos';
 
-    protected $conn;
-    protected $model;
+
     protected $siteArquivoRepository;
 
     use FindTrait;
@@ -23,7 +23,7 @@ class SiteEventoRepository implements ISiteEventoRepository {
     public function __construct(){
         $this->model = new SiteEvento();
         $this->conn = Database::getInstance()->getConnection();
-        $this->siteArquivoRepository = new SiteArquivoRepository();
+        $this->siteArquivoRepository = SiteArquivoRepository::getInstance();
     }
 
     public function allSiteEvents(array $params  = []){

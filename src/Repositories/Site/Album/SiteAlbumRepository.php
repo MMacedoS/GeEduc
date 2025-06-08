@@ -3,19 +3,19 @@
 namespace App\Repositories\Site\Album;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Site\Album\ISiteAlbumRepository;
 use App\Models\Site\Album\SiteAlbum;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteAlbumRepository implements ISiteAlbumRepository{
+class SiteAlbumRepository extends SingletonInstance implements ISiteAlbumRepository{
 
     const CLASS_NAME = SiteAlbum::class;
     const TABLE = 'site_albuns';
 
-    protected $conn;
-    protected $model;
+
     protected $siteArquivoRepository;
 
     use FindTrait;
@@ -23,7 +23,7 @@ class SiteAlbumRepository implements ISiteAlbumRepository{
     public function __construct(){
         $this->model = new SiteAlbum();
         $this->conn = Database::getInstance()->getConnection();
-        $this->siteArquivoRepository = new SiteArquivoRepository();
+        $this->siteArquivoRepository = SiteArquivoRepository::getInstance();
     }
 
     public function allSiteAlbuns(array $params = []){

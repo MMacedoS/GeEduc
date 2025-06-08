@@ -3,28 +3,29 @@
 namespace App\Repositories\Profile;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Profile\IUsuarioRepository;
 use App\Models\Profile\Usuario;
 use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
+use PDO;
 
-class UsuarioRepository implements IUsuarioRepository {
+class UsuarioRepository extends SingletonInstance implements IUsuarioRepository {
     const CLASS_NAME = Usuario::class;
     const TABLE = 'usuarios';
     
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     private $permissioRepository;
     protected $arquivoRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Usuario();
-        $this->permissioRepository = new PermissaoRepository();
-        $this->arquivoRepository = new ArquivoRepository();
+        $this->permissioRepository = PermissaoRepository::getInstance();
+        $this->arquivoRepository = ArquivoRepository::getInstance();
     }
 
     public function all(array $params = [])
@@ -347,7 +348,7 @@ class UsuarioRepository implements IUsuarioRepository {
 
     private function assignPermissionsToUser(Usuario $userFromDb)
     {
-        $access = $userFromDb->painel !== 'administrativo' ? $userFromDb->painel : null;
+        $access = !is_null($userFromDb->painel) ? $userFromDb->painel : null;
         
         $permissions = $this->permissionList($access);
 
@@ -355,7 +356,17 @@ class UsuarioRepository implements IUsuarioRepository {
             return $userFromDb;
         }
 
-        $permissionIds = array_map(fn($permission) => $permission['id'], $permissions);
+        $permissionNames = array_map(fn($permission) => $permission['name'], $permissions);
+
+        $placeholders = implode(',', array_fill(0, count($permissionNames), '?'));
+
+        $stmt = $this->conn->prepare(
+            "SELECT id FROM permissao WHERE name IN ($placeholders)"
+        );
+
+        $stmt->execute($permissionNames);
+
+        $permissionIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
         $this->addPermissions(['permissions' => $permissionIds], $userFromDb->id);
 
@@ -445,6 +456,9 @@ class UsuarioRepository implements IUsuarioRepository {
                 array('id' => '144', 'name' => 'editar periodo','description' => 'editar periodos'),
                 array('id' => '145', 'name' => 'cadastrar periodo','description' => 'cadastrar periodo'),
                 array('id' => '146', 'name' => 'deletar periodo','description' => 'deletar periodo'),
+                array('name' => 'cadastrar aulas ','description' => 'cadastrar aulas '),
+                array('name' => 'editar aulas ','description' => 'editar aulas '),
+                array('name' => 'deletar aulas ','description' => 'deletar aulas ')
               );
             return $permissao;
         }

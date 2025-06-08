@@ -3,18 +3,18 @@
 namespace App\Repositories\Classrooms;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Classrooms\IAulaRepository;
 use App\Models\Classrooms\Aula;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
+use Exception;
 
-class AulaRepository implements IAulaRepository {
+class AulaRepository extends SingletonInstance implements IAulaRepository {
     const CLASS_NAME = Aula::class;
     const TABLE = 'aula';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
@@ -24,7 +24,10 @@ class AulaRepository implements IAulaRepository {
     public function allClass(array $params = [])
     {
         $sql = "SELECT 
-                a.id AS aula_id,
+                a.id,
+                a.uuid,
+                a.turma_disciplina_id,                
+                a.dia_id,
                 JSON_OBJECT(
                     'nome', ds.dia,
                     'horario', ds.horario,
@@ -53,7 +56,8 @@ class AulaRepository implements IAulaRepository {
                     )
                 ) AS detalhes
             FROM aula a
-            LEFT JOIN professor_disciplina dp ON dp.id = a.professor_disciplina_id
+            LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
+            LEFT JOIN professor_disciplina dp ON dp.id = td.professor_disciplina_id
             LEFT JOIN disciplinas d ON d.id = dp.disciplina_id
             LEFT JOIN professores p ON p.id = dp.professor_id
             LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
@@ -67,9 +71,9 @@ class AulaRepository implements IAulaRepository {
             $bindings[':shift'] = $params['shift'];
         }
 
-        if (isset($params['teacher'])) {
-            $conditions[] = "pf.nome LIKE :teacher ";
-            $bindings[':teacher'] = '%' . $params['teacher'] . '%';
+        if (isset($params['search'])) {
+            $conditions[] = "pf.nome LIKE :search ";
+            $bindings[':search'] = '%' . $params['search'] . '%';
         } 
 
         if (isset($params['day']) && $params['day'] != '') {
@@ -77,11 +81,16 @@ class AulaRepository implements IAulaRepository {
             $bindings[':day'] = $params['day'];
         }
 
+        if (isset($params['classroom_discipline_id']) && $params['classroom_discipline_id'] != '') {
+            $conditions[] = "a.turma_disciplina_id = :turma_disciplina";
+            $bindings[':turma_disciplina'] = $params['classroom_discipline_id'];
+        }
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
+        $sql .= " GROUP BY a.id ORDER BY ds.horario, ds.turno asc";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -92,17 +101,62 @@ class AulaRepository implements IAulaRepository {
 
     public function create(array $data)
     {
-        
+        if(
+            empty($data) || 
+            (
+                !isset($data['days_id']) && 
+                !isset($data['classroom_discipline_id'])
+            )
+        ) {
+            return null;
+        }       
+
+        if (!$this->removeClass($data['classroom_discipline_id'])) {
+            return false;
+        }
+
+        try {            
+            foreach ($data['days_id'] as $day) {
+                $stmt = $this->conn->prepare(
+                    "INSERT INTO aula (uuid, dia_id, turma_disciplina_id) 
+                    VALUES (uuid(), :day_id, :class_disciplina_id)"
+                );
+                
+                $success = $stmt->execute([
+                    ':day_id' => (int)$day,
+                    ':class_disciplina_id' => (int)$data['classroom_discipline_id']
+                ]);
+
+                if (!$success) {
+                    continue;
+                }
+            }
+            return true;
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
     }
 
     public function update(array $data, int $id)
     {
+        throw new Exception("Error Processing Request", 1);
         
     }
 
-    public function delete(int $id)
+    public function delete(string $id)
     {
-        
+        $class = $this->findByUuid($id);
+
+        if(is_null($class)) {
+            return null;
+        }
+
+        $smtp = $this->conn->prepare("DELETE FROM aula WHERE id = :id");
+        return $smtp->execute(
+            [
+                ':id' => (int)$class->id
+            ]
+        );
     }
 
     public function classByTeacherDisciplineId(int $teacherDisciplineId)
@@ -113,5 +167,15 @@ class AulaRepository implements IAulaRepository {
     public function classByTeacherId(int $teacherId)
     {
         
+    }
+
+    private function removeClass(int $turma_disciplina_id): bool 
+    {
+        $stmt = $this->conn->prepare(
+            "DELETE FROM aula WHERE turma_disciplina_id = :turma_disciplina_id"
+        );
+        $deleted = $stmt->execute([':turma_disciplina_id' => (int)$turma_disciplina_id]);
+
+        return $deleted;
     }
 }

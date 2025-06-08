@@ -23,4 +23,19 @@ trait GenericTrait {
     public function calculatePercentage($partial, $total) {
         return $total > 0 ? round(($partial / $total) * 100, 2) : 0;
     }
+
+    public function extractItemOfObject($dados, string $param) 
+    {   
+        return array_map(function($item) use ($param) {
+            return $item->$param;
+        }, $dados);
+    }
+
+    public function responseJson(int $code = 200, ?string $message) {
+        http_response_code($code);
+        return json_encode([
+            'status' => $code,
+            'message' => $message
+        ]);
+    }
 }

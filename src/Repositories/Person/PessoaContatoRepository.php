@@ -3,6 +3,7 @@
 namespace App\Repositories\Person;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Person\IPessoaContatoRepository;
 use App\Models\Person\PessoaContato;
 use App\Repositories\Person\PessoaFisicaRepository;
@@ -11,22 +12,21 @@ use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaContatoRepository implements IPessoaContatoRepository {
+class PessoaContatoRepository extends SingletonInstance implements IPessoaContatoRepository {
 
     const CLASS_NAME = PessoaContato::class;
     const TABLE = 'pessoa_contato';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new PessoaContato();
-        $this->usuarioRepository = new UsuarioRepository();
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->usuarioRepository = UsuarioRepository::getInstance();
+        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance();
     }
 
     public function allPersons(array $params = []){

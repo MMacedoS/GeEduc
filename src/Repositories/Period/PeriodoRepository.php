@@ -3,18 +3,18 @@
 namespace App\Repositories\Period;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Period\IPeriodoRepository;
 use App\Models\Period\Periodo;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper; 
 
-class PeriodoRepository implements IPeriodoRepository {
+class PeriodoRepository extends SingletonInstance implements IPeriodoRepository {
     const CLASS_NAME = Periodo::class;
     const TABLE = 'periodo';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();

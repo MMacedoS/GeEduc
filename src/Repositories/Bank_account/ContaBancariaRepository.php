@@ -3,18 +3,17 @@
 namespace App\Repositories\Bank_account;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Bank_account\IContaBancariaRepository;
 use App\Models\Bank_account\ContaBancaria;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ContaBancariaRepository implements IContaBancariaRepository{
+class ContaBancariaRepository extends SingletonInstance implements IContaBancariaRepository{
     const CLASS_NAME = ContaBancaria::class;
     const TABLE = 'contas_bancarias';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

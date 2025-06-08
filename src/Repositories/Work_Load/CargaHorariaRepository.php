@@ -3,19 +3,18 @@
 namespace App\Repositories\Work_Load;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Models\Work_Load\CargaHoraria;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CargaHorariaRepository implements ICargaHorariaRepository {
+class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaRepository {
 
     const CLASS_NAME = CargaHoraria::class;
     const TABLE = 'carga_horaria';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();

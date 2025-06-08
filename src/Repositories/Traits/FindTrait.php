@@ -1,6 +1,10 @@
 <?php
  namespace App\Repositories\Traits;
 trait FindTrait{
+
+    protected $conn;
+    protected $model;
+    
     public function findById($id)
     {
         $stmt = $this->conn->prepare("SELECT * FROM " . self::TABLE . " where id = :id");

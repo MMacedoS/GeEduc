@@ -3,18 +3,18 @@
 namespace App\Repositories\Discipline;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Models\Discipline\Disciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class DisciplinaRepository implements IDisciplinaRepository {
+class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepository {
     const CLASS_NAME = Disciplina::class;
     const TABLE = 'disciplinas';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct(){
         $this->conn = Database::getInstance()->getConnection();

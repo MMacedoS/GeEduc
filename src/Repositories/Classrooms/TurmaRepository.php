@@ -3,25 +3,25 @@
 namespace App\Repositories\Classrooms;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Models\Classrooms\Turma;
 use App\Repositories\Coordination\CoordenadorTurmaRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaRepository implements ITurmaRepository {
+class TurmaRepository extends SingletonInstance implements ITurmaRepository {
     const CLASS_NAME = Turma::class;
     const TABLE = 'turmas';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     protected $coordenadorTurmaRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Turma();
-        $this->coordenadorTurmaRepository = new CoordenadorTurmaRepository();
+        $this->coordenadorTurmaRepository = CoordenadorTurmaRepository::getInstance();
     }
 
     public function allClassRooms(array $params = [])

@@ -3,18 +3,18 @@
 namespace App\Repositories\Contracts;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Contracts\IContratoRepository;
 use App\Models\Contracts\Contrato;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ContratoRepository implements IContratoRepository {
+class ContratoRepository extends SingletonInstance implements IContratoRepository {
     const CLASS_NAME = Contrato::class;
     const TABLE = 'contratos';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();

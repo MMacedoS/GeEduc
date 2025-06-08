@@ -3,6 +3,7 @@
 namespace App\Controllers\v1\ClassRooms;
 
 use App\Controllers\Controller;
+use App\Controllers\v1\Traits\GenericTrait;
 use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
@@ -12,6 +13,7 @@ use App\Utils\Validator;
 
 class TurmaController extends Controller 
 {
+    use GenericTrait;
     protected $turmaRepository;
     protected $coordenadorRepository;
     protected $coordenadorTurmaRepository;
@@ -92,7 +94,7 @@ class TurmaController extends Controller
     {
         $turma = $this->turmaRepository->findByUuid($id);
         $coordenatorsClass = $this->coordenadorTurmaRepository->allCoordinatorClass(['class_id' => $turma->id]);
-        $coordenatorsClass = $this->extractCoordenators($coordenatorsClass);
+        $coordenatorsClass = $this->extractItemOfObject($coordenatorsClass, 'coordenador_id');
         $coordenators = $this->coordenadorRepository->allCoordinators(['active' => 1]);
 
         if (is_null($turma)) {
@@ -150,12 +152,5 @@ class TurmaController extends Controller
         $this->turmaRepository->delete($turma->id);
 
         return $this->router->redirect('turmas/');
-    }
-
-    private function extractCoordenators($coordenators) 
-    {   
-        return array_map(function($coordenator) {
-            return $coordenator->coordenador_id;
-        }, $coordenators);
     }
 }

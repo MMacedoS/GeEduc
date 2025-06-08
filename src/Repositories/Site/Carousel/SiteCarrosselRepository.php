@@ -3,19 +3,19 @@
 namespace App\Repositories\Site\Carousel;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Site\Carousel\ISiteCarrosselRepository;
 use App\Models\Site\Carousel\SiteCarrossel;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class SiteCarrosselRepository implements ISiteCarrosselRepository {
+class SiteCarrosselRepository extends SingletonInstance implements ISiteCarrosselRepository {
 
     const CLASS_NAME = SiteCarrossel::class;
     const TABLE = 'site_carousel';
 
-    protected $conn;
-    protected $model;
+
     protected $siteArquivoRepository;
 
     use FindTrait;
@@ -23,7 +23,7 @@ class SiteCarrosselRepository implements ISiteCarrosselRepository {
     public function __construct(){
         $this->model = new SiteCarrossel();
         $this->conn = Database::getInstance()->getConnection();
-        $this->siteArquivoRepository = new SiteArquivoRepository();
+        $this->siteArquivoRepository = SiteArquivoRepository::getInstance();
     }
 
     public function allSiteCarousel(array $params = []){

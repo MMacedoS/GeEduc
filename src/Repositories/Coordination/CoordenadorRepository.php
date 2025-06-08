@@ -3,6 +3,7 @@
 namespace App\Repositories\Coordination;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Models\Coordination\Coordenador;
 use App\Repositories\Person\PessoaFisicaRepository;
@@ -10,21 +11,20 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorRepository implements ICoordenadorRepository{
+class CoordenadorRepository extends SingletonInstance implements ICoordenadorRepository{
     const CLASS_NAME = Coordenador::class;
     const TABLE = 'coordenadores';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Coordenador();
-        $this->usuarioRepository = new UsuarioRepository();
-        $this->pessoaFisicaRepository = new PessoaFisicaRepository();
+        $this->usuarioRepository = UsuarioRepository::getInstance();
+        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance();
     }
 
     public function allCoordinators(array $params = []){

@@ -110,6 +110,15 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
+
+                                                <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/aulas">
+                                                                <div class="border p-2 rounded-3">
+                                                                <i class="icon-library_books fs-5"></i>
+                                                                </div>
+                                                            </a> 
+                                                        <? } ?>  
+
                                                 <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
                                                     <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
@@ -136,6 +145,13 @@
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
                                                                 <div class="border p-2 rounded-3">
                                                                 <i class="icon-link fs-5"></i>
+                                                                </div>
+                                                            </a> 
+                                                        <? } ?>  
+                                                        <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                            <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
+                                                                <div class="border p-2 rounded-3">
+                                                                <i class="icon-edit fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? } ?>  

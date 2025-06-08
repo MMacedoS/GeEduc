@@ -3,18 +3,18 @@
 namespace App\Repositories\Student;
 
 use App\Config\Database;
+use App\Config\SingletonInstance;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Models\Student\EstudanteTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteTurmaRepository implements IEstudanteTurmaRepository {
+class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTurmaRepository {
     const CLASS_NAME = EstudanteTurma::class;
     const TABLE = 'estudante_turma';
 
     use FindTrait;
-    protected $conn;
-    protected $model;
+
 
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
