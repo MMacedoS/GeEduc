@@ -32,7 +32,7 @@
         <? }?>  
     </div>  
     
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
             <a href="/minha-coordenacao/turma/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="btn btn-outline-primary" > Voltar </a>
         </div>

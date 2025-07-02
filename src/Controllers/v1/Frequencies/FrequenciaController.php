@@ -5,6 +5,8 @@ namespace App\Controllers\v1\Frequencies;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Interfaces\Activitie\IAtividadeRepository;
+use App\Interfaces\Calendar\IDiaLetivoRepository;
+use App\Interfaces\Classrooms\IAulaRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Frequencies\IFrequenciaRepository;
 use App\Interfaces\Period\IPeriodoRepository;
@@ -28,9 +30,11 @@ class FrequenciaController extends Controller
     protected $professorDisciplinaRepository;
     protected $periodoRepository;
     protected $cargaHorariaRepository;
+    protected $aulaRepository;
     protected $active;
     protected $routeView;
     protected $redirect;
+    private $diaLetivoRepository;
 
     public function __construct(
         IAtividadeRepository $atividadeRepository,
@@ -40,7 +44,9 @@ class FrequenciaController extends Controller
         IEstudanteTurmaRepository $estudanteTurmaRepository,
         IProfessorDisciplinaRepository $professorDisciplinaRepository,
         ICargaHorariaRepository $cargaHorariaRepository,
-        IPeriodoRepository $periodoRepository
+        IPeriodoRepository $periodoRepository,
+        IAulaRepository $aulaRepository,
+        IDiaLetivoRepository $diaLetivoRepository
     )
     {
         parent::__construct();   
@@ -52,7 +58,8 @@ class FrequenciaController extends Controller
         $this->periodoRepository = $periodoRepository;
         $this->cargaHorariaRepository = $cargaHorariaRepository;
         $this->estudanteRepository = $estudanteRepository;
-
+        $this->aulaRepository = $aulaRepository;
+        $this->diaLetivoRepository = $diaLetivoRepository;
     }
 
     private function defineRoutes($class_discipline_id) {
@@ -175,6 +182,10 @@ class FrequenciaController extends Controller
                 ['uuid' => $class_discipline_id]
             )[0];
 
+        $aulas = $this->aulaRepository->allClass(['classroom_discipline_id' => $turma_disciplina->id]);
+
+        $dia = $this->diaLetivoRepository->firstDay(['year' => Date('Y')]);
+
         $estudantes = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
@@ -198,7 +209,6 @@ class FrequenciaController extends Controller
                     'period_id' => $paramsURL['period_id'] ?? null
                 ]
             );
-
             
         $periodos = $this->periodoRepository->all(['active' => '1']);
 
@@ -210,6 +220,8 @@ class FrequenciaController extends Controller
                 'estudantes' => $estudantes,
                 'frequencias' => $frequencias,
                 'periodos' => $periodos,
+                'aulas' => $this->extractWeekDays($aulas),
+                'dia' => $dia,
                 'dataFilter' => $data_presence,
                 'bimestreFilter' => $paramsURL['period_id'] ?? null,
             ]
@@ -224,11 +236,11 @@ class FrequenciaController extends Controller
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
 
         $data['class_discipline_id'] = $turma_disciplina->id;
-
        
         if (isset($data['class_students_id'])) {
             foreach ($data['class_students_id'] as $classStudentID => $attendance) {
-                $data['faltas'] = $attendance;
+                $data['justify'] = $data['students_justify'][$classStudentID];
+                $data['faltas'] = $this->checkSelect($attendance);
                 $data['class_student_id'] = $classStudentID;
                 $created = $this->frequenciaRepository->create($data);
             }

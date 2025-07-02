@@ -81,7 +81,7 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
     
-        $sql .= " GROUP BY et.id, e.id, pfe.id ORDER BY et.id DESC";
+        $sql .= " GROUP BY et.id, e.id, pfe.id ORDER BY pfe.nome ASC";
     
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($bindings);

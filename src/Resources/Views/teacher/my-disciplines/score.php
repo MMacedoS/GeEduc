@@ -18,7 +18,7 @@
        <!-- Breadcrumb end -->
     </div>
     <? if (hasPermission('cadastrar turmas e estudantes')) {?>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
             </div>
@@ -77,7 +77,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-2 col-xl-6">
+                            <div class="col-sm-6 col-xl-6">
                                 <div class="float-end">
                                     <a href="/meus-componentes" class="btn btn-outline-dark" > Voltar </a>
                                 </div>
@@ -88,35 +88,27 @@
                         $notasMap = [];
                         $paralelaMap = [];
                         
-                        foreach ($notas as $nota) {                            
+                        foreach ($notas as $nota) {
                             $notasMap["$nota->estudante_turma_id$nota->atividade_id"] = $nota->nota;
-                            if (isset($notasMap[$nota->estudante_turma_id])) {
-                                $notasMap[$nota->estudante_turma_id] += $nota->nota ?? 0;
-                            } else {
-                                $notasMap[$nota->estudante_turma_id] = $nota->nota ?? 0;
-                            }
+                        
+                            $notasMap[$nota->estudante_turma_id] = ($notasMap[$nota->estudante_turma_id] ?? 0) + ($nota->nota ?? 0);
                         }
-    
-                        foreach ($paralelas as $paralela) {        
-                            if (isset($paralelaMap[$paralela->estudante_turma_id])) {
-                                $paralelaMap[$paralela->estudante_turma_id] += $paralela->nota ?? 0;
-                            } else {
-                                $paralelaMap[$paralela->estudante_turma_id] = $paralela->nota ?? 0;
-                            }                    
+                        
+                        foreach ($paralelas as $paralela) {
+                            $paralelaMap[$paralela->estudante_turma_id] = ($paralelaMap[$paralela->estudante_turma_id] ?? 0) + ($paralela->nota ?? 0);
                         }
-                    
                 
                         foreach ($estudantes as $key => $estudante) {             
                           
                         ?>
                             <div class="row mb-3 me-0">
-                                <div class="col-4">
-                                    <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
+                                <div class="col-sm-12 col-md-12">
+                                    <strong class="fw-2 mt-2 bold"><?= getJsonToObject($estudante->estudante)->nome ?>
                                     -
-                                    <?= getJsonToObject($estudante->turma)->nome ?></span>
+                                    <?= getJsonToObject($estudante->turma)->nome ?></strong>
                                 </div>
                                 <?php foreach($atividades as $atividade) { ?> 
-                                <div class="col-1">
+                                <div class="col-3 col-md-2">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" 
                                             for="notas[<?= "$estudante->id,$atividade->id"?>]">
@@ -134,18 +126,8 @@
                                             : 0?>">                                   
                                     </div>
                                 </div>
-                                <?php } ?> 
-                                <?php if (isset($notasMap[$estudante->id]) && $notasMap[$estudante->id] < 6.9) {?>
-                                    <div class="col-1">
-                                        <div class="mr-2 d-flex flex-column pe-0">
-                                            <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="paralela">Paralela: </label>
-                                            <input type="number" min="0" step="0.01" max="2" 
-                                            name="parallel[<?= $estudante->id ?>]" 
-                                            value="<?= $paralelaMap[$estudante->id] ?>">                                   
-                                        </div>
-                                    </div>
-                                <?php } ?>
-                                <div class="col-1">
+                                <?php } ?>                                
+                                <div class="col-sm-12 col-md-3">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
                                         <input type="number" min="0" step="0.01" max="10" 

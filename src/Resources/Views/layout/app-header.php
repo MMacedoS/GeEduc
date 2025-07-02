@@ -66,7 +66,7 @@
                         <?php
                           $path = $_SESSION['files']->path ?? "/assets/images/logo-geeduc-sem-fundo.png";
                         ?>
-                         <img src="<?=URL_PREFIX_APP . '/Public' . @$path?>" class="rounded-2 img-3x" alt="Perfil" />
+                         <!-- <img src="<=URL_PREFIX_APP . '/Public' . @$path?>" class="rounded-2 img-3x" alt="Perfil" /> -->
                         <div class="ms-2 text-truncate d-lg-block d-none text-white">
                           <span class="d-flex opacity-50 small">
                             <?=$_SESSION['user']->nome?>

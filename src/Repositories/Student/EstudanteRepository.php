@@ -135,7 +135,7 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         
         try {
             $userData = array_merge($data, [
-                'password' => 'escola123',
+                'password' => $data['password'] ?? 'escola123',
                 'sector' => 'estudante',
             ]);
             

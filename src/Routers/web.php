@@ -6,6 +6,7 @@ use App\Config\Container;
 use App\Config\Router;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
+use App\Controllers\v1\Calendar\DiaLetivoController;
 use App\Controllers\v1\ClassRooms\AulaController;
 use App\Controllers\v1\Contracts\ContratoController;
 use App\Controllers\v1\GradeReport\GradeReportController;
@@ -56,6 +57,7 @@ $contratoController = $container->get(ContratoController::class);
 $dashboardController = $container->get(DashboardController::class);
 $disciplinaController = $container->get(DisciplinaController::class);
 $disciplinaController = $container->get(DisciplinaController::class);
+$diaLetivoController = $container->get(DiaLetivoController::class);
 
 /////created container studants
 $estudanteController = $container->get(EstudanteController::class);
@@ -98,6 +100,8 @@ require_once "user/usersRouters.php";
 
 //permissions
 require_once "permission/permissionsRouters.php";
+
+require_once "calendar/diaLetivoRouter.php";
 
 //teachers
 require_once "teacher/teacherRouters.php";

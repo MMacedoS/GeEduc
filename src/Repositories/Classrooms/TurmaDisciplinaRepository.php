@@ -15,7 +15,6 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
 
     use FindTrait;
 
-
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new TurmaDisciplina();

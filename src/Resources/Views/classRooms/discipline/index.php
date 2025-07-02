@@ -22,7 +22,7 @@
        <!-- Breadcrumb end -->
     </div>
     
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
         <? if (hasPermission('vincular turmas-disciplinas')) {?>
          <a href="\turmas\<?=$turma->uuid?>\disciplina" class="btn btn-outline-primary" > + </a>

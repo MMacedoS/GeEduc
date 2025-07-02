@@ -18,7 +18,7 @@
             </ol>
             <!-- Breadcrumb end -->
         </div>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a href="/turmas/" class="btn btn-outline-primary" > Voltar </a>
             </div>
@@ -47,5 +47,13 @@
     if (initialIds.length > 0 && initialIds[0] !== '') {
         $('#coordinator_id').val(initialIds).trigger('change'); // Pré-seleciona os valores
     }
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('#multiple_form').select2({
+        placeholder: "Selecione um ou mais componentes",
+        width: '100%'
+    });
 });
 </script>

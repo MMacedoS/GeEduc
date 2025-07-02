@@ -27,7 +27,7 @@ class DisciplinaController extends Controller{
 
         $disciplinas = $this->disciplinaRepository->allDisciplines([
             'search' => $params['name_discipline'] ?? null,
-            'active' => $params['situation'] ?? null
+            'active' => $params['situation'] ?? 1
         ]);
         
         $perPage = 10; 

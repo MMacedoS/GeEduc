@@ -227,7 +227,7 @@ class UsuarioRepository extends SingletonInstance implements IUsuarioRepository 
         $stmt = $this->conn->prepare(
             "SELECT id as code, senha, nome, email, painel, ativo, arquivo_id, uuid as id 
              FROM " . self::TABLE . " 
-             WHERE email = :email"
+             WHERE email = :email and ativo=1"
         );
         $stmt->bindValue(':email', $email);
         $stmt->execute();
@@ -520,14 +520,14 @@ class UsuarioRepository extends SingletonInstance implements IUsuarioRepository 
 
         if ($sector == 'professor') {
             $permissao = array(                
-                array('id' => '36', 'name' => 'estudante','description' => 'permissao para acesso estudante')
+                array('id' => '36', 'name' => 'professor','description' => 'permissao para acesso professor')
               );
             return $permissao;
         }
         
         if ($sector == 'estudante') {
             $permissao = array(                
-                array('id' => '141', 'name' => 'responsavel_legal','description' => 'responsavel legal dos estudantes')
+                array('id' => '141', 'name' => 'estudante','description' => 'estudantes estudantes')
               );
             return $permissao;
         }

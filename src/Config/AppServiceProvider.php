@@ -4,6 +4,7 @@ namespace App\Config;
 
 use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Interfaces\Bank_account\IContaBancariaRepository;
+use App\Interfaces\Calendar\IDiaLetivoRepository;
 use App\Interfaces\Classrooms\IAulaRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Classrooms\ITurmaRepository;
@@ -37,6 +38,7 @@ use App\Interfaces\Weekday\IDiaSemanaRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Bank_account\ContaBancariaRepository;
+use App\Repositories\Calendar\DiaLetivoRepository;
 use App\Repositories\Classrooms\AulaRepository;
 use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 use App\Repositories\Classrooms\TurmaRepository;
@@ -276,6 +278,12 @@ class AppServiceProvider
             ->set(
                 IDiaSemanaRepository::class,
                 new DiaSemanaRepository()
+            );
+
+        $this->container
+            ->set(
+                IDiaLetivoRepository::class,
+                new DiaLetivoRepository()
             );
     }
 }

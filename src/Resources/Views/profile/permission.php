@@ -12,15 +12,15 @@
                 </li>
                 <li class="breadcrumb-item">
                     <i class="fs-3 icon-archive lh-1"></i>
-                    <a href="/usuario/" class="text-decoration-none">Usuarios</a>
+                    <a href="/usuarios" class="text-decoration-none">Usuarios</a>
                 </li>
                 <li class="breadcrumb-item">Vincular Permissão</li>
             </ol>
             <!-- Breadcrumb end -->
         </div>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
-                <a href="/usuario/" class="btn btn-outline-primary" > Voltar </a>
+                <a href="/usuarios" class="btn btn-outline-primary" > Voltar </a>
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@
                     <div class="card-body">
                         <div class="d-flex flex-wrap gap-2 justify-content-end">
                             <button type="submit" class="btn btn-primary">Salvar</button>
-                            <a href="\usuario\" class="btn btn-secondary">Cancelar</a>
+                            <a href="\usuarios" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </div>
                 </div>

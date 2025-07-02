@@ -32,55 +32,62 @@
                                 <i class="icon-add_task"></i> Pedagógico
                             </a>
                             <ul class="dropdown-menu">                             
-                            <?php if (hasPermission('visualizar periodos')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\periodos\">
-                                        <span>Trimestres</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar coordenadores')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\coordenadores">
-                                        <span>Coordenadores</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar carga_horaria')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\carga-horaria">
-                                        <span>Carga Horaria</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar disciplinas')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\disciplinas\">
-                                        <span>Disciplinas</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar estudantes')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\estudantes\">
-                                        <span>Estudantes</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar professores')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\professores">
-                                        <span>Professores</span>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <?php if (hasPermission('visualizar turmas')) { ?>
-                                <li>
-                                    <a class="dropdown-item" href="\turmas">
-                                        <span>Turmas</span>
-                                    </a>
-                                </li>
-                      
+                                <?php if (hasPermission('visualizar periodos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\dialetivos\">
+                                            <span>Dias Letivos</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar periodos')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\periodos\">
+                                            <span>Bimestres</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar coordenadores')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\coordenadores">
+                                            <span>Coordenadores</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar carga_horaria')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\carga-horaria">
+                                            <span>Carga Horaria</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar disciplinas')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\disciplinas\">
+                                            <span>Disciplinas</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar estudantes')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\estudantes\">
+                                            <span>Estudantes</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar professores')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\professores">
+                                            <span>Professores</span>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (hasPermission('visualizar turmas')) { ?>
+                                    <li>
+                                        <a class="dropdown-item" href="\turmas">
+                                            <span>Turmas</span>
+                                        </a>
+                                    </li>
+                        
                                 <?php } ?>
                             </ul>
                         </li>
@@ -156,8 +163,8 @@
                                     
                                 <?php if (hasPermission('criar usuários')) { ?>
                                     <li>
-                                        <a class="dropdown-item" href="/usuario/">
-                                            <span>Usuário</span>
+                                        <a class="dropdown-item" href="/usuarios/">
+                                            <span>Usuários</span>
                                         </a>
                                     </li>
                                     <li>

@@ -24,53 +24,52 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
     public function allFrequencies(array $params = [])
     {
         $sql = "SELECT 
-            f.*,
-            JSON_OBJECT(
-                'id', td.id,
-                'uuid', td.uuid,
-                'professor_disciplina', JSON_OBJECT(
-                    'id', pd.id,
-                    'disciplina_id', pd.disciplina_id,
-                    'professor_id', pd.professor_id,
-                    'professor', JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    ),
-                    'disciplina', JSON_OBJECT(
-                        'id', d.id,
-                        'nome', d.nome
-                    )
-                ),
-                'turma', JSON_OBJECT(
-                    'id', t.id,
-                    'uuid', t.uuid
-                ),
-                'carga_horaria', JSON_OBJECT(
-                    'id', ch.id,
-                    'carga_horaria', ch.carga
-                ),
-                'periodo', JSON_OBJECT(
-                    'id', b.id,
-                    'periodo', b.periodo
-                ),
-                'total_faltas_aluno', (
-                    SELECT SUM(f2.faltas) 
-                    FROM frequencias f2 
-                    WHERE f2.estudante_turma_id = f.estudante_turma_id 
-                    AND f2.turma_disciplina_id = td.id
-                )
-            ) AS turma_disciplina_details
-        FROM frequencias f
-        LEFT JOIN turma_disciplina td ON td.id = f.turma_disciplina_id
-        LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id AND pd.ativo = 1
-        LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1
-        LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
-        LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
-        LEFT JOIN turmas t ON t.id = td.turma_id
-        LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id         
-        LEFT JOIN periodo b ON b.id = f.periodo_id ";
-
+                    f.*,
+                    JSON_OBJECT(
+                        'id', td.id,
+                        'uuid', td.uuid,
+                        'professor_disciplina', JSON_OBJECT(
+                            'id', pd.id,
+                            'disciplina_id', pd.disciplina_id,
+                            'professor_id', pd.professor_id,
+                            'professor', JSON_OBJECT(
+                                'id', pf.id,
+                                'nome', pf.nome,
+                                'email', pf.email
+                            ),
+                            'disciplina', JSON_OBJECT(
+                                'id', d.id,
+                                'nome', d.nome
+                            )
+                        ),
+                        'turma', JSON_OBJECT(
+                            'id', t.id,
+                            'uuid', t.uuid
+                        ),
+                        'carga_horaria', JSON_OBJECT(
+                            'id', ch.id,
+                            'carga_horaria', ch.carga
+                        ),
+                        'periodo', JSON_OBJECT(
+                            'id', b.id,
+                            'periodo', b.periodo
+                        ),
+                        'total_faltas_aluno', (
+                            SELECT SUM(f2.faltas) 
+                            FROM frequencias f2 
+                            WHERE f2.estudante_turma_id = f.estudante_turma_id 
+                            AND f2.turma_disciplina_id = td.id
+                        )
+                    ) AS turma_disciplina_details
+                FROM frequencias f
+                LEFT JOIN turma_disciplina td ON td.id = f.turma_disciplina_id
+                LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id AND pd.ativo = 1
+                LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1
+                LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
+                LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
+                LEFT JOIN turmas t ON t.id = td.turma_id
+                LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id         
+                LEFT JOIN periodo b ON b.id = f.periodo_id ";
         
         $conditions = [];
         $bindings = [];
@@ -134,6 +133,7 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                     turma_disciplina_id = :turma_disciplina_id,
                     periodo_id = :periodo_id,
                     estudante_turma_id = :estudante_turma_id,
+                    justificativa = :justify,
                     data = :data,
                     faltas = :faltas"
                     
@@ -147,6 +147,7 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
                 ':periodo_id' => $class->periodo_id,
                 ':estudante_turma_id' => $class->estudante_turma_id,
+                ':justify' => $class->justificativa,
                 ':data' => $class->data ?? null,
                 ':faltas' => $class->faltas,
             ]);

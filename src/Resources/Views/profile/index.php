@@ -13,9 +13,9 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
-         <a href="\usuario\criar" class="btn btn-outline-primary" > + </a>
+         <a href="\usuario" class="btn btn-outline-primary" > + </a>
         </div>
     </div>
 </div>
@@ -35,7 +35,7 @@
     <!-- Row start -->
 <div class="row gx-3">
     <div class="col-12">
-        <form id="users-form" action="/usuario" method="GET">            
+        <form id="users-form" action="/usuarios" method="GET">            
             <div class="accordion mt-2" id="accordionSpecialTitle">
                 <div class="accordion-item bg-transparent">
                     <h2 class="accordion-header" id="headingSpecialTitleTwo">
@@ -110,7 +110,7 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                            <a href="\usuario" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) || isset($shift) || isset($coordinator) ? 'd-block' : 'd-none'?>">Limpar</a>
+                                            <a href="\usuarios" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) || isset($shift) || isset($coordinator) ? 'd-block' : 'd-none'?>">Limpar</a>
                                             <button type="submit" class="btn btn-primary">Buscar</button>
                                         </div>
                                     </div>
@@ -183,6 +183,17 @@
                                                     <span class="fs-5 icon-edit_road"></span>
                                                     </div>
                                                 </a>
+                                                <a class="mb-1 ms-2 mt-1" href="/usuario/<?=$usuario->uuid?>/active">
+                                                    <div class="border p-2 rounded-3">
+                                                        <?  if ($usuario->ativo === 1) {
+                                                            echo '<i class="icon-circle1 text-danger fs-5"></i>';
+                                                            }
+                                                            if ($usuario->ativo === 0) {
+                                                                echo '<i class="icon-circle1 text-success fs-5"></i>';
+                                                            }
+                                                        ?>
+                                                    </div>
+                                                </a> 
                                             </div>
                                             <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
                                                 <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
@@ -207,6 +218,11 @@
                                                             <span class="fs-5 icon-edit_road"></span>
                                                             </div>
                                                         </a>
+                                                        <a class="mb-1 m-2 mt-1" href="/usuario/<?=$usuario->uuid?>/active">
+                                                            <div class="border p-2 rounded-3">
+                                                                <i class="icon-circle1 text-danger fs-5"></i>
+                                                            </div>
+                                                        </a> 
                                                     </div>
                                                 </div>
                                             </div>

@@ -47,9 +47,14 @@ class UsuarioController extends Controller
         $params['situation'] = (isset($params['situation']) && $params['situation'] != '') ? $params['situation'] : '1';
 
         $usuario = $this->usuarioRepository->all($params);
+
+        $criteria = '&situation=' . $params['situation'];
+        $criteria .= (isset($params['access']) && $params['access'] != '') ? '&access=' . $params['access'] : '';        
+        $criteria .= (isset($params['name_email']) && $params['name_email'] != '') ? '&name_email=' . $params['name_email'] : '';
+
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
-        $paginator = new Paginator($usuario, $perPage, $currentPage);
+        $paginator = new Paginator($usuario, $perPage, $currentPage, $criteria);
         $paginatedBoards = $paginator->getPaginatedItems();
 
         return $this->router->view('profile/index', [
@@ -64,7 +69,7 @@ class UsuarioController extends Controller
 
     public function create() {
         if(!hasPermission('criar usuários')) {
-            return $this->router->redirect('usuario?error=422');
+            return $this->router->redirect('usuarios?error=422');
         }
 
         return $this->router->view('profile/create', ['active' => 'register']);
@@ -97,13 +102,13 @@ class UsuarioController extends Controller
         return $this->router->view('profile/create', ['active' => 'register', 'danger' => true]);
         }
 
-        return $this->router->redirect('usuario/');
+        return $this->router->redirect('usuarios');
     }
 
     public function edit(Request $request, $id) 
     {
         if(!hasPermission('editar usuarios')) {
-            return $this->router->redirect('usuario?error=422');
+            return $this->router->redirect('usuarios?error=422');
         }
 
         $usuario = $this->usuarioRepository->findByUuid($id);
@@ -148,7 +153,7 @@ class UsuarioController extends Controller
         return $this->router->view('profile/edit', ['active' => 'register', 'danger' => true]);
         }
 
-        return $this->router->redirect('usuario/');
+        return $this->router->redirect('usuarios');
     }
 
     public function profileUpdate(Request $request)
@@ -177,7 +182,7 @@ class UsuarioController extends Controller
     public function delete(Request $request, $id) 
     {
         if(!hasPermission('deletar usuários')) {
-            return $this->router->redirect('usuario?error=422');
+            return $this->router->redirect('usuarios?error=422');
         }
 
         $usuario = $this->usuarioRepository->findByUuid($id);
@@ -188,7 +193,7 @@ class UsuarioController extends Controller
 
         $usuario = $this->usuarioRepository->delete($usuario->id);
 
-        return $this->router->redirect('usuario/');
+        return $this->router->redirect('usuarios');
     }
 
     public function login(Request $request) 
@@ -273,5 +278,23 @@ class UsuarioController extends Controller
         
         echo json_encode("sucess!");
         exit();
+    }
+
+    public function changeStatus(Request $request, string $id)
+    {
+        $user = $this->usuarioRepository->findByUuid($id);
+        
+        if(is_null($user)){
+            return $this->router->view('profile/profile', ['active' => 'pedagogico', 'danger' => true]);
+        }
+
+        $active = $user->ativo == '0' ? '1' : '0';
+
+        $data['active'] = $active;
+
+        $updated = $this->usuarioRepository->update($data, $user->id);
+        $criteria = '?name_email=' . $user->email;
+
+        return $this->router->redirect('usuarios' . $criteria);
     }
 }

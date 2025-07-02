@@ -69,6 +69,8 @@ class NotaController extends Controller
     {
         $this->defineRoutes($class_discipline_id);
         $paramsURL = $request->getQueryParams();
+
+        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
      
         $turma_disciplina = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
@@ -87,15 +89,13 @@ class NotaController extends Controller
         
         $notas = $this->notaRepository->allScores([
             'class_discipline_id' => $turma_disciplina->id, 
-            'period_id' => $paramsURL['period_id'] ?? null
+            'period_id' => $paramsURL['period_id'] ?? $periodos[0]->periodo
         ]);
 
         $paralela = $this->paralelaRepository->allScoresParallel([
             'class_discipline_id' => $turma_disciplina->id, 
-            'period_id' => $paramsURL['period_id'] ?? null
+            'period_id' => $paramsURL['period_id'] ?? $periodos[0]->periodo
         ]);
-        
-        $periodos = $this->periodoRepository->all(['active' => '1']);
 
         return $this->router->view(
             "$this->routeView/score", 
@@ -133,7 +133,7 @@ class NotaController extends Controller
             }
         }
 
-        if (isset($data['parallel'])) {
+        if (isset($data['parallel']) && !empty($data['parallel'])) {
             $data_parallel = [];
             foreach ($data['parallel'] as $studantsID => $score) {
                 $data_parallel['nota'] = $score;

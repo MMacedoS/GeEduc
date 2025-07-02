@@ -18,7 +18,7 @@
        <!-- Breadcrumb end -->
     </div>
     <? if (hasPermission('cadastrar turmas e estudantes')) {?>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
             </div>
@@ -53,18 +53,21 @@
                 <div class="container mt-4">   
                     <form id="frequencia-form" action="/meus-componentes/<?=$turma_disciplina->uuid?>/frequencia" method="POST">
                         <div class="row mb-3">
-                            <div class="col-md-4">                                           
+                            <div class="col-md-3">                                           
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
                                             <label for="data-frequencia" class="form-label">Selecione a Data</label>
-                                            <input type="date" id="data-frequencia" name="data" class="form-control" required value="<?= $dataFilter ?>" max="<?= date('Y-m-d') ?>">
-                                        </div>
+                                            <input type="date"
+                                             max="<?= date('Y-m-d') ?>" min="<?= $dia->data?>"
+                                             id="data-frequencia" name="data" class="form-control" required 
+                                            value="<?= $dataFilter ?>">
+                                        </div>  
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">                    
+                            <div class="col-md-3">                    
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -78,7 +81,7 @@
                                     </div>
                                 </div>
                             </div>               
-                            <div class="col-md-2 d-flex align-items-end">             
+                            <div class="col-md-3 d-flex align-items-end">             
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -87,13 +90,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="float-end text-end">
                                     <a href="/meus-componentes" class="btn btn-outline-dark" > Voltar </a>
                                 </div>
                             </div>
                         </div>        
                         <hr>
+                        <div class="row fs-5 mb-3">
+                            <div class="col-6 text-start">
+                                Estudantes
+                            </div>
+                            <div class="col-4 text-start">
+                                Justificativa
+                            </div>
+                            <div class="col-2 text-start">
+                                Falta
+                            </div>
+                        </div>
                         <?php 
                         // Transformar o array de frequências em um índice rápido por ID do estudante
                         $frequenciasMap = [];
@@ -109,14 +123,17 @@
                                     -
                                     <?= getJsonToObject($estudante->turma)->nome ?></span>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-check form-switch form-check-reverse mr-2 d-flex pe-0">
-                                        <label class="form-check-label mt-2 me-2" style="width: 100px;" for="presenca-<?= $estudante->id ?>">Nº de faltas: </label>
-                                        <select class="form-select" name="class_students_id[<?= $estudante->id ?>]" id="presenca-<?= $estudante->id ?>">
-                                        <option value="0" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 0 ? 'selected' : '') : 'selected' ?>>0</option>
-                                            <option value="1" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 1 ? 'selected' : '') : '' ?>>1</option>
-                                            <option value="2" <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 2 ? 'selected' : '') : '' ?>>2</option>
-                                        </select>                                        
+                                <div class="col-4">
+                                    <textarea name="students_justify[<?= $estudante->id ?>]" class="form-control" id="justify" rows="1"><?=isset($frequenciasMap[$estudante->id]) ? $frequencia->justificativa: ''?>
+                                    </textarea>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-check form-switch fs-5">
+                                        <input class="form-check-input" type="checkbox" 
+                                            name="class_students_id[<?= $estudante->id ?>]"
+                                            <?= isset($frequenciasMap[$estudante->id]) ? ($frequenciasMap[$estudante->id] == 1 ? 'checked' : '') : '' ?> 
+                                            role="switch" id="presenca-<?= $estudante->id ?>"
+                                        <label class="form-check-label" for="presenca-<?= $estudante->id ?>">Falta</label>
                                     </div>
                                 </div>
                             </div>     
@@ -141,27 +158,42 @@
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
 
 <script>
-$(document).ready(function() {
-    $('#search').click(function() {
-        searchDate();       
+    $(document).ready(function() {
+        $('#search').click(function() {
+            searchDate();       
+        });
+
+        $('#data-frequencia').change(function() {
+            searchDate();       
+        });
+
+        const searchDate = function() {
+            // Capturar valores do formulário
+            var data = $('#data-frequencia').val();
+            var period_id = $('#period_id').val();
+
+            // Montar a URL
+            var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/frequencia';
+            url += '?data=' + data + '&period_id=' + period_id;
+
+            // Redirecionar para a URL
+            window.location.href = url;
+        }
     });
 
-    $('#data-frequencia').change(function() {
-        searchDate();       
+  const diasPermitidos = <?= json_encode($aulas) ?>; // [1, 5] por exemplo
+  console.log(diasPermitidos);
+  const input = document.getElementById("data-frequencia");
+
+  input.addEventListener("input", function () {
+    const dataSelecionada = this.valueAsDate;
+        if (!dataSelecionada) return;
+        
+        const diaSemana = dataSelecionada.getDay(); // 0 = domingo ... 6 = sábado
+        if (!diasPermitidos.includes(diaSemana)) {
+            alert("Essa data não está disponível para seleção.");
+            this.value = ""; // limpa o valor
+        }
     });
-
-    const searchDate = function() {
-         // Capturar valores do formulário
-         var data = $('#data-frequencia').val();
-        var period_id = $('#period_id').val();
-
-        // Montar a URL
-        var url = '/meus-componentes/<?= $turma_disciplina->uuid ?>/frequencia';
-        url += '?data=' + data + '&period_id=' + period_id;
-
-        // Redirecionar para a URL
-        window.location.href = url;
-    }
-});
 
 </script>

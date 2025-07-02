@@ -9,13 +9,15 @@ class Paginator {
     protected $currentPage;
     protected $totalItems;
     protected $totalPages;
+    protected $criteria = '';
 
-    public function __construct(array $items, int $perPage = 10, int $currentPage = 1) {
+    public function __construct(array $items, int $perPage = 10, int $currentPage = 1, $criteria = '') {
         $this->items = $items;
         $this->perPage = $perPage;
         $this->currentPage = $currentPage;
         $this->totalItems = count($items);
         $this->totalPages = ceil($this->totalItems / $this->perPage);
+        $this->criteria = $criteria;
     }
 
     public function getPaginatedItems() {
@@ -29,7 +31,7 @@ class Paginator {
         // Previous button
         if ($this->currentPage > 1) {
             $prevPage = $this->currentPage - 1;
-            $links .= '<li class="page-item"><a class="page-link" href="?page='.$prevPage.'">&laquo;</a></li>';
+            $links .= '<li class="page-item"><a class="page-link" href="?page='.$prevPage. $this->criteria .'">&laquo;</a></li>';
         } 
         if ($this->currentPage <= 1) {
             $links .= '<li class="page-item disabled"><a class="page-link" href="">&laquo;</a></li>';
@@ -39,10 +41,10 @@ class Paginator {
         $isLimite = false;
         for ($i = 1; $i <= $this->totalPages; $i++) {
             if ($i == $this->currentPage && $i <= self::FIVE) {
-                $links .= '<li class="page-item active"><a class="page-link" href="">'.$i.'</a></li>';
+                $links .= '<li class="page-item active"><a class="page-link" href="">'.$i. '</a></li>';
             } 
             if ($i != $this->currentPage && $i <= self::FIVE) {
-                $links .= '<li class="page-item"><a class="page-link" href="?page='.$i.'">'.$i.'</a></li>';
+                $links .= '<li class="page-item"><a class="page-link" href="?page='.$i. $this->criteria .'">'.$i.'</a></li>';
             }         
             if (self::FIVE < $this->currentPage && $i > self::FIVE) {
                 $links .= '<li class="page-item active"><a class="page-link" href="">...</a></li>';
@@ -58,7 +60,7 @@ class Paginator {
         // Next button
         if ($this->currentPage < $this->totalPages) {
             $nextPage = $this->currentPage + 1;
-            $links .= "<li class='page-item'><a class='page-link' href='?page=$nextPage'>&raquo;</a></li>";
+            $links .= "<li class='page-item'><a class='page-link' href='?page=$nextPage$this->criteria'>&raquo;</a></li>";
         } 
         if ($this->currentPage >= $this->totalPages) {
             $links .= "<li class='page-item disabled'><a class='page-link' href=''>&raquo;</a></li>";

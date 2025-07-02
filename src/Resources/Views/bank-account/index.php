@@ -14,7 +14,7 @@
        <!-- Breadcrumb end -->
     </div>
     
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
         <? if (hasPermission('cadastrar contas')) {?>
          <a href="\bancos\criar" class="btn btn-outline-primary" > + </a>

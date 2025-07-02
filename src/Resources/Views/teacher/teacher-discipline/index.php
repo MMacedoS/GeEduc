@@ -18,7 +18,7 @@
        <!-- Breadcrumb end -->
     </div>
     <? if (hasPermission('vincular turmas e estudantes')) {?>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
             </div>
@@ -143,12 +143,6 @@
         </div>
     </div>
 </div> 
-
-<div class="row">
-    <div class="float-end">
-        <?=$links?>
-    </div>
-</div>
 
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
 

@@ -80,7 +80,7 @@
         <div class="card-body">
             <div class="d-flex flex-wrap gap-2 justify-content-end">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="\usuario\" class="btn btn-secondary">Cancelar</a>
+                <a href="\usuarios" class="btn btn-secondary">Cancelar</a>
             </div>
         </div>
     </div>

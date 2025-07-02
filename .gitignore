@@ -5,6 +5,6 @@ vendor/composer/autoload_namespaces.php
 /src/env/**
 /src/env/app.php
 /Public/**
-logs/app.log
+# logs/app.log
 vendor/composer/autoload_files.php
 src/env/app.php

@@ -28,7 +28,7 @@ class Paralela {
         $paralela->periodo_id = $data['period_id'] ?? null;
         $paralela->estudante_turma_id = $data['class_student_id'];     
         $paralela->turma_disciplina_id = $data['class_discipline_id'];
-        $paralela->nota = $data['nota'] ?? '0';  
+        $paralela->nota = floatval($data['nota']) ?? '0.0';  
         $paralela->updated_at = $data['updated_at'] ?? null;
         $paralela->created_at = $data['created_at'] ?? null;
         return $paralela;

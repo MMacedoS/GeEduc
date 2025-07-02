@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
          <a href="\permissao\criar" class="btn btn-outline-primary" > + </a>
         </div>

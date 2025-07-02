@@ -38,7 +38,6 @@ class AulaController extends Controller
     {
         $params = $request->getQueryParams();
 
-        $class = $this->aulaRepository->allClass($params);
         $days = $this->diaSemanaRepository->allWeekDay();
         $classRoom = $this->turmaRepository->findByUuid($turma_id);
 
@@ -48,6 +47,10 @@ class AulaController extends Controller
                 'uuid' => $turma_disciplina_id
             ]
         );
+
+        $params['classroom_discipline_id'] = $class_disciplines[0]->id;
+        
+        $class = $this->aulaRepository->allClass($params);
 
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;

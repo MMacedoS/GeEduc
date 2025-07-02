@@ -14,7 +14,7 @@
        <!-- Breadcrumb end -->
     </div>
     <?php if (hasPermission('cadastrar coordenadores')) {?>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\coordenador" class="btn btn-outline-primary" > + </a>
             </div>

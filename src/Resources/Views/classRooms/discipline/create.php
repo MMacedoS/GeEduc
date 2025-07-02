@@ -28,7 +28,7 @@
         <? }?>  
     </div>  
     
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
             <a href="/turmas/<?=$turma->uuid?>/disciplinas/" class="btn btn-outline-primary" > Voltar </a>
         </div>
@@ -43,3 +43,11 @@
 </form>
 
 <?php require_once __DIR__ . '/../../layout/bottom.php'; ?>
+<script>
+$(document).ready(function() {
+    $('#teacher_discipline_id').select2({
+        placeholder: "Selecione um ou mais componentes",
+        width: '100%'
+    });
+});
+</script>

@@ -18,7 +18,7 @@
        <!-- Breadcrumb end -->
     </div>
     <? if (hasPermission('cadastrar turmas e estudantes')) {?>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
             </div>

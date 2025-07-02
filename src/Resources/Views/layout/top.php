@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
@@ -35,6 +35,10 @@
         <link rel="stylesheet" href="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.css" />
         <!-- Date Range CSS -->
         <link rel="stylesheet" href="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/daterange.css" />
+
+        <!-- Calendar CSS -->
+        <link rel="stylesheet" href="<?=URL_PREFIX_APP?>/Public/assets/vendor/calendar/css/main.min.css" />
+        <link rel="stylesheet" href="<?=URL_PREFIX_APP?>/Public/assets/vendor/calendar/css/custom.css" />
     </head>
     <body>
 

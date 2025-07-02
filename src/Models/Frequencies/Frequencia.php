@@ -15,6 +15,7 @@ class Frequencia {
     public $estudante_turma_id;
     public $faltas;
     public $data;
+    public $justificativa;
     public $updated_at;
     public $created_at;
 
@@ -30,6 +31,7 @@ class Frequencia {
         $frequencia->periodo_id = $data['period_id'] ?? null;
         $frequencia->estudante_turma_id = $data['class_student_id'];     
         $frequencia->faltas = (int)$data['faltas'] ?? 0;  
+        $frequencia->justificativa = $data['justify'];   
         $frequencia->data = $data['data'] ?? null;  
         $frequencia->updated_at = $data['updated_at'] ?? null;
         $frequencia->created_at = $data['created_at'] ?? null;

@@ -64,16 +64,16 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
             $bindings[':coordinator'] = '%' . $params['coordinator'] . '%';
         } 
 
-        if (isset($params['situation']) && $params['situation'] != '') {
-            $conditions[] = "t.ativo = :situation";
-            $bindings[':situation'] = $params['situation'];
+        if (isset($params['active']) && $params['active'] != '') {
+            $conditions[] = "t.ativo = :active";
+            $bindings[':active'] = $params['active'];
         }
 
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " GROUP BY t.id ORDER BY t.created_at DESC";
+        $sql .= " GROUP BY t.id ORDER BY t.ordem DESC";
 
         $stmt = $this->conn->prepare($sql);
 

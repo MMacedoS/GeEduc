@@ -163,6 +163,7 @@ class EstudanteController extends Controller
         $studentData['mother'] = $student['Mãe'];
         $studentData['father'] = $student['Pai'];
         $studentData['address'] = $student['Endereço do Estudante'];
+        $studentData['password'] = $student['Senha'];
         $studentData['active'] = 1;
         $studentData['procees_monthylees'] = 'Não';
         $estudante = $this->estudanteRepository->saveAll($studentData);

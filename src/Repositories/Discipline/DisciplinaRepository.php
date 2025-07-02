@@ -25,7 +25,6 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
         $sql = "SELECT 
             d.* 
             FROM " . self::TABLE . " d 
-            LEFT JOIN professor_disciplina pd ON pd.disciplina_id = d.id
             ";
 
         $conditions = [];
@@ -39,10 +38,6 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
         if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "d.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
-        }
-        if (isset($params['teacher_id'])) {
-            $conditions[] = "pd.professor_id = :professor_id";
-            $bindings[':professor_id'] = $params['teacher_id'];
         }
 
         if (count($conditions) > 0) {

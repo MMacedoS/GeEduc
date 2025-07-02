@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <div class="col-2 col-xl-6">
+    <div class="col-4 col-xl-6">
         <div class="float-end">
          <a href="\disciplinas\criar" class="btn btn-outline-primary" > + </a>
         </div>
@@ -119,7 +119,7 @@
                             </thead>
                             
                             <tbody>
-                            <? foreach ($data['disciplinas'] as $disciplina) { ?>
+                            <? foreach ($disciplinas as $disciplina) { ?>
                                     <tr>
                                         <td><?=$disciplina->id?></td>
                                         <td class="fw-bold"> <?=$disciplina->nome?>
@@ -194,7 +194,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($data['disciplinas'])?></b> registros
+                        Total <b><?=count($disciplinas)?></b> registros
                     </div>
                 </div>
             </div>
@@ -204,7 +204,7 @@
 
 <div class="row">
     <div class="float-end">
-        <?=$data['links']?>
+        <?=$links?>
     </div>
 </div>
 

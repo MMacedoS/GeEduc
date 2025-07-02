@@ -55,7 +55,7 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY a.created_at DESC";
+        $sql .= " ORDER BY a.tipo ASC";
 
         try {
             $stmt = $this->conn->prepare($sql);

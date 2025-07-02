@@ -5,11 +5,10 @@
         <label class="form-label">Atividade</label>
         <select class="form-control" name="type" id="type">
             <option value="">Selecione um componente</option>
-            <option value="atividade" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'atividade') { echo 'selected'; } ?>>Atividade</option>
-            <option value="participacao" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'participacao') { echo 'selected'; } ?>>Participação</option>
-            <option value="teste" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'teste') { echo 'selected'; } ?>>Teste</option>
-            <option value="prova" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'prova') { echo 'selected'; } ?>>Prova</option>
-            <option value="trabalho" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'trabalho') { echo 'selected'; } ?>>Trabalho</option>
+            <option value="A-1" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'A-1') { echo 'selected'; } ?>>Atividade 1</option>
+            <option value="A-2" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'A-2') { echo 'selected'; } ?>>Atividade 2</option>
+            <option value="A-3" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'A-3') { echo 'selected'; } ?>>Atividade 3</option>
+            <option value="A-4" <?php if(isset($atividade->tipo)  && $atividade->tipo == 'A-4') { echo 'selected'; } ?>>Atividade 4</option>
         </select>
       </div>
     </div>

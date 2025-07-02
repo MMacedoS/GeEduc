@@ -18,7 +18,7 @@
             </ol>
             <!-- Breadcrumb end -->
         </div>
-        <div class="col-2 col-xl-6">
+        <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a href="/carga-horaria/" class="btn btn-outline-primary" > Voltar </a>
             </div>
