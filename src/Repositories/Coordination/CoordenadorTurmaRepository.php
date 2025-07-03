@@ -52,7 +52,7 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY ct.created_at DESC";
+        $sql .= " ORDER BY t.ordem DESC";
 
         $stmt = $this->conn->prepare($sql);
 

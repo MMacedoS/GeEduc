@@ -38,7 +38,7 @@ class ProfessorController extends Controller
     {
         $params = $request->getQueryParams();
 
-        if(!hasPermission('visualizar professores')) {
+        if(!hasPermission('visualizar_professores')) {
             return $this->router->redirect('professores?error=422');
         }
 
@@ -59,7 +59,7 @@ class ProfessorController extends Controller
 
     public function create() 
     {
-        if(!hasPermission('cadastrar professores')) {
+        if(!hasPermission('cadastrar_professor')) {
             return $this->router->redirect('professores?error=422');
         }
 
@@ -100,7 +100,7 @@ class ProfessorController extends Controller
 
     public function edit(Request $request, $id) 
     {
-        if(!hasPermission('editar professores')) {
+        if(!hasPermission('editar_professor')) {
             return $this->router->redirect('professores?error=422');
         }
 
@@ -163,7 +163,7 @@ class ProfessorController extends Controller
 
     public function destroy(Request $request, $id) 
     {
-        if(!hasPermission('deletar professores')) {
+        if(!hasPermission('deletar_professor')) {
             return $this->router->redirect('professores?error=422');
         }
 

@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar planos')) {?>                                     
+    <? if (hasPermission('cadastrar_planos')) {?>                                     
         <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\planos\criar" class="btn btn-outline-primary" > + </a>
@@ -51,7 +51,7 @@
                                     <th>Nome</th>
                                     <th>Descricao</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar planos') || hasPermission('deletar planos')) {?>
+                                    <? if (hasPermission('editar_plano') || hasPermission('deletar_plano')) {?>
                                         <th>Ação</th>
                                     <? }?>
                                 </tr>
@@ -79,16 +79,16 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar planos') || hasPermission('deletar planos')) {?>
+                                        <? if (hasPermission('editar_plano') || hasPermission('deletar_plano')) {?>
                                         <td class="d-flex">
-                                            <? if (hasPermission('editar planos')) {?>
+                                            <? if (hasPermission('editar_plano')) {?>
                                                 <a class="mb-1 me-2 mt-1" href="/planos/<?=$plano->uuid?>/editar">
                                                     <div class="border p-2 rounded-3">
                                                         <i class="icon-edit fs-5"></i>
                                                     </div>
                                                 </a>  
                                             <? }?>
-                                            <? if (hasPermission('deletar planos')) {?>                                       
+                                            <? if (hasPermission('deletar_plano')) {?>                                       
                                                 <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$plano->uuid?>">                                                     
                                                     <div class="border p-2 rounded-3">
                                                         <span class="fs-5 text-danger icon-delete1"></span>

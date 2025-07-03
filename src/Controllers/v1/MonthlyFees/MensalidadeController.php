@@ -37,7 +37,7 @@ class MensalidadeController extends Controller
     }
 
     public function index(Request $request){
-        if(!hasPermission('visualizar mensalidades')){
+        if(!hasPermission('visualizar_mensalidades')){
             return $this->router->redirect('dashboard?error=442');
         }
 
@@ -70,7 +70,7 @@ class MensalidadeController extends Controller
     }
 
     public function create(Request $request){
-        if(!hasPermission('visualizar mensalidades')){
+        if(!hasPermission('visualizar_mensalidades')){
             return $this->router->redirect('dashboard?error=442');
         }
 
@@ -141,7 +141,7 @@ class MensalidadeController extends Controller
     }
 
     public function edit(Request $request, string $id){
-        if(!hasPermission('editar mensalidade')){
+        if(!hasPermission('editar_mensalidade')){
             return $this->router->redirect('mensalidades?error=442');
         }
 

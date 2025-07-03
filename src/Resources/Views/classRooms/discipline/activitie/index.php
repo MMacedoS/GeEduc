@@ -28,7 +28,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar atividades')) {?>
+        <? if (hasPermission('cadastrar_atividade')) {?>
          <a href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividade" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
@@ -63,7 +63,7 @@
                                     <th class="text-center">Atividade</th>
                                     <th class="text-center <?=$total_maximo > 10 ? 'text-danger': 'text-success'?>">Pont. Maxima: <?=$total_maximo?></th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
+                                    <? if (hasPermission('editar_turmas_disciplinas') || hasPermission('deletar_turmas_disciplinas')) {?>
                                     <th>Ação</th>
                                     <? } ?>
                                 </tr>
@@ -92,17 +92,17 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
+                                        <? if (hasPermission('editar_turmas_disciplinas') || hasPermission('deletar_turmas_disciplinas')) {?>
                                         <td>
                                             <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                                <? if (hasPermission('editar_turmas_disciplinas')) {?>
                                                     <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividade/<?=$atividade->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? }?> 
-                                                <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                                <? if (hasPermission('deletar_turmas_disciplinas')) {?>                                       
                                                     <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$atividade->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
@@ -117,14 +117,14 @@
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <div class="header-action-links float-end">
-                                                        <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                                        <? if (hasPermission('editar_turmas_disciplinas')) {?>
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/atividade/<?=$atividade->uuid?>">
                                                                 <div class="border p-2 rounded-3">
                                                                     <i class="icon-edit fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? }?> 
-                                                        <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                                        <? if (hasPermission('deletar_turmas_disciplinas')) {?>                                       
                                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$atividade->uuid?>">                                                     
                                                                 <div class="border p-2 rounded-3">
                                                                     <span class="fs-5 text-danger icon-delete1"></span>

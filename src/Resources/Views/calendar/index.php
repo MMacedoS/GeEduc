@@ -17,7 +17,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar turmas')) {?>
+        <? if (hasPermission('cadastrar_turma')) {?>
          <a href="\dialetivo" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>

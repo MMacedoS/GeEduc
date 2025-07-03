@@ -17,7 +17,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar mensalidades')) {?>
+    <? if (hasPermission('cadastrar_mensalidade')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a href="\estudantes\<?=$estudante->uuid?>\mensalidade" class="btn btn-outline-primary" > + </a>
@@ -59,7 +59,7 @@
                                     <th>Data Vencimento</th>
                                     <th>Valor</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar mensalidade') || hasPermission('cancelar mensalidades')) {?>
+                                    <? if (hasPermission('editar_mensalidade') || hasPermission('cancelar_mensalidade')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -97,10 +97,10 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar mensalidade') && hasPermission('cancelar mensalidades')) {?>
+                                        <? if (hasPermission('editar_mensalidade') && hasPermission('cancelar_mensalidade')) {?>
                                             <td class="d-flex">
                                                 <? if (
-                                                    hasPermission('cancelar mensalidades') &&
+                                                    hasPermission('cancelar_mensalidade') &&
                                                     (
                                                         $estudante_mensalidade->situacao !== 'cancelado' &&
                                                         $estudante_mensalidade->situacao !== 'pago'
@@ -130,7 +130,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <? if (hasPermission('editar mensalidade')) {?>
+                                                <? if (hasPermission('editar_mensalidade')) {?>
                                                     <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidade/<?=$estudante_mensalidade->uuid?>/">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>

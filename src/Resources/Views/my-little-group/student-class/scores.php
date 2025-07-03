@@ -35,7 +35,7 @@
                                 <tr>
                                     <th class="text-center">Professor</th>
                                     <th class="text-center">Componentes Curricular</th>
-                                    <th class="text-center">Trimestre</th>
+                                    <th class="text-center">Bimestre</th>
                                     <th class="text-left">Atividades e Notas</th>
                                 </tr>
                             </thead>

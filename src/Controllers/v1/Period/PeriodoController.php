@@ -20,7 +20,7 @@ class PeriodoController extends Controller{
     }
 
     public function index(Request $request){
-        if(!hasPermission('visualizar periodos')){
+        if(!hasPermission('visualizar_periodos')){
             return $this->router->redirect('dashboard?error=442');
         }
 

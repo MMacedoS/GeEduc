@@ -17,7 +17,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('vincular turmas e estudantes')) {?>
+    <? if (hasPermission('vincular_turmas_estudantes')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
@@ -59,7 +59,7 @@
                                     <th>Nome</th>
                                     <th>Ano Letivo</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                    <? if (hasPermission('editar_professor') || hasPermission('deletar_professor')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -87,9 +87,9 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('inativar vinculos')) {?>
+                                        <? if (hasPermission('inativar_vinculos')) {?>
                                             <td class="d-flex">                                                 
-                                                <? if (hasPermission('inativar vinculos')) {?>                                                                           
+                                                <? if (hasPermission('inativar_vinculos')) {?>                                                                           
                                                     <button class="btn btn-outline btn-sm" type="button" onclick="inactivateLink('<?=$turma_estudante->uuid?>')">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-power_settings_new"></span>

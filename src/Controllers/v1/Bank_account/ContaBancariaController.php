@@ -22,7 +22,7 @@ class ContaBancariaController extends Controller
 
     public function index(Request $request) 
     {
-        if(!hasPermission('visualizar contas bancarias')) {
+        if(!hasPermission('visualizar_contas_bancarias')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -41,7 +41,7 @@ class ContaBancariaController extends Controller
 
     public function create(Request $request)
     {
-        if(!hasPermission('cadastrar contas')) {
+        if(!hasPermission('cadastrar_conta')) {
             return $this->router->redirect('bancos?error=422');
         }
 
@@ -50,6 +50,10 @@ class ContaBancariaController extends Controller
 
     public function store(Request $request)
     {
+        if(!hasPermission('cadastrar_conta')) {
+            return $this->router->redirect('bancos?error=422');
+        }
+
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
@@ -83,7 +87,7 @@ class ContaBancariaController extends Controller
 
     public function edit(Request $request, string $id)
     {
-        if(!hasPermission('editar contas')) {
+        if(!hasPermission('editar_conta')) {
             return $this->router->redirect('bancos?error=422');
         }
 
@@ -98,6 +102,10 @@ class ContaBancariaController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if(!hasPermission('editar_conta')) {
+            return $this->router->redirect('bancos?error=422');
+        }
+
         $data = $request->getBodyParams();
 
         $bank = $this->contaBancariaRepository->findByUuid($id);
@@ -137,7 +145,7 @@ class ContaBancariaController extends Controller
 
     public function destroy(Request $request, string $id)
     {
-        if(!hasPermission('deletar contas')) {
+        if(!hasPermission('deletar_conta')) {
             return $this->router->redirect('bancos?error=422');
         }
 

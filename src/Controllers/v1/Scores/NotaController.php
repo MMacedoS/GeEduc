@@ -22,9 +22,6 @@ class NotaController extends Controller
     protected $estudanteRepository;
     protected $periodoRepository;
     protected $paralelaRepository;
-    protected $active;
-    protected $routeView;
-    protected $redirect;
 
     public function __construct(
         IAtividadeRepository $atividadeRepository,

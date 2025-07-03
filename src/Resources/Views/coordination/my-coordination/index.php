@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <?php if (hasPermission('cadastrar coordenadores')) {?>
+    <?php if (hasPermission('cadastrar_coordenador')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\coordenador" class="btn btn-outline-primary" > + </a>
@@ -113,7 +113,7 @@
                                     <th>Nome</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar coordenadores') || hasPermission('deletar coordenadores')) {?>
+                                    <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -141,10 +141,10 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar disciplinas')) {?>
+                                        <? if (hasPermission('editar_disciplina')) {?>
                                             <td>
                                                 <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('editar disciplinas')) {?>                                     
+                                                    <? if (hasPermission('editar_disciplina')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/disciplinas">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-link fs-5"></i>

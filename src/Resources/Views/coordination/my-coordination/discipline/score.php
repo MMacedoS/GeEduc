@@ -21,7 +21,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar turmas e estudantes')) {?>
+    <? if (hasPermission('cadastrar_turmas_estudantes')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
@@ -62,7 +62,7 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
-                                            <label class="form-label">Trimestre</label>
+                                            <label class="form-label">Bimestre</label>
                                             <select class="form-select" name="period_id" id="period_id">
                                                 <?php foreach ($periodos as $key => $value) {?>
                                                     <option value="<?=$value->id?>" <?= $periodFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>
@@ -103,10 +103,8 @@
                                 $paralelaMap[$paralela->estudante_turma_id] = $paralela->nota ?? 0;
                             }                    
                         }
-                    
-                
-                        foreach ($estudantes as $key => $estudante) {             
-                          
+                                    
+                        foreach ($estudantes as $key => $estudante) {                                       
                         ?>
                             <div class="row mb-3 me-0">
                                 <div class="col-4">
@@ -123,22 +121,13 @@
                                             type="number" 
                                             name="notas[<?= "$estudante->id,$atividade->id"?>]" 
                                             min="0" 
-                                            step="0.01" 
+                                            step="0.1" 
                                             max="<?= $atividade->valor ?>" 
                                             value="<?= $notasMap["$estudante->id$atividade->id"] ?? 0?>">                                   
                                     </div>
                                 </div>
-                                <?php } ?> 
-                                <?php if (isset($notasMap[$estudante->id]) && $notasMap[$estudante->id] < 6.9) {?>
-                                    <div class="col-1">
-                                        <div class="mr-2 d-flex flex-column pe-0">
-                                            <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="paralela">Paralela: </label>
-                                            <input type="number" min="0" step="0.01" max="2" 
-                                            name="parallel[<?= $estudante->id ?>]" 
-                                            value="<?= $paralelaMap[$estudante->id] ?>">                                   
-                                        </div>
-                                    </div>
                                 <?php } ?>
+
                                 <div class="col-1">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>

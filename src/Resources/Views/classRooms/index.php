@@ -16,7 +16,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar turmas')) {?>
+        <? if (hasPermission('cadastrar_turma')) {?>
          <a href="\turma" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
@@ -157,7 +157,7 @@
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Coordenador</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                    <? if (hasPermission('editar_turma') || hasPermission('deletar_turma')) {?>
                                     <th>Ação</th>
                                     <? } ?>
                                 </tr>
@@ -188,24 +188,24 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                        <? if (hasPermission('editar_turma') || hasPermission('deletar_turma')) {?>
                                         <td>
                                             <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                <? if (hasPermission('editar turmas')) {?>
+                                                <? if (hasPermission('editar_turma')) {?>
                                                     <a class="mb-1 me-2 mt-1" href="/turma/<?=$turma->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? }?> 
-                                                <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                <? if (hasPermission('visualizar_turmas_estudantes')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas">
                                                         <div class="border p-2 rounded-3">
                                                         <i class="icon-link fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
-                                                <? if (hasPermission('deletar turmas')) {?>                                       
+                                                <? if (hasPermission('deletar_turma')) {?>                                       
                                                     <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
@@ -220,21 +220,21 @@
                                                 </a>
                                                 <div class="dropdown-menu">
                                                     <div class="header-action-links float-end">
-                                                        <? if (hasPermission('editar turmas')) {?>
+                                                        <? if (hasPermission('editar_turma')) {?>
                                                             <a class="mb-1 me-2 mt-1" href="/turma/<?=$turma->uuid?>">
                                                                 <div class="border p-2 rounded-3">
                                                                     <i class="icon-edit fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? }?> 
-                                                        <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                        <? if (hasPermission('visualizar_turmas_estudantes')) {?>                                     
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas">
                                                                 <div class="border p-2 rounded-3">
                                                                 <i class="icon-link fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? } ?>  
-                                                        <? if (hasPermission('deletar turmas')) {?>                                       
+                                                        <? if (hasPermission('deletar_turma')) {?>                                       
                                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma->uuid?>">                                                     
                                                                 <div class="border p-2 rounded-3">
                                                                     <span class="fs-5 text-danger icon-delete1"></span>

@@ -17,9 +17,6 @@ class AtividadeController extends Controller
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
     protected $turmaRepository;
-    protected $redirect;
-    protected $routeView;
-    protected $active;
 
     public function __construct(
         ITurmaRepository $turmaRepository,

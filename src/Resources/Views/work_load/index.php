@@ -16,7 +16,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar turmas')) {?>
+        <? if (hasPermission('cadastrar_turma')) {?>
          <a href="\carga-horaria\criar" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
@@ -51,7 +51,7 @@
                                     <th></th>
                                     <th>Carga Horaria</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                    <? if (hasPermission('editar_turma') || hasPermission('deletar_turma')) {?>
                                     <th>Actions</th>
                                     <? } ?>
                                 </tr>
@@ -76,16 +76,16 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar turmas') || hasPermission('deletar turmas')) {?>
+                                        <? if (hasPermission('editar_turma') || hasPermission('deletar_turma')) {?>
                                         <td class="d-flex">
-                                        <? if (hasPermission('editar turmas')) {?>
+                                        <? if (hasPermission('editar_turma')) {?>
                                             <a class="mb-1 me-2 mt-1" href="/carga-horaria/<?=$carga_horaria->uuid?>/editar">
                                                 <div class="border p-2 rounded-3">
                                                     <i class="icon-edit fs-5"></i>
                                                 </div>
                                             </a> 
                                         <? }?> 
-                                        <? if (hasPermission('deletar turmas')) {?>                                       
+                                        <? if (hasPermission('deletar_turma')) {?>                                       
                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$carga_horaria->uuid?>">                                                     
                                                 <div class="border p-2 rounded-3">
                                                     <span class="fs-5 text-danger icon-delete1"></span>

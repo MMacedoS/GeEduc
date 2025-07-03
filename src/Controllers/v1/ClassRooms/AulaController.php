@@ -36,6 +36,10 @@ class AulaController extends Controller
 
     public function index(Request $request, ?string $turma_id, ?string $turma_disciplina_id ) 
     {
+        if(!hasPermission('visualizar_aulas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $params = $request->getQueryParams();
 
         $days = $this->diaSemanaRepository->allWeekDay();
@@ -72,6 +76,10 @@ class AulaController extends Controller
 
     public function create(Request $request, ?string $turma_id, ?string $turma_disciplina_id)
     {        
+        if(!hasPermission('cadastrar_aula')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $days = $this->diaSemanaRepository->allWeekDay();
         $classRoom = $this->turmaRepository->findByUuid($turma_id);
 
@@ -96,6 +104,10 @@ class AulaController extends Controller
 
     public function store(Request $request, ?string $turma_id, ?string $turma_disciplina_id)
     {
+        if(!hasPermission('cadastrar_aula')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $data = $request->getBodyParams();
         
         $validator = new Validator($data);
@@ -141,6 +153,10 @@ class AulaController extends Controller
         string $turma_disciplina_id, 
         string $aula_id
     ) {
+        if(!hasPermission('deletar_aula')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         if(is_null($aula_id)) {
             echo $this->responseJson(422, "aula não encontrada");
             exit();

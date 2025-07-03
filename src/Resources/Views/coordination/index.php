@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar coordenadores')) {?>
+    <? if (hasPermission('cadastrar_coordenador')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\coordenador" class="btn btn-outline-primary" > + </a>
@@ -113,7 +113,7 @@
                                     <th>Nome</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">email</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar coordenadores') || hasPermission('deletar coordenadores')) {?>
+                                    <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -142,17 +142,17 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar coordenadores') || hasPermission('deletar coordenadores')) {?>
+                                        <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) {?>
                                             <td>
                                                 <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('editar coordenadores')) {?>                                     
+                                                    <? if (hasPermission('editar_coordenador')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/coordenador/<?=$coordenador->uuid?>">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-edit fs-5"></i>
                                                             </div>
                                                         </a> 
                                                     <? } ?>  
-                                                    <? if (hasPermission('deletar coordenadores')) {?>                                                                           
+                                                    <? if (hasPermission('deletar_coordenador')) {?>                                                                           
                                                         <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$coordenador->uuid?>">                                                     
                                                             <div class="border p-2 rounded-3">
                                                                 <span class="fs-5 text-danger icon-delete1"></span>
@@ -167,14 +167,14 @@
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <div class="header-action-links float-end">
-                                                            <? if (hasPermission('editar coordenadores')) {?>                                     
+                                                            <? if (hasPermission('editar_coordenador')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" href="/coordenador/<?=$coordenador->uuid?>">
                                                                     <div class="border p-2 rounded-3">
                                                                         <i class="icon-edit fs-5"></i>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?>  
-                                                            <? if (hasPermission('deletar coordenadores')) {?>                                                                           
+                                                            <? if (hasPermission('deletar_coordenador')) {?>                                                                           
                                                                 <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$coordenador->uuid?>">                                                     
                                                                     <div class="border p-2 rounded-3">
                                                                         <span class="fs-5 text-danger icon-delete1"></span>

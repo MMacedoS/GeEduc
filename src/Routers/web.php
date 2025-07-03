@@ -31,6 +31,7 @@ use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Period\PeriodoController;
 use App\Controllers\v1\Person\PessoaContatoController;
 use App\Controllers\v1\Profile\RecuperarSenhaController;
+use App\Controllers\v1\Recuperation\RecuperacaoController;
 use App\Controllers\v1\Scores\NotaController;
 use App\Controllers\v1\Site\Album\SiteAlbumController;
 
@@ -80,6 +81,7 @@ $pessoaContatoController = $container->get(PessoaContatoController::class);
 $professorDisciplinaController = $container->get(ProfessorDisciplinaController::class);
 
 $recuperarSenhaController = $container->get(RecuperarSenhaController::class);
+$recuperacaoController = $container->get(RecuperacaoController::class);
 
 $siteAlbumController = $container->get(SiteAlbumController::class);
 $siteEventoController = $container->get(SiteEventoController::class);

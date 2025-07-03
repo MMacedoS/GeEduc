@@ -16,7 +16,7 @@ use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class TurmaDisciplinaController extends Controller 
+class TurmaDisciplinaController extends Controller
 {
     private $turmaRepository;
     protected $turmaDisciplinaRepository;
@@ -36,21 +36,24 @@ class TurmaDisciplinaController extends Controller
         IPessoaFisicaRepository $pessoaFisicaRepository,
         IUsuarioRepository $usuarioRepository,
         ICoordenadorTurmaRepository $coordenadorTurmaRepository
-    )
-    {
-        parent::__construct();   
+    ) {
+        parent::__construct();
         $this->turmaRepository = $turmaRepository;
-        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository; 
-        $this->cargaHorariaRepository = $cargaHorariaRepository; 
-        $this->professorDisciplinaRepository = $professorDisciplinaRepository; 
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->cargaHorariaRepository = $cargaHorariaRepository;
+        $this->professorDisciplinaRepository = $professorDisciplinaRepository;
         $this->coordenadorRepository = $coordenadorRepository;
         $this->pessoaFisicaRepository = $pessoaFisicaRepository;
         $this->usuarioRepository = $usuarioRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
     }
 
-    public function index(Request $request, $turma_id) 
+    public function index(Request $request, $turma_id)
     {
+        if (!hasPermission('visualizar_turmas_disciplinas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $classRooms = $this->turmaRepository->findByUuid($turma_id);
         $class_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
@@ -65,18 +68,24 @@ class TurmaDisciplinaController extends Controller
         $paginatedBoards = $paginator->getPaginatedItems();
 
         return $this->router->view(
-            'classRooms/discipline/index', 
+            'classRooms/discipline/index',
             [
-                'active' => 'pedagogico', 
-                'turma' => $classRooms, 
-                'turmas_disciplinas' => $paginatedBoards, 
+                'active' => 'pedagogico',
+                'turma' => $classRooms,
+                'turmas_disciplinas' => $paginatedBoards,
                 'links' => $paginator->links()
             ]
-        ); 
+        );
     }
-    public function indexClassRoomDisciplineByCoordenador(Request $request, $turma_id) {
+
+    public function indexClassRoomDisciplineByCoordenador(Request $request, $turma_id)
+    {
+        if (!hasPermission('visualizar_turmas_disciplinas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $classRoom = $this->turmaRepository->findByUuid($turma_id);
-  
+
         $class_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
@@ -90,7 +99,7 @@ class TurmaDisciplinaController extends Controller
         $paginatedBoards = $paginator->getPaginatedItems();
 
         return $this->router->view(
-            'coordination/my-coordination/discipline/index', 
+            'coordination/my-coordination/discipline/index',
             [
                 'turma' => $classRoom,
                 'disciplinas' => $paginatedBoards,
@@ -99,39 +108,77 @@ class TurmaDisciplinaController extends Controller
                 'name_discipline' => $params['name_discipline'] ?? null,
                 'situation' => $params['situation'] ?? null
             ]
-        ); 
+        );
     }
-    public function indexByCoordenador(Request $request){
+
+    public function indexByCoordenador(Request $request)
+    {
         $params = $request->getQueryParams();
-        $usuario = $this->usuarioRepository->findByUuid($_SESSION["user"]->id);
-        $pessoaFisica = $this->pessoaFisicaRepository->findPessoaFisica(["usuario_id" => $usuario->id]);
-        $coordenador = $this->coordenadorRepository->allCoordinators(["pessoa_fisica_id" => $pessoaFisica->id]);
-        $turmas = $this->coordenadorTurmaRepository->allCoordinatorClass(["coordenador_id" => $coordenador[0]->id]);
+
+        $usuario = $this->usuarioRepository
+            ->findByUuid(
+                $_SESSION["user"]->id
+            );
+
+        $pessoaFisica = $this->pessoaFisicaRepository
+            ->findPessoaFisica(
+                ["usuario_id" => $usuario->id]
+            );
+
+        $coordenador = $this->coordenadorRepository
+            ->allCoordinators(
+                ["pessoa_fisica_id" => $pessoaFisica->id]
+            );
+
+        $turmas = $this->coordenadorTurmaRepository
+            ->allCoordinatorClass(
+                ["coordenador_id" => $coordenador[0]->id]
+            );
+
         $perPage = 10;
-        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
-        $paginator = new Paginator($turmas, $perPage, $currentPage);
+
+        $currentPage = $request->getParam('page')
+            ? (int)$request->getParam('page')
+            : 1;
+
+        $paginator = new Paginator(
+            $turmas,
+            $perPage,
+            $currentPage
+        );
+
         $paginatedBoards = $paginator->getPaginatedItems();
-   
-        return $this->router->view('/coordination/my-coordination/index', [
-            'active' => 'coordinator',  
-            'turmas' => $paginatedBoards,
-            'links' => $paginator->links(),
-            'searchFilter'=> $params['name_email'] ?? null,
-            'situation' => $params['situation'] ?? null
-        ]);
+
+        return $this->router->view(
+            '/coordination/my-coordination/index',
+            [
+                'active' => 'coordinator',
+                'turmas' => $paginatedBoards,
+                'links' => $paginator->links(),
+                'searchFilter' => $params['name_email'] ?? null,
+                'situation' => $params['situation'] ?? null
+            ]
+        );
     }
 
     public function create(Request $request, string $class_id)
     {
-        $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $disciplinas = $this->professorDisciplinaRepository->allTeacherDisciplines(['active' => 1]);
-        $carga_horaria = $this->cargaHorariaRepository->allWorkLoad();
+        $classRooms = $this->turmaRepository
+            ->findByUuid($class_id);
+
+        $disciplinas = $this->professorDisciplinaRepository
+            ->allTeacherDisciplines(
+                ['active' => 1]
+            );
+
+        $carga_horaria = $this->cargaHorariaRepository
+            ->allWorkLoad();
 
         return $this->router->view(
-            'classRooms/discipline/create', 
+            'classRooms/discipline/create',
             [
-                'active' => 'register', 
-                'disciplinas' => $disciplinas, 
+                'active' => 'register',
+                'disciplinas' => $disciplinas,
                 'carga_horaria' => $carga_horaria,
                 'turma' => $classRooms
             ]
@@ -140,15 +187,26 @@ class TurmaDisciplinaController extends Controller
 
     public function store(Request $request, $class_id)
     {
-        $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $disciplinas = $this->professorDisciplinaRepository->allTeacherDisciplines(['active' => 1]);
-        $carga_horaria = $this->cargaHorariaRepository->allWorkLoad();
+        if (!hasPermission('vincular_turmas_disciplinas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
+        $classRooms = $this->turmaRepository
+            ->findByUuid($class_id);
+
+        $disciplinas = $this->professorDisciplinaRepository
+            ->allTeacherDisciplines(
+                ['active' => 1]
+            );
+
+        $carga_horaria = $this->cargaHorariaRepository
+            ->allWorkLoad();
 
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
 
-        $rules = [     
+        $rules = [
             'work_load_id' => 'required',
             'teacher_discipline_id' => 'required',
             'academic_year' => 'required'
@@ -156,33 +214,33 @@ class TurmaDisciplinaController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'classRooms/discipline/create', 
+                'classRooms/discipline/create',
                 [
-                    'active' => 'pedagogico', 
-                    'danger' => true, 
+                    'active' => 'pedagogico',
+                    'danger' => true,
                     'message' => "reveja os campos preenchidos",
-                    'disciplinas' => $disciplinas, 
+                    'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria,
                     'turma' => $classRooms
                 ]
             );
-        } 
+        }
 
         $data['class_id'] = $classRooms->id;
-        
+
         foreach ($data['teacher_discipline_id'] as $key => $value) {
             $data['teacher_discipline_id'] = $value;
             $created = $this->turmaDisciplinaRepository->create($data);
         }
 
-        if(is_null($created)) {            
+        if (is_null($created)) {
             return $this->router->view(
-                'classRooms/discipline/create', 
+                'classRooms/discipline/create',
                 [
-                    'active' => 'pedagogico', 
-                    'danger' => true, 
+                    'active' => 'pedagogico',
+                    'danger' => true,
                     'message' => 'não pode ser criado',
-                    'disciplinas' => $disciplinas, 
+                    'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria,
                     'turma' => $classRooms
                 ]
@@ -194,51 +252,78 @@ class TurmaDisciplinaController extends Controller
 
     public function edit(Request $request, string $class_id, string $id)
     {
-        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid($id);
-        $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $disciplinas = $this->professorDisciplinaRepository->allTeacherDisciplines(['active' => 1]);
-        $carga_horaria = $this->cargaHorariaRepository->allWorkLoad();
+        if (!hasPermission('vincular_turmas_disciplinas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaRepository
+            ->findByUuid($id);
+
+        $classRooms = $this->turmaRepository
+            ->findByUuid($class_id);
+
+        $disciplinas = $this->professorDisciplinaRepository
+            ->allTeacherDisciplines(
+                ['active' => 1]
+            );
+
+        $carga_horaria = $this->cargaHorariaRepository
+            ->allWorkLoad();
 
         if (is_null($class_disciplines)) {
             return $this->router->view(
-                'classRooms/discipline/index', 
+                'classRooms/discipline/index',
                 [
-                    'active' => 'pedagogico', 
-                    'danger' => true, 
+                    'active' => 'pedagogico',
+                    'danger' => true,
                     'message' => 'item não encontrado',
-                    'turma' => $classRooms    
+                    'turma' => $classRooms
                 ]
             );
         }
-        
+
         return $this->router->view(
-            'classRooms/discipline/edit', 
+            'classRooms/discipline/edit',
             [
-                'active' => 'pedagogico', 
-                'turma' => $classRooms, 
+                'active' => 'pedagogico',
+                'turma' => $classRooms,
                 'turma_disciplina' => $class_disciplines,
-                'disciplinas' => $disciplinas, 
+                'disciplinas' => $disciplinas,
                 'carga_horaria' => $carga_horaria
             ]
         );
     }
-    
-    public function update(Request $request,string $class_id, string $id)
+
+    public function update(Request $request, string $class_id, string $id)
     {
-        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid($id);
-        $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $disciplinas = $this->professorDisciplinaRepository->allTeacherDisciplines(['active' => 1]);
-        $carga_horaria = $this->cargaHorariaRepository->allWorkLoad();
+        if (!hasPermission('vincular_turmas_disciplinas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaRepository
+            ->findByUuid($id);
+
+        $classRooms = $this->turmaRepository
+            ->findByUuid($class_id);
+
+        $disciplinas = $this->professorDisciplinaRepository
+            ->allTeacherDisciplines(
+                ['active' => 1]
+            );
+
+        $carga_horaria = $this->cargaHorariaRepository
+            ->allWorkLoad();
+
         $data = $request->getBodyParams();
 
         if (is_null($class_disciplines)) {
             return $this->router->view(
-                'classRooms/discipline/edit', 
+                'classRooms/discipline/edit',
                 [
-                    'active' => 'pedagogico', 
-                    'turma' => $classRooms, 
+                    'active' => 'pedagogico',
+                    'turma' => $classRooms,
                     'turma_disciplina' => $class_disciplines,
-                    'disciplinas' => $disciplinas, 
+                    'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria
                 ]
             );
@@ -246,7 +331,7 @@ class TurmaDisciplinaController extends Controller
 
         $validator = new Validator($data);
 
-        $rules = [     
+        $rules = [
             'work_load_id' => 'required',
             'teacher_discipline_id' => 'required',
             'academic_year' => 'required'
@@ -254,12 +339,12 @@ class TurmaDisciplinaController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'classRooms/discipline/create', 
+                'classRooms/discipline/create',
                 [
-                    'active' => 'pedagogico', 
-                    'danger' => true, 
+                    'active' => 'pedagogico',
+                    'danger' => true,
                     'message' => "reveja os campos preenchidos",
-                    'disciplinas' => $disciplinas, 
+                    'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria,
                     'turma' => $classRooms
                 ]
@@ -272,14 +357,14 @@ class TurmaDisciplinaController extends Controller
             $updated = $this->turmaDisciplinaRepository->update($data, $class_disciplines->id);
         }
 
-        if(is_null($updated)) {            
+        if (is_null($updated)) {
             return $this->router->view(
-                'classRooms/discipline/create', 
+                'classRooms/discipline/create',
                 [
-                    'active' => 'pedagogico', 
-                    'danger' => true, 
+                    'active' => 'pedagogico',
+                    'danger' => true,
                     'message' => 'não pode ser criado',
-                    'disciplinas' => $disciplinas, 
+                    'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria,
                     'turma' => $classRooms
                 ]
@@ -291,8 +376,15 @@ class TurmaDisciplinaController extends Controller
 
     public function destroy(Request $request, string $class_id, string $id)
     {
-        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid($id);
-        $classRooms = $this->turmaRepository->findByUuid($class_id);
+        if (!hasPermission('deletar_turmas_disciplinas')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaRepository
+            ->findByUuid($id);
+
+        $classRooms = $this->turmaRepository
+            ->findByUuid($class_id);
 
         if (is_null($class_disciplines)) {
             return $this->router->redirect("turmas/$classRooms->uuid/disciplinas?error=not_deleted");

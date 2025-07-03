@@ -17,7 +17,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar turmas e estudantes')) {?>
+    <? if (hasPermission('cadastrar_turmas_estudantes')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
@@ -102,9 +102,18 @@
                                                     </a> 
                                                 <? } ?>                                                                                
                                                 <? if (hasPermission('professor')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
+                                                    <a class="mb-1 me-2 mt-1" 
+                                                        href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
                                                             <i class="icon-link fs-5"></i>
+                                                        </div>
+                                                    </a> 
+                                                <? } ?>  
+                                                <? if (hasPermission('professor')) {?>                                     
+                                                    <a class="mb-1 me-2 mt-1" 
+                                                        href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/recuperacoes">
+                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                            <i class="icon-sync_problem fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                

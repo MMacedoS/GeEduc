@@ -187,25 +187,26 @@ if(isset($success)){?>
 
     const validatePasswords = () => {
       if (passwordNew.value && passwordConfirm.value) {
-        if (passwordNew.value === passwordConfirm.value) {
-          passwordError.style.display = 'none';
-          passwordNew.classList.remove('is-invalid');
-          passwordConfirm.classList.remove('is-invalid');
-          passwordNew.classList.add('is-valid');
-          passwordConfirm.classList.add('is-valid');
-        } else {
-          passwordError.style.display = 'block';
-          passwordNew.classList.add('is-invalid');
-          passwordConfirm.classList.add('is-invalid');
-          passwordNew.classList.remove('is-valid');
-          passwordConfirm.classList.remove('is-valid');
+          if (passwordNew.value === passwordConfirm.value) {
+            passwordError.style.display = 'none';
+            passwordNew.classList.remove('is-invalid');
+            passwordConfirm.classList.remove('is-invalid');
+            passwordNew.classList.add('is-valid');
+            passwordConfirm.classList.add('is-valid');
+            return;
+          } 
+            passwordError.style.display = 'block';
+            passwordNew.classList.add('is-invalid');
+            passwordConfirm.classList.add('is-invalid');
+            passwordNew.classList.remove('is-valid');
+            passwordConfirm.classList.remove('is-valid');
+          return;
         }
-      } else {
-        passwordError.style.display = 'none';
-        passwordNew.classList.remove('is-valid', 'is-invalid');
-        passwordConfirm.classList.remove('is-valid', 'is-invalid');
-      }
-    };
+          passwordError.style.display = 'none';
+          passwordNew.classList.remove('is-valid', 'is-invalid');
+          passwordConfirm.classList.remove('is-valid', 'is-invalid');
+        return;
+      };
 
     passwordNew.addEventListener('input', validatePasswords);
     passwordConfirm.addEventListener('input', validatePasswords);

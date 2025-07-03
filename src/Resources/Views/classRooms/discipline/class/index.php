@@ -28,7 +28,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar aulas')) {?>
+        <? if (hasPermission('cadastrar_aula')) {?>
          <a href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turmas_disciplinas[0]->uuid?>/aula" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
@@ -63,7 +63,7 @@
                                     <th>Dia</th>
                                     <th>Horario</th>
                                     <th>Turno</th>
-                                    <? if (hasPermission('editar aulas') || hasPermission('deletar aulas')) {?>
+                                    <? if (hasPermission('editar_aula') || hasPermission('deletar_aula')) {?>
                                     <th>Ação</th>
                                     <? } ?>
                                 </tr>
@@ -84,11 +84,11 @@
                                         <td>
                                             <?=getJsonToObject($aula->dia)->turno ?? 'não identificado'?>
                                         </td>
-                                        <? if (hasPermission('editar aulas') || hasPermission('deletar aulas')) {?>
+                                        <? if (hasPermission('editar_aula') || hasPermission('deletar_aula')) {?>
                                         <td>
                                             <div class="d-none d-xl-flex d-lg-flex d-md-flex">
                                                 
-                                                <? if (hasPermission('deletar aulas')) {?>                                       
+                                                <? if (hasPermission('deletar_aula')) {?>                                       
                                                     <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$aula->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
@@ -103,7 +103,7 @@
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <div class="header-action-links float-end">                                                        
-                                                        <? if (hasPermission('deletar aulas')) {?>                                       
+                                                        <? if (hasPermission('deletar_aula')) {?>                                       
                                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$aula->uuid?>">                                                     
                                                                 <div class="border p-2 rounded-3">
                                                                     <span class="fs-5 text-danger icon-delete1"></span>

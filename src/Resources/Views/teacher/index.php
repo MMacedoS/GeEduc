@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar professores')) {?>
+    <? if (hasPermission('cadastrar_professor')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\professores\criar" class="btn btn-outline-primary" > + </a>
@@ -125,7 +125,7 @@
                                     <th>Nome</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Email</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                    <? if (hasPermission('editar_professor') || hasPermission('deletar_professor')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -153,24 +153,24 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar professores') || hasPermission('deletar professores')) {?>
+                                        <? if (hasPermission('editar_professor') || hasPermission('deletar_professor')) {?>
                                             <td >
                                                 <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('editar professores')) {?>                                     
+                                                    <? if (hasPermission('editar_professor')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-edit fs-5"></i>
                                                             </div>
                                                         </a> 
                                                     <? } ?>  
-                                                    <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                    <? if (hasPermission('visualizar_turmas_estudantes')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/disciplina">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-link fs-5"></i>
                                                             </div>
                                                         </a> 
                                                     <? } ?> 
-                                                    <? if (hasPermission('deletar professores')) {?>                                                                           
+                                                    <? if (hasPermission('deletar_professor')) {?>                                                                           
                                                         <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
                                                             <div class="border p-2 rounded-3">
                                                                 <span class="fs-5 text-danger icon-delete1"></span>
@@ -185,21 +185,21 @@
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <div class="header-action-links float-end">
-                                                            <? if (hasPermission('editar professores')) {?>                                     
+                                                            <? if (hasPermission('editar_professor')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" href="/professores/<?=$professor->uuid?>/editar">
                                                                     <div class="border p-2 rounded-3">
                                                                         <i class="icon-edit fs-5"></i>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?>  
-                                                            <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                            <? if (hasPermission('visualizar_turmas_estudantes')) {?>                                     
                                                                 <a class="mb-1 me-0 mt-1" href="/professores/<?=$professor->uuid?>/disciplina">
                                                                     <div class="border p-2 rounded-3">
                                                                         <i class="icon-link fs-5"></i>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?> 
-                                                            <? if (hasPermission('deletar professores')) {?>                                                                           
+                                                            <? if (hasPermission('deletar_professor')) {?>                                                                           
                                                                 <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$professor->uuid?>">                                                     
                                                                     <div class="border p-2 rounded-3">
                                                                         <span class="fs-5 text-danger icon-delete1"></span>

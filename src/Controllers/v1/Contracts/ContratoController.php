@@ -37,10 +37,24 @@ class ContratoController extends Controller {
   public function generateAndSendContracts($students) {
     $students = $this->estudanteMensalidadeRepository->allMonthlyfees(['verify_contract' => true]);
     foreach($students as $student) {
-      $pathPDF = $this->generatePDF($student, "/Resources/Views/contracts/contrato.php", "/../Public/files/contracts/contrato");
+      $pathPDF = $this->generatePDF(
+        $student, 
+        "/Resources/Views/contracts/contrato.php", 
+        "/../Public/files/contracts/contrato"
+      );
+
       if($pathPDF) {
-        $contract = $this->autentiqueService->sendContract($student, $pathPDF);
-        $idContract = getJsonToObject($contract)->data->createDocument->id;
+        $contract = $this->autentiqueService
+          ->sendContract(
+            $student, 
+            $pathPDF
+          );
+
+        $idContract = getJsonToObject($contract)
+          ->data
+          ->createDocument
+          ->id;
+
         if($idContract) {
           $data = [
             "student_id" => $student->estudante_id,
@@ -62,21 +76,46 @@ class ContratoController extends Controller {
     $headers = $request->getHeaders();
     $event = $payload['event'];
 
-    $verify = $this->autentiqueService->verifySignature($headers, json_encode($payload), SECRET_AUTENTIQUE);
+    $verify = $this->autentiqueService
+      ->verifySignature(
+        $headers, 
+        json_encode($payload), 
+        SECRET_AUTENTIQUE
+      );
 
-    $verify_2 = $this->autentiqueService->verifySignature($headers, json_encode($payload), SECRET_AUTENTIQUE_CREATE_DOC);
+    $verify_2 = $this->autentiqueService
+      ->verifySignature(
+        $headers, 
+        json_encode($payload), 
+        SECRET_AUTENTIQUE_CREATE_DOC
+      );
     
     if($verify || $verify_2) {
       switch ($event['type']) {
         case 'signature.accepted':
-          $this->contratoRepository->updateSignature($event["data"]["document"], $event);
+          $this->contratoRepository
+            ->updateSignature(
+              $event["data"]["document"], 
+              $event
+            );
           break;
+
         case 'signature.deleted':
-            $this->contratoRepository->updateSignature($event["data"]["document"], $event);
+            $this->contratoRepository
+              ->updateSignature(
+                $event["data"]["document"], 
+                $event
+              );
           break;
+
         case 'signature.rejected':
-            $this->contratoRepository->updateSignature($event["data"]["document"], $event);
+            $this->contratoRepository
+              ->updateSignature(
+                $event["data"]["document"], 
+                $event
+              );
           break;
+          
         default:
           LoggerHelper::logError("Evento não identificado");
       }

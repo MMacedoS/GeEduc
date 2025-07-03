@@ -31,9 +31,6 @@ class FrequenciaController extends Controller
     protected $periodoRepository;
     protected $cargaHorariaRepository;
     protected $aulaRepository;
-    protected $active;
-    protected $routeView;
-    protected $redirect;
     private $diaLetivoRepository;
 
     public function __construct(

@@ -21,7 +21,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar turmas e estudantes')) {?>
+    <? if (hasPermission('cadastrar_turmas_estudantes')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
@@ -72,7 +72,7 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
-                                            <label class="form-label">Trimestre</label>
+                                            <label class="form-label">Bimestre</label>
                                             <select class="form-select" name="period_id" id="bimester_id">
                                                 <?php foreach ($periodos as $key => $value) {?>
                                                     <option value="<?=$value->id?>" <?= $bimestreFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>

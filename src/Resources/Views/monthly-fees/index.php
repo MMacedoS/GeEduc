@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar mensalidades')) {?>
+    <? if (hasPermission('cadastrar_mensalidade')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a href="\mensalidade" class="btn btn-outline-primary" > + </a>
@@ -171,7 +171,7 @@
                                                                 <th>Dt. Vencimento</th>
                                                                 <th>Valor</th>
                                                                 <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                                                <? if (hasPermission('editar mensalidade') || hasPermission('cancelar mensalidades')) {?>
+                                                                <? if (hasPermission('editar_mensalidade') || hasPermission('cancelar_mensalidade')) {?>
                                                                 <th>Ação</th>
                                                                 <? } ?>
                                                             </tr>
@@ -209,11 +209,11 @@
                                                                             <? } ?>
                                                                         </div>
                                                                     </td>
-                                                                    <? if (hasPermission('editar mensalidade') && hasPermission('cancelar mensalidades')) {?>
+                                                                    <? if (hasPermission('editar_mensalidade') && hasPermission('cancelar_mensalidade')) {?>
                                                                         <td>
                                                                             <div class="d-none d-xl-flex d-lg-flex d-md-flex">
                                                                                 <? if (
-                                                                                    hasPermission('cancelar mensalidades') &&
+                                                                                    hasPermission('cancelar_mensalidade') &&
                                                                                     (
                                                                                         $estudante_mensalidade->situacao !== 'cancelado' &&
                                                                                         $estudante_mensalidade->situacao !== 'pago'
@@ -225,7 +225,7 @@
                                                                                         </div>
                                                                                     </button>
                                                                                 <? }?>
-                                                                                <? if (hasPermission('editar mensalidade')) {?>
+                                                                                <? if (hasPermission('editar_mensalidade')) {?>
                                                                                     <a class="mb-1 me-2 mt-1" href="/mensalidade/<?=$estudante_mensalidade->uuid?>/">
                                                                                         <div class="border p-2 rounded-3">
                                                                                             <i class="icon-edit fs-5"></i>
@@ -248,7 +248,7 @@
                                                                                 <div class="dropdown-menu dropdown-menu-end">
                                                                                     <div class="header-action-links float-end">
                                                                                             <? if (
-                                                                                            hasPermission('cancelar mensalidades') &&
+                                                                                            hasPermission('cancelar_mensalidade') &&
                                                                                             (
                                                                                                 $estudante_mensalidade->situacao !== 'cancelado' &&
                                                                                                 $estudante_mensalidade->situacao !== 'pago'
@@ -260,7 +260,7 @@
                                                                                                 </div>
                                                                                             </button>
                                                                                         <? }?>
-                                                                                        <? if (hasPermission('editar mensalidade')) {?>
+                                                                                        <? if (hasPermission('editar_mensalidade')) {?>
                                                                                             <a class="mb-1 me-2 mt-1" href="/mensalidade/<?=$estudante_mensalidade->uuid?>/">
                                                                                                 <div class="border p-2 rounded-3">
                                                                                                     <i class="icon-edit fs-5"></i>

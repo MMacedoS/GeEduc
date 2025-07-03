@@ -21,7 +21,7 @@ class DisciplinaController extends Controller{
     public function index(Request $request){
         $params = $request->getQueryParams();
         
-        if(!hasPermission('visualizar disciplinas')){
+        if(!hasPermission('visualizar_disciplinas')){
             return $this->router->redirect('disciplinas?error=442');
         }
 
@@ -83,7 +83,7 @@ class DisciplinaController extends Controller{
     }
 
     public function edit(Request $resquest, $id){
-        if(!hasPermission('editar disciplinas')){
+        if(!hasPermission('editar_disciplina')){
             return $this->router->redirect('disciplinas?error=422');
         }
 

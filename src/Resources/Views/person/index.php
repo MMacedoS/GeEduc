@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar pessoa')) {?>
+    <? if (hasPermission('cadastrar_pessoa')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\pessoa" class="btn btn-outline-primary" > + </a>
@@ -112,7 +112,7 @@
                                     <th>Nome</th>
                                     <th>email</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar pessoa contato') || hasPermission('deletar pessoa')) {?>
+                                    <? if (hasPermission('editar pessoa contato') || hasPermission('deletar_pessoa')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -141,16 +141,16 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar pessoa') || hasPermission('deletar pessoa')) {?>
+                                        <? if (hasPermission('editar_pessoa') || hasPermission('deletar_pessoa')) {?>
                                             <td class="d-flex">
-                                                 <? if (hasPermission('editar pessoa')) {?>                                     
+                                                 <? if (hasPermission('editar_pessoa')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/pessoa/<?=$pessoa->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
-                                                <? if (hasPermission('deletar pessoa')) {?>                                                                           
+                                                <? if (hasPermission('deletar_pessoa')) {?>                                                                           
                                                     <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$pessoa->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>

@@ -13,7 +13,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar estudantes')) {?>
+    <? if (hasPermission('cadastrar_estudante')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
             <a href="\estudante" class="btn btn-outline-primary" > + </a>
@@ -113,7 +113,7 @@
                                     <th>Nome</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">email</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar estudantes') || hasPermission('deletar professores')) {?>
+                                    <? if (hasPermission('editar_estudante') || hasPermission('deletar_professor')) {?>
                                      <th>Ação</th>
                                      <? } ?>
                                 </tr>
@@ -141,10 +141,10 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar estudantes') || hasPermission('deletar estudantes') || hasPermission('visualizar turmas estudantes')) {?>
+                                        <? if (hasPermission('editar_estudante') || hasPermission('deletar_estudante') || hasPermission('visualizar_turmas_estudantes')) {?>
                                             <td>
                                                  <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('editar estudantes')) {?>                                     
+                                                    <? if (hasPermission('editar_estudante')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/estudante/<?=$estudante->uuid?>">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-edit fs-5"></i>
@@ -152,14 +152,14 @@
                                                         </a> 
                                                     <? } ?>
 
-                                                    <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                    <? if (hasPermission('visualizar_turmas_estudantes')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/turma">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-link fs-5"></i>
                                                             </div>
                                                         </a> 
                                                     <? } ?>  
-                                                    <? if (hasPermission('visualizar mensalidades')) {?>                                     
+                                                    <? if (hasPermission('visualizar_mensalidades')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidades">
                                                             <div class="border p-2 rounded-3">
                                                                 <i class="icon-dollar-sign fs-5"></i>
@@ -167,7 +167,7 @@
                                                         </a> 
                                                     <? } ?>  
     
-                                                    <? if (hasPermission('deletar estudantes')) {?>                                                                           
+                                                    <? if (hasPermission('deletar_estudante')) {?>                                                                           
                                                         <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$estudante->uuid?>">                                                     
                                                             <div class="border p-2 rounded-3">
                                                                 <span class="fs-5 text-danger icon-delete1"></span>
@@ -182,7 +182,7 @@
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <div class="header-action-links">
-                                                            <? if (hasPermission('editar estudantes')) {?>                                     
+                                                            <? if (hasPermission('editar_estudante')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" href="/estudante/<?=$estudante->uuid?>">
                                                                     <div class="border p-2 rounded-3">
                                                                         <i class="icon-edit fs-5"></i>
@@ -190,21 +190,21 @@
                                                                 </a> 
                                                             <? } ?>
 
-                                                            <? if (hasPermission('visualizar turmas estudantes')) {?>                                     
+                                                            <? if (hasPermission('visualizar_turmas_estudantes')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/turma">
                                                                     <div class="border p-2 rounded-3">
                                                                         <i class="icon-link fs-5"></i>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?>  
-                                                            <? if (hasPermission('visualizar mensalidades')) {?>                                     
+                                                            <? if (hasPermission('visualizar_mensalidades')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" href="/estudantes/<?=$estudante->uuid?>/mensalidades">
                                                                     <div class="border p-2 rounded-3">
                                                                         <i class="icon-dollar-sign fs-5"></i>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?>  
-                                                            <? if (hasPermission('deletar estudantes')) {?>                                                                           
+                                                            <? if (hasPermission('deletar_estudante')) {?>                                                                           
                                                                 <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$estudante->uuid?>">                                                     
                                                                     <div class="border p-2 rounded-3">
                                                                         <span class="fs-5 text-danger icon-delete1"></span>

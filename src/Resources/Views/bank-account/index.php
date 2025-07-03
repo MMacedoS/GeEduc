@@ -16,7 +16,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('cadastrar contas')) {?>
+        <? if (hasPermission('cadastrar_conta')) {?>
          <a href="\bancos\criar" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
@@ -60,7 +60,7 @@
                                     <th>Agencia</th>
                                     <th>Conta</th>
                                     <th>Situação</th>
-                                    <? if (hasPermission('editar contas') || hasPermission('deletar contas')) {?>
+                                    <? if (hasPermission('editar_conta') || hasPermission('deletar_conta')) {?>
                                     <th>Ação</th>
                                     <? } ?>
                                 </tr>
@@ -91,16 +91,16 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar contas') || hasPermission('deletar contas')) {?>
+                                        <? if (hasPermission('editar_conta') || hasPermission('deletar_conta')) {?>
                                         <td class="d-flex">
-                                        <? if (hasPermission('editar contas')) {?>
+                                        <? if (hasPermission('editar_conta')) {?>
                                             <a class="mb-1 me-2 mt-1" href="/bancos/<?=$conta->uuid?>/editar">
                                                 <div class="border p-2 rounded-3">
                                                     <i class="icon-edit fs-5"></i>
                                                 </div>
                                             </a> 
                                         <? }?> 
-                                        <? if (hasPermission('deletar contas')) {?>                                       
+                                        <? if (hasPermission('deletar_conta')) {?>                                       
                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$conta->uuid?>">                                                     
                                                 <div class="border p-2 rounded-3">
                                                     <span class="fs-5 text-danger icon-delete1"></span>

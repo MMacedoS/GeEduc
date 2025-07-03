@@ -36,7 +36,7 @@ class PermissaoRepository extends SingletonInstance implements IPermissaoReposit
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY name DESC";
+        $sql .= " ORDER BY name ASC";
 
         $stmt = $this->conn->prepare($sql);
 

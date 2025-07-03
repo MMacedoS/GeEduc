@@ -24,7 +24,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('vincular turmas-disciplinas')) {?>
+        <? if (hasPermission('vincular_turmas_disciplinas')) {?>
          <a href="\turmas\<?=$turma->uuid?>\disciplina" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>
@@ -61,7 +61,7 @@
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Professor</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Carga Horária</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
+                                    <? if (hasPermission('editar_turmas_disciplinas') || hasPermission('deletar_turmas_disciplinas')) {?>
                                     <th>Ação</th>
                                     <? } ?>
                                 </tr>
@@ -93,17 +93,17 @@
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar turmas-disciplinas') || hasPermission('deletar turmas-disciplinas')) {?>
+                                        <? if (hasPermission('editar_turmas_disciplinas') || hasPermission('deletar_turmas_disciplinas')) {?>
                                         <td>
                                             <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                                <? if (hasPermission('editar_turmas_disciplinas')) {?>
                                                     <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplina/<?=$turma_disciplina->uuid?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? }?> 
-                                                <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                <? if (hasPermission('visualizar_atividades')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
                                                         <div class="border p-2 rounded-3">
                                                         <i class="icon-link fs-5"></i>
@@ -111,7 +111,7 @@
                                                     </a> 
                                                 <? } ?>  
 
-                                                <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                <? if (hasPermission('visualizar_atividades')) {?>                                     
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/aulas">
                                                                 <div class="border p-2 rounded-3">
                                                                 <i class="icon-library_books fs-5"></i>
@@ -119,7 +119,7 @@
                                                             </a> 
                                                         <? } ?>  
 
-                                                <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                                <? if (hasPermission('deletar_turmas_disciplinas')) {?>                                       
                                                     <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
                                                         <div class="border p-2 rounded-3">
                                                             <span class="fs-5 text-danger icon-delete1"></span>
@@ -134,28 +134,28 @@
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <div class="header-action-links float-end">
-                                                        <? if (hasPermission('editar turmas-disciplinas')) {?>
+                                                        <? if (hasPermission('editar_turmas_disciplinas')) {?>
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplina/<?=$turma_disciplina->uuid?>">
                                                                 <div class="border p-2 rounded-3">
                                                                     <i class="icon-edit fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? }?> 
-                                                        <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                        <? if (hasPermission('visualizar_atividades')) {?>                                     
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
                                                                 <div class="border p-2 rounded-3">
                                                                 <i class="icon-link fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? } ?>  
-                                                        <? if (hasPermission('visualizar atividades')) {?>                                     
+                                                        <? if (hasPermission('visualizar_atividades')) {?>                                     
                                                             <a class="mb-1 me-2 mt-1" href="/turmas/<?=$turma->uuid?>/disciplinas/<?=$turma_disciplina->uuid?>/atividades">
                                                                 <div class="border p-2 rounded-3">
                                                                 <i class="icon-edit fs-5"></i>
                                                                 </div>
                                                             </a> 
                                                         <? } ?>  
-                                                        <? if (hasPermission('deletar turmas-disciplinas')) {?>                                       
+                                                        <? if (hasPermission('deletar_turmas_disciplinas')) {?>                                       
                                                             <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$turma_disciplina->uuid?>">                                                     
                                                                 <div class="border p-2 rounded-3">
                                                                     <span class="fs-5 text-danger icon-delete1"></span>

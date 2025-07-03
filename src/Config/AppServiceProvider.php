@@ -22,6 +22,7 @@ use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Interfaces\Plan\IPlanoRepository;
 use App\Interfaces\Profile\IUsuarioRecuperarSenhaRepository;
 use App\Interfaces\Profile\IUsuarioRepository;
+use App\Interfaces\Recuperation\IRecuperacaoRepository;
 use App\Interfaces\Scores\INotaRepository;
 use App\Interfaces\Scores\IParalelaRepository;
 use App\Interfaces\Site\Album\ISiteAlbumRepository;
@@ -56,6 +57,7 @@ use App\Repositories\Person\PessoaFisicaRepository;
 use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Profile\UsuarioRecuperarSenhaRepository;
 use App\Repositories\Profile\UsuarioRepository;
+use App\Repositories\Recuperation\RecuperacaoRepository;
 use App\Repositories\Scores\NotaRepository;
 use App\Repositories\Scores\ParalelaRepository;
 use App\Repositories\Site\Album\SiteAlbumRepository;
@@ -284,6 +286,12 @@ class AppServiceProvider
             ->set(
                 IDiaLetivoRepository::class,
                 new DiaLetivoRepository()
+            );
+        
+        $this->container
+            ->set(
+                IRecuperacaoRepository::class,
+                new RecuperacaoRepository()
             );
     }
 }

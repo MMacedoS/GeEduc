@@ -17,7 +17,7 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar mensalidades')) {?>
+    <? if (hasPermission('cadastrar_mensalidade')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a href="\mensalidade" class="btn btn-outline-primary" > + </a>
