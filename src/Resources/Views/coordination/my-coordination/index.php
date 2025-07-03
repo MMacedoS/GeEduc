@@ -121,7 +121,7 @@
                             
                             <tbody>
                             <? 
-                            foreach ($data['turmas'] as $turma) { 
+                            foreach ($turmas as $turma) { 
                                 ?>
                                     <tr>
                                         <td><?=getJsonToObject($turma->turma_details)->id ?></td>
@@ -151,6 +151,14 @@
                                                             </div>
                                                         </a> 
                                                     <? } ?>  
+                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" 
+                                                            href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
+                                                                <i class="icon-archive fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?> 
                                                 </div>                                        
                                             </td>
                                         <? }?>
@@ -160,7 +168,7 @@
                         </table>
                     </div>
                     <div class="text-end ">
-                        Total <b><?=count($data['turmas'])?></b> registros
+                        Total <b><?=count($turmas)?></b> registros
                     </div>
                 </div>
             </div>
@@ -170,7 +178,7 @@
 
 <div class="row">
     <div class="float-end">
-        <?=$data['links']?>
+        <?=$links?>
     </div>
 </div>
 

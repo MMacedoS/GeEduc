@@ -24,7 +24,7 @@
     
     <div class="col-4 col-xl-6">
         <div class="float-end">
-        <? if (hasPermission('vincular_turmas_disciplinas')) {?>
+        <? if (hasPermission('vincular_turmas_disciplina')) {?>
          <a href="\turmas\<?=$turma->uuid?>\disciplina" class="btn btn-outline-primary" > + </a>
         <? }?>
         </div>

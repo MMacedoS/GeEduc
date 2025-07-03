@@ -50,7 +50,7 @@ class TurmaDisciplinaController extends Controller
 
     public function index(Request $request, $turma_id)
     {
-        if (!hasPermission('visualizar_turmas_disciplinas')) {
+        if (!hasPermission('visualizar_turmas')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -80,7 +80,7 @@ class TurmaDisciplinaController extends Controller
 
     public function indexClassRoomDisciplineByCoordenador(Request $request, $turma_id)
     {
-        if (!hasPermission('visualizar_turmas_disciplinas')) {
+        if (!hasPermission('visualizar_disciplinas')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -187,7 +187,7 @@ class TurmaDisciplinaController extends Controller
 
     public function store(Request $request, $class_id)
     {
-        if (!hasPermission('vincular_turmas_disciplinas')) {
+        if (!hasPermission('vincular_turmas_disciplina')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -252,7 +252,7 @@ class TurmaDisciplinaController extends Controller
 
     public function edit(Request $request, string $class_id, string $id)
     {
-        if (!hasPermission('vincular_turmas_disciplinas')) {
+        if (!hasPermission('vincular_turmas_disciplina')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -296,7 +296,7 @@ class TurmaDisciplinaController extends Controller
 
     public function update(Request $request, string $class_id, string $id)
     {
-        if (!hasPermission('vincular_turmas_disciplinas')) {
+        if (!hasPermission('vincular_turmas_disciplina')) {
             return $this->router->redirect('dashboard?error=422');
         }
 

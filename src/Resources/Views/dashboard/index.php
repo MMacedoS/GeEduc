@@ -7,7 +7,7 @@
     </div>
 <? }?>
 <!-- Row start -->  
-<?php if (hasPermission("visualizar cards dashboard")) {?>
+<?php if (hasPermission("visualizar_cards_dashboard")) {?>
   <div class="row gx-3">
     <div class="col-sm-3 col-12">
       <a href="\estudantes">

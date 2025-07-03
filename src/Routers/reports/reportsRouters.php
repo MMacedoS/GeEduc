@@ -4,3 +4,4 @@ $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 
 
 $router->create('GET', "/relatorios/{id}/grade-notas", [$gradeReportController, 'indexStudents'], $auth);
 $router->create('GET', "/relatorios/{id}/gerar-grade", [$gradeReportController, 'indexTeacher'], $auth);
+$router->create('GET', "/relatorios/turma/{id}/boletins", [$gradeReportController, 'boletins'], $auth);

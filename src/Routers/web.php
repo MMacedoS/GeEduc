@@ -34,6 +34,7 @@ use App\Controllers\v1\Profile\RecuperarSenhaController;
 use App\Controllers\v1\Recuperation\RecuperacaoController;
 use App\Controllers\v1\Scores\NotaController;
 use App\Controllers\v1\Site\Album\SiteAlbumController;
+use App\Services\NotaHelperService;
 
 $router = new Router();
 $auth = new Auth();

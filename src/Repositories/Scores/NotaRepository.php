@@ -16,7 +16,6 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
 
     use FindTrait;
 
-
     public function __construct() {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Nota();
@@ -74,6 +73,14 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
         } finally {          
             Database::getInstance()->closeConnection();
         }
+    }
+
+    public function getNotasByEstudante(int $estudanteTurmaId): array
+    {
+        $stmt = $this->conn->prepare("SELECT nota FROM notas WHERE estudante_turma_id = :id");
+        $stmt->bindParam(':id', $estudanteTurmaId);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function create(array $params)

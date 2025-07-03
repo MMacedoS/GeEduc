@@ -151,7 +151,7 @@
                         <td class="text-center"><?= $total ?></td>
                     <?php endforeach; ?>
                     <td class="text-center"><?= $faltas ?></td>
-                    <td class="text-center"><?= $total > 0 ? $situacao : '-' ?></td>
+                    <td class="text-center"><?= $total > 0 ? '-' : '-' ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

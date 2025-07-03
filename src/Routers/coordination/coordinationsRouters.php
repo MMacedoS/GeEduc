@@ -20,4 +20,4 @@ $router->create("POST", "/minha-coordenacao/turma/{id}/disciplina/{turma_discipl
 $router->create("GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "edit"], $auth);
 $router->create("POST", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "update"], $auth);
 $router->create("DELETE", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividade/{atividade_id}", [$atividadeController, "destroy"], $auth);
-$router->create('GET', "/minha-coordenacao/turma/{turma_id}/disciplina/{disciplina_id}/recuperacao", [$recuperacaoController, 'index'], $auth);
+$router->create('GET', "/minha-coordenacao/turma/{turma_id}/disciplina/{disciplina_id}/recuperacoes", [$recuperacaoController, 'index'], $auth);

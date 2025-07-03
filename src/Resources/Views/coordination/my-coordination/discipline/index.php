@@ -59,7 +59,7 @@
                                     <th class="text-center">Disciplina</th>
                                     <th class="text-center">Professor</th>
                                     <th class="text-center">Ano Letivo</th>
-                                    <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>
+                                    <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>
                                     <th>Ação</th>
                                     <? } ?>
                                 </tr>
@@ -78,7 +78,7 @@
                                         </td>
                                         <td class="text-center"> <?=$disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
-                                        <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor')) {?>
+                                        <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>
                                             <td class="d-flex">                                                 
                                                 <? if (hasPermission('inserir notas') || hasPermission('professor')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/notas">
@@ -94,7 +94,7 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>                                                                                
-                                                <? if (hasPermission('professor')) {?>                                     
+                                                <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
                                                             <i class="icon-file fs-5"></i>
@@ -109,14 +109,14 @@
                                                         </div>
                                                     </a> 
                                                 <? } ?>  
-                                                <? if (hasPermission('professor')) {?>                                     
+                                                <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" 
                                                         href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/recuperacoes">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
                                                             <i class="icon-sync_problem fs-5"></i>
                                                         </div>
                                                     </a> 
-                                                <? } ?>                                                                                
+                                                <? } ?>                                                                               
                                             </td>
                                         <? }?>
                                     </tr>
