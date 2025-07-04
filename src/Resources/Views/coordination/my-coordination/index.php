@@ -13,13 +13,6 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <?php if (hasPermission('cadastrar_coordenador')) {?>
-        <div class="col-4 col-xl-6">
-            <div class="float-end">
-            <a href="\coordenador" class="btn btn-outline-primary" > + </a>
-            </div>
-        </div>
-    <?php }?>
 </div>
     <!-- Row end -->
 <?php if(isset($success)){?>

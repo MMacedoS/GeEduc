@@ -82,6 +82,80 @@ class AtividadeController extends Controller
         );
     }
 
+    public function indexCoordenator(Request $request, string $class_id)
+    {
+        $classRooms = $this->turmaRepository->findByUuid($class_id);
+        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
+            [
+                'class_id' => $classRooms->id,
+                'academic_year' => Date('Y')
+            ]
+        );
+
+        return $this->router->view(
+            "coordination/my-coordination/discipline/activities", 
+            [
+                'active' => $this->active, 
+                'turma' => $classRooms, 
+                'turmas_disciplinas' => $class_disciplines
+            ]
+        );
+    }
+
+    public function createByClass(Request $request, string $class_id)
+    {
+        $classRooms = $this->turmaRepository->findByUuid($class_id);
+        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
+            [
+                'class_id' => $classRooms->id,
+                'academic_year' => Date('Y')
+            ]
+        );
+
+        $data = $request->getBodyParams();
+
+        $validator = new Validator($data);
+
+        $rules = [     
+            'type' => 'required',
+            'value' => 'required',
+            'active' => 'required'
+        ];
+
+        if (!$validator->validate($rules)) {
+            return $this->router->view(
+                "coordination/my-coordination/discipline/activities", 
+                [
+                    'active' => $this->active, 
+                    'danger' => true,  
+                    'turma' => $classRooms, 
+                    'turmas_disciplinas' => $class_disciplines
+                ]
+            );
+        }
+
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
+
+        $totalValue = $this->sumValueActivities($activities);
+
+        if($totalValue >= self::TEN) {
+            return $this->router->redirect(
+                "minha-coordenacao/turma/$classRooms->uuid/atividades?completed=$totalValue"
+            );   
+        }
+
+        $created = 0; 
+        foreach ($class_disciplines as $key => $value) {
+            $data['class_discipline_id'] = $value->id;
+            $res = $this->atividadeRepository->create($data);
+            !is_null($res) ? $created++ : ''; 
+        }
+        
+        return $this->router->redirect(
+            "minha-coordenacao/turma/$classRooms->uuid/atividades?created=$created"
+        );   
+    }
+
     public function create(Request $request, string $class_id, string $class_discipline_id)
     {        
         $this->defineRoutes($class_id, $class_discipline_id);

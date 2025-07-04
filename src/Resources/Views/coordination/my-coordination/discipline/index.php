@@ -17,10 +17,10 @@
         </ol>
        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar_turmas_estudantes')) {?>
+    <? if (hasPermission('cadastrar_atividade')) {?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
-                <a class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
+                <a href="\minha-coordenacao\turma\<?=$turma->uuid?>\atividades" class="btn btn-outline-primary" > + </a>
             </div>
         </div>
     <? }?>
@@ -80,7 +80,7 @@
                                         </td>
                                         <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>
                                             <td class="d-flex">                                                 
-                                                <? if (hasPermission('inserir notas') || hasPermission('professor')) {?>                                     
+                                                <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>                                     
                                                     <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/notas">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
                                                             <i class="icon-edit fs-5"></i>
