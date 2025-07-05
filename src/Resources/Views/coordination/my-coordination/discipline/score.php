@@ -107,13 +107,13 @@
                         foreach ($estudantes as $key => $estudante) {                                       
                         ?>
                             <div class="row mb-3 me-0">
-                                <div class="col-4">
+                                <div class="col-sm-12 col-md-4">
                                     <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
                                     -
                                     <?= getJsonToObject($estudante->turma)->nome ?></span>
                                 </div>
                                 <?php foreach($atividades as $atividade) { ?> 
-                                <div class="col-1">
+                                <div class="col-3 col-md-2">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
                                         <input 
@@ -123,12 +123,12 @@
                                             min="0" 
                                             step="0.1" 
                                             max="<?= $atividade->valor ?>" 
-                                            value="<?= $notasMap["$estudante->id$atividade->id"] ?? 0?>">                                   
+                                            value="<?= $notasMap["$estudante->id$atividade->id"] ?? ''?>">                                   
                                     </div>
                                 </div>
                                 <?php } ?>
 
-                                <div class="col-1">
+                                <div class="col-sm-12 col-md-3">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
                                         <input type="number" min="0" step="0.01" max="10" 

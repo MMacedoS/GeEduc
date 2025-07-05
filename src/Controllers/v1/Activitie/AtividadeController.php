@@ -132,23 +132,29 @@ class AtividadeController extends Controller
                     'turmas_disciplinas' => $class_disciplines
                 ]
             );
-        }
-
-        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
-
-        $totalValue = $this->sumValueActivities($activities);
-
-        if($totalValue >= self::TEN) {
-            return $this->router->redirect(
-                "minha-coordenacao/turma/$classRooms->uuid/atividades?completed=$totalValue"
-            );   
-        }
+        }        
 
         $created = 0; 
+        $completed = 0;
         foreach ($class_disciplines as $key => $value) {
+            $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $value->id, 'active' => 1]);
+
+            $totalValue = $this->sumValueActivities($activities);
+
+            if($totalValue >= self::TEN) {
+                $completed++;
+                continue; 
+            }
+
             $data['class_discipline_id'] = $value->id;
             $res = $this->atividadeRepository->create($data);
             !is_null($res) ? $created++ : ''; 
+        }
+
+        if (count($class_disciplines) == $completed) {
+            return $this->router->redirect(
+                "minha-coordenacao/turma/$classRooms->uuid/atividades?completed=$totalValue"
+            );  
         }
         
         return $this->router->redirect(

@@ -10,7 +10,7 @@
     {
         $cores = array("rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)", "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)");
 
-        $html = '<canvas id="grafico-barras' . $canva . '" width="800" height="250"></canvas>';
+        $html = '<canvas id="grafico-barras' . $canva . '" width="750" height="200"></canvas>';
         $html .= '<script>';
         $html .= 'var ctx = document.getElementById("grafico-barras' . $canva . '").getContext("2d");';
         $html .= 'var meuGrafico = new Chart(ctx, {';
@@ -208,7 +208,7 @@
         $pagina .= '<table id="customers" width="100%">
             <tr> 
                 <th width="33%" colspan="3" style="font-size: 18;" align="center">
-                    <img src="' . ROTA_GERAL . '/Public/assets/images/novaLogo.png" alt="logo" width="100" height="60">
+                    <img src="' . ROTA_GERAL . '/Public/assets/images/novaLogo.png" alt="logo" width="100" height="40">
                     <span style="display: flow-root;">Instituto Social de Tucano</span>
                 </th>
             </tr>
@@ -433,9 +433,9 @@
         echo $html;
     }
 ?>
-<!-- <script defer>
+<script defer>
     document.addEventListener("DOMContentLoaded", function(event) {
         console.log("DOM completamente carregado e analisado");
         window.print();
     });
-</script> -->
+</script>

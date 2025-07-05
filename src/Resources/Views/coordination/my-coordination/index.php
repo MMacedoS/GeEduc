@@ -146,13 +146,39 @@
                                                     <? } ?>  
                                                     <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" 
-                                                            href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins">
+                                                            href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins"  target="_blank">
                                                             <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
                                                                 <i class="icon-archive fs-5"></i>
                                                             </div>
                                                         </a> 
                                                     <? } ?> 
-                                                </div>                                        
+                                                </div> 
+                                                
+                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
+                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
+                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="icon-menu"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu">
+                                                        <div class="header-action-links float-end">
+                                                            <? if (hasPermission('editar_disciplina')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/disciplinas">
+                                                                    <div class="border p-2 rounded-3">
+                                                                        <i class="icon-link fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>  
+                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" 
+                                                                    href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins" target="_blank">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
+                                                                        <i class="icon-archive fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?> 
+                                                        </div>
+                                                    </div>
+                                                </div>                                       
                                             </td>
                                         <? }?>
                                     </tr>

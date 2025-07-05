@@ -3,6 +3,7 @@
 namespace App\Controllers\v1\Scores;
 
 use App\Controllers\Controller;
+use App\Controllers\Middleware\Authenticate;
 use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Period\IPeriodoRepository;
@@ -111,6 +112,8 @@ class NotaController extends Controller
 
     public function store(Request $request, string $class_discipline_id, string $class_id = null)
     {
+        $auth_check = new Authenticate();
+        $auth_check->handle();
         $this->defineRoutes($class_discipline_id);
         $data = $request->getBodyParams();
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);

@@ -57,7 +57,7 @@
                                 <tr>
                                     <th class="text-center">#</th>
                                     <th class="text-center">Disciplina</th>
-                                    <th class="text-center">Professor</th>
+                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Professor</th>
                                     <th class="text-center">Ano Letivo</th>
                                     <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>
                                     <th>Ação</th>
@@ -73,50 +73,99 @@
                                         <td class="fw-bold text-center"> 
                                             <?=getJsonToObject($disciplina->professor_disciplina)->disciplina->nome ?? 'não identificado'?>
                                         </td>
-                                        <td class="fw-bold text-center"> 
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell"> 
                                             <?=getJsonToObject($disciplina->professor_disciplina)->professor->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="text-center"> <?=$disciplina->ano_letivo ?? 'não identificado'?>
                                         </td>
                                         <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>
                                             <td class="d-flex">                                                 
-                                                <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/notas">
-                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
-                                                            <i class="icon-edit fs-5"></i>
+                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex">
+                                                    <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/notas">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
+                                                                <i class="icon-edit fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>
+                                                    <? if (hasPermission('realizar chamadas') || hasPermission('professor')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/frequencia">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Frequência">
+                                                                <i class="icon-calendar fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>                                                                                
+                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
+                                                                <i class="icon-file fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>                                                                                
+                                                    <? if (hasPermission('professor')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" 
+                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                                <i class="icon-link fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>  
+                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" 
+                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/recuperacoes">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                                <i class="icon-sync_problem fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>                                           
+                                                </div>
+                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
+                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
+                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="icon-menu"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu">
+                                                        <div class="header-action-links float-end">
+                                                            <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/notas">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
+                                                                        <i class="icon-edit fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>
+                                                            <? if (hasPermission('realizar chamadas') || hasPermission('professor')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/frequencia">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Frequência">
+                                                                        <i class="icon-calendar fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>                                                                                
+                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
+                                                                        <i class="icon-file fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>                                                                                
+                                                            <? if (hasPermission('professor')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" 
+                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                                        <i class="icon-link fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>  
+                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" 
+                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/recuperacoes">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                                        <i class="icon-sync_problem fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>  
                                                         </div>
-                                                    </a> 
-                                                <? } ?>
-                                                <? if (hasPermission('realizar chamadas') || hasPermission('professor')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=$disciplina->uuid?>/frequencia">
-                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Frequência">
-                                                            <i class="icon-calendar fs-5"></i>
-                                                        </div>
-                                                    </a> 
-                                                <? } ?>                                                                                
-                                                <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$disciplina->uuid?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
-                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
-                                                            <i class="icon-file fs-5"></i>
-                                                        </div>
-                                                    </a> 
-                                                <? } ?>                                                                                
-                                                <? if (hasPermission('professor')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" 
-                                                        href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/atividades">
-                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                            <i class="icon-link fs-5"></i>
-                                                        </div>
-                                                    </a> 
-                                                <? } ?>  
-                                                <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" 
-                                                        href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/recuperacoes">
-                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                            <i class="icon-sync_problem fs-5"></i>
-                                                        </div>
-                                                    </a> 
-                                                <? } ?>                                                                               
+                                                    </div>
+                                                </div>                                                                           
                                             </td>
                                         <? }?>
                                     </tr>
