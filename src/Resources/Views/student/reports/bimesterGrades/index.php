@@ -64,16 +64,16 @@
             <thead class="table-primary text-center">
                 <tr>
                     <th rowspan="3" class="align-middle">Disciplina</th>
-                    <th colspan="6">Bimestres</th>
+                    <th colspan="6">periodos</th>
                     <th colspan="4" rowspan="2" class="align-middle">Total</th>
                 </tr>
                 <tr>
-                <?php foreach($bimestres as $bimestre) { ?>
-                    <th colspan="2"><?= $bimestre->bimestre?>º Bimestre</th>
+                <?php foreach($periodos as $periodo) { ?>
+                    <th colspan="2"><?= $periodo->periodo?>º periodo</th>
                 <?php } ?>
                 </tr>
                 <tr>
-                <?php foreach($bimestres as $bimestre) { ?>
+                <?php foreach($periodos as $periodo) { ?>
                     <th>Nota</th>
                     <th>Faltas</th>
                 <?php } ?>
@@ -83,47 +83,73 @@
                     <th>T.F</th>
                 </tr>
             </thead>
-            <tbody>
+            <?php
+                $notasMap = [];
+                $frequenciaMap = [];
 
-                <?php
-                $notasMap = []; 
-                foreach($notas as $nota) {
-                    $turma_disciplina_id = getJsonToObject($nota->turmas_details)->id;
-                    if(isset($notasMap["$nota->bimestre_id$turma_disciplina_id"])) {
-                        $notasMap["$nota->bimestre_id$turma_disciplina_id"] += $nota->nota;
-                    } else {
-                        $notasMap["$nota->bimestre_id$turma_disciplina_id"] = $nota->nota;
+                // Organiza notas por período e por disciplina
+                foreach ($notas as $nota) {
+                    $turmaDisciplinaId = getJsonToObject($nota->turmas_details)->id;
+                    $periodoKey = "{$nota->periodo_id}{$turmaDisciplinaId}";
+
+                    // Soma por bimestre
+                    if (!isset($notasMap[$periodoKey])) {
+                        $notasMap[$periodoKey] = 0;
                     }
-                    $notasMap[$turma_disciplina_id] += $nota->nota;
+                    $notasMap[$periodoKey] += $nota->nota;
+
+                    // Soma total da disciplina
+                    if (!isset($notasMap[$turmaDisciplinaId])) {
+                        $notasMap[$turmaDisciplinaId] = 0;
+                    }
+                    $notasMap[$turmaDisciplinaId] += $nota->nota;
                 }
-                $frequenciaMap = []; 
-                foreach($frequencias as $frequencia) {
-                    
-                    if(isset($frequenciaMap["$frequencia->bimestre_id$frequencia->turma_disciplina_id"])) {
-                        $frequenciaMap["$frequencia->bimestre_id$frequencia->turma_disciplina_id"] += $frequencia->faltas;
-                    } else {
-                        $frequenciaMap["$frequencia->bimestre_id$frequencia->turma_disciplina_id"] = $frequencia->faltas;
-                    }
 
+                // Organiza faltas por período e por disciplina
+                foreach ($frequencias as $frequencia) {
+                    $periodoKey = "{$frequencia->periodo_id}{$frequencia->turma_disciplina_id}";
+
+                    // Soma por bimestre
+                    if (!isset($frequenciaMap[$periodoKey])) {
+                        $frequenciaMap[$periodoKey] = 0;
+                    }
+                    $frequenciaMap[$periodoKey] += $frequencia->faltas;
+
+                    // Soma total da disciplina
+                    if (!isset($frequenciaMap[$frequencia->turma_disciplina_id])) {
+                        $frequenciaMap[$frequencia->turma_disciplina_id] = 0;
+                    }
                     $frequenciaMap[$frequencia->turma_disciplina_id] += $frequencia->faltas;
                 }
+                ?>
 
-               
-                foreach(getJsonToObject($allDisciplines["resultado"])->disciplinas as $disciplina) {?>
-                <tr class="text-center">
-                    <td class="text-start text-capitalize"><?= $disciplina->disciplina_nome; ?></td>
+                <tbody>
+                <?php foreach (getJsonToObject($allDisciplines["resultado"])->disciplinas as $disciplina): ?>
+                    <tr class="text-center">
+                        <td class="text-start text-capitalize"><?= $disciplina->disciplina_nome; ?></td>
 
-                    <?php foreach($bimestres as $bimestre) { ?>
-                    <td><?= $notasMap["$bimestre->bimestre$disciplina->turma_disciplina_id"] ?? "0" ?></td>
-                    <td><?= $frequenciaMap["$bimestre->bimestre$disciplina->turma_disciplina_id"] ?? "0" ?></td>
-                    <?php } ?>
-                    <td><?= $notasMap[$disciplina->turma_disciplina_id] ?? "0" ?></td>
-                    <td><?= isset($notasMap[$disciplina->turma_disciplina_id]) ? number_format($notasMap[$disciplina->turma_disciplina_id] / count($bimestres), 2) : "0" ?></td>
-                    <td><?= isset($notasMap[$disciplina->turma_disciplina_id]) && number_format($notasMap[$disciplina->turma_disciplina_id] / count($bimestres) >= MIN_SCORE, 2) ? "APR" : "REP" ?></td>
-                    <td><?= $frequenciaMap[$disciplina->turma_disciplina_id] ?? "0" ?></td>
-                </tr>
-                <?php } ?>
-            </tbody>
+                        <?php foreach ($periodos as $periodo): 
+                            $notaBimestre = $notasMap["{$periodo->periodo}{$disciplina->turma_disciplina_id}"] ?? 0;
+                            $faltasBimestre = $frequenciaMap["{$periodo->periodo}{$disciplina->turma_disciplina_id}"] ?? 0;
+                        ?>
+                            <td><?= $notaBimestre ?></td>
+                            <td><?= $faltasBimestre ?></td>
+                        <?php endforeach; ?>
+
+                        <?php
+                            $totalNota = $notasMap[$disciplina->turma_disciplina_id] ?? 0;
+                            $media = count($periodos) ? number_format($totalNota / count($periodos), 2) : '0.00';
+                            $situacao = $totalNota && $media >= MIN_SCORE ? 'APR' : 'REP';
+                            $totalFaltas = $frequenciaMap[$disciplina->turma_disciplina_id] ?? 0;
+                        ?>
+                        <td><?= $totalNota ?></td>
+                        <td><?= $media ?></td>
+                        <td><?= $situacao ?></td>
+                        <td><?= $totalFaltas ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+
         </table>
         <p class="mt-4"><strong>Legenda:</strong>TOTAL: somatório anual, M.F: média
         final, R.F: resultado final, T.F: total de faltas, APR: aprovado, REP: reprovado, T.N: total notas.</p>
@@ -133,6 +159,5 @@
 <script>
 window.onload = function() {
     window.print();
-    window.close();
 };
 </script>

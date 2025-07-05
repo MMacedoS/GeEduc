@@ -48,37 +48,37 @@
                             </thead>
                             
                             <tbody>
-                            <? foreach ($turmas as $turma) { 
+                            <? foreach ($turmas as $turma_estudante) { 
                                 ?>
                                     <tr>
-                                        <td><?=$turma->id?></td>
-                                        <td class="fw-bold"> <?=getJsonToObject($turma->turma)->nome ?? 'não identificado'?>
+                                        <td><?=$turma_estudante->id?></td>
+                                        <td class="fw-bold"> <?=getJsonToObject($turma_estudante->turma)->nome ?? 'não identificado'?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                        <?=getJsonToObject($turma->turma)->coordenador->nome ?? 'não identificado'?>
+                                            <?=getCustomers(getJsonToObject($turma_estudante->turma)->coordenadores)?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
-                                            <?=$turma->ano_letivo?>
+                                            <?=$turma_estudante->ano_letivo?>
                                         </td>
-                                        <? if (hasPermission('estudante')) {?>
+                                        <? if (hasPermission('estudante') && getJsonToObject($turma_estudante->turma)->visivel == 1) {?>
                                             <td class="d-flex">
                                                  <? if (hasPermission('estudante')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/minhas-turmas/<?=$turma->uuid?>/notas">
+                                                    <a class="mb-1 me-2 mt-1" href="/minhas-turmas/<?=$turma_estudante->uuid?>/estudante/<?=getJsonToObject($turma_estudante->estudante)->uuid?>/notas">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>
                                                     </a> 
                                                 <? } ?>
                                                 <? if (hasPermission('estudante')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/minhas-turmas/<?=$turma->uuid?>/frequencia">
+                                                    <!-- <a class="mb-1 me-2 mt-1" href="/minhas-turmas/<?=$turma_estudante->uuid?>/frequencia">
                                                         <div class="border p-2 rounded-3" data-toggle="tooltip" title="Frequência">
                                                             <i class="icon-calendar fs-5"></i>
                                                         </div>
-                                                    </a> 
+                                                    </a>  -->
                                                 <? } ?>
                                                 <? if (hasPermission('estudante')) {?>                                     
-                                                    <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$turma->uuid?>/grade-notas">
-                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Grade de notas" target="_blank">
+                                                    <a class="mb-1 me-2 mt-1" href="/relatorios/<?=$turma_estudante->uuid?>/grade-notas" target="_blank">
+                                                        <div class="border p-2 rounded-3" data-toggle="tooltip" title="Grade de notas">
                                                             <i class="icon-file fs-5"></i>
                                                         </div>
                                                     </a> 

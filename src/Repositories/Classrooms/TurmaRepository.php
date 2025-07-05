@@ -124,7 +124,9 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
 
     public function update(array $data, int $id) 
     {
-        $class = $this->model->create($data);
+        $register = $this->findById($id);
+
+        $class = $this->model->update($data, $register);
 
         try {
             $stmt = $this->conn->prepare(
@@ -133,7 +135,8 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
                     nome = :nome,
                     turno = :turno,
                     ordem = :ordem,
-                    ativo = :ativo
+                    ativo = :ativo,
+                    visivel = :visible
                 WHERE id = :id
                 "
             );
@@ -143,6 +146,7 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
                 ':turno' => $class->turno,
                 ':ordem' => $class->ordem,
                 ':ativo' => $class->ativo,
+                ':visible' => $class->visivel,
                 ':id' => $id
             ]);
 

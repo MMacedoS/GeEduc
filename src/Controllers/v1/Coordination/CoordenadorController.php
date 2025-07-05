@@ -3,6 +3,7 @@
 namespace App\Controllers\v1\Coordination;
 
 use App\Controllers\Controller;
+use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Interfaces\Person\IPessoaFisicaRepository;
@@ -17,19 +18,22 @@ class CoordenadorController extends Controller{
     protected $pessoaFisicaRepository;
     protected $usuarioRepository;
     protected $coordenadorTurmaRepository;
+    protected $turmaRepository;
     
 
     public function __construct(
         ICoordenadorRepository $coordenadorRepository,
         IPessoaFisicaRepository $pessoaFisicaRepository,
         IUsuarioRepository $usuarioRepository,
-        ICoordenadorTurmaRepository $coordenadorTurmaRepository
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository,
+        ITurmaRepository $turmaRepository
     ){
         parent::__construct();
         $this->coordenadorRepository = $coordenadorRepository;
         $this->pessoaFisicaRepository = $pessoaFisicaRepository;
         $this->usuarioRepository = $usuarioRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
+        $this->turmaRepository = $turmaRepository;
     }
 
     public function index(Request $request){
@@ -162,5 +166,22 @@ class CoordenadorController extends Controller{
         }
 
         $this->coordenadorRepository->deleteAll($coordenador);
+    }
+
+    public function visible(Request $request, string $id) 
+    {
+        $turma = $this->turmaRepository->findByUuid($id);
+        
+        if(is_null($turma)){            
+            return $this->router->redirect('minha-coordenacao/');
+        }
+
+        $active = $turma->visivel == '0' ? '1' : '0';
+
+        $data['visible'] = $active;
+
+        $updated = $this->turmaRepository->update($data, $turma->id);
+
+        return $this->router->redirect('minha-coordenacao/');
     }
 }

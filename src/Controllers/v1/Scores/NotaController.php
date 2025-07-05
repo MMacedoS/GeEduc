@@ -152,6 +152,37 @@ class NotaController extends Controller
         return $this->router->redirect("$this->redirect/notas?period_id=$data[period_id]");
     }
 
+    public function indexStudents(Request $request, string $studant_class_id, string $student_id) 
+    {    
+        $student = $this->estudanteRepository
+            ->studentWithPersonByUuid((string)$student_id);
+
+        $student_class = $this->estudanteTurmaRepository->findByUuid($studant_class_id);        
+                
+        $notas = $this->notaRepository->allScoresByStudents([
+            'student_class_id' => $student_class->id
+        ]);
+        
+        $periodos = $this->periodoRepository->all(['active' => '1']);
+
+        $perPage = 10;
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($notas, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+
+        return $this->router->view(
+            '/student/my-classrooms/scores', 
+            [
+                'active' => 'students',
+                'estudante' => $student,
+                'notas' => $paginatedBoards,
+                'links' => $paginator->links(),
+                'periodos' => $periodos,
+                'bimestreFilter' => $paramsURL['bimester_id'] ?? null,
+            ]
+        );
+    }
+
     public function indexResponsibleStudents(Request $request, string $student_id, string $studant_class_id) 
     {    
         $student = $this->estudanteRepository

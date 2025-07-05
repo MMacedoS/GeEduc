@@ -125,6 +125,7 @@ class EstudanteController extends Controller
 
         return $this->router->redirect('estudantes/');
     }
+    
     private function organizationTableExcel($spreadsheet, callable $callback)
     {
         foreach ($spreadsheet->getAllSheets() as $worksheet) {

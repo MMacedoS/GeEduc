@@ -175,8 +175,26 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
     {
         $sql = "SELECT 
                     d.nome AS disciplina,
-                    b.periodo AS periodo,
-                    GROUP_CONCAT(CONCAT(a.tipo, ': ', n.nota) SEPARATOR '</br> ') AS atividades_notas,
+                    GROUP_CONCAT(
+                        CASE WHEN b.id = 1 THEN CONCAT('1º Bim: ', a.tipo, ': ', n.nota) END
+                        SEPARATOR '</br>'
+                    ) AS notas_bimestre1,
+
+                    GROUP_CONCAT(
+                        CASE WHEN b.id = 2 THEN CONCAT('2º Bim: ', a.tipo, ': ', n.nota) END
+                        SEPARATOR '</br>'
+                    ) AS notas_bimestre2,
+
+                    GROUP_CONCAT(
+                        CASE WHEN b.id = 3 THEN CONCAT('3º Bim: ', a.tipo, ': ', n.nota) END
+                        SEPARATOR '</br>'
+                    ) AS notas_bimestre3,
+
+                    GROUP_CONCAT(
+                        CASE WHEN b.id = 4 THEN CONCAT('4º Bim: ', a.tipo, ': ', n.nota) END
+                        SEPARATOR '</br>'
+                    ) AS notas_bimestre4,
+                    SUM(n.nota) as media,
                     pf.nome as professor
                 FROM 
                     notas n
@@ -206,20 +224,15 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
             $conditions[] = 'n.estudante_turma_id = :student_class_id';
             $bindings[':student_class_id'] = $params['student_class_id'];
         }
-
-        if (isset($params['period_id'])) {
-            $conditions[] = 'n.periodo_id = :period_id';
-            $bindings[':period_id'] = $params['period_id'];
-        }
         
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
         $sql .= " GROUP BY 
-                    pf.nome, et.id, d.id, b.id
+                    pf.nome, et.id, d.id
                 ORDER BY 
-                 d.nome, b.periodo;";
+                 d.nome;";
 
         try {
             $stmt = $this->conn->prepare($sql);

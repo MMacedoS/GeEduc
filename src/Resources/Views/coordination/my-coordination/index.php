@@ -152,6 +152,19 @@
                                                             </div>
                                                         </a> 
                                                     <? } ?> 
+                                                    <? if (hasPermission('coordenador') ) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" 
+                                                            href="/minha-coordenacao/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/visibilidade">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
+                                                                <? if(getJsonToObject($turma->turma_details)->visivel == 0) {?>
+                                                                    <i class="icon-eye-off fs-5"></i>
+                                                                <? }?>
+                                                                <? if(getJsonToObject($turma->turma_details)->visivel == 1) {?>
+                                                                    <i class="icon-eye fs-5"></i>
+                                                                <? }?>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?> 
                                                 </div> 
                                                 
                                                 <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
@@ -173,6 +186,19 @@
                                                                     href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins" target="_blank">
                                                                     <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
                                                                         <i class="icon-archive fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?> 
+                                                            <? if (hasPermission('coordenador') ) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" 
+                                                                    href="/minha-coordenacao/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/visibilidade">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
+                                                                        <? if(getJsonToObject($turma->turma_details)->visivel == 0) {?>
+                                                                            <i class="icon-eye-off fs-5"></i>
+                                                                        <? }?>
+                                                                        <? if(getJsonToObject($turma->turma_details)->visivel == 1) {?>
+                                                                            <i class="icon-eye fs-5"></i>
+                                                                        <? }?>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?> 

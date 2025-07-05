@@ -28,6 +28,7 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
                     JSON_OBJECT(
                         'id', t.uuid,
                         'nome', t.nome,
+                        'visivel', t.visivel,
                         'coordenadores', JSON_ARRAYAGG(
                             JSON_OBJECT(
                                 'nome', pf.nome,
@@ -37,6 +38,7 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
                     ) AS turma,
                     JSON_OBJECT(
                         'id', e.id,
+                        'uuid', e.uuid,
                         'pessoa_fisica_id', e.pessoa_fisica_id,
                         'nome', pfe.nome
                     ) AS estudante

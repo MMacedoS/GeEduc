@@ -30,6 +30,7 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
                     'uuid', t.uuid,
                     'nome', t.nome,
                     'turno', t.turno,
+                    'visivel', t.visivel,
                     'ativo', t.ativo
                 ) AS turma_details
             FROM " . self::TABLE . " ct
@@ -63,12 +64,11 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
 
     public function saveAll(array $data, $turma_id)
     {
-        if (empty($data)) {
+        if (empty($data) || empty($data['coordinator_id'])) {
             return null;
         }
         
-        try {
-           
+        try {           
             $this->conn->beginTransaction();
 
             $this->deleteByClassId($turma_id);

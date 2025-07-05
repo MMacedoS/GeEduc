@@ -14,6 +14,7 @@ $router->create('GET', "/minha-coordenacao/turma/{id}/frequencia", [$frequenciaC
 $router->create('POST', "/minha-coordenacao/turma/{id}/frequencia", [$frequenciaController, 'store'], $auth);
 $router->create('GET', "/minha-coordenacao/turma/{id}/notas", [$notaController, 'indexTeacher'], $auth);
 $router->create('POST', "/minha-coordenacao/turma/{id}/notas", [$notaController, 'store'], $auth);
+$router->create('GET', "/minha-coordenacao/turma/{id}/visibilidade", [$coordenadorController, 'visible'], $auth);
 $router->create('GET', "/minha-coordenacao/turma/{turma_id}/atividades", [$atividadeController, 'indexCoordenator'], $auth);
 $router->create('POST', "/minha-coordenacao/turma/{turma_id}/atividades", [$atividadeController, 'createByClass'], $auth);
 $router->create("GET", "/minha-coordenacao/turma/{id}/disciplina/{turma_disciplina}/atividades", [$atividadeController, "index"], $auth);
