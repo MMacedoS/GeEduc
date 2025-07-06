@@ -177,6 +177,75 @@ class GradeReportController extends Controller
             ]
         ); 
     }
+
+    public function allTicketsDetails(Request $request, string $turma_id)
+    {
+        $class = $this->turmaRepository->findByUuid($turma_id);
+
+        $periodos = $this->periodoRepository->all(['active' => '1']);
+
+        $all_disciplines = $this->turmaDisciplinaRepository
+            ->allClassDisciplines(
+                [
+                    'class_id' => $class->id,
+                    'academic_year' => Date('Y')
+                ]
+            );       
+        
+        $all_students = $this->estudanteTurmaRepository
+            ->allClassStudents(
+                [
+                    'class_id' => $class->id,
+                    'school_year' => Date('Y')
+                ]
+            );
+
+        return $this->router->view(
+            'reports/details', 
+            [
+                'allStudentClass' => $all_students,
+                'allDisciplines' => $all_disciplines,
+                'periodos' => $periodos,
+                'notaService' => $this->boletimRepository,
+                'activitiesService' => $this->atividadeRepository
+            ]
+        ); 
+    }
+
+    public function ticketsDetailsByStudent(Request $request, string $turma_id, string $estudante_id)
+    {
+        $class = $this->turmaRepository->findByUuid($turma_id);
+
+        $periodos = $this->periodoRepository->all(['active' => '1']);
+
+        $all_disciplines = $this->turmaDisciplinaRepository
+            ->allClassDisciplines(
+                [
+                    'class_id' => $class->id,
+                    'academic_year' => Date('Y')
+                ]
+            );       
+        
+        $all_students = $this->estudanteTurmaRepository
+            ->allClassStudents(
+                [
+                    'class_id' => $class->id, 
+                    'uuid' => $estudante_id,
+                    'school_year' => Date('Y')
+                ]
+            );
+
+        return $this->router->view(
+            'reports/details', 
+            [
+                'allStudentClass' => $all_students,
+                'allDisciplines' => $all_disciplines,
+                'periodos' => $periodos,
+                'notaService' => $this->boletimRepository,
+                'activitiesService' => $this->atividadeRepository
+            ]
+        ); 
+    }
 }
 
 

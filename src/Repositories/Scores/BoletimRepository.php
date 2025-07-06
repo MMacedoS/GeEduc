@@ -6,6 +6,7 @@ use App\Config\Database;
 use App\Config\SingletonInstance;
 use App\Interfaces\Scores\IBoletimRepository;
 use App\Models\Scores\Nota;
+use App\Repositories\Activitie\AtividadeRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
@@ -208,6 +209,107 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
 
         $sql .= "
             ORDER BY r.id DESC";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function allcoreByStudentsAndActiviteAndPeriod(array $params = [])
+    {
+        $sql = "SELECT 
+                n.nota, 
+                d.id, 
+                d.nome 
+            FROM `notas` n 
+            LEFT JOIN atividade a 
+            on a.id = n.atividade_id 
+            LEFT JOIN turma_disciplina td 
+            on td.id = a.turma_disciplina_id
+            LEFT JOIN professor_disciplina pd 
+            on pd.id = td.professor_disciplina_id 
+            LEFT JOIN disciplinas d 
+            on d.id = pd.disciplina_id";
+
+        $conditions = [];
+        $bindings = [];
+        
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
+
+        if (isset($params['activitie_id'])) {
+            $conditions[] = 'n.atividade_id= :activitie_id';
+            $bindings[':activitie_id'] = $params['activitie_id'];
+        }
+
+        if (isset($params['period'])) {
+            $conditions[] = 'n.periodo_id= :period';
+            $bindings[':period'] = $params['period'];
+        }
+        
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " GROUP BY 
+                    d.id, d.nome
+                ORDER BY 
+                 d.nome;";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            
+            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function scoreByStudentsAndActiviteAndPeriod(array $params = [])
+    {
+        $sql = "SELECT 
+            n.estudante_turma_id,
+            n.nota
+        FROM notas n 
+        LEFT JOIN atividade a ON a.id = n.atividade_id
+        LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id";
+        
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['activitie_id'])) {
+            $conditions[] = 'n.atividade_id = :activitie_id';
+            $bindings[':activitie_id'] = $params['activitie_id'];
+        }
+
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
+
+        if (isset($params['period'])) {
+            $conditions[] = 'n.periodo = :period';
+            $bindings[':period'] = $params['period'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= "
+            ORDER BY n.id DESC";
 
         try {
             $stmt = $this->conn->prepare($sql);

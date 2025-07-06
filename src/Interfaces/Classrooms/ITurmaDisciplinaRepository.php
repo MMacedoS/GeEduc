@@ -19,4 +19,6 @@ interface ITurmaDisciplinaRepository {
     public function findByUuid(string $uuid);
 
     public function findById(string $id);
+
+    public function classDisciplineByParams(array $params = []);
 }

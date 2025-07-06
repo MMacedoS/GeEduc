@@ -83,6 +83,11 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             $conditions[] = 'td.uuid = :uuid';
             $bindings[':uuid'] = $params['uuid'];
         }
+
+        if (isset($params['id'])) {
+            $conditions[] = 'td.id = :id';
+            $bindings[':id'] = $params['id'];
+        }
     
         if (isset($params['active'])) {
             $conditions[] = 'td.ativo = :ativo';
@@ -99,6 +104,73 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }   
+
+    public function classDisciplineByParams(array $params = [])
+    {
+        $sql = "SELECT 
+                td.*,
+                JSON_OBJECT(
+                    'id', pd.id,
+                    'disciplina_id', pd.disciplina_id,
+                    'professor_id', pd.professor_id,
+                    'professor', JSON_OBJECT(
+                        'id', pf.id,
+                        'nome', pf.nome,
+                        'email', pf.email
+                    ),
+                    'disciplina', JSON_OBJECT(
+                        'id', d.id,
+                        'nome', d.nome
+                    )
+                ) AS professor_disciplina,
+                JSON_OBJECT(
+                    'id', t.id,
+                    'nome', t.nome,
+                    'uuid', t.uuid
+                ) AS turma,
+                JSON_OBJECT(
+                    'id', d.id,
+                    'nome', d.nome,
+                    'uuid', d.uuid
+                ) AS disciplinas,
+                JSON_OBJECT(
+                    'id', ch.id,
+                    'carga_horaria', ch.carga
+                ) AS carga_horaria
+            FROM turma_disciplina td
+            LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id AND pd.ativo = 1
+            LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1
+            LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id
+            LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
+            LEFT JOIN turmas t ON t.id = td.turma_id
+            LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id
+        ";
+    
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['id'])) {
+            $conditions[] = 'td.id = :id';
+            $bindings[':id'] = $params['id'];
+        }
+    
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+    
+        $sql .= " ORDER BY td.created_at DESC";
+    
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
+            return $stmt->fetch();  
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
         } finally {          

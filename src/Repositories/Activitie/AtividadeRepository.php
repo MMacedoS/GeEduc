@@ -30,7 +30,8 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
                     'tipo', a.tipo,
                     'valor', a.valor
                 ) AS activies_details
-            FROM atividade a";
+            FROM atividade a 
+            LEFT JOIN turma_disciplina td on td.id = a.turma_disciplina_id";
 
         $conditions = [];
         $bindings = [];
@@ -39,6 +40,11 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
         if (isset($params['class_discipline_id'])) {
             $conditions[] = 'a.turma_disciplina_id = :turma_disciplina_id';
             $bindings[':turma_disciplina_id'] = $params['class_discipline_id'];
+        }
+
+        if (isset($params['class_room_id'])) {
+            $conditions[] = 'td.turma_id = :turma_id';
+            $bindings[':turma_id'] = $params['class_room_id'];
         }
 
         if (isset($params['active'])) {

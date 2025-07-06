@@ -215,7 +215,7 @@
             <tr>
                 <td width="50%">Endereço: Avenida Francisco Araújo de Souza, s/n.</td>
                 <td width="25%" align="center">CEP: 48790-000</td>
-                <td width="25%" style="text-align: right;">Cidade: Tucano-BA</td>
+                <td width="25%" style="text-align: right;">Cidade: Tucano-Ba</td>
             </tr>
             <tr>
                 <td width="50%">Estudante:<strong> ' . getJsonToObject($estudante->estudante)->nome . '</strong></td>

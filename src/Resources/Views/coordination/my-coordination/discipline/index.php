@@ -113,7 +113,7 @@
                                                     <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" 
                                                             href="/minha-coordenacao/turma/<?= getJsonToObject($disciplina->turma)->uuid ?>/disciplina/<?= $disciplina->uuid ?>/recuperacoes">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Recuperações">
                                                                 <i class="icon-sync_problem fs-5"></i>
                                                             </div>
                                                         </a> 

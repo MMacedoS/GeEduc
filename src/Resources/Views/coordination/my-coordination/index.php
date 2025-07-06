@@ -164,7 +164,15 @@
                                                                 <? }?>
                                                             </div>
                                                         </a> 
-                                                    <? } ?> 
+                                                    <? } ?>                                                        
+                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" 
+                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/estudantes">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="estudantes">
+                                                                <i class="icon-list fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>      
                                                 </div> 
                                                 
                                                 <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
@@ -199,6 +207,14 @@
                                                                         <? if(getJsonToObject($turma->turma_details)->visivel == 1) {?>
                                                                             <i class="icon-eye fs-5"></i>
                                                                         <? }?>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?> 
+                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" 
+                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/estudantes">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="estudantes">
+                                                                        <i class="icon-list fs-5"></i>
                                                                     </div>
                                                                 </a> 
                                                             <? } ?> 

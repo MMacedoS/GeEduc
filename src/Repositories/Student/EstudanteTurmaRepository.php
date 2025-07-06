@@ -58,10 +58,20 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             $conditions[] = "t.nome LIKE :nome";
             $bindings[':nome'] = '%' . $params['search'] . '%';
         }
+
+        if (isset($params['student_name'])) {
+            $conditions[] = "pfe.nome LIKE :nome";
+            $bindings[':nome'] = '%' . $params['student_name'] . '%';
+        }
     
         if (isset($params['student_id'])) {
             $conditions[] = "et.estudante_id = :estudante_id";
             $bindings[':estudante_id'] = $params['student_id'];
+        }
+    
+        if (isset($params['uuid'])) {
+            $conditions[] = "et.uuid = :uuid";
+            $bindings[':uuid'] = $params['uuid'];
         }
     
         if (isset($params['class_id'])) {

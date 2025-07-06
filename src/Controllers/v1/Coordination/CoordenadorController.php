@@ -3,11 +3,14 @@
 namespace App\Controllers\v1\Coordination;
 
 use App\Controllers\Controller;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
+use App\Interfaces\Period\IPeriodoRepository;
 use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Interfaces\Profile\IUsuarioRepository;
+use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -19,6 +22,9 @@ class CoordenadorController extends Controller{
     protected $usuarioRepository;
     protected $coordenadorTurmaRepository;
     protected $turmaRepository;
+    protected $periodoRepository;
+    protected $turmaDisciplinaRepository;
+    protected $estudanteTurmaRepository;
     
 
     public function __construct(
@@ -26,7 +32,10 @@ class CoordenadorController extends Controller{
         IPessoaFisicaRepository $pessoaFisicaRepository,
         IUsuarioRepository $usuarioRepository,
         ICoordenadorTurmaRepository $coordenadorTurmaRepository,
-        ITurmaRepository $turmaRepository
+        IPeriodoRepository $periodoRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        ITurmaRepository $turmaRepository,
+        IEstudanteTurmaRepository $estudanteTurmaRepository
     ){
         parent::__construct();
         $this->coordenadorRepository = $coordenadorRepository;
@@ -34,6 +43,9 @@ class CoordenadorController extends Controller{
         $this->usuarioRepository = $usuarioRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
         $this->turmaRepository = $turmaRepository;
+        $this->periodoRepository = $periodoRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->estudanteTurmaRepository = $estudanteTurmaRepository;
     }
 
     public function index(Request $request){
@@ -183,5 +195,35 @@ class CoordenadorController extends Controller{
         $updated = $this->turmaRepository->update($data, $turma->id);
 
         return $this->router->redirect('minha-coordenacao/');
+    }
+
+    public function indexStudents(Request $request, string $class_id)
+    {
+        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
+
+        $turma = $this->turmaRepository->findByUuid($class_id);
+        
+        if(is_null($turma)){            
+            return $this->router->redirect("minha-coordenacao/turma/$class_id/disciplinas");
+        }
+
+        $params = $request->getQueryParams();
+        $params['class_id'] = $turma->id;
+        $students = $this->estudanteTurmaRepository
+            ->allClassStudents($params);
+        $perPage = 10;
+        $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $paginator = new Paginator($students, $perPage, $currentPage);
+        $paginatedBoards = $paginator->getPaginatedItems();
+        
+        return $this->router->view('/coordination/my-coordination/classroom/index', [
+            'active' => 'pedagogico',  
+            'students' => $paginatedBoards,
+            'class' => $turma,
+            'links' => $paginator->links(),
+            'searchFilter'=> $params['student_name'] ?? null,
+            'situation' => $params['situation'] ?? null,
+            'period_id' => $params['period_id'] ?? null
+        ]);
     }
 }
