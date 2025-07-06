@@ -94,8 +94,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
                     disciplinas d ON pd.disciplina_id = d.id
                 LEFT JOIN 
                     periodo b ON n.periodo_id = b.id                
-            ";
-        
+            ";       
         
         $conditions = [];
         $bindings = [];
@@ -118,6 +117,51 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
                     pf.nome, et.id, d.id, b.id
                 ORDER BY 
                  d.nome, b.periodo;";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            
+            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function totalScoreByStudentsAndDisciplines(array $params = [])
+    {
+        $sql = "SELECT 
+                sum(n.nota) as total, 
+                d.id, 
+                d.nome 
+            FROM `notas` n 
+            LEFT JOIN atividade a 
+            on a.id = n.atividade_id 
+            LEFT JOIN turma_disciplina td 
+            on td.id = a.turma_disciplina_id
+            LEFT JOIN professor_disciplina pd 
+            on pd.id = td.professor_disciplina_id 
+            LEFT JOIN disciplinas d 
+            on d.id = pd.disciplina_id";
+
+        $conditions = [];
+        $bindings = [];
+        
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'n.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
+        
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " GROUP BY 
+                    d.id, d.nome
+                ORDER BY 
+                 d.nome;";
 
         try {
             $stmt = $this->conn->prepare($sql);

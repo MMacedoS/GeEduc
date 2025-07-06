@@ -10,6 +10,7 @@ use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Interfaces\Frequencies\IFrequenciaRepository;
 use App\Interfaces\MonthlyFees\IMensalidadeRepository;
+use App\Interfaces\Scores\IBoletimRepository;
 use App\Interfaces\Student\IEstudanteRepository;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Interfaces\Teacher\IProfessorRepository;
@@ -31,6 +32,7 @@ class DashboardController extends Controller
     protected $turmaRepository;
     protected $professorRepository;
     protected $disciplinaRepository;
+    protected $boletimRepository;
 
     public function __construct(
         ICargaHorariaRepository $cargaHorariaRepository,
@@ -41,7 +43,8 @@ class DashboardController extends Controller
         IEstudanteRepository $estudanteRepository,
         IEstudanteTurmaRepository $estudanteTurmaRepository,
         IProfessorRepository $professorRepository,
-        IDisciplinaRepository $disciplinaRepository
+        IDisciplinaRepository $disciplinaRepository,
+        IBoletimRepository $boletimRepository
     ) {
         parent::__construct();
 
@@ -54,6 +57,7 @@ class DashboardController extends Controller
         $this->turmaRepository = $turmaRepository;
         $this->professorRepository = $professorRepository;
         $this->disciplinaRepository = $disciplinaRepository;
+        $this->boletimRepository = $boletimRepository;
     }
     
     public function index(Request $request) {
@@ -128,6 +132,14 @@ class DashboardController extends Controller
             'total_faltas' => $total_faltas,
             'presenca' => $presenca]);
         }
+
+        $notas = $this->boletimRepository->totalScoreByStudentsAndDisciplines(
+           [
+            'student_class_id' => $estudante_turma->id,
+           ]
+        );
+
+        $data['notas'] = $notas;
 
         return $this->router->view(
             'dashboard/index',

@@ -133,7 +133,7 @@ class AulaRepository extends SingletonInstance implements IAulaRepository {
             }
             return true;
         } catch (\Throwable $th) {
-            dd($th->getMessage());
+            return null;
         }
     }
 

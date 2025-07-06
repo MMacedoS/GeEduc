@@ -186,34 +186,18 @@
     </div>
 
     <div class="col-xl-6">
-      <a href="{{route('admin.news')}}">
-        <div class="card mb-3">
-          <div class="card-body">
-            <div class="d-flex mb-2">
-              <div class="icons-box md bg-primary rounded-5 me-3">
-                <i class="icon-add_task fs-4 text-white"></i>
-              </div>
-              <div class="d-flex flex-column">                
-                <h2 class="m-0 lh-1 d-block d-sm-none">Notificações</h2>
-                <h2 class="m-0 lh-1 d-none d-xl-block d-lg-block d-md-block"> Disponiveis</h2>
-                <p class="m-0 opacity-50"></p>
-              </div>
-            </div>
-            <div class="m-0">
-                <div class="progress thin mb-2">
-                <div class="progress-bar bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0"
-                    aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <p class="m-0 small fw-light opacity-75">0%.</p>
-            </div>
-          </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Desempenho</h5>
+          <div id="scoresByDiscipline" class="auto-align-graph"></div>
         </div>
-      </a>
+      </div>
     </div>
   </div>
 <?} ?>
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; ?>
+<?php require_once __DIR__ . '/../layout/bottom.php'; 
+?>
 
 <?php if (hasPermission("visualizar cards dashboard")) { ?>
     <script>
@@ -276,5 +260,81 @@
             labelColor: "#507D0C",
             colors: ["#e94235", "#34a853"]
         });
+    </script>
+    <script>
+        var notas = JSON.parse('<?=json_encode($notas)?>');
+        var options = {
+          chart: {
+            height: 350,
+            width: "100%",
+            type: "bar",
+            toolbar: {
+              show: false,
+            },
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: "60%",
+              borderRadius: 8,
+            },
+          },
+          dataLabels: {
+            enabled: false,
+          },
+          stroke: {
+            show: true,
+            width: 0,
+            colors: ["#ec5757"],
+          },
+          series: [
+            {
+              name: "Pontos",
+              data: notas.map((item) => item.total),
+            },
+          ],
+          legend: {
+            show: false,
+          },
+          xaxis: {
+            categories: notas.map((item) => item.nome),
+          },
+          yaxis: {
+            show: false,
+          },
+          fill: {
+            colors: ["#e73737"],
+          },
+          tooltip: {
+            y: {
+              formatter: function (val) {
+                return +val;
+              },
+            },
+          },
+          grid: {
+            borderColor: "#c8cfcc",
+            strokeDashArray: 5,
+            xaxis: {
+              lines: {
+                show: true,
+              },
+            },
+            yaxis: {
+              lines: {
+                show: false,
+              },
+            },
+            padding: {
+              top: 0,
+              right: 0,
+              bottom: -10,
+              left: 0,
+            },
+          },
+        };
+        var chart = new ApexCharts(document.querySelector("#scoresByDiscipline"), options);
+        chart.render();
+     
     </script>
 <? } ?>

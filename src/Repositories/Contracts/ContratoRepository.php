@@ -53,7 +53,6 @@ class ContratoRepository extends SingletonInstance implements IContratoRepositor
             $created = $this->findByUuid($contract->uuid);
             return $created;
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;

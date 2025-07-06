@@ -43,56 +43,58 @@
     </div>
 </div>
 
-          <!-- *************
-        ************ JavaScript Files *************
-      ************* -->
-      
-      <!-- Required jQuery first, then Bootstrap Bundle JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/jquery.min.js"></script>
-      
-      <!-- Include Select2 JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/select2.min.js"></script>
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/bootstrap.bundle.min.js"></script>
+        <!-- *************
+    ************ JavaScript Files *************
+    ************* -->
+    
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/js/jquery.min.js"></script>
+    
+    <!-- Include Select2 JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/js/select2.min.js"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/js/bootstrap.bundle.min.js"></script>
 
-      <!-- *************
-        ************ Vendor Js Files *************
-      ************* -->
+    <!-- *************
+    ************ Vendor Js Files *************
+    ************* -->
 
-      <!-- Overlay Scroll JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
-      <!-- <script src="public/assets/vendor/quill/quill.min.js"></script>
-      <script src="public/assets/vendor/quill/custom.js"></script> -->
+    <!-- Overlay Scroll JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
+    <!-- <script src="public/assets/vendor/quill/quill.min.js"></script>
+    <script src="public/assets/vendor/quill/custom.js"></script> -->
 
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/custom.js"></script>
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/validations.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/js/custom.js"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/js/validations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/morris/raphael-min.js"></script>
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/morris/morris.min.js"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/morris/raphael-min.js"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/morris/morris.min.js"></script>
 
-      <!-- Dropzone JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.js"></script>    <!-- Moment JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/js/moment.min.js"></script>
+    <!-- Dropzone JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/dropzone/dropzone.min.js"></script>    <!-- Moment JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/js/moment.min.js"></script>
 
-      <!-- Date Range JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/daterange.js"></script>
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/custom-daterange.js"></script>
-            
-      <!-- Calendar JS -->
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/calendar/js/main.min.js"></script>
-      
-        <script>
-            var diasLetivos = <?= json_encode(array_map(function($d) {
-                return [
-                    'title' => $d->evento,
-                    'start' => $d->data,
-                    'id' => $d->uuid,
-                    'allDay' => true
-                ];
-            }, $dias ?? [])) ?>;
-        </script>
-      <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/calendar/custom/selectable-calendar.js"></script>
+    <!-- Date Range JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/daterange.js"></script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/daterange/custom-daterange.js"></script>
+        
+    <!-- Calendar JS -->
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/calendar/js/main.min.js"></script>
+    
+    <script>
+        var diasLetivos = <?= json_encode(array_map(function($d) {
+            return [
+                'title' => $d->evento,
+                'start' => $d->data,
+                'id' => $d->uuid,
+                'allDay' => true
+            ];
+        }, $dias ?? [])) ?>;
+    </script>
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/calendar/custom/selectable-calendar.js"></script>
+
+    <script src="<?=URL_PREFIX_APP?>/Public/assets/vendor/apex/apexcharts.min.js"></script>
       
     </body>
 </html>

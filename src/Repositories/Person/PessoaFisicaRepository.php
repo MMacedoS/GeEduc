@@ -240,7 +240,6 @@ class PessoaFisicaRepository extends SingletonInstance implements IPessoaFisicaR
             }
             return false;
         } catch(\Throwable $th) {
-            dd($th->getMessage());
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;

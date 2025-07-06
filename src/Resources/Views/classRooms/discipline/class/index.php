@@ -71,7 +71,6 @@
                             
                             <tbody>
                                 <? foreach ($aulas as $aula) { 
-                                    // dd($aula);
                                     ?>
                                     <tr>
                                         <td><?=$aula->id?></td>

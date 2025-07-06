@@ -35,13 +35,13 @@ if (!function_exists('hasPermission')) {
 }
 
 if (!function_exists('getCustomers')) {    
-    function getCustomers($data) {
+    function getCustomers($data, $delimiter = ' | ') {
         if (is_array($data)) {
             $names = '';
             foreach ($data as $key => $customer) {
                 $names.= $customer->nome; 
                 if($key < 1) {
-                    $names .= ' | ';
+                    $names .= $delimiter;
                 }
             }
             return $names;

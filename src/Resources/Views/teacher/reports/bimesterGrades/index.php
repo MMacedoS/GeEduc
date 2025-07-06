@@ -97,7 +97,7 @@
     <?php
     // Mapeia notas e faltas
     $frequenciasMap = [];
-    $notasMap = [];
+    $notasMap = [];    
 
     foreach ($frequencias as $frequencia) {
         $frequenciasMap["$frequencia->estudante_turma_id$frequencia->periodo_id"] = $frequencia->faltas;
@@ -120,7 +120,7 @@
                         <?= $periodo->periodo ?>º Bimestre
                     </th>
                 <?php endforeach; ?>
-                <th colspan="2">Resultado</th>
+                <th colspan="3">Resultado</th>
             </tr>
             <tr>
                 <?php foreach ($periodos as $periodo): ?>
@@ -129,12 +129,16 @@
                     <?php endforeach; ?>
                     <th>Soma</th>
                 <?php endforeach; ?>
+                    <th>Total</th>
                     <th>Faltas</th>
                     <th>Situação</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($estudantes as $estudante): ?>
+            <?php foreach ($estudantes as $estudante): 
+                $total_geral = 0;
+                ?>
+                
                 <tr>
                     <td class="bg-row"><?= getJsonToObject($estudante->estudante)->nome ?></td>
                     <?php foreach ($periodos as $periodo): ?>
@@ -145,11 +149,13 @@
                         <?php endforeach; ?>
                         <?php
                             $total = $notasMap["$estudante->id$periodo->id"] ?? 0;
+                            $total_geral += $total;
                             $faltas = $frequenciasMap["$estudante->id$periodo->id"] ?? 0;
                             $situacao = $total >= MIN_SCORE ? "Aprovado" : "Reprovado";
                         ?>
                         <td class="text-center"><?= $total ?></td>
                     <?php endforeach; ?>
+                    <td class="text-center"><?=$total_geral?></td>
                     <td class="text-center"><?= $faltas ?></td>
                     <td class="text-center"><?= $total > 0 ? '-' : '-' ?></td>
                 </tr>
