@@ -8,7 +8,7 @@ use App\Repositories\Permission\PermissaoRepository;
 use Firebase\JWT\JWT;
 
 class Auth {
-    protected $sessionTimeout = 3600;
+    protected $sessionTimeout = 14400;
     protected $renewTime = 600; 
 
     public function __construct() {
@@ -28,7 +28,7 @@ class Auth {
         ];
 
         $token = JWT::encode($payload, SECRET_KEY,'HS256');                
-        setcookie('token', $token, time() + 3600);
+        setcookie('token', $token, time() + 14400);
         $_SESSION['user'] = $username;
         $_SESSION['login_time'] = time();
         $_SESSION['last_activity'] = time();
@@ -48,25 +48,34 @@ class Auth {
         unset($_SESSION['user']);
         unset($_SESSION['login_time']);
         unset($_SESSION['last_activity']);
-        setcookie('token', '', time() - 3600);
+        setcookie('token', '', time() - 14400);
         session_destroy();
     }
 
-    public function check() 
-    {           
-        if (isset($_SESSION['user']) && isset($_SESSION['login_time']) && isset($_SESSION['last_activity'])) {
-            if ((time() - $_SESSION['login_time']) > $this->sessionTimeout) {
-                $this->logout();
-                return false;
-            }
-    
-            if ((time() - $_SESSION['last_activity']) < $this->renewTime) {
-                $_SESSION['last_activity'] = time();
-            }
-            return true;
+    public function check(): bool
+    {
+        if (
+            empty($_SESSION['user']) || 
+            empty($_SESSION['login_time']) || 
+            empty($_SESSION['last_activity'])
+        ) {
+            return false;
         }
-        return false;
+
+        $now = time();
+
+        if (($now - $_SESSION['login_time']) > $this->sessionTimeout) {
+            $this->logout(); // método que limpa a sessão e cookies
+            return false;
+        }
+
+        if (($now - $_SESSION['last_activity']) < $this->renewTime) {
+            $_SESSION['last_activity'] = $now;
+        }
+
+        return true;
     }
+
 
     public function user() {
         return $_SESSION['user'] ?? null;

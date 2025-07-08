@@ -300,7 +300,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         }
 
         if (isset($params['period'])) {
-            $conditions[] = 'n.periodo = :period';
+            $conditions[] = 'n.periodo_id = :period';
             $bindings[':period'] = $params['period'];
         }
 

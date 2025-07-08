@@ -324,7 +324,7 @@
 
                         array_push($array_nota, $nota);
                                                 
-                        $pagina .= "<td><center>" . $nota ."</center></td>";
+                        $pagina .= "<td><center>" . number_format($nota, 1, ',') ."</center></td>";
                         $pagina .= '<td><center>-</center></td>';
                         if ($i == 2 || $i == 4) {
                             $rec = $busca_rec ? $busca_rec['nota'] : 0;

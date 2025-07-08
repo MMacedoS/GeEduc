@@ -180,9 +180,9 @@ class GradeReportController extends Controller
 
     public function allTicketsDetails(Request $request, string $turma_id)
     {
-        $class = $this->turmaRepository->findByUuid($turma_id);
-
-        $periodos = $this->periodoRepository->all(['active' => '1']);
+        $class = $this->turmaRepository->findByUuid($turma_id);        
+      
+        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $all_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
@@ -214,9 +214,9 @@ class GradeReportController extends Controller
 
     public function ticketsDetailsByStudent(Request $request, string $turma_id, string $estudante_id)
     {
-        $class = $this->turmaRepository->findByUuid($turma_id);
-
-        $periodos = $this->periodoRepository->all(['active' => '1']);
+        $class = $this->turmaRepository->findByUuid($turma_id);        
+      
+        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $all_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(

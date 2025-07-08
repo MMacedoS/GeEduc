@@ -217,7 +217,7 @@ class CoordenadorController extends Controller{
         $paginatedBoards = $paginator->getPaginatedItems();
         
         return $this->router->view('/coordination/my-coordination/classroom/index', [
-            'active' => 'pedagogico',  
+            'active' => 'coordinator',
             'students' => $paginatedBoards,
             'class' => $turma,
             'links' => $paginator->links(),

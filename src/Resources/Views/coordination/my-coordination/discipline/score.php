@@ -122,6 +122,7 @@
                                             name="notas[<?= "$estudante->id,$atividade->id"?>]" 
                                             min="0" 
                                             step="0.1" 
+                                            oninput="formatAutoDecimal(this)" 
                                             max="<?= $atividade->valor ?>" 
                                             value="<?= $notasMap["$estudante->id$atividade->id"] ?? ''?>">                                   
                                     </div>
@@ -175,5 +176,17 @@ $(document).ready(function() {
         window.location.href = url;
     }
 });
+
+function formatAutoDecimal(input) {
+    let raw = input.value.replace(/[^0-9]/g, '');
+
+    if (raw.length <= 1) {
+        input.value = raw;
+        return;
+    }
+    const intPart = raw.slice(0, raw.length - 1);
+    const decimalPart = raw.slice(-1);
+    input.value = `${intPart}.${decimalPart}`;
+}
 
 </script>
