@@ -16,7 +16,6 @@ use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Interfaces\Teacher\IProfessorRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
-use App\Utils\Paginator;
 
 class DashboardController extends Controller
 {
@@ -75,7 +74,7 @@ class DashboardController extends Controller
             return $this->indexStudents();
         }
 
-        if($painel == 'professor') {
+        if($painel === 'professor') {
             return $this->indexTeacher();
         }
 
@@ -84,7 +83,7 @@ class DashboardController extends Controller
         }
 
         if ($painel == 'coordenador') {
-            return $this->indexAdministrators();
+            return $this->indexCoordenators();
         }
 
         return $this->router->view('dashboard/index', ['active' => 'dashboard']);
@@ -217,6 +216,50 @@ class DashboardController extends Controller
             ]
         ); 
     }
+
+    private function indexCoordenators () 
+    {
+        $estudante_turmas = $this->estudanteTurmaRepository
+            ->allClassStudents(
+                [
+                    'active' => 1, 
+                    'school_year' => Date('Y')
+                ]
+            );
+
+        $discipline = $this->disciplinaRepository
+            ->allDisciplines(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $turmas = $this->turmaRepository
+            ->allClassRooms(
+                [
+                    'active' => 1
+                ]
+            );
+
+        $professor = $this->professorRepository
+            ->allTeachers(
+                [
+                    'active' => 1
+                ]
+            );
+
+        return $this->router->view(
+            'dashboard/index',
+            [
+                'active' => 'dashboard',
+                'estudante_turmas' => $estudante_turmas,
+                'discipline' => $discipline,
+                'teachers' => $professor,
+                'turmas' => $turmas,
+            ]
+        ); 
+    }
+
     private function indexTeacher () 
     {
         $pessoaAuth = $this->authUser();

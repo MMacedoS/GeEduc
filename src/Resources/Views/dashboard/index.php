@@ -1,13 +1,13 @@
 <?php require_once __DIR__ . '/../layout/top.php'; ?>
 
-<? if(isset($_GET['error'])){?>
+<? if(isset($_GET['error'])):?>
     <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
        <b>Sem permissão!</b>.
        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<? }?>
+<? endif;?>
 <!-- Row start -->  
-<?php if (hasPermission("visualizar_cards_dashboard")) {?>
+<?php if (hasPermission("visualizar_cards_dashboard")):?>
   <div class="row gx-3">
     <div class="col-sm-3 col-12">
       <a href="\estudantes">
@@ -104,7 +104,26 @@
       </div>
     </div>
   </div>  
-  
+<? endif; ?>
+
+<?
+  if(hasPermission('coordenacao')):
+?>
+  <div class="col-xl-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Desempenho</h5>
+          <div id="scoresByClass" class="auto-align-graph"></div>
+        </div>
+      </div>
+  </div>
+<?
+  endif;
+?>
+
+<?
+if(hasPermission('financeiro')):
+?>
   <div class="row">
     <div class="col-xl-6">
       <div class="card mb-3">
@@ -117,9 +136,11 @@
       </div>
     </div>
   </div>
-<?} ?>
+<?
+endif;
+?>
 
-<?php if (hasPermission("professor")) {?>
+<?php if (hasPermission("professor")):?>
   <div class="row gx-3">
     <div class="col-sm-3 col-12">
       <a href="\meus-componentes">
@@ -170,9 +191,9 @@
       </a>
     </div>
   </div>  
-<?} ?>
+<? endif; ?>
 
-<?php if (hasPermission("estudante") || hasPermission("responsavel_legal")) { ?>
+<?php if (hasPermission("estudante") || hasPermission("responsavel_legal")): ?>
   <div class="row">
     <div class="col-xl-6">
         <div class="card mb-3">
@@ -194,12 +215,12 @@
       </div>
     </div>
   </div>
-<?} ?>
+<? endif; ?>
 
 <?php require_once __DIR__ . '/../layout/bottom.php'; 
 ?>
 
-<?php if (hasPermission("visualizar cards dashboard")) { ?>
+<?php if (hasPermission("visualizar cards dashboard")): ?>
     <script>
         Morris.Donut({
             element: "donutFormatter",
@@ -234,9 +255,9 @@
             colors: ["#00abf1", "#e66100", "#34a853", "#e94235"]
         });
     </script>
-<? } ?>
+<? endif;?>
 
-<?php if (hasPermission("estudante")) { ?>
+<?php if (hasPermission("estudante")): ?>
     <script>
         Morris.Donut({
             element: "donutFormatter",
@@ -337,4 +358,4 @@
         chart.render();
      
     </script>
-<? } ?>
+<? endif; ?>
