@@ -96,7 +96,7 @@ require_once __DIR__ . '/../../../layout/top.php'; ?>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <? foreach($semester_1 as $semester) :?>                                      
+                                                <? foreach($semester_1 as $semester):?>                                      
                                                     <tr>
                                                         <td><?=$semester->estudante_nome?></td>
                                                         <td><?=$semester->disciplinas_reprovadas?></td>
