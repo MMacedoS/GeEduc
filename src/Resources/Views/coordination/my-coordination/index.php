@@ -107,7 +107,7 @@
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
                                     <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
                                     <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) {?>
-                                     <th>Ação</th>
+                                     <th class="float-end me-5">Ação</th>
                                      <? } ?>
                                 </tr>
                             </thead>
@@ -120,7 +120,7 @@
                                         <td><?=getJsonToObject($turma->turma_details)->id ?></td>
                                         <td class="fw-bold"> <?= getJsonToObject($turma->turma_details)->nome ?? 'não identificado'?>
                                         </td>
-                                        <td class="fw-bold"> <?= getJsonToObject($turma->turma_details)->turno ?? 'não identificado'?>
+                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell"> <?= getJsonToObject($turma->turma_details)->turno ?? 'não identificado'?>
                                         </td>
                                         <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
                                             <div class="d-flex align-items-center">
@@ -136,7 +136,7 @@
                                         </td>
                                         <? if (hasPermission('editar_disciplina')) {?>
                                             <td>
-                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex">
+                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex float-end">
                                                     <? if (hasPermission('editar_disciplina')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/disciplinas">
                                                             <div class="border p-2 rounded-3">
@@ -144,7 +144,7 @@
                                                             </div>
                                                         </a> 
                                                     <? } ?>  
-                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                    <? if (hasPermission('coordenador')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" 
                                                             href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins"  target="_blank">
                                                             <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
@@ -165,17 +165,25 @@
                                                             </div>
                                                         </a> 
                                                     <? } ?>                                                        
-                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                    <? if (hasPermission('coordenador')) {?>                                     
                                                         <a class="mb-1 me-2 mt-1" 
                                                             href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/estudantes">
                                                             <div class="border p-2 rounded-3" data-toggle="tooltip" title="estudantes">
                                                                 <i class="icon-list fs-5"></i>
                                                             </div>
                                                         </a> 
-                                                    <? } ?>      
+                                                    <? } ?>    
+                                                    <? if (hasPermission('coordenador')) {?>                                     
+                                                        <a class="mb-1 me-2 mt-1" 
+                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/recuperacoes">
+                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                                <i class="icon-sync_problem fs-5"></i>
+                                                            </div>
+                                                        </a> 
+                                                    <? } ?>    
                                                 </div> 
                                                 
-                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
+                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3 float-end me-5">
                                                     <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
                                                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="icon-menu"></i>
@@ -189,7 +197,7 @@
                                                                     </div>
                                                                 </a> 
                                                             <? } ?>  
-                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                            <? if (hasPermission('coordenador')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" 
                                                                     href="/relatorios/turma/<?=getJsonToObject($turma->turma_details)->uuid?>/boletins" target="_blank">
                                                                     <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
@@ -210,7 +218,7 @@
                                                                     </div>
                                                                 </a> 
                                                             <? } ?> 
-                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) {?>                                     
+                                                            <? if (hasPermission('coordenador')) {?>                                     
                                                                 <a class="mb-1 me-2 mt-1" 
                                                                     href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/estudantes">
                                                                     <div class="border p-2 rounded-3" data-toggle="tooltip" title="estudantes">
@@ -218,6 +226,15 @@
                                                                     </div>
                                                                 </a> 
                                                             <? } ?> 
+
+                                                            <? if (hasPermission('coordenador')) {?>                                     
+                                                                <a class="mb-1 me-2 mt-1" 
+                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/recuperacoes">
+                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
+                                                                        <i class="icon-sync_problem fs-5"></i>
+                                                                    </div>
+                                                                </a> 
+                                                            <? } ?>  
                                                         </div>
                                                     </div>
                                                 </div>                                       

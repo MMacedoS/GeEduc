@@ -31,7 +31,7 @@ trait GenericTrait {
         }, $dados);
     }
 
-    public function responseJson(int $code = 200, string $message) {
+    public function responseJson(int $code = 200, string $message = '') {
         http_response_code($code);
         return json_encode([
             'status' => $code,

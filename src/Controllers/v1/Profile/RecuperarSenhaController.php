@@ -12,8 +12,7 @@ class RecuperarSenhaController extends Controller
 
     public function __construct(
         IUsuarioRecuperarSenhaRepository $usuarioRecuperaSenhaRepository
-    )
-    {   
+    ) {   
         parent::__construct();
         $this->usuarioRecuperaSenhaRepository = $usuarioRecuperaSenhaRepository;
     }
@@ -29,11 +28,13 @@ class RecuperarSenhaController extends Controller
         $created = $this->usuarioRecuperaSenhaRepository->create($data['email']);
 
         if(is_null($created)) {
-            return $this->router->redirect('recuperar/');
+            $this->router->redirect('recuperar/');
+            exit;
         }
 
         echo '<script>alert("Solicitação iniciada! acesse a caixa de entrada ou spam do endereço de email:'. $data['email'] .' ")</script>';
-        return $this->router->redirect();
+        $this->router->redirect();
+        exit;
     }
 
     public function edit(Request $request, string $id) 
@@ -41,7 +42,8 @@ class RecuperarSenhaController extends Controller
         $solicitation = $this->usuarioRecuperaSenhaRepository->findByUuid($id);
         
         if(is_null($solicitation) || $solicitation->ativo == 0) {
-            return $this->router->redirect();
+            $this->router->redirect();
+            exit;
         }
 
         return $this->router->view('login/update-password', ['solicitation' => $solicitation]);
@@ -52,7 +54,8 @@ class RecuperarSenhaController extends Controller
         $solicitation = $this->usuarioRecuperaSenhaRepository->findByUuid($id);
         
         if(is_null($solicitation)) {
-            return $this->router->redirect();
+            $this->router->redirect();
+            exit;
         }
 
         $data = $request->getBodyParams();
@@ -64,6 +67,7 @@ class RecuperarSenhaController extends Controller
 
         echo '<script>alert("Senha atualizada!")</script>';
 
-        return $this->router->redirect();
+        $this->router->redirect();
+        exit;
     } 
 }

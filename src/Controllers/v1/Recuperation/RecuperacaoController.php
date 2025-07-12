@@ -96,6 +96,63 @@ class RecuperacaoController extends Controller
         );
     }
 
+    public function indexByCoordenator(Request $request, string $class_id)
+    {
+        $this->defineRoutes(
+            $class_id
+        );
+        
+        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
+
+        $classRooms = $this->turmaRepository->findByUuid($class_id);
+        
+        if(is_null($classRooms)){            
+            return $this->router->redirect("minha-coordenacao/");
+        }
+        
+        $semester_one = $this->recuperacaoRepository
+            ->studentToFailed(
+                [
+                    'periodOne' => 1,
+                    'periodTwo' => 2,
+                    'class_room' => $classRooms->id,
+                    'total' => 13.9
+                ]
+            );
+        
+        $semester_two = $this->recuperacaoRepository
+            ->studentToFailed(
+                [
+                    'periodoOne' => 3,
+                    'periodoTwo' => 4,
+                    'class_room' => $classRooms->id,
+                    'total' => 13.9
+                ]
+            ); 
+
+        $final = $this->recuperacaoRepository
+            ->studentToFailed(
+                [
+                    'periodoOne' => 1,
+                    'periodoTwo' => 4,
+                    'class_room' => $classRooms->id,
+                    'total' => 27.6
+                ]
+            ); 
+
+        return $this->router->view(
+            "/coordination/my-coordination/classroom/recuperations", 
+            [
+                'active' => $this->active, 
+                'turma' => $classRooms,
+                'semester_1' => $semester_one,
+                'semester_2' => $semester_two,
+                'final' => $final,
+                'periodos' => $periodos
+            ]
+        );
+    }
+
     public function store(Request $request, string $class_id, string $class_discipline_id)
     {
         $this->defineRoutes($class_id, $class_discipline_id);
@@ -115,7 +172,7 @@ class RecuperacaoController extends Controller
         return $this->router->redirect("$this->redirect");
     }
 
-    private function defineRoutes($class_discipline_id, $discipline_teacher_id) {
+    private function defineRoutes($class_discipline_id, $discipline_teacher_id = null) {
         switch($_SESSION["user"]->painel) {
             case 'coordenador':
                 $this->routeView = 'coordination/my-coordination/discipline/recuperation';

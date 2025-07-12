@@ -128,6 +128,72 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
         }
     }
 
+    public function studentToFailed(array $params = []) 
+    {
+        $sql = "SELECT 
+                    estudante_nome,
+                    GROUP_CONCAT(DISTINCT disciplina ORDER BY disciplina SEPARATOR ', ') AS disciplinas_reprovadas
+                FROM (
+                    SELECT
+                        pf.nome AS estudante_nome,
+                        d.nome AS disciplina,
+                        SUM(COALESCE(n.nota, 0)) AS soma_notas
+
+                    FROM notas n
+                    LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id
+                    LEFT JOIN estudantes e ON e.id = et.estudante_id
+                    LEFT JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id
+                    LEFT JOIN atividade a ON a.id = n.atividade_id
+                    LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
+                    LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
+                    LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
+
+                    WHERE n.periodo_id BETWEEN :periodOne AND :periodTwo
+                    AND td.turma_id = :class
+
+                    GROUP BY et.id, d.id, pf.nome, d.nome
+                    HAVING soma_notas < :total
+                ) AS reprovacoes
+                GROUP BY estudante_nome
+                ORDER BY estudante_nome;
+";
+
+        // $sql = "SELECT 
+        //         et.id AS estudante_turma_id, 
+        //         td.turma_id, 
+        //         pf.nome as estudante, 
+        //         d.nome AS disciplina, 
+        //         SUM(COALESCE(n.nota, 0)) AS soma 
+        //     FROM estudante_turma et 
+        //     LEFT JOIN estudantes e ON e.id = et.estudante_id 
+        //     LEFT JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id 
+        //     LEFT JOIN notas n ON n.estudante_turma_id = et.id AND n.periodo_id BETWEEN :periodOne AND :periodTwo 
+        //     LEFT JOIN atividade a ON a.id = n.atividade_id 
+        //     LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id 
+        //     LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id 
+        //     LEFT JOIN disciplinas d ON d.id = pd.disciplina_id 
+        //     WHERE td.turma_id = :class 
+        //     GROUP BY et.id, e.id, e.uuid, pf.nome, td.turma_id, d.id, d.nome 
+        //     HAVING soma < :total 
+        //     ORDER BY pf.nome, d.nome";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':periodOne' => $params['periodOne'] ?? 1,
+                ':periodTwo' => $params['periodTwo'] ?? 2,
+                ':class' => $params['class_room'],
+                ':total' => $params['total'] ?? 13.9
+            ]);
+            
+            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {          
+            Database::getInstance()->closeConnection();
+        }
+    }
+
     public function create(array $params)
     {
         $recuperacao = $this->model->create($params);

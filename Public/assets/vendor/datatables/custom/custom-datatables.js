@@ -2,8 +2,8 @@
 $(function () {
 	$("#basicExample").DataTable({
 		lengthMenu: [
-			[5, 10, 25, 50],
-			[5, 10, 25, 50, "All"],
+			[15, 25, 50],
+			[15, 25, 50, "All"],
 		],
 		language: {
 			lengthMenu: "Display _MENU_ Records Per Page",
@@ -26,8 +26,8 @@ $(function () {
 $(function () {
 	$("#highlightRowColumn").DataTable({
 		lengthMenu: [
-			[5, 10, 25, 50],
-			[5, 10, 25, 50, "All"],
+			[15, 25, 50],
+			[15, 25, 50, "All"],
 		],
 		language: {
 			lengthMenu: "Display _MENU_ Records Per Page",
@@ -45,8 +45,8 @@ $(function () {
 $(function () {
 	$("#apiCallbacks").DataTable({
 		lengthMenu: [
-			[5, 10, 25, 50],
-			[5, 10, 25, 50, "All"],
+			[15, 25, 50],
+			[15, 25, 50, "All"],
 		],
 		language: {
 			lengthMenu: "Display _MENU_ Records Per Page",
@@ -64,8 +64,8 @@ $(function () {
 $(function () {
 	$("#hideSearchExample").DataTable({
 		lengthMenu: [
-			[5, 10, 25, 50],
-			[5, 10, 25, 50, "All"],
+			[15, 25, 50],
+			[15, 25, 50, "All"],
 		],
 		searching: false,
 		language: {
@@ -79,8 +79,8 @@ $(function () {
 $(function () {
 	$("#customButtons").DataTable({
 		lengthMenu: [
-			[5, 10, 25, 50],
-			[5, 10, 25, 50, "All"],
+			[15, 25, 50],
+			[15, 25, 50, "All"],
 		],
 		dom: "Bfrtip",
 		buttons: ["copy", "csv", "excel", "pdf", "print"],

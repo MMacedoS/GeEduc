@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title><?=APP_NAME?></title>
+        <title><?=$name ?? APP_NAME?></title>
         <meta name="description" content="Sistema de gestão escolar" />
         <meta name="author" content="Mauricio Macedo" />
         <meta property="og:url" content="https://www.geeduc.com.br"/>
