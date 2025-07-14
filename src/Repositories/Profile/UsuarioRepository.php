@@ -515,7 +515,8 @@ class UsuarioRepository extends SingletonInstance implements IUsuarioRepository 
                 array('id' => '144', 'name' => 'editar_periodo','description' => 'editar periodos'),
                 array('id' => '145', 'name' => 'cadastrar_periodo','description' => 'cadastrar_periodo'),
                 array('id' => '146', 'name' => 'deletar_periodo','description' => 'deletar_periodo'),
-                array('id' => '3', 'name' => 'cadastrar_usuario','description' => 'cadastrar usuários')
+                array('id' => '3', 'name' => 'cadastrar_usuario','description' => 'cadastrar usuários'),
+                array('name' => 'coordenador','description' => 'Coordenar turmas')
               );
             return $permissao;
         }

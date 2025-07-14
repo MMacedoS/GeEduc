@@ -132,7 +132,7 @@ class TurmaDisciplinaController extends Controller
 
         $turmas = $this->coordenadorTurmaRepository
             ->allCoordinatorClass(
-                ["coordenador_id" => $coordenador[0]->id]
+                ["coordenador_id" => $coordenador[0]->id ?? null]
             );
 
         $perPage = 10;
