@@ -130,10 +130,21 @@ class TurmaDisciplinaController extends Controller
                 ["pessoa_fisica_id" => $pessoaFisica->id]
             );
 
-        $turmas = $this->coordenadorTurmaRepository
-            ->allCoordinatorClass(
-                ["coordenador_id" => $coordenador[0]->id ?? null]
-            );
+        if (!empty($coordenador) && !empty($coordenador[0]->id)) {
+            $turmas = $this->coordenadorTurmaRepository
+                ->allCoordinatorClass(
+                    ["coordenador_id" => $coordenador[0]->id]
+                );
+        }
+
+        if (empty($coordenador) || is_null($coordenador)) {
+            $turmas = $this->coordenadorTurmaRepository
+                ->allCoordinatorClassWithoutCoordinator(
+                    [
+                        'active' => 1
+                    ]
+                );
+        }
 
         $perPage = 10;
 

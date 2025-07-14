@@ -44,9 +44,49 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
             $conditions[] = "ct.turma_id = :turma_id";
             $bindings[':turma_id'] = $params['class_id'];
         }
+
         if (isset($params['coordenador_id'])) {
             $conditions[] = "ct.coordenador_id = :coordenador_id";
             $bindings[':coordenador_id'] = $params['coordenador_id'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY t.ordem DESC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute($bindings);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS);
+    }
+
+     public function allCoordinatorClassWithoutCoordinator(array $params = []) 
+    {
+        $sql = "SELECT
+                JSON_OBJECT(
+                    'id', t.id,
+                    'uuid', t.uuid,
+                    'nome', t.nome,
+                    'turno', t.turno,
+                    'visivel', t.visivel,
+                    'ativo', t.ativo
+                ) AS turma_details
+            FROM turmas t
+        ";
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['class_id'])) {
+            $conditions[] = "id = :turma_id";
+            $bindings[':turma_id'] = $params['class_id'];
+        }
+        if (isset($params['active'])) {
+            $conditions[] = "t.ativo = :active";
+            $bindings[':active'] = $params['active'];
         }
 
         if (count($conditions) > 0) {

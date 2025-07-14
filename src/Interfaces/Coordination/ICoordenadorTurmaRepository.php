@@ -8,6 +8,8 @@ interface ICoordenadorTurmaRepository {
     
     public function allCoordinatorClass(array $params = []);
 
+    public function allCoordinatorClassWithoutCoordinator(array $params = []);
+
     public function saveAll(array $data, $turma_id);
 
     public function create(array $data): ?CoordenadorTurma;
