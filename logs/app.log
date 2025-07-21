@@ -177,3 +177,7 @@
 [2025-07-02T00:47:55.486674+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []
 [2025-07-02T00:47:55.555868+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []
 [2025-07-02T00:47:55.625078+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []
+[2025-07-21T15:21:32.656485+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []
+[2025-07-21T15:24:44.527324+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []
+[2025-07-21T15:30:19.936787+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []
+[2025-07-21T15:31:25.615445+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, bool returned [] []

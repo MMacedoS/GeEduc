@@ -27,7 +27,7 @@ class PessoaContato {
         $pessoa_contato->uuid = $data['uuid'] ?? $this->generateUUID();
         $pessoa_contato->responsavel_legal = (int)$data['legal_responsive'] ?? 1;
         $pessoa_contato->pessoa_fisica_id = (int)$data['person_id'];
-        $pessoa_contato->ativo = (int)$data['active'] ?? 1; 
+        $pessoa_contato->ativo = $data['active'] ?? 1; 
         $pessoa_contato->created_at = $data['created_at'] ?? null;
         $pessoa_contato->updated_at = $data['updated_at'] ?? null;
         return $pessoa_contato;

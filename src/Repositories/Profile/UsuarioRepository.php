@@ -459,7 +459,9 @@ class UsuarioRepository extends SingletonInstance implements IUsuarioRepository 
                 array('name' => 'cadastrar_aula','description' => 'cadastrar aulas '),
                 array('name' => 'editar_aula','description' => 'editar aulas '),
                 array('name' => 'cadastrar_permissao','description' => 'cadastrar permissao'),
-                array('name' => 'deletar_aula','description' => 'deletar aulas ')
+                array('name' => 'deletar_aula','description' => 'deletar aulas '),
+                array('name' => 'visualizar_aulas','description' => 'visualizar aulas'),
+                array('name' => 'editar_turmas_disciplinas','description' => 'Coordenar turmas')
               );
             return $permissao;
         }
@@ -516,7 +518,8 @@ class UsuarioRepository extends SingletonInstance implements IUsuarioRepository 
                 array('id' => '145', 'name' => 'cadastrar_periodo','description' => 'cadastrar_periodo'),
                 array('id' => '146', 'name' => 'deletar_periodo','description' => 'deletar_periodo'),
                 array('id' => '3', 'name' => 'cadastrar_usuario','description' => 'cadastrar usuários'),
-                array('name' => 'coordenador','description' => 'Coordenar turmas')
+                array('name' => 'coordenador','description' => 'Coordenar turmas'),                
+                array('name' => 'editar_turmas_disciplinas','description' => 'Coordenar turmas')
               );
             return $permissao;
         }

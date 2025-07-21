@@ -241,7 +241,7 @@
 
 <script>
   document.getElementById('email').addEventListener('input', function() {
-    const domain = '@escolacesp.com.br';
+    const domain = '@escolaisttucano.com.br';
     const currentValue = this.value;
 
     if (currentValue.includes('@') && !currentValue.includes(domain)) {
