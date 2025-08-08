@@ -4,7 +4,7 @@ namespace App\Config;
 
 use App\Request\Request;
 
-class Router {
+class Router extends Session{
     protected $routers = [];    
     protected $auth = null; 
 
@@ -12,7 +12,7 @@ class Router {
         string $method, 
         string $path, 
         callable $callback, 
-        Auth $auth = null
+        ?Auth $auth = null
     ) {
         $normalizedPath = $this->normalizePath($path);
         $this->routers[$method][$normalizedPath] = [
@@ -71,5 +71,15 @@ class Router {
         header("Location: $url");
         
         exit();
+    }
+
+    public function userLogged()
+    {
+        return $this->get('user');
+    }
+
+    public function userUnLogged()
+    {
+        return $this->destroy();
     }
 }

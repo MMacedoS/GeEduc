@@ -41,11 +41,11 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
         LEFT JOIN estudante_turma et ON et.id = r.estudante_turma_id 
         LEFT JOIN estudantes e ON e.id = et.estudante_id
         LEFT JOIN pessoa_fisica pf on pf.id = e.pessoa_fisica_id
-        ";        
-        
+        ";
+
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['class_discipline_id'])) {
             $conditions[] = 'r.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
@@ -65,7 +65,7 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
             $conditions[] = 'r.periodo_id = :period';
             $bindings[':period'] = $params['period'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -75,11 +75,11 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
@@ -109,8 +109,8 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
             LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
             LEFT JOIN recuperacao r ON r.estudante_turma_id = et.id AND r.periodo = :tipo
             GROUP BY et.id, r.id, r.uuid,r.ano_letivo, r.nota,r.turma_disciplina_id,r.periodo,r.estudante_turma_id,r.obs
-            HAVING SUM(COALESCE(n.nota, 0)) < :total;";  
-        
+            HAVING SUM(COALESCE(n.nota, 0)) < :total;";
+
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
@@ -119,16 +119,64 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                 ':tipo' => $params['type'],
                 ':total' => $params['total']
             ]);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    public function studentToFailed(array $params = []) 
+    public function studentsByTurmaDisciplinaAndScore(array $params = [])
+    {
+        $sql = "SELECT
+                    et.id as estudante_turma_id,
+                    SUM(n.nota) AS media,
+                    JSON_OBJECT(
+                        'id', e.id,
+                        'uuid', e.uuid,
+                        'nome', pf.nome
+                    ) AS estudante,
+                    r.id AS recuperacao_id,
+                    r.uuid,
+                    r.ano_letivo,
+                    r.nota,
+                    r.periodo,
+                    r.obs
+                FROM estudante_turma et
+                LEFT JOIN estudantes e ON e.id = et.estudante_id
+                LEFT JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id
+                LEFT JOIN notas n ON n.estudante_turma_id = et.id 
+                    AND n.periodo_id BETWEEN :periodoOne AND :periodoTwo
+                LEFT JOIN atividade a ON a.id = n.atividade_id
+                LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
+                LEFT JOIN recuperacao r ON r.estudante_turma_id = et.id 
+                    AND r.periodo = :type 
+                    AND r.turma_disciplina_id = :turma_disciplina_id
+                WHERE td.id = :turma_disciplina_id
+                GROUP BY et.id, r.id
+                HAVING SUM(COALESCE(n.nota, 0)) < :total";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':periodoOne' => $params['periodoOne'] ?? 1,
+                ':periodoTwo' => $params['periodoTwo'] ?? 2,
+                ':type' => $params['type'],
+                ':total' => $params['total'],
+                ':turma_disciplina_id' => $params['turma_disciplina_id']
+            ]);
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
+        } catch (\PDOException $e) {
+            throw new \Exception("Database query error: " . $e->getMessage());
+        } finally {
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function studentToFailed(array $params = [])
     {
         $sql = "SELECT 
                     estudante_nome,
@@ -185,11 +233,11 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                 ':class' => $params['class_room'],
                 ':total' => $params['total'] ?? 13.9
             ]);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
@@ -211,7 +259,7 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
             );
 
             $idScore = $this->checkIfExistsScore($recuperacao);
-            if($idScore) {
+            if ($idScore) {
                 $this->removeScore($idScore);
             }
 
@@ -224,22 +272,23 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                 ':obs' => $recuperacao->obs,
                 ':nota' => $recuperacao->nota
             ]);
-  
+
             if (!$create) {
                 return null;
             }
-    
+
             return true;
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    private function checkIfExistsScore($recuperacao) :?String {
+    private function checkIfExistsScore($recuperacao): ?String
+    {
         try {
             $stmt = $this->conn
                 ->prepare(
@@ -257,39 +306,39 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
             ]);
 
             $id = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $id['id'] ?? null;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação select: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    private function removeScore($id) :?bool 
+    private function removeScore($id): ?bool
     {
         $scores = $this->findById((int)$id);
 
         if (is_null($scores)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            if($delete) {
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }

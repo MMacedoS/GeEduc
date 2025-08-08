@@ -5,7 +5,9 @@
 <!-- App footer start -->
 <div class="app-footer">
     <div class="container">
-     <span>© <?=APP_NAME?> <?=date('Y')?> by <a href="https://github.com/MMacedoS" target="_blank">Mauricio Macedo</a></span>
+        <span>© <?=APP_NAME?> <?=date('Y')?></span>
+        <span class="float-center">Version: 1.0.0</span>
+        <span class="float-end">Powered by <a href="https://github.com/MMacedoS" target="_blank">Mauricio Macedo</a></span>
     </div>
 </div>
       <!-- App footer end -->

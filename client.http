@@ -1,0 +1,28 @@
+# variables
+@baseUrl = http://app1.localhost:8080/api/v1
+
+# health check
+GET {{baseUrl}}/time-session
+
+###
+
+# get token
+# @name getToken
+POST  {{baseUrl}}/time-session/token
+Content-Type: application/json
+
+{
+    "username": "teste@teste.com.br",
+    "password": "@teste123"
+}
+
+###
+
+@token = {{getToken.token}}
+
+###
+
+POST {{baseUrl}}/time-session/validate-token
+Headers:
+Content-Type: application/json  
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwZXJzb24iOnsiaWQiOiJmZGJhMTc5NC1jNTE0LTRjNzctYTI4ZC1mYTYyM2RlNGRjZGIiLCJub21lIjoiVGVzdGUgIiwiZW1haWwiOiJ0ZXN0ZUB0ZXN0ZS5jb20uYnIiLCJjb2RlIjoiNzYyIiwiYXJxdWl2b19pZCI6bnVsbCwibXlfcGVybWlzc2lvbnMiOltdLCJhcnF1aXZvIjpudWxsLCJhdGl2byI6MSwicGFpbmVsIjoiYWRtaW5pc3RyYXRpdm8iLCJjcmVhdGVkX2F0IjpudWxsLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzUzNzA4ODQ3LCJleHAiOjE3NTM3MjMyNDd9.ftIoow6xYEPwTb6CKEAyizul5cLYmMKhFEGEksKWs30

@@ -11,7 +11,7 @@ use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Request\Request;
 use App\Utils\Paginator;
 
-class RecuperacaoController extends Controller 
+class RecuperacaoController extends Controller
 {
     protected $turmaDisciplinaRepository;
     protected $professorDisciplinaRepository;
@@ -25,22 +25,17 @@ class RecuperacaoController extends Controller
         IProfessorDisciplinaRepository $professorDisciplinaRepository,
         IPeriodoRepository $periodoRepository,
         ITurmaRepository $turmaRepository
-    ) {   
+    ) {
         parent::__construct();
-        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;        
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
         $this->recuperacaoRepository = $recuperacaoRepository;
         $this->professorDisciplinaRepository = $professorDisciplinaRepository;
         $this->turmaRepository = $turmaRepository;
         $this->periodoRepository = $periodoRepository;
     }
-    
+
     public function index(Request $request, string $class_id, string $class_discipline_id)
     {
-        $this->defineRoutes(
-            $class_id, 
-            $class_discipline_id
-        );
-        
         $classRooms = $this->turmaRepository->findByUuid($class_id);
 
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
@@ -50,18 +45,23 @@ class RecuperacaoController extends Controller
                 'class_id' => $classRooms->id,
                 'uuid' => $class_discipline_id
             ]
-        ); 
-        
+        );
+
+        if (is_null($class_disciplines)) {
+            return false;
+        }
+
         $semester_one = $this->recuperacaoRepository
-            ->studentByScoreLow(
+            ->studentsByTurmaDisciplinaAndScore(
                 [
                     'periodoOne' => 1,
                     'periodoTwo' => 2,
                     'type' => 'I Semestre',
-                    'total' => 13.8
+                    'total' => 13.8,
+                    'turma_disciplina_id' => $class_disciplines[0]->id
                 ]
-            ); 
-        
+            );
+
         $semester_two = $this->recuperacaoRepository
             ->studentByScoreLow(
                 [
@@ -70,7 +70,7 @@ class RecuperacaoController extends Controller
                     'type' => 'II Semestre',
                     'total' => 13.8
                 ]
-            ); 
+            );
 
         $final = $this->recuperacaoRepository
             ->studentByScoreLow(
@@ -80,12 +80,12 @@ class RecuperacaoController extends Controller
                     'type' => 'Exames Finais',
                     'total' => 27.6
                 ]
-            ); 
+            );
 
         return $this->router->view(
-            "$this->routeView/index", 
+            "teacher/my-disciplines/recuperation/index",
             [
-                'active' => $this->active, 
+                'active' => $this->active,
                 'turmas_disciplinas' => $class_disciplines,
                 'turma' => $classRooms,
                 'semester_1' => $semester_one,
@@ -98,18 +98,14 @@ class RecuperacaoController extends Controller
 
     public function indexByCoordenator(Request $request, string $class_id)
     {
-        $this->defineRoutes(
-            $class_id
-        );
-        
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        
-        if(is_null($classRooms)){            
+
+        if (is_null($classRooms)) {
             return $this->router->redirect("minha-coordenacao/");
         }
-        
+
         $semester_one = $this->recuperacaoRepository
             ->studentToFailed(
                 [
@@ -119,7 +115,7 @@ class RecuperacaoController extends Controller
                     'total' => 13.9
                 ]
             );
-        
+
         $semester_two = $this->recuperacaoRepository
             ->studentToFailed(
                 [
@@ -128,7 +124,7 @@ class RecuperacaoController extends Controller
                     'class_room' => $classRooms->id,
                     'total' => 13.9
                 ]
-            ); 
+            );
 
         $final = $this->recuperacaoRepository
             ->studentToFailed(
@@ -138,12 +134,12 @@ class RecuperacaoController extends Controller
                     'class_room' => $classRooms->id,
                     'total' => 27.6
                 ]
-            ); 
+            );
 
         return $this->router->view(
-            "/coordination/my-coordination/classroom/recuperations", 
+            "/coordination/my-coordination/classroom/recuperations",
             [
-                'active' => $this->active, 
+                'active' => $this->active,
                 'turma' => $classRooms,
                 'semester_1' => $semester_one,
                 'semester_2' => $semester_two,
@@ -155,40 +151,18 @@ class RecuperacaoController extends Controller
 
     public function store(Request $request, string $class_id, string $class_discipline_id)
     {
-        $this->defineRoutes($class_id, $class_discipline_id);
-
         $data = $request->getBodyParams();
 
         $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
 
-        if(is_null($turma_disciplina)) {
+        if (is_null($turma_disciplina)) {
             return $this->router->redirect("$this->redirect?error=422");
         }
-          
+
         $data['class_discipline_id'] = $turma_disciplina->id;
 
         $this->recuperacaoRepository->create($data);
-    
-        return $this->router->redirect("$this->redirect");
-    }
 
-    private function defineRoutes($class_discipline_id, $discipline_teacher_id = null) {
-        switch($_SESSION["user"]->painel) {
-            case 'coordenador':
-                $this->routeView = 'coordination/my-coordination/discipline/recuperation';
-                $this->redirect = "minha-coordenacao/turma/$class_discipline_id/disciplina/$discipline_teacher_id/recuperacoes";
-                $this->active = 'coordinator';
-                break;
-            case 'administrativo':
-                $this->routeView = 'coordination/my-coordination/discipline/recuperation';
-                $this->redirect = "minha-coordenacao/turma/$class_discipline_id/disciplina/$discipline_teacher_id/recuperacoes";
-                $this->active = 'coordinator';
-                break;
-            case 'professor':
-                $this->routeView = 'teacher/my-disciplines/recuperation';
-                $this->redirect = "meus-componentes/turma/$class_discipline_id/disciplina/$discipline_teacher_id/recuperacoes";
-                $this->active = 'teacher';
-                break;
-        }
+        return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes");
     }
 }

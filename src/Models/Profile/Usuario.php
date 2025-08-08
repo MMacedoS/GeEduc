@@ -14,6 +14,8 @@ class Usuario
     public ?string $email;
     public ?string $code;    
     public ?string $arquivo_id;
+    public ?array $my_permissions = [];
+    public $arquivo = null;
     public ?string $senha;
     public $ativo;
     public ?string $painel;

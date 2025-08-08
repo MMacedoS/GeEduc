@@ -8,3 +8,5 @@ vendor/composer/autoload_namespaces.php
 # logs/app.log
 vendor/composer/autoload_files.php
 src/env/app.php
+src/env/app-exemple.php
+src/env/app-exemple.php

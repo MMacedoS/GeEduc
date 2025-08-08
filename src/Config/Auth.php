@@ -6,6 +6,7 @@ use App\Repositories\Balance\CaixaRepository;
 use App\Repositories\File\ArquivoRepository;
 use App\Repositories\Permission\PermissaoRepository;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class Auth {
     protected $sessionTimeout = 14400;
@@ -22,26 +23,60 @@ class Auth {
         if (is_null($username)) {
             return false; 
         }
-
-        $payload = [
-            'username' => (array)$username
-        ];
-
-        $token = JWT::encode($payload, SECRET_KEY,'HS256');                
-        setcookie('token', $token, time() + 14400);
-        $_SESSION['user'] = $username;
-        $_SESSION['login_time'] = time();
-        $_SESSION['last_activity'] = time();
-        $permissaoRepository = new PermissaoRepository(); 
-        $permissions = $permissaoRepository->allByUser((int)$username->code);
-        $_SESSION['my_permissions'] = $permissions;
         
         $arquivoRepository = new ArquivoRepository();
-        $arquivo = $arquivoRepository->findById((int)$username->arquivo_id);   
+        $arquivo = $arquivoRepository->findById((int)$username->arquivo_id);           
+        $permissaoRepository = new PermissaoRepository(); 
+        $permissions = $permissaoRepository->allByUser((int)$username->code);
+
         $_SESSION['files'] = $arquivo ?? null;
+        
+        $token = $this->prepareToken($username);
+
+        if (!$token) {
+            return false; 
+        }
+
+        setcookie('token', $token, time() + $this->sessionTimeout);
+        $_SESSION['user'] = $username;
+        $_SESSION['login_time'] = time();
+        $_SESSION['last_activity'] = time() + $this->sessionTimeout;
+        $_SESSION['my_permissions'] = $permissions;
     
         session_regenerate_id(true);
         return true;
+    }
+
+    public function prepareToken($username) {
+        if (is_null($username)) {
+            return false; 
+        }
+
+        $payload = [
+            'person' => (array)$username,
+            'iat' => time(),
+            'exp' => time() + $this->sessionTimeout,
+        ];
+
+        $token = JWT::encode($payload, SECRET_KEY,'HS256');   
+        return $token;
+    }
+
+    public function isValidToken($token) {
+        if (is_null($token)) {
+            return false; 
+        }
+
+        try {
+               $decoded = JWT::decode($token, new Key(SECRET_KEY, 'HS256'));
+            
+               if (!isset($decoded->person)) {
+                   return null;
+               }
+            return $decoded;
+        } catch (\Exception $e) {
+            return null; 
+        }
     }
 
     public function logout() {
@@ -75,7 +110,6 @@ class Auth {
 
         return true;
     }
-
 
     public function user() {
         return $_SESSION['user'] ?? null;

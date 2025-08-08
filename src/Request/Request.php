@@ -5,6 +5,7 @@ namespace App\Request;
 class Request {
     protected $method;
     protected $uri;
+    protected $autorization;
     protected $queryParams;
     protected $bodyParams;
     protected $headers;
@@ -47,5 +48,13 @@ class Request {
 
     public function getJsonBody() {
         return $this->jsonBody;
+    }
+
+    public function getAuthorization() {
+        $authorization = $this->headers['Authorization'] ?? null;
+        if (preg_match('/Bearer\s(\S+)/', $authorization, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }

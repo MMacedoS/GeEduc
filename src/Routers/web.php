@@ -4,6 +4,7 @@ use App\Config\AppServiceProvider;
 use App\Config\Auth;
 use App\Config\Container;
 use App\Config\Router;
+use App\Controllers\api\v1\TimeSession\TimeSessionController;
 use App\Controllers\v1\Activitie\AtividadeController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\Calendar\DiaLetivoController;
@@ -93,75 +94,79 @@ $turmaDisciplinaController = $container->get(TurmaDisciplinaController::class);
 
 $usuarioController = $container->get(UsuarioController::class);
 
-/////routes
-require_once "login/loginRouters.php";
+$timesessionController = $container->get(TimeSessionController::class);
 
-require_once "dashboard/dashboardRouters.php";
+/////routes
+require_once "v1/login/loginRouters.php";
+
+require_once "v1/dashboard/dashboardRouters.php";
 
 //users
-require_once "user/usersRouters.php";
+require_once "v1/user/usersRouters.php";
 
 //permissions
-require_once "permission/permissionsRouters.php";
+require_once "v1/permission/permissionsRouters.php";
 
-require_once "calendar/diaLetivoRouter.php";
+require_once "v1/calendar/diaLetivoRouter.php";
 
 //teachers
-require_once "teacher/teacherRouters.php";
+require_once "v1/teacher/teacherRouters.php";
 
 //students
-require_once "student/studentsRouters.php";
+require_once "v1/student/studentsRouters.php";
 
 //plans
-require_once "plans/plansRouters.php";
+require_once "v1/plans/plansRouters.php";
 
 //classrooms
-require_once "classRoom/classRoomRouters.php";
+require_once "v1/classRoom/classRoomRouters.php";
 
 //work_load
-require_once "workload/workloadsRouters.php";
+require_once "v1/workload/workloadsRouters.php";
 
 //banks
-require_once "bank/banksRouters.php";
+require_once "v1/bank/banksRouters.php";
 
 //disciplines
-require_once "discipline/disciplinesRouters.php";
+require_once "v1/discipline/disciplinesRouters.php";
 
 //student-class
-require_once "student/studentsClassRouter.php";
+require_once "v1/student/studentsClassRouter.php";
 
 //student-monthlyfees
-require_once "student/studentsMonthylessRouters.php";
+require_once "v1/student/studentsMonthylessRouters.php";
 
 // Coordenação
-require_once "coordination/coordinationsRouters.php";
+require_once "v1/coordination/coordinationsRouters.php";
 
 //periods
-require_once "period/periodsRouters.php";
+require_once "v1/period/periodsRouters.php";
 
 //activities-teacher
-require_once "myComponent/myComponents.php";
+require_once "v1/myComponent/myComponents.php";
 
 //site
-require_once "site/siteEvents.php";
-require_once "site/siteCarousel.php";
+require_once "v1/site/siteEvents.php";
+require_once "v1/site/siteCarousel.php";
 
 //minha-turma-estudantes
-require_once "myClassRoom/myClassRoomsRouters.php";
+require_once "v1/myClassRoom/myClassRoomsRouters.php";
 
 //mensalidades
-require_once "monthylees/monthyleesRouters.php";
+require_once "v1/monthylees/monthyleesRouters.php";
 
 // pessoa_contato
-require_once "person/personRouters.php";
+require_once "v1/person/personRouters.php";
 
-require_once "reports/reportsRouters.php";
+require_once "v1/reports/reportsRouters.php";
 
-require_once "profile/profileRouters.php";
+require_once "v1/profile/profileRouters.php";
 
-require_once "contract/contractsRouters.php";
+require_once "v1/contract/contractsRouters.php";
 
-require_once "integrations/integrationAutentique.php";
+require_once "v1/integrations/integrationAutentique.php";
+
+require_once "api/v1/timeSessionRouters.php";
 
 return $router;
 

@@ -16,4 +16,14 @@ class Authenticate
             exit;
         }
     }
+
+    public static function isValid(): bool
+    {
+        $auth = new Auth();
+
+        if (!$auth->check()) {
+            return false;
+        }
+        return true;
+    }
 }

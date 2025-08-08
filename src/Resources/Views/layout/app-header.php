@@ -69,11 +69,11 @@
                          <img src="<?=URL_PREFIX_APP . '/Public' . @$path?>" class="rounded-2 img-3x" alt="Perfil" />
                         <div class="ms-2 text-truncate d-lg-block d-none text-white">
                           <span class="d-flex opacity-50 small">
-                            <?=$_SESSION['user']->nome?>
+                            <?=$this->userLogged()->nome?>
                           </span>
                           <span>
-                          <?=$_SESSION['user']->email?>
-                          </span>
+                            <?=$this->userLogged()->email?>
+                          </span>                          
                         </div>
                       </a>
                       <div class="dropdown-menu dropdown-menu-end">

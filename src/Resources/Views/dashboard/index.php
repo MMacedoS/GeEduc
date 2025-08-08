@@ -1,13 +1,13 @@
 <?php require_once __DIR__ . '/../layout/top.php'; ?>
 
-<? if(isset($_GET['error'])):?>
-    <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
-       <b>Sem permissão!</b>.
-       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-<? endif;?>
-<!-- Row start -->  
-<?php if (hasPermission("visualizar_cards_dashboard")):?>
+<? if (isset($_GET['error'])): ?>
+  <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+    <b>Sem permissão!</b>.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<? endif; ?>
+<!-- Row start -->
+<?php if (hasPermission("visualizar_cards_dashboard")): ?>
   <div class="row gx-3">
     <div class="col-sm-3 col-12">
       <a href="\estudantes">
@@ -18,7 +18,7 @@
                 <i class="icon-add_task fs-4 text-white"></i>
               </div>
               <div class="d-flex flex-column">
-                <h2 class="m-0 lh-1"><?=isset($estudante_turmas) ? count($estudante_turmas) : 0?></h2>
+                <h2 class="m-0 lh-1"><?= isset($estudante_turmas) ? count($estudante_turmas) : 0 ?></h2>
                 <p class="m-0 opacity-50">Estudantes</p>
               </div>
             </div>
@@ -42,7 +42,7 @@
                 <i class="icon-add_task fs-4 text-white"></i>
               </div>
               <div class="d-flex flex-column">
-                <h2 class="m-0 lh-1"><?=isset($turmas) ? count($turmas) : 0 ?></h2>
+                <h2 class="m-0 lh-1"><?= isset($turmas) ? count($turmas) : 0 ?></h2>
                 <p class="m-0 opacity-50">Turmas</p>
               </div>
             </div>
@@ -66,7 +66,7 @@
                 <i class="icon-add_task fs-4 text-white"></i>
               </div>
               <div class="d-flex flex-column">
-                <h2 class="m-0 lh-1"><?=isset($discipline) ? count($discipline) : 0?></h2>
+                <h2 class="m-0 lh-1"><?= isset($discipline) ? count($discipline) : 0 ?></h2>
                 <p class="m-0 opacity-50">Disciplinas</p>
               </div>
             </div>
@@ -89,7 +89,7 @@
               <i class="icon-add_task fs-4 text-white"></i>
             </div>
             <div class="d-flex flex-column">
-              <h2 class="m-0 lh-1"><?=isset($teachers) ? count($teachers) : 0 ?></h2>
+              <h2 class="m-0 lh-1"><?= isset($teachers) ? count($teachers) : 0 ?></h2>
               <p class="m-0 opacity-50">Professores</p>
             </div>
           </div>
@@ -103,32 +103,32 @@
         </div>
       </div>
     </div>
-  </div>  
+  </div>
 <? endif; ?>
 
 <?
-  if(hasPermission('coordenacao')):
+if (hasPermission('coordenacao')):
 ?>
   <div class="col-xl-6">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Desempenho</h5>
-          <div id="scoresByClass" class="auto-align-graph"></div>
-        </div>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Desempenho</h5>
+        <div id="scoresByClass" class="auto-align-graph"></div>
       </div>
+    </div>
   </div>
 <?
-  endif;
+endif;
 ?>
 
 <?
-if(hasPermission('financeiro')):
+if (hasPermission('financeiro')):
 ?>
   <div class="row">
     <div class="col-xl-6">
       <div class="card mb-3">
         <div class="card-header">
-            <h5 class="card-title">Gráficos de Mensalidades</h5>
+          <h5 class="card-title">Gráficos de Mensalidades</h5>
         </div>
         <div class="card-body">
           <div id="donutFormatter" class="chart-height-xl"></div>
@@ -140,7 +140,7 @@ if(hasPermission('financeiro')):
 endif;
 ?>
 
-<?php if (hasPermission("professor")):?>
+<?php if (hasPermission("professor") && !hasPermission("coordenador")): ?>
   <div class="row gx-3">
     <div class="col-sm-3 col-12">
       <a href="\meus-componentes">
@@ -151,7 +151,7 @@ endif;
                 <i class="icon-add_task fs-4 text-white"></i>
               </div>
               <div class="d-flex flex-column">
-                <h2 class="m-0 lh-1"><?=isset($turmas) ? count($turmas) : 0 ?></h2>
+                <h2 class="m-0 lh-1"><?= isset($turmas) ? count($turmas) : 0 ?></h2>
                 <p class="m-0 opacity-50">Turmas</p>
               </div>
             </div>
@@ -175,7 +175,7 @@ endif;
                 <i class="icon-add_task fs-4 text-white"></i>
               </div>
               <div class="d-flex flex-column">
-                <h2 class="m-0 lh-1"><?=isset($discipline) ? count($discipline) : 0?></h2>
+                <h2 class="m-0 lh-1"><?= isset($discipline) ? count($discipline) : 0 ?></h2>
                 <p class="m-0 opacity-50">Disciplinas</p>
               </div>
             </div>
@@ -190,20 +190,20 @@ endif;
         </div>
       </a>
     </div>
-  </div>  
+  </div>
 <? endif; ?>
 
 <?php if (hasPermission("estudante") || hasPermission("responsavel_legal")): ?>
   <div class="row">
     <div class="col-xl-6">
-        <div class="card mb-3">
-          <div class="card-header">
-                <h5 class="card-title">Gráficos de Faltas</h5>
-            </div>
-            <div class="card-body">
-              <div id="donutFormatter" class="chart-height-xl"></div>
-            </div>
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="card-title">Gráficos de Faltas</h5>
         </div>
+        <div class="card-body">
+          <div id="donutFormatter" class="chart-height-xl"></div>
+        </div>
+      </div>
     </div>
 
     <div class="col-xl-6">
@@ -217,145 +217,140 @@ endif;
   </div>
 <? endif; ?>
 
-<?php require_once __DIR__ . '/../layout/bottom.php'; 
+<?php require_once __DIR__ . '/../layout/bottom.php';
 ?>
 
 <?php if (hasPermission("visualizar cards dashboard")): ?>
-    <script>
-        Morris.Donut({
-            element: "donutFormatter",
-            data: [
-                {
-                    value: "<?=$pending_monthly; ?>",
-                    label: "Pendentes",
-                    formatted: "<?=$percentual_pending; ?>%"
-                },
-                {
-                    value: "<?=$late_monthly; ?>",
-                    label: "Atrasado",
-                    formatted: "<?php echo $percentual_late; ?>%"
-                },
-                {
-                    value: "<?=$paid_monthly; ?>",
-                    label: "Pago",
-                    formatted: "<?php echo $percentual_paid; ?>%"
-                },
-                {
-                    value: "<?=$canceled_monthly; ?>",
-                    label: "Cancelado",
-                    formatted: "<?php echo $percentual_canceled; ?>%"
-                }
-            ],
-            resize: true,
-            hideHover: "auto",
-            formatter: function (x, data) {
-                return data.formatted;
-            },
-            labelColor: "#507D0C",
-            colors: ["#00abf1", "#e66100", "#34a853", "#e94235"]
-        });
-    </script>
-<? endif;?>
+  <script>
+    Morris.Donut({
+      element: "donutFormatter",
+      data: [{
+          value: "<?= $pending_monthly; ?>",
+          label: "Pendentes",
+          formatted: "<?= $percentual_pending; ?>%"
+        },
+        {
+          value: "<?= $late_monthly; ?>",
+          label: "Atrasado",
+          formatted: "<?php echo $percentual_late; ?>%"
+        },
+        {
+          value: "<?= $paid_monthly; ?>",
+          label: "Pago",
+          formatted: "<?php echo $percentual_paid; ?>%"
+        },
+        {
+          value: "<?= $canceled_monthly; ?>",
+          label: "Cancelado",
+          formatted: "<?php echo $percentual_canceled; ?>%"
+        }
+      ],
+      resize: true,
+      hideHover: "auto",
+      formatter: function(x, data) {
+        return data.formatted;
+      },
+      labelColor: "#507D0C",
+      colors: ["#00abf1", "#e66100", "#34a853", "#e94235"]
+    });
+  </script>
+<? endif; ?>
 
 <?php if (hasPermission("estudante")): ?>
-    <script>
-        Morris.Donut({
-            element: "donutFormatter",
-            data: [
-                {
-                    value: "<?= $total_faltas ?? 0 ?>",
-                    label: "Faltas",
-                    formatted: "<?php echo $percentual_faltas ?? 0  ?>%"
-                },
-                {
-                    value: "<?= $presenca ?? 1 ?>",
-                    label: "Presença",
-                    formatted: "<?php echo $percentual_presenca ?? 100 ?>%"
-                }
-            ],
-            resize: true,
-            hideHover: "auto",
-            formatter: function (x, data) {
-                return data.formatted;
-            },
-            labelColor: "#507D0C",
-            colors: ["#e94235", "#34a853"]
-        });
-    </script>
-    <script>
-        var notas = JSON.parse('<?=json_encode($notas)?>');
-        var options = {
-          chart: {
-            height: 350,
-            width: "100%",
-            type: "bar",
-            toolbar: {
-              show: false,
-            },
+  <script>
+    Morris.Donut({
+      element: "donutFormatter",
+      data: [{
+          value: "<?= $total_faltas ?? 0 ?>",
+          label: "Faltas",
+          formatted: "<?php echo $percentual_faltas ?? 0  ?>%"
+        },
+        {
+          value: "<?= $presenca ?? 1 ?>",
+          label: "Presença",
+          formatted: "<?php echo $percentual_presenca ?? 100 ?>%"
+        }
+      ],
+      resize: true,
+      hideHover: "auto",
+      formatter: function(x, data) {
+        return data.formatted;
+      },
+      labelColor: "#507D0C",
+      colors: ["#e94235", "#34a853"]
+    });
+  </script>
+  <script>
+    var notas = JSON.parse('<?= json_encode($notas) ?>');
+    var options = {
+      chart: {
+        height: 350,
+        width: "100%",
+        type: "bar",
+        toolbar: {
+          show: false,
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: "60%",
+          borderRadius: 8,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        show: true,
+        width: 0,
+        colors: ["#ec5757"],
+      },
+      series: [{
+        name: "Pontos",
+        data: notas.map((item) => item.total),
+      }, ],
+      legend: {
+        show: false,
+      },
+      xaxis: {
+        categories: notas.map((item) => item.nome),
+      },
+      yaxis: {
+        show: false,
+      },
+      fill: {
+        colors: ["#e73737"],
+      },
+      tooltip: {
+        y: {
+          formatter: function(val) {
+            return +val;
           },
-          plotOptions: {
-            bar: {
-              horizontal: false,
-              columnWidth: "60%",
-              borderRadius: 8,
-            },
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          stroke: {
+        },
+      },
+      grid: {
+        borderColor: "#c8cfcc",
+        strokeDashArray: 5,
+        xaxis: {
+          lines: {
             show: true,
-            width: 0,
-            colors: ["#ec5757"],
           },
-          series: [
-            {
-              name: "Pontos",
-              data: notas.map((item) => item.total),
-            },
-          ],
-          legend: {
+        },
+        yaxis: {
+          lines: {
             show: false,
           },
-          xaxis: {
-            categories: notas.map((item) => item.nome),
-          },
-          yaxis: {
-            show: false,
-          },
-          fill: {
-            colors: ["#e73737"],
-          },
-          tooltip: {
-            y: {
-              formatter: function (val) {
-                return +val;
-              },
-            },
-          },
-          grid: {
-            borderColor: "#c8cfcc",
-            strokeDashArray: 5,
-            xaxis: {
-              lines: {
-                show: true,
-              },
-            },
-            yaxis: {
-              lines: {
-                show: false,
-              },
-            },
-            padding: {
-              top: 0,
-              right: 0,
-              bottom: -10,
-              left: 0,
-            },
-          },
-        };
-        var chart = new ApexCharts(document.querySelector("#scoresByDiscipline"), options);
-        chart.render();
-     
-    </script>
+        },
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: -10,
+          left: 0,
+        },
+      },
+    };
+    var chart = new ApexCharts(document.querySelector("#scoresByDiscipline"), options);
+    chart.render();
+  </script>
 <? endif; ?>
