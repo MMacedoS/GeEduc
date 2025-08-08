@@ -6,8 +6,8 @@ const DB_HOST = 'mysql';
 const DB_NAME = 'cesp-geeduc';
 const DB_USER = 'root';
 const DB_PASS = '12345';
-const SECRET_KEY = '1SDS-AKLSDK7.SDAK.33DSAK.SDAK';
-const SECRET_KEY_DAYLI = 'fbc761f5e0a5a34e5a1ec23ff671e1f87525e5a8756ed5fe14eab3e1a97af274';
+const SECRET_KEY = 'asdasd-asdasd-asdasd-asdasd-asdasd';
+const SECRET_KEY_DAYLI = 'asd54as4d5as4d5as4d4as2d1as2d1asdas5d4asdasd';
 const NAME_SCHOOL = "Instituto Social de Tucano";
 const ACRONYM_SCHOOL = "IST";
 const SCHOOL_ADDRESS = "CENTRO - TUCANO/BA";
@@ -20,9 +20,9 @@ const ACCREDITATION = "nº 7.915/2013";
 const PHONES_SCHOOL = ["(75) 00000-6871", "(75)  00000-9651"];
 const MIN_SCORE = 7;
 const URL_AUTENTIQUE = "https://api.autentique.com.br/v2/graphql";
-const TOKEN_AUTENTIQUE = "2b4f9e72c2e5685f0418adfc220e927b8f339766ba37cc320ea2302ab41082ec";
-const SECRET_AUTENTIQUE = "01JKPQJA4W6F2MVXP8XWEXKBFK";
-const SECRET_AUTENTIQUE_CREATE_DOC = "01JKPW31XFBR17RH2RPZ9Q9J0X";
+const TOKEN_AUTENTIQUE = "asd55454sad5a4sd54as5das5das3d5as4d5as4d85as54d5asd";
+const SECRET_AUTENTIQUE = "asdas4d545asd2as1d21asdasd";
+const SECRET_AUTENTIQUE_CREATE_DOC = "asd54as5d4as5d4as5d1as2d1as5d4as5d";
 const CONTRACT_START = "03/02/";
 const CONTRACT_END = "12/12/";
 const EMAIL_SCHOOL = "contato@escolaisttucano.com.br";
@@ -32,18 +32,14 @@ const CONFIG_EMAIL = [
     'host' => 'smtp.gmail.com', // Servidor SMTP
     'port' => 587, // Porta do servidor
     'username' => 'geeducsoftware@gmail.com', // E-mail do remetente
-    'password' => 'bfik kbbt oukv bfaz', // Senha do e-mail
+    'password' => 'senha', // Senha do e-mail
     'encryption' => 'tls', // Tipo de criptografia (tls/ssl)
     'from_email' => 'contato@escolaisttucano.com.br', // E-mail do remetente
     'from_name' => 'Gestor Educacional' // Nome do remetente
 ];
 
-// const TOKEN_URL_BB = 'https://oauth.sandbox.bb.com.br/oauth/token';
-// const BASIC_TOKEN = 'Basic ZXlKcFpDSTZJbUV3T1dFek0ySXRZallpTENKamIyUnBaMjlRZFdKc2FXTmhaRzl5SWpvd0xDSmpiMlJwWjI5VGIyWjBkMkZ5WlNJNk1USTBNamsyTENKelpYRjFaVzVqYVdGc1NXNXpkR0ZzWVdOaGJ5STZNWDA6ZXlKcFpDSTZJbUl4WkROaU5qUmtMVFU0TXprdE5HUXdaUzFoWlRSakxUVXlPVE5sWXpFeVptUmhNaUlzSW1OdlpHbG5iMUIxWW14cFkyRmtiM0lpT2pBc0ltTnZaR2xuYjFOdlpuUjNZWEpsSWpveE1qUXlPVFlzSW5ObGNYVmxibU5wWVd4SmJuTjBZV3hoWTJGdklqb3hMQ0p6WlhGMVpXNWphV0ZzUTNKbFpHVnVZMmxoYkNJNk1Td2lZVzFpYVdWdWRHVWlPaUpvYjIxdmJHOW5ZV05oYnlJc0ltbGhkQ0k2TVRjek9EY3hNVEl6TVRjM00zMA==';
-// const GW_APP_KEY = "5d3a0e9d39378f829daeb7fcea9a3239";
-// const API_BB_URL = "https://api.hm.bb.com.br/cobrancas/v2/";
-//produção
-const TOKEN_URL_BB = 'https://oauth.bb.com.br/oauth/token';
-const BASIC_TOKEN = "Basic ZXlKcFpDSTZJakZqTlROaFlUWXRaalUxTXkwME5EQXpMVGhpTVRrdE5UQWlMQ0pqYjJScFoyOVFkV0pzYVdOaFpHOXlJam93TENKamIyUnBaMjlUYjJaMGQyRnlaU0k2TVRBeU5EQTFMQ0p6WlhGMVpXNWphV0ZzU1c1emRHRnNZV05oYnlJNk1uMDpleUpwWkNJNklqWXhZakEwTkRJdE1EVTROeTAwWVRrMExUa3pZVEF0SWl3aVkyOWthV2R2VUhWaWJHbGpZV1J2Y2lJNk1Dd2lZMjlrYVdkdlUyOW1kSGRoY21VaU9qRXdNalF3TlN3aWMyVnhkV1Z1WTJsaGJFbHVjM1JoYkdGallXOGlPaklzSW5ObGNYVmxibU5wWVd4RGNtVmtaVzVqYVdGc0lqb3hMQ0poYldKcFpXNTBaU0k2SW5CeWIyUjFZMkZ2SWl3aWFXRjBJam94TnpNNU1qRXlOVFEyTVRVNWZR";
-const GW_APP_KEY = "0d8436836b7fa63bd7eac4bdf5db57f7";
-const API_BB_URL = "https://api.bb.com.br/cobrancas/v2/";
+const TOKEN_URL_BB = 'url';
+const BASIC_TOKEN = "token";
+const GW_APP_KEY = "key";
+
+const API_BB_URL = "url_api";
