@@ -49,3 +49,43 @@ Sistema-Escolar/
 ├── crontab                  # Tarefas agendadas
 └── index.php                # Ponto de entrada do sistema
 ```
+
+## 🛠 Funcionalidades
+
+- Cadastro e gerenciamento de alunos, professores e turmas
+- Controle de notas e frequência
+- Módulo de autenticação com **JWT**
+- Painel administrativo responsivo com **Bootstrap**
+- Rotas dinâmicas e organizadas
+- Logs para auditoria e depuração
+- Configuração modular via `Config/` e `.env`
+
+---
+
+## ⚡ Como Executar o Projeto
+
+### 1️⃣ Clonar o repositório
+
+```bash
+git clone https://github.com/seuusuario/sistema-escolar.git
+
+DB_HOST=localhost
+DB_NAME=sistema_escolar
+DB_USER=root
+DB_PASS=secret
+JWT_SECRET=suachavesecreta
+
+php -S localhost:8000 -t Public
+
+
+📌 Rotas
+Exemplo de algumas rotas disponíveis:
+
+GET /alunos → Lista alunos
+
+POST /alunos → Cadastra novo aluno
+
+POST /login → Gera token JWT
+
+GET /turmas → Lista turmas
+```
