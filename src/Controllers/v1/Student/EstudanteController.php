@@ -55,7 +55,7 @@ class EstudanteController extends Controller
 
         return $this->router->view('/student/index', 
             [
-                'active' => 'pedagogico',  
+                'active' => 'pedagogico',
                 'estudantes' => $paginatedBoards,
                 'links' => $paginator->links(),
                 'searchFilter' => $params['name_email'] ?? null,
@@ -68,7 +68,7 @@ class EstudanteController extends Controller
     {
         $planos = $this->planosRepository->allPlans();
         
-        return $this->router->view('/student/create', ['active' => 'pedagogico', 'plans' => $planos]);
+        return $this->router->view('/student/create', ['active' => 'pedagogico', 'plans' => $planos, 'responsavelForm' => true]);
     }
 
     public function createExcel(Request $request)

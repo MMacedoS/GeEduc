@@ -32,6 +32,26 @@
         </div>
     </form>
 
+    <div class="modal fade modal-xl" id="reponsavel-legal-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <form action="/pessoa-responsavel" method="POST" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Cadastrar Responsável Legal</h5>
+                </div>
+
+                <div class="modal-body row gx-3">
+                    <p class="mt-2 text-muted">Insira as informações para o cadastro</p>
+                    <?php include_once __DIR__ . '/../person/_forms.php'; ?>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary text-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi-search"></i> Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 <?php require_once __DIR__ . '/../layout/bottom.php'; ?>
 
 
@@ -69,7 +89,7 @@
                     }
 
                     if (response.length === 0 || !Array.isArray(response)) {
-                        $('#responsible_suggestions').html('<li class="list-group-item">Sem resultados, <a href="/pessoa" target="_blank">Cadastrar ?</a></li>').show();
+                        $('#responsible_suggestions').html('<li class="list-group-item" data-bs-toggle="modal" data-bs-target="#reponsavel-legal-modal">Sem resultados, <span class="text-decoration-underline text-info">Cadastrar?</span></li>').show();
                         $('#redirect_button').show();
                     }
                 },
