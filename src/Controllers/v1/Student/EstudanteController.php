@@ -201,7 +201,7 @@ class EstudanteController extends Controller
             'doc' => 'required',
             'monthly_day' => 'required',
             'plan_id' => 'required',
-            // 'legal_responsible_id' => 'required'
+            'legal_responsible_id' => 'required'
         ];
 
         if(!$validator->validate($rules)){

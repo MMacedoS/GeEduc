@@ -38,13 +38,13 @@ class Validator {
 
     protected function required($field) {
         if (empty($this->data[$field])) {
-            $this->errors[$field][] = 'Este campo é obrigatório.';
+            $this->errors[$field][] = "O campo <b>$field</b> é obrigatório.";
         }
     }
 
     protected function min($field, $min) {
         if (strlen($this->data[$field]) < $min) {
-            $this->errors[$field][] = "Este campo deve ter no mínimo $min caracteres.";
+            $this->errors[$field][] = "O campo <b>$field</b> deve ter no mínimo $min caracteres.";
         }
     }
 
@@ -56,7 +56,7 @@ class Validator {
 
     protected function email($field) {
         if (!filter_var($this->data[$field], FILTER_VALIDATE_EMAIL)) {
-            $this->errors[$field][] = 'Este campo deve ser um endereço de email válido.';
+            $this->errors[$field][] = "O campo <b>$field</b> deve ser um endereço de email válido.";
         }
     }
 

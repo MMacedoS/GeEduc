@@ -40,8 +40,10 @@
                 </div>
 
                 <div class="modal-body row gx-3">
-                    <p id="teste-de-errors"></p>
-                    <p class="mt-2 text-muted">Insira as informações para o cadastro</p>
+                    <div id="modal-errors"></div>
+                    
+                    <p class="text-muted">Insira as informações para o cadastro</p>
+
                     <?php include_once __DIR__ . '/../person/_forms.php'; ?>
                 </div>
 
@@ -122,6 +124,8 @@
         });
     });
 
+    $('#modal-errors').hide();
+
     $("#modal-form").submit(function(event) {
         event.preventDefault();
 
@@ -134,9 +138,16 @@
             dataType: "JSON",
             success: function(response) {
                 if(response.errors){
+                    var errors = '';
+
                     $.each(response.errors, function(key, value) {
-                        $("#teste-de-errors").text(value); 
+                        errors += '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">'
+                        errors += '<p class="m-0 p-0">'+ value +'</p>'
+                        errors += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                        errors += '</div>'
                     });
+
+                    $('#modal-errors').html(errors).show();
                 }else{
                     $('#responsible_id').val(response.id); 
                     $('#responsible_search').val(response.nome + ' (' + response.email + ')'); 
