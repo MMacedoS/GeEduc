@@ -7,3 +7,4 @@
 [2025-08-09T02:49:39.996657+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, false returned [] []
 [2025-08-09T02:50:48.831984+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, false returned [] []
 [2025-08-09T02:52:16.949889+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, false returned [] []
+[2025-08-09T03:04:06.994789+00:00] app_logger.INFO: App\Repositories\Person\PessoaFisicaRepository::findPessoaFisica(): Return value must be of type ?App\Models\Person\PessoaFisica, false returned [] []

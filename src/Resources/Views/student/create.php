@@ -139,7 +139,7 @@
                     });
                 }else{
                     $('#responsible_id').val(response.id); 
-                    $('#responsible_search').val(response.pessoa_fisica.nome + ' (' + response.pessoa_fisica.email + ')'); 
+                    $('#responsible_search').val(response.nome + ' (' + response.email + ')'); 
 
                     $('#responsavel-legal-modal').modal('hide');
                 }

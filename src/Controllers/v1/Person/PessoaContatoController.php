@@ -232,9 +232,14 @@ class PessoaContatoController extends Controller
             exit();
         }
 
-        $created->pessoa_fisica = $this->pessoaFisicaRepository->findById($created->pessoa_fisica_id);
+        $pessoa_fisica = $this->pessoaFisicaRepository->findById($created->pessoa_fisica_id);
         
-        echo json_encode($created);
+        echo json_encode([
+            'id' => $created->id,
+            'nome' => $pessoa_fisica->nome,
+            'email' => $pessoa_fisica->email
+        ]);
+        
         exit();
     }
 }
