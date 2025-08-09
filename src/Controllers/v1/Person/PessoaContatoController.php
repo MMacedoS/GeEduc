@@ -201,4 +201,40 @@ class PessoaContatoController extends Controller
             ]
         );
     }
+
+    public function createStudentLegalGuardian(Request $request){
+        $data = $request->getBodyParams();
+
+        $validator = new Validator($data);
+
+        $rules = [
+            'name' => 'required|min:1|max:100',
+            'email' => 'required',
+            'mother' => 'required',
+            'doc' => 'required',
+        ];
+
+        if(!$validator->validate($rules)){
+            echo json_encode([
+                'errors' => $validator->getErrors()
+            ]);
+
+            exit();
+        }
+
+        $created = $this->pessoaContatoRepository->saveAll($data);
+
+        if(is_null($created)){
+            echo json_encode([
+                'errors' => 'Erro ao cadastrar responsável legal'
+            ]);
+
+            exit();
+        }
+
+        $created->pessoa_fisica = $this->pessoaFisicaRepository->findById($created->pessoa_fisica_id);
+        
+        echo json_encode($created);
+        exit();
+    }
 }

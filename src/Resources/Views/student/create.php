@@ -32,14 +32,15 @@
         </div>
     </form>
 
-    <div class="modal fade modal-xl" id="reponsavel-legal-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade modal-xl" id="responsavel-legal-modal" tabindex="-1" role="dialog" aria-labelledby="responsavel-legal-modal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <form action="/pessoa-responsavel" method="POST" class="modal-content">
+            <form action="/pessoa-responsavel" method="POST" class="modal-content" id="modal-form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Cadastrar Responsável Legal</h5>
                 </div>
 
                 <div class="modal-body row gx-3">
+                    <p id="teste-de-errors"></p>
                     <p class="mt-2 text-muted">Insira as informações para o cadastro</p>
                     <?php include_once __DIR__ . '/../person/_forms.php'; ?>
                 </div>
@@ -89,7 +90,7 @@
                     }
 
                     if (response.length === 0 || !Array.isArray(response)) {
-                        $('#responsible_suggestions').html('<li class="list-group-item" data-bs-toggle="modal" data-bs-target="#reponsavel-legal-modal">Sem resultados, <span class="text-decoration-underline text-info">Cadastrar?</span></li>').show();
+                        $('#responsible_suggestions').html('<li class="list-group-item" data-bs-toggle="modal" data-bs-target="#responsavel-legal-modal">Sem resultados, <span class="text-decoration-underline text-info">Cadastrar?</span></li>').show();
                         $('#redirect_button').show();
                     }
                 },
@@ -117,6 +118,34 @@
         $(document).on('click', function (e) {
             if (!$(e.target).closest('#responsible_search').length) {
                 $('#responsible_suggestions').hide();
+            }
+        });
+    });
+
+    $("#modal-form").submit(function(event) {
+        event.preventDefault();
+
+        const formData = $(this).serialize();
+
+        $.ajax({
+            type: "POST",
+            url: "/pessoa-responsavel",
+            data: formData,
+            dataType: "JSON",
+            success: function(response) {
+                if(response.errors){
+                    $.each(response.errors, function(key, value) {
+                        $("#teste-de-errors").text(value); 
+                    });
+                }else{
+                    $('#responsible_id').val(response.id); 
+                    $('#responsible_search').val(response.pessoa_fisica.nome + ' (' + response.pessoa_fisica.email + ')'); 
+
+                    $('#responsavel-legal-modal').modal('hide');
+                }
+            },
+            error: function(error){
+                console.error('Erro na requisição:', error);
             }
         });
     });
