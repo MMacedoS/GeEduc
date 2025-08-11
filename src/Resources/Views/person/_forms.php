@@ -121,8 +121,14 @@
       <div class="m-0">
         <label class="form-label">Responsável Legal</label>
         <select name="legal_responsive" class="form-control" id="">
+          <?php
+            if(!isset($responsavelForm)){
+          ?>
             <option value="0" <?php if(isset($pessoa_contato->responsavel_legal) && $pessoa_contato->responsavel_legal == 0) { echo 'selected'; } ?>>Não</option>
-            <option value="1" <?php if(isset($pessoa_contato->responsavel_legal) && $pessoa_contato->responsavel_legal == 1) { echo 'selected'; } ?>>Sim</option>
+          <?php
+            }
+          ?>
+          <option value="1" <?php if(isset($pessoa_contato->responsavel_legal) && $pessoa_contato->responsavel_legal == 1) { echo 'selected'; } ?>>Sim</option>
         </select>
       </div>
    </div>
@@ -140,14 +146,20 @@
   </div>
 </div>
 
-<div class="col-xxl-12">
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex flex-wrap gap-2 justify-content-end">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="\pessoas\" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php
+  if(!isset($responsavelForm)){
+?>
+  <div class="col-xxl-12">
+      <div class="card mb-3">
+          <div class="card-body">
+              <div class="d-flex flex-wrap gap-2 justify-content-end">
+                  <button type="submit" class="btn btn-primary">Salvar</button>
+                  <a href="\pessoas\" class="btn btn-secondary">Cancelar</a>
+              </div>
+          </div>
+      </div>
+  </div>
+<?php
+  }
+?>
 
