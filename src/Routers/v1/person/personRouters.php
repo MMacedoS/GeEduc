@@ -12,3 +12,5 @@ $router->create('GET', '/minha-galerinha', [$pessoaContatoController, 'indexMyLi
 $router->create('GET', '/minha-galerinha/estudante/{id}', [$estudanteTurmaController, 'indexHistory'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/frequencia", [$frequenciaController, 'indexResponsibleStudents'], $auth);
 $router->create('GET', "/minha-galerinha/estudante/{id}/turma/{class_student_id}/notas", [$notaController, 'indexResponsibleStudents'], $auth);
+
+$router->create('POST', '/pessoa-responsavel', [$pessoaContatoController, 'createStudentLegalGuardian'], $auth);
