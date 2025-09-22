@@ -24,6 +24,7 @@ use App\Interfaces\Profile\IUsuarioRecuperarSenhaRepository;
 use App\Interfaces\Profile\IUsuarioRepository;
 use App\Interfaces\Recuperation\IRecuperacaoRepository;
 use App\Interfaces\Scores\IBoletimRepository;
+use App\Interfaces\Scores\ILowScoresRepository;
 use App\Interfaces\Scores\INotaRepository;
 use App\Interfaces\Scores\IParalelaRepository;
 use App\Interfaces\Site\Album\ISiteAlbumRepository;
@@ -60,6 +61,7 @@ use App\Repositories\Profile\UsuarioRecuperarSenhaRepository;
 use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Recuperation\RecuperacaoRepository;
 use App\Repositories\Scores\BoletimRepository;
+use App\Repositories\Scores\LowScoresRepository;
 use App\Repositories\Scores\NotaRepository;
 use App\Repositories\Scores\ParalelaRepository;
 use App\Repositories\Site\Album\SiteAlbumRepository;
@@ -76,21 +78,23 @@ use App\Repositories\Weekday\DiaSemanaRepository;
 use App\Repositories\Work_Load\CargaHorariaRepository;
 use App\Services\NotaHelperService;
 
-class AppServiceProvider 
+class AppServiceProvider
 {
     protected $container;
 
-    public function __construct(Container $container) {
+    public function __construct(Container $container)
+    {
         $this->container = $container;
     }
 
-    public function registerDependencies() {
+    public function registerDependencies()
+    {
         // Registra as dependências
         $this->container
             ->set(
-                IUsuarioRepository::class, 
+                IUsuarioRepository::class,
                 new UsuarioRepository()
-        );
+            );
         $this->container
             ->set(
                 IUsuarioRecuperarSenhaRepository::class,
@@ -100,77 +104,83 @@ class AppServiceProvider
             ->set(
                 IEstudanteRepository::class,
                 new EstudanteRepository()
-            );        
+            );
         $this->container
             ->set(
                 IEstudanteTurmaRepository::class,
                 new EstudanteTurmaRepository()
-            );        
+            );
         $this->container
             ->set(
                 IEstudanteMensalidadeRepository::class,
                 new EstudanteMensalidadeRepository()
             );
-    
+
         $this->container
             ->set(
                 IFrequenciaRepository::class,
                 new FrequenciaRepository()
-            );        
+            );
         $this->container
             ->set(
                 IArquivoRepository::class,
                 new ArquivoRepository()
             );
-        
+
         $this->container
             ->set(
                 IMensalidadeRepository::class,
                 new MensalidadeRepository()
             );
-        
+
         $this->container
             ->set(
                 IPeriodoRepository::class,
                 new PeriodoRepository()
             );
-        
+
         $this->container
             ->set(
                 IPessoaFisicaRepository::class,
                 new PessoaFisicaRepository()
             );
-        
+
         $this->container
             ->set(
                 IPessoaContatoRepository::class,
                 new PessoaContatoRepository()
             );
-                
+
         $this->container
             ->set(
                 IPessoaFisicaRepository::class,
                 new PessoaFisicaRepository()
             );
-                
+
         $this->container
             ->set(
                 IPermissaoRepository::class,
                 new PermissaoRepository()
             );
-        
+
         $this->container
             ->set(
                 IPlanoRepository::class,
                 new PlanoRepository()
             );
-        
+
         $this->container
             ->set(
                 INotaRepository::class,
                 new NotaRepository()
             );
-        
+
+        $this->container
+            ->set(
+                ILowScoresRepository::class,
+                new LowScoresRepository()
+            );
+
         $this->container
             ->set(
                 IParalelaRepository::class,
@@ -181,8 +191,8 @@ class AppServiceProvider
             ->set(
                 ISiteAlbumRepository::class,
                 new SiteAlbumRepository()
-            );        
-        
+            );
+
         $this->container
             ->set(
                 ISiteEventoRepository::class,
@@ -193,62 +203,62 @@ class AppServiceProvider
             ->set(
                 ISiteArquivoRepository::class,
                 new SiteArquivoRepository()
-            );        
-        
+            );
+
         $this->container
             ->set(
                 ISiteCarrosselRepository::class,
                 new SiteCarrosselRepository()
             );
-    
+
         $this->container
             ->set(
                 IProfessorRepository::class,
                 new ProfessorRepository()
             );
-                
+
         $this->container
             ->set(
                 IProfessorDisciplinaRepository::class,
                 new ProfessorDisciplinaRepository()
             );
-                
+
         $this->container
             ->set(
                 ICargaHorariaRepository::class,
                 new CargaHorariaRepository()
             );
-                        
+
         $this->container
             ->set(
                 IContaBancariaRepository::class,
                 new ContaBancariaRepository()
             );
-                        
+
         $this->container
             ->set(
                 IAtividadeRepository::class,
                 new AtividadeRepository()
             );
-        
+
         $this->container
             ->set(
                 ITurmaRepository::class,
                 new TurmaRepository()
-            );        
-                        
+            );
+
         $this->container
             ->set(
                 ITurmaDisciplinaRepository::class,
                 new TurmaDisciplinaRepository()
-            );        
-                        
+            );
+
         $this->container
             ->set(
                 ICoordenadorRepository::class,
                 new CoordenadorRepository()
             );
-                                
+
         $this->container
             ->set(
                 ICoordenadorTurmaRepository::class,
@@ -260,7 +270,7 @@ class AppServiceProvider
                 IDisciplinaRepository::class,
                 new DisciplinaRepository()
             );
-        
+
         $this->container
             ->set(
                 IContratoRepository::class,
@@ -290,7 +300,7 @@ class AppServiceProvider
                 IDiaLetivoRepository::class,
                 new DiaLetivoRepository()
             );
-        
+
         $this->container
             ->set(
                 IRecuperacaoRepository::class,
