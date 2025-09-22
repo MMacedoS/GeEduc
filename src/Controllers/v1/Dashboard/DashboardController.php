@@ -11,6 +11,7 @@ use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Interfaces\Frequencies\IFrequenciaRepository;
 use App\Interfaces\MonthlyFees\IMensalidadeRepository;
 use App\Interfaces\Scores\IBoletimRepository;
+use App\Interfaces\Scores\ILowScoresRepository;
 use App\Interfaces\Student\IEstudanteRepository;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Interfaces\Teacher\IProfessorRepository;
@@ -32,6 +33,7 @@ class DashboardController extends Controller
     protected $professorRepository;
     protected $disciplinaRepository;
     protected $boletimRepository;
+    protected $lowScoresRepository;
 
     public function __construct(
         ICargaHorariaRepository $cargaHorariaRepository,
@@ -43,7 +45,8 @@ class DashboardController extends Controller
         IEstudanteTurmaRepository $estudanteTurmaRepository,
         IProfessorRepository $professorRepository,
         IDisciplinaRepository $disciplinaRepository,
-        IBoletimRepository $boletimRepository
+        IBoletimRepository $boletimRepository,
+        ILowScoresRepository $lowScoresRepository
     ) {
         parent::__construct();
 
@@ -57,28 +60,30 @@ class DashboardController extends Controller
         $this->professorRepository = $professorRepository;
         $this->disciplinaRepository = $disciplinaRepository;
         $this->boletimRepository = $boletimRepository;
+        $this->lowScoresRepository = $lowScoresRepository;
     }
-    
-    public function index(Request $request) {
+
+    public function index(Request $request)
+    {
         return $this->prepareIndex($_SESSION['user']->painel);
     }
 
-    public function indexFacility(Request $request) 
+    public function indexFacility(Request $request)
     {
         return $this->router->view('dashboard/facility', ['active' => 'dashboard']);
     }
 
     private function prepareIndex(string $painel)
     {
-        if($painel == 'estudante') {
+        if ($painel == 'estudante') {
             return $this->indexStudents();
         }
 
-        if($painel === 'professor') {
+        if ($painel === 'professor') {
             return $this->indexTeacher();
         }
 
-        if($painel == 'administrativo') {
+        if ($painel == 'administrativo') {
             return $this->indexAdministrators();
         }
 
@@ -89,11 +94,11 @@ class DashboardController extends Controller
         return $this->router->view('dashboard/index', ['active' => 'dashboard']);
     }
 
-    private function indexStudents() 
+    private function indexStudents()
     {
         $data = [
             'active' => 'dashboard',
-        ];  
+        ];
         $pessoaAuth = $this->authUser();
 
         $estudante = $this->estudanteRepository
@@ -113,29 +118,31 @@ class DashboardController extends Controller
                     'class_id' => $estudante_turma->turma_id
                 ]
             );
-        
-        if(isset($frequencias) && !empty($frequencias)) {
+
+        if (isset($frequencias) && !empty($frequencias)) {
             $class_discipline = $this->turmaDisciplinaRepository->findById($frequencias[0]->turma_disciplina_id);
-    
+
             $carga_horaria = $this->cargaHorariaRepository->findById($class_discipline->id);
-    
-            $total_faltas = $this->sumAbsences($frequencias); 
+
+            $total_faltas = $this->sumAbsences($frequencias);
             $carga = $carga_horaria->carga ?? 80;
-    
+
             $presenca = $carga - $total_faltas;
             $percentual_faltas = round(($total_faltas / $carga) * 100, 2);
             $percentual_presenca = round(($presenca / $carga) * 100, 2);
 
-            array_merge($data, ['percentual_faltas' => $percentual_faltas,
-            'percentual_presenca' => $percentual_presenca,
-            'total_faltas' => $total_faltas,
-            'presenca' => $presenca]);
+            $data = array_merge($data, [
+                'percentual_faltas' => $percentual_faltas,
+                'percentual_presenca' => $percentual_presenca,
+                'total_faltas' => $total_faltas,
+                'presenca' => $presenca
+            ]);
         }
 
         $notas = $this->boletimRepository->totalScoreByStudentsAndDisciplines(
-           [
-            'student_class_id' => $estudante_turma->id,
-           ]
+            [
+                'student_class_id' => $estudante_turma->id,
+            ]
         );
 
         $data['notas'] = $notas;
@@ -143,15 +150,15 @@ class DashboardController extends Controller
         return $this->router->view(
             'dashboard/index',
             $data
-        ); 
+        );
     }
 
-    private function indexAdministrators () 
+    private function indexAdministrators()
     {
         $estudante_turmas = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
-                    'active' => 1, 
+                    'active' => 1,
                     'school_year' => Date('Y')
                 ]
             );
@@ -178,23 +185,23 @@ class DashboardController extends Controller
             );
 
         $monthlyfees = $this->mensalidadeRepository->allMonthlyfeesGraph();
-        
-        $total_monthly = $this->sumMonthlyFees($monthlyfees); 
 
-        $late_monthly = $this->sumMonthlyFees($monthlyfees, 'atrasado'); 
-        
-        $canceled_monthly = $this->sumMonthlyFees($monthlyfees, 'cancelado'); 
-        
-        $paid_monthly = $this->sumMonthlyFees($monthlyfees, 'pago'); 
-        
-        $pending_monthly = $this->sumMonthlyFees($monthlyfees, 'pendente'); 
+        $total_monthly = $this->sumMonthlyFees($monthlyfees);
+
+        $late_monthly = $this->sumMonthlyFees($monthlyfees, 'atrasado');
+
+        $canceled_monthly = $this->sumMonthlyFees($monthlyfees, 'cancelado');
+
+        $paid_monthly = $this->sumMonthlyFees($monthlyfees, 'pago');
+
+        $pending_monthly = $this->sumMonthlyFees($monthlyfees, 'pendente');
 
         $percentual_pending = $this->calculatePercentage($pending_monthly, $total_monthly);
         $percentual_late = $this->calculatePercentage($late_monthly, $total_monthly);
-        $percentual_paid = $this->calculatePercentage($paid_monthly, $total_monthly);        
+        $percentual_paid = $this->calculatePercentage($paid_monthly, $total_monthly);
         $percentual_canceled = $this->calculatePercentage($canceled_monthly, $total_monthly);
 
-        $total_monthly -= $canceled_monthly; 
+        $total_monthly -= $canceled_monthly;
 
         return $this->router->view(
             'dashboard/index',
@@ -214,15 +221,15 @@ class DashboardController extends Controller
                 'teachers' => $professor,
                 'turmas' => $turmas,
             ]
-        ); 
+        );
     }
 
-    private function indexCoordenators () 
+    private function indexCoordenators()
     {
         $estudante_turmas = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
-                    'active' => 1, 
+                    'active' => 1,
                     'school_year' => Date('Y')
                 ]
             );
@@ -257,15 +264,15 @@ class DashboardController extends Controller
                 'teachers' => $professor,
                 'turmas' => $turmas,
             ]
-        ); 
+        );
     }
 
-    private function indexTeacher () 
+    private function indexTeacher()
     {
         $pessoaAuth = $this->authUser();
         $professor = $this->professorRepository
             ->teacherWithPersonByID($pessoaAuth->id);
-        
+
         $discipline = $this->disciplinaRepository
             ->allDisciplines(
                 [
@@ -273,7 +280,7 @@ class DashboardController extends Controller
                     'teacher_id' => $professor["id"]
                 ]
             );
-        
+
         $turmas = $this->turmaRepository
             ->allClassroomsByTeacherID($professor["id"]);
 
@@ -284,6 +291,73 @@ class DashboardController extends Controller
                 'discipline' => $discipline,
                 'turmas' => $turmas,
             ]
-        ); 
+        );
+    }
+
+    /**
+     * Retorna dados do gráfico de alunos reprovados por disciplina
+     */
+    public function getFailedStudentsByDiscipline(Request $request)
+    {
+        try {
+            $params = [
+                'ano_letivo' => $request->getParam('ano_letivo') ?? date('Y'),
+                'turma_id' => $request->getParam('turma_id')
+            ];
+
+            $result = $this->lowScoresRepository->getFailedStudentsByDisciplineAndClass($params);
+
+            if (!$result['success']) {
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'Erro desconhecido'
+                ]);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $result['data'],
+                'chart_data' => $result['chart_data'],
+                'title' => 'Alunos Reprovados por Disciplina'
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro interno do servidor'
+            ]);
+        }
+    }
+
+    /**
+     * Retorna as turmas disponíveis para o coordenador
+     */
+    public function getCoordinatorClasses(Request $request)
+    {
+        try {
+            $result = $this->lowScoresRepository->getClassesForCoordinator();
+
+            if (!$result['success']) {
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'Erro desconhecido'
+                ]);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $result['data']
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro interno do servidor'
+            ]);
+        }
     }
 }
