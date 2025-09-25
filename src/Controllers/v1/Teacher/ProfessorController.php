@@ -9,10 +9,11 @@ use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Interfaces\Teacher\IProfessorRepository;
 use App\Request\Request;
+use App\Transformers\Teacher\ProfessorTransformer;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class ProfessorController extends Controller 
+class ProfessorController extends Controller
 {
     use UserToPerson;
 
@@ -20,25 +21,28 @@ class ProfessorController extends Controller
     protected $professorDisciplinaRepository;
     protected $pessoaFisicaRepository;
     protected $turmaDisciplinaRepository;
+    protected $professorTransformer;
 
     public function __construct(
         IProfessorRepository $professorRepository,
         IProfessorDisciplinaRepository $professorDisciplinaRepository,
         IPessoaFisicaRepository $pessoaFisicaRepository,
-        ITurmaDisciplinaRepository $turmaDisciplinaRepository
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
+        ProfessorTransformer $professorTransformer
     ) {
-        parent::__construct();   
-        $this->professorRepository = $professorRepository; 
-        $this->pessoaFisicaRepository = $pessoaFisicaRepository; 
+        parent::__construct();
+        $this->professorRepository = $professorRepository;
+        $this->pessoaFisicaRepository = $pessoaFisicaRepository;
         $this->professorDisciplinaRepository = $professorDisciplinaRepository;
         $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
+        $this->professorTransformer = $professorTransformer;
     }
 
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         $params = $request->getQueryParams();
 
-        if(!hasPermission('visualizar_professores')) {
+        if (!hasPermission('visualizar_professores')) {
             return $this->router->redirect('professores?error=422');
         }
 
@@ -48,32 +52,34 @@ class ProfessorController extends Controller
         $paginator = new Paginator($professores, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
+        $paginatedBoards = $this->professorTransformer->transformCollection($paginatedBoards);
+
         return $this->router->view('teacher/index', [
-            'active' => 'pedagogico', 
+            'active' => 'pedagogico',
             'professores' => $paginatedBoards,
             'links' => $paginator->links(),
             'searchFilter' => $params['name_email'] ?? null,
             'situation' => $params['situation'] ?? null
-        ]); 
-    }    
+        ]);
+    }
 
-    public function create() 
+    public function create()
     {
-        if(!hasPermission('cadastrar_professor')) {
+        if (!hasPermission('cadastrar_professor')) {
             return $this->router->redirect('professores?error=422');
         }
 
         return $this->router->view('teacher/create', ['active' => 'register']);
     }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
 
         $rules = [
-            'name' => 'required|min:1|max:100',           
+            'name' => 'required|min:1|max:100',
             'email' => 'required',
             'mother' => 'required',
             'doc' => 'required',
@@ -81,26 +87,26 @@ class ProfessorController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'teacher/create', 
+                'teacher/create',
                 [
-                    'active' => 'pedagogico', 
+                    'active' => 'pedagogico',
                     'errors' => $validator->getErrors()
                 ]
             );
-        } 
-        
+        }
+
         $created = $this->professorRepository->saveAll($data);
 
-        if(is_null($created)) {            
-        return $this->router->view('teacher/create', ['active' => 'pedagogico', 'danger' => true]);
+        if (is_null($created)) {
+            return $this->router->view('teacher/create', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('professores/');
     }
 
-    public function edit(Request $request, $id) 
+    public function edit(Request $request, $id)
     {
-        if(!hasPermission('editar_professor')) {
+        if (!hasPermission('editar_professor')) {
             return $this->router->redirect('professores?error=422');
         }
 
@@ -111,11 +117,11 @@ class ProfessorController extends Controller
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($professor->pessoa_fisica_id);
-        
+
         return $this->router->view('teacher/edit', ['active' => 'pedagogico', 'professor' => $professor, 'pessoa_fisica' => $pessoa_fisica]);
     }
 
-    public function update(Request $request, $id) 
+    public function update(Request $request, $id)
     {
         $data = $request->getBodyParams();
 
@@ -130,7 +136,7 @@ class ProfessorController extends Controller
         $validator = new Validator($data);
 
         $rules = [
-            'name' => 'required|min:1|max:100',           
+            'name' => 'required|min:1|max:100',
             'email' => 'required',
             'mother' => 'required',
             'doc' => 'required',
@@ -139,31 +145,31 @@ class ProfessorController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'teacher/edit', 
+                'teacher/edit',
                 [
-                    'active' => 'pedagogico', 
+                    'active' => 'pedagogico',
                     'errors' => $validator->getErrors()
                 ]
             );
         }
-        
+
         $data['usuario_id'] = $pessoa_fisica->usuario_id;
         $data['pessoa_fisica_id'] = $pessoa_fisica->id;
         $data['id'] = $professor->id;
         $data['sector'] = 'professor';
-        
+
         $updated = $this->professorRepository->updateAll($data);
 
-        if(is_null($updated)) {            
+        if (is_null($updated)) {
             return $this->router->view('teacher/edit', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('professores/');
     }
 
-    public function destroy(Request $request, $id) 
+    public function destroy(Request $request, $id)
     {
-        if(!hasPermission('deletar_professor')) {
+        if (!hasPermission('deletar_professor')) {
             return $this->router->redirect('professores?error=422');
         }
 
@@ -179,7 +185,7 @@ class ProfessorController extends Controller
     public function indexTeacher(Request $request)
     {
         $pessoaAuth = $this->authUser();
-        
+
         $professor = $this->professorRepository->teacherByPersonId($pessoaAuth->id);
 
         $class_discipline = $this->turmaDisciplinaRepository
@@ -187,7 +193,7 @@ class ProfessorController extends Controller
                 $professor->id
             );
 
-        $perPage = 10; 
+        $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($class_discipline, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();

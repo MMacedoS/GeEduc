@@ -7,31 +7,36 @@ use App\Controllers\v1\Traits\UserToPerson;
 use App\Interfaces\Person\IPessoaContatoRepository;
 use App\Interfaces\Person\IPessoaFisicaRepository;
 use App\Interfaces\Student\IEstudanteRepository;
+use App\Models\Student\Estudante;
 use App\Request\Request;
+use App\Transformers\Students\EstudanteTransformer;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class PessoaContatoController extends Controller 
+class PessoaContatoController extends Controller
 {
     use UserToPerson;
 
     protected $pessoaContatoRepository;
     protected $pessoaFisicaRepository;
     protected $estudanteRepository;
+    protected $estudanteTransformer;
 
     public function __construct(
         IPessoaFisicaRepository $pessoaFisicaRepository,
         IPessoaContatoRepository $pessoaContatoRepository,
-        IEstudanteRepository $estudanteRepository
-    )
-    {
+        IEstudanteRepository $estudanteRepository,
+        EstudanteTransformer $estudanteTransformer
+    ) {
         parent::__construct();
         $this->pessoaFisicaRepository = $pessoaFisicaRepository;
         $this->pessoaContatoRepository = $pessoaContatoRepository;
         $this->estudanteRepository = $estudanteRepository;
+        $this->estudanteTransformer = $estudanteTransformer;
     }
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $params = $request->getQueryParams();
         $pessoas = $this->pessoaContatoRepository->allPersons([
             'name_email' => $params['name_email'] ?? null,
@@ -39,12 +44,12 @@ class PessoaContatoController extends Controller
         ]);
 
         $perPage = 10;
-        $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $currentPage  = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($pessoas, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
-        
+
         $data = [
-            'active' => 'responsible_legal',  
+            'active' => 'responsible_legal',
             'pessoas' => $paginatedBoards,
             'links' => $paginator->links(),
             'name_email' => $params['name_email'] ?? null,
@@ -55,11 +60,12 @@ class PessoaContatoController extends Controller
     }
 
     public function create(Request $request)
-    {        
+    {
         return $this->router->view('/person/create', ['active' => 'pedagogico']);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
@@ -71,46 +77,49 @@ class PessoaContatoController extends Controller
             'doc' => 'required',
         ];
 
-        if(!$validator->validate($rules)){
+        if (!$validator->validate($rules)) {
             return $this->router->view('person/create', [
-                'active' => 'pedagogico', 
+                'active' => 'pedagogico',
                 'errors' => $validator->getErrors()
             ]);
         }
 
         $created = $this->pessoaContatoRepository->saveAll($data);
 
-        if(is_null($created)){
+        if (is_null($created)) {
             return $this->router->view('person/create', ['active' => 'pedagogico',  'danger' => true]);
         }
-        
+
         return $this->router->redirect('pessoas/');
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id)
+    {
         $pessoa_contato = $this->pessoaContatoRepository->findByUuid($id);
 
-        if(is_null($pessoa_contato)){
+        if (is_null($pessoa_contato)) {
             return $this->router->view('person/', ['active' => 'register', 'danger' => true]);
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($pessoa_contato->pessoa_fisica_id);
 
-        return $this->router->view('person/edit', 
-        [
-            'active' => 'register', 
-            'pessoa_contato' => $pessoa_contato, 
-            'pessoa_fisica' => $pessoa_fisica
-        ]);
+        return $this->router->view(
+            'person/edit',
+            [
+                'active' => 'register',
+                'pessoa_contato' => $pessoa_contato,
+                'pessoa_fisica' => $pessoa_fisica
+            ]
+        );
     }
 
-    public function update(Request $request, $id) 
+    public function update(Request $request, $id)
     {
         $data = $request->getBodyParams();
 
         $pessoa_contato = $this->pessoaContatoRepository->findByUuid($id);
 
-        if(is_null($pessoa_contato)){
+        if (is_null($pessoa_contato)) {
             return $this->router->view('person/', ['active' => 'pedagogico', 'danger' => true]);
         }
 
@@ -125,7 +134,7 @@ class PessoaContatoController extends Controller
             'doc' => 'required'
         ];
 
-        if(!$validator->validate($rules)){
+        if (!$validator->validate($rules)) {
             return $this->router->view('person/edit', [
                 'active' => 'register',
                 'errors' => $validator->getErrors()
@@ -139,9 +148,9 @@ class PessoaContatoController extends Controller
 
         $updated = $this->pessoaContatoRepository->updateAll($data);
 
-        if(is_null($updated)){
+        if (is_null($updated)) {
             return $this->router->view('person/edit', [
-                'active' => 'pedagogico', 
+                'active' => 'pedagogico',
                 'danger' => true
             ]);
         }
@@ -149,13 +158,13 @@ class PessoaContatoController extends Controller
         return $this->router->redirect('pessoas/');
     }
 
-    public function destroy(Request $request, $id) 
+    public function destroy(Request $request, $id)
     {
         $pessoa_contato = $this->pessoaContatoRepository->findByUuid($id);
 
-        if(is_null($pessoa_contato)){
+        if (is_null($pessoa_contato)) {
             return $this->router->view('person/', [
-                'active' => 'pedagogico', 
+                'active' => 'pedagogico',
                 'danger' => true
             ]);
         }
@@ -166,7 +175,7 @@ class PessoaContatoController extends Controller
         exit();
     }
 
-    public function indexWithoutPagination(Request $request) 
+    public function indexWithoutPagination(Request $request)
     {
         $data = $request->getQueryParams();
         $pessoas = $this->pessoaContatoRepository->allPersons($data);
@@ -179,30 +188,34 @@ class PessoaContatoController extends Controller
         $personAuth = $this->authUser();
 
         $pessoa_contato = $this->pessoaContatoRepository
-        ->findByContactPersonId(
-            [
-                'person_id' => $personAuth->id
-            ]
-        );
+            ->findByContactPersonId(
+                [
+                    'person_id' => $personAuth->id
+                ]
+            );
 
-        $params = isset($pessoa_contato) ? ['contact_person_id' => $pessoa_contato->id] : ["id" => $personAuth->id]; 
+        $params = isset($pessoa_contato) ? ['contact_person_id' => $pessoa_contato->id] : ["id" => $personAuth->id];
         $estudantes = $this->estudanteRepository->allStudents($params);
 
         $perPage = 10;
-        $currentPage  =$request->getParam('page') ? (int)$request->getParam('page') : 1;
+        $currentPage  = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($estudantes, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        return $this->router->view('/my-little-group/index', 
+        $paginatedBoards = $this->estudanteTransformer->transformCollection($paginatedBoards);
+
+        return $this->router->view(
+            '/my-little-group/index',
             [
-                'active' => 'responsible_legal',  
+                'active' => 'responsible_legal',
                 'estudantes' => $paginatedBoards,
                 'links' => $paginator->links()
             ]
         );
     }
 
-    public function createStudentLegalGuardian(Request $request){
+    public function createStudentLegalGuardian(Request $request)
+    {
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
@@ -214,7 +227,7 @@ class PessoaContatoController extends Controller
             'doc' => 'required',
         ];
 
-        if(!$validator->validate($rules)){
+        if (!$validator->validate($rules)) {
             echo json_encode([
                 'errors' => $validator->getErrors()
             ]);
@@ -224,7 +237,7 @@ class PessoaContatoController extends Controller
 
         $created = $this->pessoaContatoRepository->saveAll($data);
 
-        if(is_null($created)){
+        if (is_null($created)) {
             echo json_encode([
                 'errors' => 'Erro ao cadastrar responsável legal'
             ]);
@@ -233,13 +246,13 @@ class PessoaContatoController extends Controller
         }
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($created->pessoa_fisica_id);
-        
+
         echo json_encode([
             'id' => $created->id,
             'nome' => $pessoa_fisica->nome,
             'email' => $pessoa_fisica->email
         ]);
-        
+
         exit();
     }
 }
