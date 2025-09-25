@@ -4,14 +4,15 @@ namespace App\Config;
 
 use App\Request\Request;
 
-class Router extends Session{
-    protected $routers = [];    
-    protected $auth = null; 
+class Router extends Session
+{
+    protected $routers = [];
+    protected $auth = null;
 
     public function create(
-        string $method, 
-        string $path, 
-        callable $callback, 
+        string $method,
+        string $path,
+        callable $callback,
         ?Auth $auth = null
     ) {
         $normalizedPath = $this->normalizePath($path);
@@ -21,7 +22,8 @@ class Router extends Session{
         ];
     }
 
-    public function init() {
+    public function init()
+    {
         $httpMethod = $_SERVER["REQUEST_METHOD"];
         $requestUri = $_SERVER["REQUEST_URI"];
         $request = new Request();
@@ -40,36 +42,39 @@ class Router extends Session{
                     }
 
                     // Executa o callback
-                    array_shift($matches); 
+                    array_shift($matches);
                     return call_user_func_array($route['callback'], array_merge([$request], $matches));
                 }
             }
         }
 
         // Nenhuma rota encontrada
-        http_response_code(404);
-        $this->redirect('not-found');
+        // http_response_code(404);
+        // $this->redirect('not-found');
     }
 
-    private function normalizePath($path) {
+    private function normalizePath($path)
+    {
         return rtrim(parse_url($path, PHP_URL_PATH), '/');
     }
 
-    public function view(string $viewName, array $data = []) {
+    public function view(string $viewName, array $data = [])
+    {
         extract($data);
         require_once __DIR__ . '/../Resources/Views/' . $viewName . '.php';
         exit();
     }
 
-    public function redirect($page = '', $delay = 0) {
+    public function redirect($page = '', $delay = 0)
+    {
         $url = URL_PREFIX_APP . '/' . $page;
         if ($delay > 0) {
             echo "<meta http-equiv='refresh' content='{$delay};url={$url}'>";
             exit();
-        } 
+        }
 
         header("Location: $url");
-        
+
         exit();
     }
 

@@ -19,7 +19,8 @@ class TimeSessionController extends Auth
     }
 
     public function index()
-    { 
+    {
+        dd('index');
         echo json_encode([
             'status' => 'success',
             'message' => 'API is working correctly'
@@ -102,12 +103,12 @@ class TimeSessionController extends Auth
             ]);
             http_response_code(200);
             return;
-        } 
+        }
 
-         echo json_encode([
-                'status' => 'error',
-                'message' => 'Invalid token'
-            ]);
-            http_response_code(401);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Invalid token'
+        ]);
+        http_response_code(401);
     }
-}   
+}
