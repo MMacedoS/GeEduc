@@ -2,23 +2,80 @@
 
 namespace App\Transformers\Students;
 
+use App\Models\Student\Estudante;
+use App\Repositories\Person\PessoaFisicaRepository;
+use App\Repositories\Student\EstudanteTurmaRepository;
+
 class EstudanteTransformer
 {
-    public static function transform(array $student): array
+    public function transform(Estudante $student)
     {
+        if (is_array($student)) {
+            $student = (object) $student;
+        }
+
         return [
-            'id' => $student['id'],
-            'nome' => $student['nome'],
-            'email' => $student['email'],
-            'data_nascimento' => $student['data_nascimento'],
-            'turma' => $student['turma'],
-            'media_geral' => $student['media_geral'],
-            'status' => $student['status'],
+            'code' => $student->id,
+            'id' => $student->uuid,
+            'class' => $this->studentClasse($student->id),
+            'student_name' => $this->prepareStudentName($student->id),
+            'birth_date' => $this->prepareBirthDate($student->id),
+            'student_email' => $this->prepareStudentEmail($student->id),
+            'active' => $student->ativo,
         ];
     }
 
-    public static function transformCollection(array $students): array
+    private function studentClasse($studentId)
     {
-        return array_map([self::class, 'transform'], $students);
+        if (is_null($studentId)) {
+            return null;
+        }
+
+        $estudanteTurmaRepository = EstudanteTurmaRepository::getInstance();
+
+        $estudanteTurmaTransformer = new EstudanteTurmaTransformer();
+
+        $studentClasses = $estudanteTurmaRepository->studentClassByStudentId($studentId);
+
+        if (empty($studentClasses)) {
+            return null;
+        }
+
+        $transformedClasses = (object)$estudanteTurmaTransformer->transform($studentClasses);
+        return $transformedClasses->class_name ?? null;
+    }
+
+    private function prepareStudentName($studentId)
+    {
+        if (is_null($studentId)) {
+            return null;
+        }
+
+        $pessoaFisica = PessoaFisicaRepository::getInstance()->findByStudentId($studentId);
+        return $pessoaFisica ? $pessoaFisica->nome : null;
+    }
+
+    private function prepareBirthDate($studentId)
+    {
+        if (is_null($studentId)) {
+            return null;
+        }
+
+        $pessoaFisica = PessoaFisicaRepository::getInstance()->findByStudentId($studentId);
+        return $pessoaFisica ? $pessoaFisica->data_nascimento : null;
+    }
+
+    private function prepareStudentEmail($studentId)
+    {
+        if (is_null($studentId)) {
+            return null;
+        }
+        $pessoaFisica = PessoaFisicaRepository::getInstance()->findByStudentId($studentId);
+        return $pessoaFisica ? $pessoaFisica->email : null;
+    }
+
+    public function transformCollection(array $students): array
+    {
+        return array_map(fn($student) => $this->transform($student), $students);
     }
 }

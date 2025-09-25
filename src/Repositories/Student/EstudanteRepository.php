@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories\Student;
 
@@ -15,7 +15,8 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteRepository extends SingletonInstance implements IEstudanteRepository {
+class EstudanteRepository extends SingletonInstance implements IEstudanteRepository
+{
 
     const CLASS_NAME = Estudante::class;
     const TABLE = 'estudantes';
@@ -28,9 +29,10 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
     protected $estudanteMensalidadeRepository;
     protected $estudanteTurmaRepository;
     protected $mensalidadeRepository;
-    
 
-    public function __construct(){
+
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Estudante();
         $this->usuarioRepository = UsuarioRepository::getInstance();
@@ -41,19 +43,11 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         $this->mensalidadeRepository = MensalidadeRepository::getInstance();
     }
 
-    public function allStudents(array $params = []){
+    public function allStudents(array $params = [])
+    {
 
         $sql = "SELECT
-            e.*,(
-                SELECT 
-                    JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    )
-                FROM pessoa_fisica pf
-                WHERE pf.id = e.pessoa_fisica_id
-            ) AS pessoa_fisica
+            e.*
             FROM " . self::TABLE . " 
             e LEFT JOIN pessoa_fisica pf ON e.pessoa_fisica_id = pf.id
         ";
@@ -90,7 +84,7 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " ORDER BY created_at DESC";
+        $sql .= " ORDER BY e.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -124,7 +118,7 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         $stmt->execute([':id' => $uuid]);
 
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
+        return $stmt->fetch();
     }
 
     public function saveAll(array $data)
@@ -132,38 +126,37 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         if (empty($data)) {
             return null;
         }
-        
+
         try {
             $userData = array_merge($data, [
                 'password' => $data['password'] ?? 'escola123',
                 'sector' => 'estudante',
             ]);
-            
+
             $user = $this->usuarioRepository->create($userData);
-    
+
             $personData = array_merge($data, ['usuario_id' => $user->id]);
             $person = $this->pessoaFisicaRepository->create($personData);
-            
+
             $studentData = array_merge($data, ['person_id' => $person->id]);
             $student = $this->create($studentData);
-            
-            if(isset($data['procees_monthylees']) && $data['procees_monthylees'] == 'sim') {
+
+            if (isset($data['procees_monthylees']) && $data['procees_monthylees'] == 'sim') {
                 $monthlyData = array_merge($data, ['student_id' => $student->id]);
                 $monthly = $this->estudanteMensalidadeRepository->create($monthlyData);
             }
-            
+
             return $student;
-    
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    public function create(array $data) 
+    public function create(array $data)
     {
         $existingPerson = $this->findByStudentId($data);
         if ($existingPerson) {
@@ -172,7 +165,7 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
 
         $estudante = $this->model->create($data);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
                     SET
@@ -190,64 +183,62 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
                 ':pessoa_contato_id' => $estudante->pessoa_contato_id
             ]);
 
-            if(!$create){
+            if (!$create) {
                 return null;
             }
 
             return $this->findByUuid($estudante->uuid);
-
-        }catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
-
     }
 
-    public function updateAll(array $data){
+    public function updateAll(array $data)
+    {
 
-        if(empty($data)){
+        if (empty($data)) {
             return null;
         }
 
-        try{    
+        try {
             $user = $this->usuarioRepository->update($data, $data['usuario_id']);
-            if(is_null($user)){
+            if (is_null($user)) {
                 return null;
             }
 
             $person = $this->pessoaFisicaRepository->update($data, $data['pessoa_fisica_id']);
-            if(is_null($person)){
+            if (is_null($person)) {
                 return null;
             }
-            
+
             $estudante = $this->update($data, (int)$data['id']);
 
-            if(is_null($estudante)){
+            if (is_null($estudante)) {
                 return null;
             }
 
-            if(isset($data['procees_monthylees']) && $data['procees_monthylees'] == 'sim') {
+            if (isset($data['procees_monthylees']) && $data['procees_monthylees'] == 'sim') {
                 $monthlyData = $this->estudanteMensalidadeRepository
-                ->getMonthlyFee(
-                [
-                   'student_id' => $estudante->id, 
-                   'active' => 1
-                ]
-                );
+                    ->getMonthlyFee(
+                        [
+                            'student_id' => $estudante->id,
+                            'active' => 1
+                        ]
+                    );
 
                 $monthly = $this->estudanteMensalidadeRepository->update($data, $monthlyData->id);
 
-                if(is_null($monthly)){
+                if (is_null($monthly)) {
                     return null;
                 }
             }
 
             return $estudante;
-
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
@@ -258,7 +249,7 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
 
         $estudante = $this->model->update($data, $estudante);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     set
@@ -278,19 +269,20 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
                 ':id' => $id
             ]);
 
-            if(!$updated){
+            if (!$updated) {
                 return null;
             }
 
             return $this->findById($id);
-        }catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    public function deleteAll($estudante){
+    public function deleteAll($estudante)
+    {
         $pessoa_fisica = $this->pessoaFisicaRepository->findById($estudante->pessoa_fisica_id);
 
         $this->usuarioRepository->delete($pessoa_fisica->usuario_id);
@@ -302,24 +294,25 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         return $this->delete($estudante->id);
     }
 
-    public function removeAll($id){
+    public function removeAll($id)
+    {
         $estudante = $this->findById((int)$id);
 
         if (is_null($estudante)) {
             return null;
         }
-        
+
         $estudanteMensalidade = $this->estudanteMensalidadeRepository->allMonthlyfees(['student_id' => $id]);
         $estudanteTurma = $this->estudanteTurmaRepository->allClassStudents(['student_id' => $id]);
         $mensalidade = $this->mensalidadeRepository->allMonthlyfees(['student_monthlyfees_id' => $estudanteMensalidade[0]->id]);
-  
+
         $this->mensalidadeRepository->remove((int)$mensalidade[0]->id);
         $this->estudanteMensalidadeRepository->remove((int)$estudanteMensalidade[0]->id);
         $this->estudanteTurmaRepository->remove((int)$estudanteTurma[0]->id);
         $this->remove((int)$id);
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById((int)$estudante->pessoa_fisica_id);
-    
+
         if (is_null($pessoa_fisica)) {
             return null;
         }
@@ -329,34 +322,35 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         return $this->usuarioRepository->remove((int)$pessoa_fisica->usuario_id);
     }
 
-    public function remove($id) :?bool 
+    public function remove($id): ?bool
     {
         $estudante = $this->findById((int)$id);
 
         if (is_null($estudante)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            
-            if($delete) {
+
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    public function delete(int $id){
+    public function delete(int $id)
+    {
         $stmt = $this->conn->prepare(
             "UPDATE " . self::TABLE . "
                 SET
@@ -365,9 +359,9 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
             "
         );
 
-            $updated = $stmt->execute(['id' => $id]);
+        $updated = $stmt->execute(['id' => $id]);
 
-            return $updated;
+        return $updated;
     }
 
     private function verifyAndRollback($object, string $errorMessage)
@@ -389,7 +383,7 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
             }
 
             if (empty($conditions)) {
-                return null; 
+                return null;
             }
 
             $sql = "SELECT * FROM " . self::TABLE . " WHERE " . implode(' AND ', $conditions);
@@ -397,17 +391,18 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
             $stmt->execute($params);
 
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-            $result = $stmt->fetch();  
+            $result = $stmt->fetch();
 
-            return $result ?: null; 
+            return $result ?: null;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
 
-    public function studentByPersonId(int $person_id){
+    public function studentByPersonId(int $person_id)
+    {
 
         $sql = "SELECT
             e.*
@@ -422,6 +417,6 @@ class EstudanteRepository extends SingletonInstance implements IEstudanteReposit
         $stmt->execute([':id' => $person_id]);
 
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
+        return $stmt->fetch();
     }
 }
