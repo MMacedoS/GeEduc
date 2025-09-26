@@ -2,7 +2,6 @@
 
 namespace App\Transformers\Students;
 
-use App\Models\Classrooms\Turma;
 use App\Models\Student\EstudanteTurma;
 use App\Repositories\Classrooms\TurmaRepository;
 

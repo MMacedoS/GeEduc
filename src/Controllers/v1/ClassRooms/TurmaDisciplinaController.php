@@ -12,6 +12,7 @@ use App\Interfaces\Profile\IUsuarioRepository;
 use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
+use App\Transformers\Classe\TurmaDisciplinaTransformer;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -26,6 +27,7 @@ class TurmaDisciplinaController extends Controller
     protected $pessoaFisicaRepository;
     protected $usuarioRepository;
     protected $coordenadorTurmaRepository;
+    protected $turmaDisciplinaTransformer;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
@@ -35,7 +37,8 @@ class TurmaDisciplinaController extends Controller
         ICoordenadorRepository $coordenadorRepository,
         IPessoaFisicaRepository $pessoaFisicaRepository,
         IUsuarioRepository $usuarioRepository,
-        ICoordenadorTurmaRepository $coordenadorTurmaRepository
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository,
+        TurmaDisciplinaTransformer $turmaDisciplinaTransformer
     ) {
         parent::__construct();
         $this->turmaRepository = $turmaRepository;
@@ -46,6 +49,7 @@ class TurmaDisciplinaController extends Controller
         $this->pessoaFisicaRepository = $pessoaFisicaRepository;
         $this->usuarioRepository = $usuarioRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
+        $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
     }
 
     public function index(Request $request, $turma_id)
@@ -66,6 +70,10 @@ class TurmaDisciplinaController extends Controller
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($class_disciplines, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
+
+        $paginatedBoards = $this->turmaDisciplinaTransformer->transformCollection($paginatedBoards);
+
+        dd($paginatedBoards);
 
         return $this->router->view(
             'classRooms/discipline/index',

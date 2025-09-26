@@ -3,7 +3,6 @@
 namespace App\Transformers\Classe;
 
 use App\Models\Classrooms\Turma;
-use App\Models\Coordination\CoordenadorTurma;
 use App\Repositories\Coordination\CoordenadorTurmaRepository;
 
 class TurmaTransformer

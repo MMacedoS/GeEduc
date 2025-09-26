@@ -10,7 +10,8 @@ use App\Repositories\Coordination\CoordenadorTurmaRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaRepository extends SingletonInstance implements ITurmaRepository {
+class TurmaRepository extends SingletonInstance implements ITurmaRepository
+{
     const CLASS_NAME = Turma::class;
     const TABLE = 'turmas';
 
@@ -18,7 +19,8 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
 
     protected $coordenadorTurmaRepository;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Turma();
         $this->coordenadorTurmaRepository = CoordenadorTurmaRepository::getInstance();
@@ -52,7 +54,7 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
         if (isset($params['classroom'])) {
             $conditions[] = "(t.nome LIKE :classroom)";
             $bindings[':classroom'] = '%' . $params['classroom'] . '%';
-        }   
+        }
 
         if (isset($params['shift']) && $params['shift'] != '') {
             $conditions[] = "t.turno = :shift";
@@ -62,7 +64,7 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
         if (isset($params['coordinator'])) {
             $conditions[] = "pf.nome LIKE :coordinator ";
             $bindings[':coordinator'] = '%' . $params['coordinator'] . '%';
-        } 
+        }
 
         if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "t.ativo = :active";
@@ -79,7 +81,7 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
     public function create(array $data)
@@ -117,12 +119,10 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id) 
+    public function update(array $data, int $id)
     {
         $register = $this->findById($id);
 
@@ -161,34 +161,31 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function allClassroomsByTeacherID(?int $id) {
+    public function allClassroomsByTeacherID(?int $id)
+    {
         if (is_null($id)) {
             return null;
         }
-        
+
         try {
             $sql = "SELECT t.* 
-                    FROM " . self::TABLE ." t
+                    FROM " . self::TABLE . " t
                     INNER JOIN turma_disciplina td ON td.turma_id = t.id
                     INNER JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
                     INNER JOIN professores p ON p.id = pd.professor_id
                     WHERE p.id = :id";
-                    
+
             $stmt = $this->conn->prepare($sql);
             $stmt->execute(['id' => $id]);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);  
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $th) {
             LoggerHelper::logError($th->getMessage());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-    }    
+    }
     public function findByName(string $name): ?Turma
     {
         $sql = "SELECT * FROM " . self::TABLE . " WHERE nome = :name";
@@ -197,22 +194,22 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository {
         $stmt->execute();
 
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        $register = $stmt->fetch(); 
+        $register = $stmt->fetch();
         if (!$register) {
             return null;
         }
-    
+
         return $register;
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
