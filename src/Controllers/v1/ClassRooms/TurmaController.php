@@ -8,31 +8,34 @@ use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Request\Request;
+use App\Transformers\Classe\TurmaTransformer;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class TurmaController extends Controller 
+class TurmaController extends Controller
 {
     use GenericTrait;
     protected $turmaRepository;
     protected $coordenadorRepository;
     protected $coordenadorTurmaRepository;
+    protected $turmaTransformer;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
         ICoordenadorRepository $coordenadorRepository,
-        ICoordenadorTurmaRepository $coordenadorTurmaRepository
-    )
-    {
-        parent::__construct();   
-        $this->turmaRepository = $turmaRepository; 
+        ICoordenadorTurmaRepository $coordenadorTurmaRepository,
+        TurmaTransformer $turmaTransformer
+    ) {
+        parent::__construct();
+        $this->turmaRepository = $turmaRepository;
         $this->coordenadorRepository = $coordenadorRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
+        $this->turmaTransformer = $turmaTransformer;
     }
 
-    public function index(Request $request) 
+    public function index(Request $request)
     {
-        if(!hasPermission('visualizar_turmas')) {
+        if (!hasPermission('visualizar_turmas')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -44,6 +47,8 @@ class TurmaController extends Controller
         $paginator = new Paginator($classRooms, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
+        $paginatedBoards = $this->turmaTransformer->transformCollection($paginatedBoards);
+
         return $this->router->view('classRooms/index', [
             'active' => 'pedagogico',
             'turmas' => $paginatedBoards,
@@ -52,12 +57,12 @@ class TurmaController extends Controller
             'shift' => $params['shift'] ?? null,
             'coordinator' => $params['coordinator'] ?? null,
             'situation' => $params['situation'] ?? null
-        ]); 
+        ]);
     }
 
     public function create(Request $request)
     {
-        if(!hasPermission('cadastrar_turma')) {
+        if (!hasPermission('cadastrar_turma')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -67,16 +72,16 @@ class TurmaController extends Controller
 
     public function store(Request $request)
     {
-        if(!hasPermission('cadastrar_turma')) {
+        if (!hasPermission('cadastrar_turma')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
         $data = $request->getBodyParams();
-        
+
         $validator = new Validator($data);
 
         $rules = [
-            'name' => 'required|min:1|max:100',           
+            'name' => 'required|min:1|max:100',
             'order' => 'required',
             'shift' => 'required',
             'active' => 'required',
@@ -85,18 +90,18 @@ class TurmaController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'classRooms/create', 
+                'classRooms/create',
                 [
-                    'active' => 'pedagogico', 
+                    'active' => 'pedagogico',
                     'errors' => $validator->getErrors()
                 ]
             );
-        } 
-        
+        }
+
         $created = $this->turmaRepository->create($data);
 
-        if(is_null($created)) {            
-        return $this->router->view('classRooms/create', ['active' => 'pedagogico', 'danger' => true]);
+        if (is_null($created)) {
+            return $this->router->view('classRooms/create', ['active' => 'pedagogico', 'danger' => true]);
         }
 
         return $this->router->redirect('turmas/');
@@ -104,7 +109,7 @@ class TurmaController extends Controller
 
     public function edit(Request $request, string $id)
     {
-        if(!hasPermission('editar_turma')) {
+        if (!hasPermission('editar_turma')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -116,13 +121,13 @@ class TurmaController extends Controller
         if (is_null($turma)) {
             return $this->router->view('classRooms/', ['active' => 'pedagogico', 'danger' => true]);
         }
-        
+
         return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'turma' => $turma, 'coordenadores' => $coordenators, 'coordenadores_inseridos' => $coordenatorsClass]);
     }
 
     public function update(Request $request, string $id)
     {
-        if(!hasPermission('editar_turma')) {
+        if (!hasPermission('editar_turma')) {
             return $this->router->redirect('dashboard?error=422');
         }
 
@@ -136,7 +141,7 @@ class TurmaController extends Controller
         $validator = new Validator($data);
 
         $rules = [
-            'name' => 'required|min:1|max:100',           
+            'name' => 'required|min:1|max:100',
             'order' => 'required',
             'shift' => 'required',
             'coordinator_id' => 'required'
@@ -144,17 +149,17 @@ class TurmaController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                'classRooms/edit', 
+                'classRooms/edit',
                 [
-                    'active' => 'pedagogico', 
+                    'active' => 'pedagogico',
                     'errors' => $validator->getErrors()
                 ]
             );
         }
-        
+
         $updated = $this->turmaRepository->update($data, $turma->id);
 
-        if(is_null($updated)) {            
+        if (is_null($updated)) {
             return $this->router->view('classRooms/edit', ['active' => 'pedagogico', 'danger' => true]);
         }
 
@@ -163,7 +168,7 @@ class TurmaController extends Controller
 
     public function destroy(Request $request, string $id)
     {
-        if(!hasPermission('deletar_turmas')) {
+        if (!hasPermission('deletar_turmas')) {
             return $this->router->redirect('dashboard?error=422');
         }
 

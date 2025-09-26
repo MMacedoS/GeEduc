@@ -1,29 +1,32 @@
 <?php
 
 if (!function_exists('isPermissionChecked')) {
-    function isPermissionChecked($permissionId, $userPermissoes) {
+    function isPermissionChecked($permissionId, $userPermissoes)
+    {
         foreach ($userPermissoes as $userPermissao) {
             if ($userPermissao['permissao_id'] === $permissionId) {
                 return true;
-           }
+            }
         }
         return false;
     }
 }
 
 if (!function_exists('reservaFilteredById')) {
-    function reservaFilteredById($reservaId, $reservas) {
+    function reservaFilteredById($reservaId, $reservas)
+    {
         foreach ($reservas as $reserva) {
             if ($reserva->id === $reservaId) {
                 return $reserva;
-           }
+            }
         }
         return null;
     }
 }
 
-if (!function_exists('hasPermission')) {    
-    function hasPermission($permissio_name) {
+if (!function_exists('hasPermission')) {
+    function hasPermission($permissio_name)
+    {
         $my_permissions = $_SESSION['my_permissions'];
         foreach ($my_permissions as $permission) {
             if ($permission->name === $permissio_name) {
@@ -34,13 +37,15 @@ if (!function_exists('hasPermission')) {
     }
 }
 
-if (!function_exists('getCustomers')) {    
-    function getCustomers($data, $delimiter = ' | ') {
+if (!function_exists('getCustomers')) {
+    function getCustomers($data, $delimiter = ' | ')
+    {
         if (is_array($data)) {
             $names = '';
             foreach ($data as $key => $customer) {
-                $names.= $customer->nome; 
-                if($key < 1) {
+                $customer = (object)$customer;
+                $names .= $customer->name ?? $customer->nome ?? 'N/A';
+                if ($key < 1) {
                     $names .= $delimiter;
                 }
             }
@@ -50,14 +55,16 @@ if (!function_exists('getCustomers')) {
     }
 }
 
-if (!function_exists('getJsonToObject')) {    
-    function getJsonToObject($data) {
+if (!function_exists('getJsonToObject')) {
+    function getJsonToObject($data)
+    {
         return json_decode($data);
     }
 }
 
-if (!function_exists('brDate')) {    
-    function brDate($date) {
+if (!function_exists('brDate')) {
+    function brDate($date)
+    {
         if (!is_null($date)) {
             $date = implode('/', array_reverse(explode('-', $date)));
             return $date;
@@ -66,8 +73,9 @@ if (!function_exists('brDate')) {
     }
 }
 
-if (!function_exists('usDate')) {    
-    function usDate($date) {
+if (!function_exists('usDate')) {
+    function usDate($date)
+    {
         if (!is_null($date)) {
             $date = implode('-', array_reverse(explode('/', $date)));
             return $date;
@@ -76,8 +84,9 @@ if (!function_exists('usDate')) {
     }
 }
 
-if (!function_exists('brDateHora')) {    
-    function brDateHora($date) {
+if (!function_exists('brDateHora')) {
+    function brDateHora($date)
+    {
         if (!is_null($date)) {
             try {
                 // Converte para o formato de data brasileiro (DD/MM/AAAA HH:MM:SS)
@@ -92,8 +101,9 @@ if (!function_exists('brDateHora')) {
     }
 }
 
-if (!function_exists('brCurrency')) {    
-    function brCurrency($value) {
+if (!function_exists('brCurrency')) {
+    function brCurrency($value)
+    {
         if (!is_null($value) && is_numeric($value)) {
             return 'R$ ' . number_format($value, 2, ',', '.');
         }
@@ -101,9 +111,10 @@ if (!function_exists('brCurrency')) {
     }
 }
 
-if (!function_exists('filterAvailableToursWithYear')) { 
-    function filterAvailableToursWithYear($turmas, $estudanteTurma, $year): array {
-        return array_filter($turmas, function($turma) use ($estudanteTurma, $year) {
+if (!function_exists('filterAvailableToursWithYear')) {
+    function filterAvailableToursWithYear($turmas, $estudanteTurma, $year): array
+    {
+        return array_filter($turmas, function ($turma) use ($estudanteTurma, $year) {
             foreach ($estudanteTurma as $est_tur) {
                 if ($est_tur->turma_id === $turma->id && $est_tur->ano_letivo == $year) {
                     return false;
@@ -142,28 +153,29 @@ if (!function_exists('publicPath')) {
                 'ext' => $ext,
                 'path' => $path . $new_name
             ];
-        } 
-        
+        }
+
         return null;
     }
 }
 
 if (!function_exists('removeCaracteresEspeciais')) {
-    function removeCaracteresEspeciais($string) {
-        if(is_null($string)) {
+    function removeCaracteresEspeciais($string)
+    {
+        if (is_null($string)) {
             return null;
         }
-        
+
         return preg_replace('/\D/', '', $string);
-    }    
+    }
 }
 
 if (!function_exists('dd')) {
-    function dd($data) {
+    function dd($data)
+    {
         echo "<pre>";
         var_dump($data);
         echo "</pre>";
         die;
     }
 }
-

@@ -9,19 +9,21 @@ use App\Models\Coordination\CoordenadorTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenadorTurmaRepository {
+class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenadorTurmaRepository
+{
     const CLASS_NAME = CoordenadorTurma::class;
     const TABLE = 'coordenador_as_turma';
 
     use FindTrait;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new CoordenadorTurma();
     }
 
-    public function allCoordinatorClass(array $params = []) 
+    public function allCoordinatorClass(array $params = [])
     {
         $sql = "SELECT 
                 ct.*, 
@@ -63,7 +65,7 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
         return $stmt->fetchAll(\PDO::FETCH_CLASS);
     }
 
-     public function allCoordinatorClassWithoutCoordinator(array $params = []) 
+    public function allCoordinatorClassWithoutCoordinator(array $params = [])
     {
         $sql = "SELECT
                 JSON_OBJECT(
@@ -107,27 +109,26 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
         if (empty($data) || empty($data['coordinator_id'])) {
             return null;
         }
-        
-        try {           
+
+        try {
             $this->conn->beginTransaction();
 
             $this->deleteByClassId($turma_id);
-            
+
             foreach ($data['coordinator_id'] as $key => $value) {
                 $data['coordenador_id'] = $value;
                 $data['turma_id'] = $turma_id;
                 $coordinator = $this->create($data);
             }
-           
+
             $this->conn->commit();
             return $coordinator;
-    
         } catch (\Throwable $th) {
             $this->conn->rollBack();
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
@@ -158,11 +159,11 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
 
             return $this->findByUuid($coordinator->uuid);
         } catch (\Throwable $th) {
-            
+
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
+        } finally {
             Database::getInstance()->closeConnection();
         }
     }
@@ -170,11 +171,11 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
@@ -184,13 +185,27 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
     public function deleteByClassId(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "DELETE FROM " . self::TABLE . " 
+            ->prepare(
+                "DELETE FROM " . self::TABLE . " 
              WHERE turma_id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
+    }
+
+    public function findByTurmaId(int $turma_id): ?array
+    {
+        $stmt = $this->conn
+            ->prepare("SELECT *, pf.nome AS pessoa_fisica_nome FROM " . self::TABLE . " ct 
+            INNER JOIN coordenadores co 
+            ON ct.coordenador_id = co.id 
+            LEFT JOIN pessoa_fisica pf ON co.pessoa_fisica_id = pf.id
+            WHERE ct.turma_id = :turma_id AND co.ativo = 1");
+
+        $stmt->execute([':turma_id' => $turma_id]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
