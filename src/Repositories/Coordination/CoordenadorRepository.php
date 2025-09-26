@@ -11,7 +11,8 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CoordenadorRepository extends SingletonInstance implements ICoordenadorRepository{
+class CoordenadorRepository extends SingletonInstance implements ICoordenadorRepository
+{
     const CLASS_NAME = Coordenador::class;
     const TABLE = 'coordenadores';
 
@@ -20,14 +21,16 @@ class CoordenadorRepository extends SingletonInstance implements ICoordenadorRep
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Coordenador();
         $this->usuarioRepository = UsuarioRepository::getInstance();
         $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance();
     }
 
-    public function allCoordinators(array $params = []){
+    public function allCoordinators(array $params = [])
+    {
 
         $sql = "SELECT
             c.*,
@@ -75,7 +78,7 @@ class CoordenadorRepository extends SingletonInstance implements ICoordenadorRep
         if (empty($data)) {
             return null;
         }
-        
+
         try {
             $userData = array_merge($data, [
                 'password' => 'password',
@@ -83,24 +86,21 @@ class CoordenadorRepository extends SingletonInstance implements ICoordenadorRep
             ]);
             $this->conn->beginTransaction();
             $user = $this->usuarioRepository->create($userData);
-            
+
             $personData = array_merge($data, ['usuario_id' => $user->id]);
-            
+
             $person = $this->pessoaFisicaRepository->create($personData);
-           
+
             $coordinatorData = array_merge($data, ['person_id' => $person->id]);
             $coordinator = $this->create($coordinatorData);
-           
+
             $this->conn->commit();
             return $coordinator;
-    
         } catch (\Throwable $th) {
             $this->conn->rollBack();
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -130,16 +130,14 @@ class CoordenadorRepository extends SingletonInstance implements ICoordenadorRep
 
             return $this->findByUuid($coordinator->uuid);
         } catch (\Throwable $th) {
-            
+
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id) : ?Coordenador 
+    public function update(array $data, int $id): ?Coordenador
     {
         $coordenador = $this->model->create($data);
 
@@ -168,64 +166,61 @@ class CoordenadorRepository extends SingletonInstance implements ICoordenadorRep
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function updateAll(array $data): ?Coordenador {
+    public function updateAll(array $data): ?Coordenador
+    {
 
-        if(empty($data)){
+        if (empty($data)) {
             return null;
         }
 
-        try{    
+        try {
             $this->conn->beginTransaction();
             $user = $this->usuarioRepository->update($data, (int)$data['usuario_id']);
 
-            if(is_null($user)){
+            if (is_null($user)) {
                 return null;
             }
 
             $person = $this->pessoaFisicaRepository->update($data, (int)$data['pessoa_fisica_id']);
 
-            if(is_null($person)){
+            if (is_null($person)) {
                 return null;
             }
-            
+
             $coordenador = $this->update($data, (int)$data['id']);
 
-            if(is_null($coordenador)){
+            if (is_null($coordenador)) {
                 return null;
             }
             $this->conn->commit();
             return $coordenador;
-
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             $this->conn->rollBack();
             LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
     }
 
-    public function deleteAll($coordenador): ?bool {
+    public function deleteAll($coordenador): ?bool
+    {
         try {
             $this->conn->beginTransaction();
             $pessoa_fisica = $this->pessoaFisicaRepository->findById($coordenador->person_id);
@@ -235,13 +230,11 @@ class CoordenadorRepository extends SingletonInstance implements ICoordenadorRep
             $this->pessoaFisicaRepository->delete($pessoa_fisica->id);
             $this->conn->commit();
             return $this->delete($coordenador->id);
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             $this->conn->rollBack();
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 }

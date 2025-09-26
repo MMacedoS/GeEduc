@@ -9,19 +9,22 @@ use App\Models\Discipline\Disciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepository {
+class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepository
+{
     const CLASS_NAME = Disciplina::class;
     const TABLE = 'disciplinas';
 
     use FindTrait;
 
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Disciplina();
     }
 
-    public function allDisciplines(array $params = []){
+    public function allDisciplines(array $params = [])
+    {
         $sql = "SELECT 
             d.* 
             FROM " . self::TABLE . " d 
@@ -33,7 +36,7 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
         if (isset($params['search'])) {
             $conditions[] = "d.nome LIKE :search ";
             $bindings[':search'] = '%' . $params['search'] . '%';
-        }   
+        }
 
         if (isset($params['active']) && $params['active'] != '') {
             $conditions[] = "d.ativo = :ativo";
@@ -50,44 +53,44 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);  
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
-    public function create(array $data){
+    public function create(array $data)
+    {
         $disciplina = $this->model->create(
             $data
         );
 
-        try{
+        try {
             $stmt = $this->conn
-            ->prepare(
-                "INSERT INTO " . self::TABLE . "
+                ->prepare(
+                    "INSERT INTO " . self::TABLE . "
                     SET
                         uuid = :uuid,
                         nome = :name"
-            );
+                );
 
             $create = $stmt->execute([
                 ':uuid' => $disciplina->uuid,
                 ':name' => $disciplina->nome
             ]);
 
-            if(is_null($create)){
+            if (is_null($create)) {
                 return null;
             }
 
             return $this->findByUuid($disciplina->uuid);
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id){
+    public function update(array $data, int $id)
+    {
         $disciplina = $this->model->create($data);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     SET
@@ -102,7 +105,7 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
                 ':active' => $disciplina->ativo
             ]);
 
-            if(!$updated){
+            if (!$updated) {
                 return null;
             }
 
@@ -110,26 +113,26 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
         } catch (\Throwable $th) {
             LoggerHelper::logInfo($th->getMessage());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function delete(int $id){
+    public function delete(int $id)
+    {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . "
+            ->prepare(
+                "UPDATE " . self::TABLE . "
                 SET 
                     ativo = 0
                 WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
     }
 
-    public function findAllDisciplineByClassID($turma_id) {
+    public function findAllDisciplineByClassID($turma_id)
+    {
         try {
             $sql = "SELECT t.*, JSON_OBJECT(
                 'turma_id', t.id,
@@ -150,9 +153,9 @@ class DisciplinaRepository extends SingletonInstance implements IDisciplinaRepos
             WHERE t.id = $turma_id
             GROUP BY t.id;
             ";
-            
+
             $stmt = $this->conn->prepare($sql);
-    
+
             $stmt->execute();
             return $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $th) {

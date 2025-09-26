@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories\Person;
 
@@ -12,7 +12,8 @@ use App\Repositories\Student\EstudanteRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PessoaContatoRepository extends SingletonInstance implements IPessoaContatoRepository {
+class PessoaContatoRepository extends SingletonInstance implements IPessoaContatoRepository
+{
 
     const CLASS_NAME = PessoaContato::class;
     const TABLE = 'pessoa_contato';
@@ -22,14 +23,16 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new PessoaContato();
         $this->usuarioRepository = UsuarioRepository::getInstance();
         $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance();
     }
 
-    public function allPersons(array $params = []){
+    public function allPersons(array $params = [])
+    {
 
         $sql = "SELECT
             pc.*,
@@ -90,20 +93,20 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
         }
 
         $this->conn->beginTransaction();
-        
+
         try {
             $userData = array_merge($data, [
                 'password' => 'escola123',
                 'sector' => 'responsavel_legal',
             ]);
-    
+
             $user = $this->usuarioRepository->create($userData);
 
             if (is_null($user)) {
                 $this->conn->rollBack();
                 return null;
             }
-    
+
             $personData = array_merge($data, ['usuario_id' => $user->id]);
             $person = $this->pessoaFisicaRepository->create($personData);
 
@@ -111,7 +114,7 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
                 $this->conn->rollBack();
                 return null;
             }
-    
+
             $personContactData = array_merge($data, ['person_id' => $person->id]);
             $personContact = $this->create($personContactData);
 
@@ -121,20 +124,17 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
             }
 
             $this->conn->commit();
-    
+
             return $personContact;
-    
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             $this->conn->rollBack();
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function create(array $data) 
+    public function create(array $data)
     {
         $existingPerson = $this->findByContactPersonId($data);
         if ($existingPerson) {
@@ -143,7 +143,7 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
 
         $person = $this->model->create($data);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
                     SET
@@ -159,50 +159,43 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
                 ':pessoa_fisica_id' => $person->pessoa_fisica_id
             ]);
 
-            if(!$create){
+            if (!$create) {
                 return null;
             }
 
             return $this->findByUuid($person->uuid);
-
-        }catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-
     }
 
-    public function updateAll(array $data) 
+    public function updateAll(array $data)
     {
-        if(empty($data)){
+        if (empty($data)) {
             return null;
         }
-        
-        try{    
+
+        try {
             $user = $this->usuarioRepository->update($data, (int)$data['usuario_id']);
-            if(is_null($user)){
+            if (is_null($user)) {
                 return null;
             }
 
             $person = $this->pessoaFisicaRepository->update($data, (int)$data['person_id']);
 
-            if(is_null($person)){
+            if (is_null($person)) {
                 return null;
             }
 
             $personContact = $this->update($data, (int)$data['id']);
 
-            if(is_null($personContact)){
+            if (is_null($personContact)) {
                 return null;
             }
 
             return $personContact;
-
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -212,7 +205,7 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
 
         $person_contact = $this->model->update($data, $person_contact);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     set
@@ -230,15 +223,13 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
                 ':id' => (int)$id
             ]);
 
-            if(!$updated){
+            if (!$updated) {
                 return null;
             }
 
             return $this->findById($id);
-        }catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -257,14 +248,14 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
         return $this->delete($person_contact_id);
     }
 
-    public function removeAll($id) :?bool 
+    public function removeAll($id): ?bool
     {
         $pessoa_contato = $this->findById((int)$id);
 
         if (is_null($pessoa_contato)) {
             return null;
         }
-        
+
         $this->remove($id);
 
         $pessoa_fisica = $this->pessoaFisicaRepository->findById((int)$pessoa_contato->pessoa_fisica_id);
@@ -277,34 +268,33 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
         return $this->usuarioRepository->remove($pessoa_fisica->usuario_id);
     }
 
-    public function remove($id) :?bool 
+    public function remove($id): ?bool
     {
         $pessoa_contato = $this->findById((int)$id);
 
         if (is_null($pessoa_contato)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            
-            if($delete) {
+
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function delete(int $id){
+    public function delete(int $id)
+    {
         $stmt = $this->conn->prepare(
             "UPDATE " . self::TABLE . "
                 SET
@@ -313,9 +303,9 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
             "
         );
 
-            $updated = $stmt->execute(['id' => $id]);
+        $updated = $stmt->execute(['id' => $id]);
 
-            return $updated;
+        return $updated;
     }
 
     public function findByContactPersonId(array $criteria): ?PessoaContato
@@ -330,7 +320,7 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
             }
 
             if (empty($conditions)) {
-                return null; 
+                return null;
             }
 
             $sql = "SELECT * FROM " . self::TABLE . " WHERE " . implode(' AND ', $conditions);
@@ -338,13 +328,11 @@ class PessoaContatoRepository extends SingletonInstance implements IPessoaContat
             $stmt->execute($params);
 
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-            $result = $stmt->fetch();  
+            $result = $stmt->fetch();
 
-            return $result ?: null; 
+            return $result ?: null;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 }

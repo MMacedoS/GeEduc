@@ -9,20 +9,22 @@ use App\Models\Ticket\Boleto;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class BoletoRepository extends SingletonInstance implements IBoletoRepository {
+class BoletoRepository extends SingletonInstance implements IBoletoRepository
+{
     const CLASS_NAME = Boleto::class;
     const TABLE = 'boletos';
 
     use FindTrait;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Boleto();
     }
 
-    public function create(array $params) 
-    {   
+    public function create(array $params)
+    {
         $monthly = $this->model->create($params);
 
         try {
@@ -60,12 +62,9 @@ class BoletoRepository extends SingletonInstance implements IBoletoRepository {
             }
 
             return $this->findByUuid($monthly->uuid);
-
         } catch (\Throwable $th) {
             LoggerHelper::logError("Erro ao criar mensalidade: " . $th->getMessage(), ['exception' => $th]);
             throw $th; // Lança a exceção para ser tratada externamente
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -74,14 +73,14 @@ class BoletoRepository extends SingletonInstance implements IBoletoRepository {
         $stmt = $this->conn->prepare("SELECT * FROM " . self::TABLE . " where mensalidade_id = :id");
         $stmt->bindParam(':id', $monthly_id, \PDO::PARAM_INT);
         $stmt->execute();
-    
-        
+
+
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        $register = $stmt->fetch();  
+        $register = $stmt->fetch();
         if (is_null($register)) {
             return null;
         }
-    
+
         return $register;
     }
 

@@ -9,13 +9,15 @@ use App\Models\Bank_account\ContaBancaria;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ContaBancariaRepository extends SingletonInstance implements IContaBancariaRepository{
+class ContaBancariaRepository extends SingletonInstance implements IContaBancariaRepository
+{
     const CLASS_NAME = ContaBancaria::class;
     const TABLE = 'contas_bancarias';
 
     use FindTrait;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new ContaBancaria();
     }
@@ -60,7 +62,7 @@ class ContaBancariaRepository extends SingletonInstance implements IContaBancari
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
     public function create(array $data)
@@ -98,8 +100,6 @@ class ContaBancariaRepository extends SingletonInstance implements IContaBancari
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -145,19 +145,17 @@ class ContaBancariaRepository extends SingletonInstance implements IContaBancari
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 

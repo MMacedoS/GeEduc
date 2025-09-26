@@ -11,7 +11,8 @@ use App\Repositories\Plan\PlanoRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteMensalidadeRepository extends SingletonInstance implements IEstudanteMensalidadeRepository {
+class EstudanteMensalidadeRepository extends SingletonInstance implements IEstudanteMensalidadeRepository
+{
     const CLASS_NAME = EstudanteMensalidade::class;
     const TABLE = 'estudante_mensalidade';
 
@@ -20,7 +21,8 @@ class EstudanteMensalidadeRepository extends SingletonInstance implements IEstud
     protected $mensalidadeRepository;
     protected $planoRepository;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new EstudanteMensalidade();
         $this->mensalidadeRepository = MensalidadeRepository::getInstance();
@@ -63,17 +65,17 @@ class EstudanteMensalidadeRepository extends SingletonInstance implements IEstud
             ";
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['situation'])) {
             $conditions[] = "m.situacao = :situacao";
             $bindings[':situacao'] = $params['situation'];
         }
 
         if (isset($params['verify_contract'])) {
-            if($params['verify_contract']) {
+            if ($params['verify_contract']) {
                 $conditions[] = "c.id IS NULL";
             }
-            if(!$params['verify_contract']) {
+            if (!$params['verify_contract']) {
                 $conditions[] = "c.id IS NOT NULL";
             }
         }
@@ -99,7 +101,7 @@ class EstudanteMensalidadeRepository extends SingletonInstance implements IEstud
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS);
     }
 
     public function create(array $data)
@@ -132,22 +134,20 @@ class EstudanteMensalidadeRepository extends SingletonInstance implements IEstud
 
             $plano = $this->planoRepository->findById($monthly->plano_id);
 
-            $monthly = $this->findByUuid($monthly->uuid);            
+            $monthly = $this->findByUuid($monthly->uuid);
             $data['studante_monthly_id'] = $monthly->id;
             $data['monthly_day'] = $monthly->dia_mensalidade;
             $data['expiration_date'] = Date('Y-m-') . $monthly->dia_mensalidade;
             $data['amount'] = $plano->valor;
             $monthlyfees = $this->mensalidadeRepository->create($data);
 
-            if(is_null($monthlyfees)){
+            if (is_null($monthlyfees)) {
                 return null;
             }
-            
+
             return $monthly;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -183,58 +183,54 @@ class EstudanteMensalidadeRepository extends SingletonInstance implements IEstud
                 return null;
             }
 
-            $monthly = $this->findByUuid($monthly->uuid);            
+            $monthly = $this->findByUuid($monthly->uuid);
 
-            if(is_null($monthly)){
+            if (is_null($monthly)) {
                 return null;
             }
 
             return $monthly;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
     }
 
-    public function remove($id) :?bool 
+    public function remove($id): ?bool
     {
         $estudanteMensalidade = $this->findById((int)$id);
 
         if (is_null($estudanteMensalidade)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            
-            if($delete) {
+
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -243,47 +239,44 @@ class EstudanteMensalidadeRepository extends SingletonInstance implements IEstud
         try {
             // Base SQL
             $sql = "SELECT em.* FROM " . self::TABLE . " em";
-            
+
             // Inicializa condições e bindings
             $conditions = [];
             $bindings = [];
-    
+
             // Condições dinâmicas
             if (!empty($params['active'])) {
                 $conditions[] = "em.ativo = :ativo";
                 $bindings[':ativo'] = $params['active'];
             }
-    
+
             if (!empty($params['plan_id'])) {
                 $conditions[] = "em.plano_id = :plano_id";
                 $bindings[':plano_id'] = $params['plan_id'];
             }
-    
+
             if (!empty($params['student_id'])) {
                 $conditions[] = "em.estudante_id = :estudante_id";
                 $bindings[':estudante_id'] = $params['student_id'];
             }
-    
+
             // Adiciona condições ao SQL
             if ($conditions) {
                 $sql .= " WHERE " . implode(" AND ", $conditions);
             }
-    
+
             $sql .= " ORDER BY em.created_at DESC LIMIT 1";
-    
+
             // Prepara e executa a consulta
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-    
+
             // Configura o modo de retorno
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
             $result = $stmt->fetch(); // Retorna o resultado
             return $result !== false ? $result : null;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
-    
 }

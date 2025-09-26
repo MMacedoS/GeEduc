@@ -10,13 +10,15 @@ use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class NotaRepository extends SingletonInstance implements INotaRepository {
+class NotaRepository extends SingletonInstance implements INotaRepository
+{
     const CLASS_NAME = Nota::class;
     const TABLE = 'notas';
 
     use FindTrait;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Nota();
     }
@@ -38,11 +40,11 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
             LEFT JOIN atividade a ON n.atividade_id = a.id
             LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
             LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id";
-        
-        
+
+
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['class_discipline_id'])) {
             $conditions[] = 'a.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
@@ -56,7 +58,7 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
             $conditions[] = 'n.periodo_id = :period_id';
             $bindings[':period_id'] = $params['period_id'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -66,12 +68,10 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -98,7 +98,7 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
             );
 
             $idScore = $this->checkIfExistsScore($class);
-            if($idScore) {
+            if ($idScore) {
                 $this->removeScore($idScore);
             }
 
@@ -109,22 +109,21 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
                 ':estudante_turma_id' => $class->estudante_turma_id,
                 ':nota' => $class->nota
             ]);
-  
+
             if (!$create) {
                 return null;
             }
-    
+
             return $this->findByUuid($class->uuid);
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-    }    
+    }
 
-    private function checkIfExistsScore($class) :?String {
+    private function checkIfExistsScore($class): ?String
+    {
         try {
             $stmt = $this->conn->prepare("SELECT id FROM notas WHERE estudante_turma_id = :estudante_turma_id AND periodo_id = :periodo_id AND atividade_id = :atividade_id");
             $stmt->execute([
@@ -134,40 +133,36 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
             ]);
 
             $id = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $id['id'] ?? null;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação select: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    private function removeScore($id) :?bool 
+    private function removeScore($id): ?bool
     {
         $scores = $this->findById((int)$id);
 
         if (is_null($scores)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM notas WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            if($delete) {
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -215,16 +210,16 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
                 LEFT JOIN 
                     periodo b ON n.periodo_id = b.id                
             ";
-        
-        
+
+
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['student_class_id'])) {
             $conditions[] = 'n.estudante_turma_id = :student_class_id';
             $bindings[':student_class_id'] = $params['student_class_id'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -237,12 +232,10 @@ class NotaRepository extends SingletonInstance implements INotaRepository {
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 }

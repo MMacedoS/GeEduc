@@ -9,14 +9,16 @@ use App\Models\Student\EstudanteTurma;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTurmaRepository {
+class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTurmaRepository
+{
     const CLASS_NAME = EstudanteTurma::class;
     const TABLE = 'estudante_turma';
 
     use FindTrait;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new EstudanteTurma();
     }
@@ -50,10 +52,10 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
                 LEFT JOIN estudantes e ON e.id = et.estudante_id AND e.ativo = 1
                 LEFT JOIN pessoa_fisica pfe ON pfe.id = e.pessoa_fisica_id
         ";
-    
+
         $conditions = [];
         $bindings = [];
-    
+
         if (isset($params['search'])) {
             $conditions[] = "t.nome LIKE :nome";
             $bindings[':nome'] = '%' . $params['search'] . '%';
@@ -63,17 +65,17 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             $conditions[] = "pfe.nome LIKE :nome";
             $bindings[':nome'] = '%' . $params['student_name'] . '%';
         }
-    
+
         if (isset($params['student_id'])) {
             $conditions[] = "et.estudante_id = :estudante_id";
             $bindings[':estudante_id'] = $params['student_id'];
         }
-    
+
         if (isset($params['uuid'])) {
             $conditions[] = "et.uuid = :uuid";
             $bindings[':uuid'] = $params['uuid'];
         }
-    
+
         if (isset($params['class_id'])) {
             $conditions[] = "et.turma_id = :turma_id";
             $bindings[':turma_id'] = $params['class_id'];
@@ -83,23 +85,23 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             $conditions[] = "et.ano_letivo = :ano_letivo";
             $bindings[':ano_letivo'] = $params['school_year'];
         }
-    
+
         if (isset($params['active'])) {
             $conditions[] = "et.ativo = :ativo";
             $bindings[':ativo'] = $params['active'];
         }
-    
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-    
+
         $sql .= " GROUP BY et.id, e.id, pfe.id ORDER BY pfe.nome ASC";
-    
+
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($bindings);
-    
+
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
-    }    
+    }
 
     public function create(array $data)
     {
@@ -132,8 +134,6 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -174,53 +174,50 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             return $this->findById($id);
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
     }
 
-    public function remove($id) :?bool 
+    public function remove($id): ?bool
     {
         $estudante = $this->findById((int)$id);
 
         if (is_null($estudante)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM " . self::TABLE . " WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            
-            if($delete) {
+
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function studentClassByStudentId(int $student_id){
+    public function studentClassByStudentId(int $student_id)
+    {
 
         $sql = "SELECT
             et.*
@@ -235,6 +232,6 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
         $stmt->execute([':id' => $student_id]);
 
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
+        return $stmt->fetch();
     }
 }

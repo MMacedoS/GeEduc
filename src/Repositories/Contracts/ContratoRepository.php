@@ -9,14 +9,16 @@ use App\Models\Contracts\Contrato;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ContratoRepository extends SingletonInstance implements IContratoRepository {
+class ContratoRepository extends SingletonInstance implements IContratoRepository
+{
     const CLASS_NAME = Contrato::class;
     const TABLE = 'contratos';
 
     use FindTrait;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Contrato();
     }
@@ -56,12 +58,10 @@ class ContratoRepository extends SingletonInstance implements IContratoRepositor
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function updateSignature(string $document_id, string $contract) 
+    public function updateSignature(string $document_id, string $contract)
     {
         try {
             $stmt = $this->conn->prepare(
@@ -87,12 +87,11 @@ class ContratoRepository extends SingletonInstance implements IContratoRepositor
             LoggerHelper::logInfo("Erro na transação update: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function findByPublicID($document_id) {
+    public function findByPublicID($document_id)
+    {
         try {
             $sql = "SELECT * FROM " . self::TABLE . " WHERE document_id = :document_id";
             $stmt = $this->conn->prepare($sql);
@@ -101,7 +100,7 @@ class ContratoRepository extends SingletonInstance implements IContratoRepositor
             $contract = $stmt->fetch(\PDO::FETCH_OBJ);
 
             return $contract;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logError("Erro na consulta: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;

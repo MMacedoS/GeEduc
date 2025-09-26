@@ -10,14 +10,16 @@ use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class ParalelaRepository extends SingletonInstance implements IParalelaRepository {
+class ParalelaRepository extends SingletonInstance implements IParalelaRepository
+{
     const CLASS_NAME = Paralela::class;
     const TABLE = 'paralela';
 
     use FindTrait;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Paralela();
     }
@@ -33,11 +35,11 @@ class ParalelaRepository extends SingletonInstance implements IParalelaRepositor
             FROM paralela p
             LEFT JOIN turma_disciplina td ON td.id = p.turma_disciplina_id
             LEFT JOIN estudante_turma et ON et.id = p.estudante_turma_id";
-        
-        
+
+
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['class_discipline_id'])) {
             $conditions[] = 'p.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
@@ -47,7 +49,7 @@ class ParalelaRepository extends SingletonInstance implements IParalelaRepositor
             $conditions[] = 'p.periodo_id = :period_id';
             $bindings[':period_id'] = $params['period_id'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -57,12 +59,10 @@ class ParalelaRepository extends SingletonInstance implements IParalelaRepositor
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -81,7 +81,7 @@ class ParalelaRepository extends SingletonInstance implements IParalelaRepositor
             );
 
             $idScore = $this->checkIfExistsScoreParallel($class);
-            if($idScore) {
+            if ($idScore) {
                 $this->removeScoreParallel($idScore);
             }
 
@@ -92,30 +92,30 @@ class ParalelaRepository extends SingletonInstance implements IParalelaRepositor
                 ':estudante_turma_id' => $class->estudante_turma_id,
                 ':nota' => $class->nota
             ]);
-  
+
             if (!$create) {
                 return null;
             }
-    
+
             return $this->findByUuid($class->uuid);
         } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-    }    
+    }
 
-    private function checkIfExistsScoreParallel($class) :?String {
+    private function checkIfExistsScoreParallel($class): ?String
+    {
         try {
-            $stmt = $this->conn->prepare("SELECT id 
+            $stmt = $this->conn->prepare(
+                "SELECT id 
                 FROM paralela 
                 WHERE 
                     estudante_turma_id = :estudante_turma_id AND 
                     periodo_id = :periodo_id AND 
                     turma_disciplina_id = :turma_disciplina_id"
-                );
+            );
 
             $stmt->execute([
                 ':estudante_turma_id' => $class->estudante_turma_id,
@@ -124,39 +124,35 @@ class ParalelaRepository extends SingletonInstance implements IParalelaRepositor
             ]);
 
             $id = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $id['id'] ?? null;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação select: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    private function removeScoreParallel($id) :?bool 
-    {   
+    private function removeScoreParallel($id): ?bool
+    {
         $scores_parallel = $this->findById((int)$id);
         if (is_null($scores_parallel)) {
             return null;
         }
-        
+
         try {
             $stmt = $this->conn->prepare("DELETE FROM paralela WHERE id = :id");
             $delete = $stmt->execute([
                 ':id' => $id
             ]);
-            if($delete) {
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação delete: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 }

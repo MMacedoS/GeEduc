@@ -9,7 +9,8 @@ use App\Models\Teacher\ProfessorDisciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class ProfessorDisciplinaRepository extends SingletonInstance implements IProfessorDisciplinaRepository {
+class ProfessorDisciplinaRepository extends SingletonInstance implements IProfessorDisciplinaRepository
+{
 
     const CLASS_NAME = ProfessorDisciplina::class;
     const TABLE = 'professor_disciplina';
@@ -18,12 +19,14 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
 
 
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new ProfessorDisciplina();
     }
 
-    public function allTeacherDisciplines(array $params = []){
+    public function allTeacherDisciplines(array $params = [])
+    {
         $sql = "SELECT 
                 pd.*,
                 JSON_OBJECT(
@@ -40,7 +43,7 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
             LEFT JOIN pessoa_fisica pf ON pf.id = p.pessoa_fisica_id 
             LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
         ";
-        
+
         $conditions = [];
         $bindings = [];
 
@@ -48,25 +51,25 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
         if (isset($params['search'])) {
             $conditions[] = "(d.nome LIKE :search OR pf.nome LIKE :search)";
             $bindings[':search'] = '%' . $params['search'] . '%';
-        }        
+        }
 
-        if(isset($params['teacher_id'])){
+        if (isset($params['teacher_id'])) {
             $conditions[] = 'pd.professor_id = :professor_id';
             $bindings[':professor_id'] = $params['teacher_id'];
         }
 
-        if(isset($params['discipline_id'])){
+        if (isset($params['discipline_id'])) {
             $conditions[] = 'pd.disciplina_id = :disciplina_id';
             $bindings[':disciplina_id'] = $params['discipline_id'];
         }
 
-        if(isset($params['active'])){
+        if (isset($params['active'])) {
             $conditions[] = 'pd.ativo = :ativo';
             $bindings[':ativo'] = $params['active'];
         }
         /////////////////
 
-        if(count($conditions) > 0){
+        if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
@@ -79,10 +82,11 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
-    public function create(array $data){
+    public function create(array $data)
+    {
         $teacherDiscipline = $this->model->create($data);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
                     SET
@@ -100,30 +104,29 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
                 ':ano_letivo' => $teacherDiscipline->ano_letivo,
             ]);
 
-            if(!$create){
+            if (!$create) {
                 return null;
             }
 
             return $this->findByUuid($teacherDiscipline->uuid);
-        }catch(\Throwable $th){
+        } catch (\Throwable $th) {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id){
+    public function update(array $data, int $id)
+    {
         $professor_disciplina = $this->findById($id);
 
-        if(!$professor_disciplina){
+        if (!$professor_disciplina) {
             return null;
         }
 
         $professor_disciplina = $professor_disciplina->update($data, $professor_disciplina);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . " 
                     SET 
@@ -143,19 +146,18 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
                 ':active' => $professor_disciplina->ativo
             ]);
 
-            if(!$update){
+            if (!$update) {
                 return null;
             }
 
             return $this->findById($id);
-        }catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function delete(int $id){
+    public function delete(int $id)
+    {
         $stmt = $this->conn->prepare(
             "UPDATE " . self::TABLE . "
                 SET

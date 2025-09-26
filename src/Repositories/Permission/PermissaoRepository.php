@@ -8,14 +8,16 @@ use App\Interfaces\Permission\IPermissaoRepository;
 use App\Models\Permission\Permissao;
 use App\Repositories\Traits\FindTrait;
 
-class PermissaoRepository extends SingletonInstance implements IPermissaoRepository {
+class PermissaoRepository extends SingletonInstance implements IPermissaoRepository
+{
     const CLASS_NAME = Permissao::class;
     const TABLE = 'permissao';
 
-    
+
     use FindTrait;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->model = new Permissao();
         $this->conn = Database::getInstance()->getConnection();
     }
@@ -42,39 +44,38 @@ class PermissaoRepository extends SingletonInstance implements IPermissaoReposit
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);         
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
     public function create(array $data)
-    {   
+    {
         $permissao = $this->model->create(
             $data
         );
 
         try {
             $stmt = $this->conn
-            ->prepare(
-                "INSERT INTO " . self::TABLE . " 
+                ->prepare(
+                    "INSERT INTO " . self::TABLE . " 
                   set 
                     uuid = :uuid,
                     name = :name, 
                     description = :description
-            ");
+            "
+                );
             $create = $stmt->execute([
                 ':uuid' => $permissao->uuid,
                 ':name' => $permissao->name,
                 ':description' => $permissao->description
             ]);
-    
+
             if (is_null($create)) {
                 return null;
             }
-    
+
             return $this->findById($this->conn->lastInsertId());
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -103,7 +104,7 @@ class PermissaoRepository extends SingletonInstance implements IPermissaoReposit
                 'description' => $user->description
             ]);
 
-            if (!$updated) {                
+            if (!$updated) {
                 $this->conn
                     ->rollBack();
                 return null;
@@ -111,26 +112,23 @@ class PermissaoRepository extends SingletonInstance implements IPermissaoReposit
 
             $this->conn
                 ->commit();
-                
+
             return $this->findById($id);
         } catch (\Throwable $th) {
             $this->conn->rollBack();
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function delete($id) 
+    public function delete($id)
     {
         $stmt = $this->conn
             ->prepare(
                 "DELETE FROM " . self::TABLE . " WHERE id = :id"
             );
         $deleted = $stmt->execute([':id' => $id]);
-        
-        return $deleted;
 
+        return $deleted;
     }
 
     public function allByUser(int $id)
@@ -143,6 +141,6 @@ class PermissaoRepository extends SingletonInstance implements IPermissaoReposit
             order by name ASC"
         );
         $stmt->execute([':id' => $id]);
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 }

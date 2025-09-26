@@ -11,7 +11,8 @@ use App\Repositories\Profile\UsuarioRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class PlanoRepository extends SingletonInstance implements IPlanoRepository {
+class PlanoRepository extends SingletonInstance implements IPlanoRepository
+{
     const CLASS_NAME = Plano::class;
     const TABLE = 'planos';
 
@@ -20,11 +21,12 @@ class PlanoRepository extends SingletonInstance implements IPlanoRepository {
     protected $usuarioRepository;
     protected $pessoaFisicaRepository;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Plano();
-        $this->usuarioRepository = UsuarioRepository::getInstance(); 
-        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance(); 
+        $this->usuarioRepository = UsuarioRepository::getInstance();
+        $this->pessoaFisicaRepository = PessoaFisicaRepository::getInstance();
     }
 
     public function allPlans(array $params = [])
@@ -62,7 +64,7 @@ class PlanoRepository extends SingletonInstance implements IPlanoRepository {
 
         $stmt->execute($bindings);
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);        
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 
     public function create(array $data)
@@ -98,12 +100,10 @@ class PlanoRepository extends SingletonInstance implements IPlanoRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id) 
+    public function update(array $data, int $id)
     {
         $plan = $this->model->create($data);
 
@@ -136,19 +136,17 @@ class PlanoRepository extends SingletonInstance implements IPlanoRepository {
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
@@ -160,34 +158,32 @@ class PlanoRepository extends SingletonInstance implements IPlanoRepository {
         try {
             // Base SQL
             $sql = "SELECT p.* FROM " . self::TABLE . " p";
-            
+
             // Inicializa condições e bindings
             $conditions = [];
             $bindings = [];
-    
+
             // Condições dinâmicas
             if (!empty($params['active'])) {
                 $conditions[] = "p.ativo = :ativo";
                 $bindings[':ativo'] = $valor;
             }
-    
+
             // Adiciona condições ao SQL
             if ($conditions) {
                 $sql .= " WHERE " . implode(" AND ", $conditions);
             }
-    
+
             $sql .= " ORDER BY p.created_at DESC LIMIT 1";
-    
+
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-    
+
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-            $result = $stmt->fetch(); 
+            $result = $stmt->fetch();
             return $result !== false ? $result : null;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 }

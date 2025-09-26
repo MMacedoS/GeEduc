@@ -9,13 +9,15 @@ use App\Models\Activitie\Atividade;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class AtividadeRepository extends SingletonInstance implements IAtividadeRepository {
+class AtividadeRepository extends SingletonInstance implements IAtividadeRepository
+{
     const CLASS_NAME = Atividade::class;
     const TABLE = 'atividade';
 
     use FindTrait;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Atividade();
     }
@@ -53,7 +55,7 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
         }
 
 
-        if (isset($params['class_discipline_ids'])) { 
+        if (isset($params['class_discipline_ids'])) {
             $conditions[] = "a.turma_disciplina_id IN ($params[class_discipline_ids])";
         }
 
@@ -73,7 +75,7 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
     }
 
 
-    public function create(array $params) 
+    public function create(array $params)
     {
         $class = $this->model->create($params);
 
@@ -108,12 +110,10 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id) 
+    public function update(array $data, int $id)
     {
         $atividades = $this->findById($id);
 
@@ -148,19 +148,17 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 

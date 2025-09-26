@@ -11,13 +11,15 @@ use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 use PDO;
 
-class BoletimRepository extends SingletonInstance implements IBoletimRepository {
+class BoletimRepository extends SingletonInstance implements IBoletimRepository
+{
     const CLASS_NAME = Nota::class;
     const TABLE = 'notas';
 
     use FindTrait;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Nota();
     }
@@ -31,7 +33,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         LEFT JOIN atividade a ON n.atividade_id = a.id
         LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
         LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id";
-        
+
         $conditions = [];
         $bindings = [];
 
@@ -61,12 +63,10 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -95,11 +95,11 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
                     disciplinas d ON pd.disciplina_id = d.id
                 LEFT JOIN 
                     periodo b ON n.periodo_id = b.id                
-            ";       
-        
+            ";
+
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['student_class_id'])) {
             $conditions[] = 'n.estudante_turma_id = :student_class_id';
             $bindings[':student_class_id'] = $params['student_class_id'];
@@ -109,7 +109,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
             $conditions[] = 'n.periodo_id = :period_id';
             $bindings[':period_id'] = $params['period_id'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -122,12 +122,10 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -149,12 +147,12 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
 
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['student_class_id'])) {
             $conditions[] = 'n.estudante_turma_id = :student_class_id';
             $bindings[':student_class_id'] = $params['student_class_id'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -167,12 +165,10 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -184,7 +180,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         FROM recuperacao r 
         LEFT JOIN turma_disciplina td ON td.id = r.turma_disciplina_id
         LEFT JOIN estudante_turma et ON et.id = r.estudante_turma_id";
-        
+
         $conditions = [];
         $bindings = [];
 
@@ -213,12 +209,10 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
+
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -240,7 +234,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
 
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['student_class_id'])) {
             $conditions[] = 'n.estudante_turma_id = :student_class_id';
             $bindings[':student_class_id'] = $params['student_class_id'];
@@ -255,7 +249,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
             $conditions[] = 'n.periodo_id= :period';
             $bindings[':period'] = $params['period'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -268,12 +262,10 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -285,7 +277,7 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         FROM notas n 
         LEFT JOIN atividade a ON a.id = n.atividade_id
         LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id";
-        
+
         $conditions = [];
         $bindings = [];
 
@@ -314,12 +306,10 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
+
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 }

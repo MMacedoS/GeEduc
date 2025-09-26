@@ -9,13 +9,15 @@ use App\Models\Classrooms\TurmaDisciplina;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisciplinaRepository{
+class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisciplinaRepository
+{
     const CLASS_NAME = TurmaDisciplina::class;
     const TABLE = 'turma_disciplina';
 
     use FindTrait;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new TurmaDisciplina();
     }
@@ -60,20 +62,20 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             LEFT JOIN turmas t ON t.id = td.turma_id
             LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id
         ";
-    
+
         $conditions = [];
         $bindings = [];
-    
+
         if (isset($params['class_id'])) {
             $conditions[] = 'td.turma_id = :turma_id';
             $bindings[':turma_id'] = $params['class_id'];
         }
-    
+
         if (isset($params['teacher_discipline_id'])) {
             $conditions[] = 'pd.id = :professor_disciplina_id';
             $bindings[':professor_disciplina_id'] = $params['teacher_discipline_id'];
         }
-    
+
         if (isset($params['academic_year'])) {
             $conditions[] = 'td.ano_letivo = :ano_letivo';
             $bindings[':ano_letivo'] = $params['academic_year'];
@@ -88,28 +90,26 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             $conditions[] = 'td.id = :id';
             $bindings[':id'] = $params['id'];
         }
-    
+
         if (isset($params['active'])) {
             $conditions[] = 'td.ativo = :ativo';
             $bindings[':ativo'] = $params['active'];
         }
-    
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-    
+
         $sql .= " ORDER BY td.created_at DESC";
-    
+
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-    }   
+    }
 
     public function classDisciplineByParams(array $params = [])
     {
@@ -151,7 +151,7 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             LEFT JOIN turmas t ON t.id = td.turma_id
             LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id
         ";
-    
+
         $conditions = [];
         $bindings = [];
 
@@ -159,24 +159,22 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             $conditions[] = 'td.id = :id';
             $bindings[':id'] = $params['id'];
         }
-    
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-    
+
         $sql .= " ORDER BY td.created_at DESC";
-    
+
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
             $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-            return $stmt->fetch();  
+            return $stmt->fetch();
         } catch (\PDOException $e) {
             throw new \Exception("Database query error: " . $e->getMessage());
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-    }   
+    }
 
     public function create(array $data)
     {
@@ -211,12 +209,10 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id) 
+    public function update(array $data, int $id)
     {
         $class_disciplina = $this->findById($id);
 
@@ -253,26 +249,25 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             LoggerHelper::logInfo("Erro na transação create: {$th->getMessage()}");
             LoggerHelper::logInfo("Trace: " . $th->getTraceAsString());
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
         return $updated;
     }
 
-    public function classDisciplinesByTeacherDisciplineId(int $teacherDisciplineId){
+    public function classDisciplinesByTeacherDisciplineId(int $teacherDisciplineId)
+    {
 
         $sql = "SELECT 
                 td.*,
@@ -315,10 +310,11 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
         $stmt->execute([':id' => $teacherDisciplineId]);
 
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::CLASS_NAME);
-        return $stmt->fetch();  
+        return $stmt->fetch();
     }
 
-    public function classDisciplinesByTeacherId(int $teacherId){
+    public function classDisciplinesByTeacherId(int $teacherId)
+    {
 
         $sql = "SELECT 
                 td.*,
@@ -358,7 +354,7 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
         $stmt = $this->conn->prepare($sql);
 
         $stmt->execute([':id' => $teacherId]);
-        
+
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }
 }

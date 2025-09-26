@@ -9,19 +9,22 @@ use App\Models\Work_Load\CargaHoraria;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaRepository {
+class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaRepository
+{
 
     const CLASS_NAME = CargaHoraria::class;
     const TABLE = 'carga_horaria';
 
     use FindTrait;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new CargaHoraria();
     }
 
-    public function allWorkLoad(array $params = []){
+    public function allWorkLoad(array $params = [])
+    {
         $sql = "SELECT c.* FROM " . self::TABLE . " c";
 
         $conditions = [];
@@ -37,7 +40,7 @@ class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaR
             $bindings[':ativo'] = $params['active'];
         }
 
-        if(count($conditions) > 0){
+        if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
@@ -48,12 +51,13 @@ class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaR
         $stmt->execute($bindings);
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
-    }   
+    }
 
-    public function create(array $data){
+    public function create(array $data)
+    {
         $carga_horaria = $this->model->create($data);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . "
                     SET
@@ -67,23 +71,21 @@ class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaR
                 ':carga' => $carga_horaria->carga
             ]);
 
-            if(is_null(!$create)){
+            if (is_null(!$create)) {
                 return null;
             }
 
             return $this->findByUuid($carga_horaria->uuid);
-
-        } catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function update(array $data, int $id){
+    public function update(array $data, int $id)
+    {
         $carga_horaria = $this->model->create($data);
 
-        try{
+        try {
             $stmt = $this->conn->prepare(
                 "UPDATE " . self::TABLE . "
                     SET
@@ -99,20 +101,18 @@ class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaR
                 ':id' => $id
             ]);
 
-            if(!$update){
+            if (!$update) {
                 return null;
             }
 
             return $this->findById($id);
-
-        } catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
-    public function delete(int $id){
+    public function delete(int $id)
+    {
         $stmt = $this->conn->prepare(
             "UPDATE " . self::TABLE . "
                 SET
@@ -125,5 +125,4 @@ class CargaHorariaRepository extends SingletonInstance implements ICargaHorariaR
 
         return $updated;
     }
-
 }

@@ -9,14 +9,16 @@ use App\Models\Frequencies\Frequencia;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
-class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepository {
+class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepository
+{
     const CLASS_NAME = Frequencia::class;
     const TABLE = 'frequencias';
 
     use FindTrait;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new Frequencia();
     }
@@ -70,10 +72,10 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                 LEFT JOIN turmas t ON t.id = td.turma_id
                 LEFT JOIN carga_horaria ch ON ch.id = td.carga_horaria_id         
                 LEFT JOIN periodo b ON b.id = f.periodo_id ";
-        
+
         $conditions = [];
         $bindings = [];
-        
+
         if (isset($params['class_discipline_id'])) {
             $conditions[] = 'f.turma_disciplina_id = :class_discipline_id';
             $bindings[':class_discipline_id'] = $params['class_discipline_id'];
@@ -83,7 +85,7 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
             $conditions[] = 'f.periodo_id = :bimester_id';
             $bindings[':bimester_id'] = $params['bimester_id'];
         }
-        
+
         if (isset($params['student_id'])) {
             $conditions[] = 'f.estudante_turma_id = :student_id';
             $bindings[':student_id'] = $params['student_id'];
@@ -93,17 +95,17 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
             $conditions[] = 't.id = :class_id';
             $bindings[':class_id'] = $params['class_id'];
         }
-        
+
         if (isset($params['data_presence'])) {
             $conditions[] = 'f.data = :data_presence';
             $bindings[':data_presence'] = $params['data_presence'];
         }
-        
+
         if (isset($params['period_id'])) {
             $conditions[] = 'f.periodo_id = :period_id';
             $bindings[':period_id'] = $params['period_id'];
         }
-        
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
@@ -113,10 +115,10 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($bindings);
-            
-            return $stmt->fetchAll(\PDO::FETCH_CLASS);    
+
+            return $stmt->fetchAll(\PDO::FETCH_CLASS);
         } catch (\PDOException $e) {
-            
+
             throw new \Exception("Database query error: " . $e->getMessage());
         }
     }
@@ -124,7 +126,7 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
     public function create(array $params)
     {
         $class = $this->model->create($params);
-    
+
         try {
             $stmt = $this->conn->prepare(
                 "INSERT INTO " . self::TABLE . " 
@@ -136,12 +138,12 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                     justificativa = :justify,
                     data = :data,
                     faltas = :faltas"
-                    
+
             );
-            if($this->checkIfExistsFrequency($class)) {
+            if ($this->checkIfExistsFrequency($class)) {
                 $this->removeFrequency($class);
             }
-      
+
             $create = $stmt->execute([
                 ':uuid' => $class->uuid,
                 ':turma_disciplina_id' => $class->turma_disciplina_id,
@@ -151,20 +153,19 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                 ':data' => $class->data ?? null,
                 ':faltas' => $class->faltas,
             ]);
-  
+
             if (!$create) {
                 return null;
             }
-    
+
             return $this->findByUuid($class->uuid);
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
-    }    
+    }
 
-    private function checkIfExistsFrequency($class) :?bool {
+    private function checkIfExistsFrequency($class): ?bool
+    {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM frequencias WHERE data = :data AND estudante_turma_id = :estudante_turma_id AND periodo_id = :periodo_id");
             $select = $stmt->execute([
@@ -172,18 +173,17 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                 ':estudante_turma_id' => $class->estudante_turma_id,
                 ':periodo_id' => $class->periodo_id
             ]);
-            if($select && $stmt->fetch()) {
+            if ($select && $stmt->fetch()) {
                 return true;
             }
-            
+
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
-    private function removeFrequency($class) :?bool {
+    private function removeFrequency($class): ?bool
+    {
         try {
             $stmt = $this->conn->prepare("DELETE FROM frequencias WHERE data = :data AND estudante_turma_id = :estudante_turma_id AND periodo_id = :periodo_id");
             $delete = $stmt->execute([
@@ -191,14 +191,12 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
                 ':estudante_turma_id' => $class->estudante_turma_id,
                 ':periodo_id' => $class->periodo_id
             ]);
-            if($delete) {
+            if ($delete) {
                 return true;
             }
             return false;
-        } catch(\Throwable $th) {
+        } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
@@ -237,19 +235,17 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
             return $class;
         } catch (\Throwable $th) {
             return null;
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
 
     public function delete(int $id)
     {
         $stmt = $this->conn
-        ->prepare(
-            "UPDATE " . self::TABLE . " 
+            ->prepare(
+                "UPDATE " . self::TABLE . " 
              SET ativo = 0 
              WHERE id = :id"
-        );
+            );
 
         $updated = $stmt->execute(['id' => $id]);
 
@@ -283,9 +279,6 @@ class FrequenciaRepository extends SingletonInstance implements IFrequenciaRepos
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $th) {
             return [];
-        } finally {          
-            Database::getInstance()->closeConnection();
         }
     }
-
 }
