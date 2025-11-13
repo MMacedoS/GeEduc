@@ -37,8 +37,8 @@ class UsuarioRepository extends SingletonInstance implements IUsuarioRepository
         $conditions = [];
         $bindings = [];
 
-        if (isset($params['name_email'])) {
-            $conditions[] = "(nome LIKE :name_email or email LIKE :name_email)";
+        if (isset($params['name_email']) && $params['name_email'] != '') {
+            $conditions[] = "(nome LIKE :name_email OR email LIKE :name_email)";
             $bindings[':name_email'] = '%' . $params['name_email'] . '%';
         }
 

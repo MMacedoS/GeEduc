@@ -12,8 +12,9 @@ class TurmaDisciplinaTransformer
 {
     public function transform(TurmaDisciplina $turmaDisciplina)
     {
-        return [
-            'id' => $turmaDisciplina->id,
+        return (object)[
+            'code' => $turmaDisciplina->id,
+            'id' => $turmaDisciplina->uuid,
             'class_name' => $this->prepareTurmaName($turmaDisciplina->turma_id),
             'class_id' => $turmaDisciplina->turma_id,
             'subject_id' => $turmaDisciplina->professor_disciplina_id,
@@ -21,8 +22,15 @@ class TurmaDisciplinaTransformer
                 $turmaDisciplina
                     ->professor_disciplina_id
             )->subject_name ?? null,
+            'teacher_name' => $this->prepareTurmaDisciplinaName(
+                $turmaDisciplina
+                    ->professor_disciplina_id
+            )->teacher_name ?? null,
             'school_year' => $turmaDisciplina->ano_letivo,
             'workload' => $this->prepareWorkload($turmaDisciplina->carga_horaria_id),
+            'active' => $turmaDisciplina->ativo,
+            'created_at' => $turmaDisciplina->created_at,
+            'updated_at' => $turmaDisciplina->updated_at,
         ];
     }
 

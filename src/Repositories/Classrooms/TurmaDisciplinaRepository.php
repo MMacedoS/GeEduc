@@ -25,35 +25,7 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
     public function allClassDisciplines(array $params = [])
     {
         $sql = "SELECT 
-                td.*,
-                JSON_OBJECT(
-                    'id', pd.id,
-                    'disciplina_id', pd.disciplina_id,
-                    'professor_id', pd.professor_id,
-                    'professor', JSON_OBJECT(
-                        'id', pf.id,
-                        'nome', pf.nome,
-                        'email', pf.email
-                    ),
-                    'disciplina', JSON_OBJECT(
-                        'id', d.id,
-                        'nome', d.nome
-                    )
-                ) AS professor_disciplina,
-                JSON_OBJECT(
-                    'id', t.id,
-                    'nome', t.nome,
-                    'uuid', t.uuid
-                ) AS turma,
-                JSON_OBJECT(
-                    'id', d.id,
-                    'nome', d.nome,
-                    'uuid', d.uuid
-                ) AS disciplinas,
-                JSON_OBJECT(
-                    'id', ch.id,
-                    'carga_horaria', ch.carga
-                ) AS carga_horaria
+                td.*
             FROM turma_disciplina td
             LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id AND pd.ativo = 1
             LEFT JOIN professores p ON p.id = pd.professor_id AND p.ativo = 1

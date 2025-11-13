@@ -6,41 +6,51 @@ use App\Controllers\Controller;
 use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Models\Classrooms\Turma;
 use App\Request\Request;
+use App\Transformers\Classe\TurmaDisciplinaTransformer;
+use App\Transformers\Classe\TurmaTransformer;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
 
-class AtividadeController extends Controller 
+class AtividadeController extends Controller
 {
     const TEN = 10;
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
     protected $turmaRepository;
+    protected $turmaDisciplinaTransformer;
+    protected $turmaTransformer;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
         ITurmaDisciplinaRepository $turmaDisciplinaRepository,
-        IAtividadeRepository $atividadeRepository
+        IAtividadeRepository $atividadeRepository,
+        TurmaDisciplinaTransformer $turmaDisciplinaTransformer,
+        TurmaTransformer $turmaTransformer
     ) {
-        parent::__construct();   
-        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository; 
+        parent::__construct();
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
         $this->atividadeRepository = $atividadeRepository;
         $this->turmaRepository = $turmaRepository;
+        $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
+        $this->turmaTransformer = $turmaTransformer;
     }
 
-    private function defineRoutes($class_id, $class_discipline_id) {
-        switch($_SESSION["user"]->painel) {
+    private function defineRoutes($class_id, $class_discipline_id)
+    {
+        switch ($_SESSION["user"]->painel) {
             case 'coordenador':
                 $this->redirect = "minha-coordenacao/turma/$class_id/disciplina/$class_discipline_id/atividades";
                 $this->routeView = 'coordination/my-coordination/discipline/activitie';
                 $this->active = "coordinator";
                 break;
             case 'administrativo':
-                    $this->redirect = "minha-coordenacao/turma/$class_id/disciplina/$class_discipline_id/atividades";
-                    $this->routeView = 'coordination/my-coordination/discipline/activitie';
-                    $this->active = "coordinator";
-                    break;
+                $this->redirect = "minha-coordenacao/turma/$class_id/disciplina/$class_discipline_id/atividades";
+                $this->routeView = 'coordination/my-coordination/discipline/activitie';
+                $this->active = "coordinator";
+                break;
             case 'professor':
                 $this->redirect = "meus-componentes/$class_id/disciplina/$class_discipline_id/atividades";
                 $this->routeView = 'teacher/my-disciplines/activitie';
@@ -53,14 +63,18 @@ class AtividadeController extends Controller
     {
         $this->defineRoutes($class_id, $class_discipline_id);
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
-        
-        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id]);
+
+        if (is_null($classRooms) || is_null($class_disciplines)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
+
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines->code]);
 
         $totalValue = $this->sumValueActivities($activities);
 
@@ -70,13 +84,13 @@ class AtividadeController extends Controller
         $paginatedBoards = $paginator->getPaginatedItems();
 
         return $this->router->view(
-            "$this->routeView/index", 
+            "$this->routeView/index",
             [
-                'active' => $this->active, 
-                'turma' => $classRooms, 
+                'active' => $this->active,
+                'turma' => $classRooms,
                 'turmas_disciplinas' => $class_disciplines,
                 'total_maximo' => $totalValue,
-                'atividades' => $paginatedBoards, 
+                'atividades' => $paginatedBoards,
                 'links' => $paginator->links()
             ]
         );
@@ -85,18 +99,19 @@ class AtividadeController extends Controller
     public function indexCoordenator(Request $request, string $class_id)
     {
         $classRooms = $this->turmaRepository->findByUuid($class_id);
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
         $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
             [
-                'class_id' => $classRooms->id,
+                'class_id' => $classRooms->code,
                 'academic_year' => Date('Y')
             ]
         );
 
         return $this->router->view(
-            "coordination/my-coordination/discipline/activities", 
+            "coordination/my-coordination/discipline/activities",
             [
-                'active' => $this->active, 
-                'turma' => $classRooms, 
+                'active' => $this->active,
+                'turma' => $classRooms,
                 'turmas_disciplinas' => $class_disciplines
             ]
         );
@@ -105,9 +120,10 @@ class AtividadeController extends Controller
     public function createByClass(Request $request, string $class_id)
     {
         $classRooms = $this->turmaRepository->findByUuid($class_id);
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
         $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
             [
-                'class_id' => $classRooms->id,
+                'class_id' => $classRooms->code,
                 'academic_year' => Date('Y')
             ]
         );
@@ -116,7 +132,7 @@ class AtividadeController extends Controller
 
         $validator = new Validator($data);
 
-        $rules = [     
+        $rules = [
             'type' => 'required',
             'value' => 'required',
             'active' => 'required'
@@ -124,90 +140,98 @@ class AtividadeController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                "coordination/my-coordination/discipline/activities", 
+                "coordination/my-coordination/discipline/activities",
                 [
-                    'active' => $this->active, 
-                    'danger' => true,  
-                    'turma' => $classRooms, 
+                    'active' => $this->active,
+                    'danger' => true,
+                    'turma' => $classRooms,
                     'turmas_disciplinas' => $class_disciplines
                 ]
             );
-        }        
+        }
 
-        $created = 0; 
+        $created = 0;
         $completed = 0;
         foreach ($class_disciplines as $key => $value) {
             $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $value->id, 'active' => 1]);
 
             $totalValue = $this->sumValueActivities($activities);
 
-            if($totalValue >= self::TEN) {
+            if ($totalValue >= self::TEN) {
                 $completed++;
-                continue; 
+                continue;
             }
 
             $data['class_discipline_id'] = $value->id;
             $res = $this->atividadeRepository->create($data);
-            !is_null($res) ? $created++ : ''; 
+            !is_null($res) ? $created++ : '';
         }
 
         if (count($class_disciplines) == $completed) {
             return $this->router->redirect(
                 "minha-coordenacao/turma/$classRooms->uuid/atividades?completed=$totalValue"
-            );  
+            );
         }
-        
+
         return $this->router->redirect(
             "minha-coordenacao/turma/$classRooms->uuid/atividades?created=$created"
-        );   
+        );
     }
 
     public function create(Request $request, string $class_id, string $class_discipline_id)
-    {        
+    {
         $this->defineRoutes($class_id, $class_discipline_id);
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
 
-        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
+        if (is_null($classRooms) || is_null($class_disciplines)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
+
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines->id, 'active' => 1]);
 
         $totalValue = $this->sumValueActivities($activities);
 
-        
-        if($totalValue >= self::TEN) {
+
+        if ($totalValue >= self::TEN) {
             return $this->router->redirect($this->redirect);
         }
-        
+
         return $this->router->view(
-            "$this->routeView/create", 
+            "$this->routeView/create",
             [
-                'active' => $this->active, 
-                'turma' => $classRooms, 
+                'active' => $this->active,
+                'turma' => $classRooms,
                 'turmas_disciplinas' => $class_disciplines
-            ]);  
-        
+            ]
+        );
     }
 
     public function store(Request $request, string $class_id, string $class_discipline_id)
     {
         $this->defineRoutes($class_id, $class_discipline_id);
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
 
-        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
+        if (is_null($classRooms) || is_null($class_disciplines)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
+
+        $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines->id, 'active' => 1]);
 
         $totalValue = $this->sumValueActivities($activities);
 
-        if($totalValue >= self::TEN) {
+        if ($totalValue >= self::TEN) {
             return $this->router->redirect($this->redirect);
         }
 
@@ -215,7 +239,7 @@ class AtividadeController extends Controller
 
         $validator = new Validator($data);
 
-        $rules = [     
+        $rules = [
             'type' => 'required',
             'value' => 'required',
             'active' => 'required'
@@ -223,11 +247,11 @@ class AtividadeController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                "$this->routeView/create", 
+                "$this->routeView/create",
                 [
-                    'active' => $this->active, 
-                    'danger' => true,  
-                    'turma' => $classRooms, 
+                    'active' => $this->active,
+                    'danger' => true,
+                    'turma' => $classRooms,
                     'turmas_disciplinas' => $class_disciplines
                 ]
             );
@@ -237,14 +261,14 @@ class AtividadeController extends Controller
 
         $created = $this->atividadeRepository->create($data);
 
-        if(is_null($created)) {            
+        if (is_null($created)) {
             return $this->router->view(
-               "$this->routeView/create", 
+                "$this->routeView/create",
                 [
-                    'active' => $this->active, 
-                    'danger' => true, 
+                    'active' => $this->active,
+                    'danger' => true,
                     'message' => 'não pode ser criado',
-                    'turma' => $classRooms, 
+                    'turma' => $classRooms,
                     'turmas_disciplinas' => $class_disciplines
                 ]
             );
@@ -257,20 +281,24 @@ class AtividadeController extends Controller
     {
         $this->defineRoutes($class_id, $class_discipline_id);
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
+
+        if (is_null($classRooms) || is_null($class_disciplines)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
 
         $activitie = $this->atividadeRepository->findByUuid($id);
 
         return $this->router->view(
-            "$this->routeView/edit", 
+            "$this->routeView/edit",
             [
-                'active' => $this->active, 
-                'turma' => $classRooms, 
+                'active' => $this->active,
+                'turma' => $classRooms,
                 'turmas_disciplinas' => $class_disciplines,
                 'atividade' => $activitie
             ]
@@ -282,18 +310,22 @@ class AtividadeController extends Controller
         $this->defineRoutes($class_id, $class_discipline_id);
 
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
+
+        if (is_null($classRooms) || is_null($class_disciplines)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
+
+        $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
 
         $data = $request->getBodyParams();
 
         $validator = new Validator($data);
 
-        $rules = [     
+        $rules = [
             'type' => 'required',
             'value' => 'required',
             'active' => 'required'
@@ -301,65 +333,67 @@ class AtividadeController extends Controller
 
         if (!$validator->validate($rules)) {
             return $this->router->view(
-                "$this->routeView/create", 
+                "$this->routeView/create",
                 [
-                    'active' => $this->active, 
-                    'danger' => true,  
-                    'turma' => $classRooms, 
+                    'active' => $this->active,
+                    'danger' => true,
+                    'turma' => $classRooms,
                     'turmas_disciplinas' => $class_disciplines
                 ]
             );
         }
-        
+
         $activitie = $this->atividadeRepository->findByUuid($id);
 
         $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
         $totalValue = $this->sumValueActivities($activities, $data['type']);
 
-        if(($totalValue + $data['value']) >= self::TEN) {
+        if (($totalValue + $data['value']) >= self::TEN) {
             return $this->router->view(
-                "$this->routeView/edit", 
-                    [
-                        'active' => $this->active, 
-                        'danger' => true, 
-                        'message' => 'Nota máxima excedida! Não pode ser atualizado',
-                        'turma' => $classRooms, 
-                        'turmas_disciplinas' => $class_disciplines,
-                        'atividade' => $activitie
-                    ]
-                );
+                "$this->routeView/edit",
+                [
+                    'active' => $this->active,
+                    'danger' => true,
+                    'message' => 'Nota máxima excedida! Não pode ser atualizado',
+                    'turma' => $classRooms,
+                    'turmas_disciplinas' => $class_disciplines,
+                    'atividade' => $activitie
+                ]
+            );
         }
 
 
         $data['class_discipline_id'] = $class_disciplines[0]->id;
 
         $created = $this->atividadeRepository->update($data, (int)$activitie->id);
-        if(is_null($created)) {            
+        if (is_null($created)) {
             return $this->router->view(
-            "$this->routeView/edit", 
+                "$this->routeView/edit",
                 [
-                    'active' => $this->active, 
-                    'danger' => true, 
+                    'active' => $this->active,
+                    'danger' => true,
                     'message' => 'não pode ser atualizado',
-                    'turma' => $classRooms, 
+                    'turma' => $classRooms,
                     'turmas_disciplinas' => $class_disciplines,
                     'atividade' => $activitie
                 ]
             );
         }
-     
+
         return $this->router->redirect($this->redirect);
     }
 
     public function destroy(Request $request, string $class_id, string $class_discipline_id, string $id)
     {
         $classRooms = $this->turmaRepository->findByUuid($class_id);
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
+
+        if (is_null($classRooms) || is_null($class_disciplines)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
 
         $activitie = $this->atividadeRepository->findByUuid($id);
 
@@ -374,10 +408,10 @@ class AtividadeController extends Controller
         exit();
     }
 
-    private function sumValueActivities($activities, $activitieUpdate = null) 
+    private function sumValueActivities($activities, $activitieUpdate = null)
     {
         return array_reduce($activities, function ($sum, $item) use ($activitieUpdate) {
-            if($item->ativo && $item->tipo != $activitieUpdate) {
+            if ($item->ativo && $item->tipo != $activitieUpdate) {
                 return $sum + floatval($item->valor);
             }
         }, 0);

@@ -13,6 +13,7 @@ use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Interfaces\Work_Load\ICargaHorariaRepository;
 use App\Request\Request;
 use App\Transformers\Classe\TurmaDisciplinaTransformer;
+use App\Transformers\Classe\TurmaTransformer;
 use App\Utils\LoggerHelper;
 use App\Utils\Paginator;
 use App\Utils\Validator;
@@ -28,6 +29,7 @@ class TurmaDisciplinaController extends Controller
     protected $usuarioRepository;
     protected $coordenadorTurmaRepository;
     protected $turmaDisciplinaTransformer;
+    protected $turmaTransformer;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
@@ -38,7 +40,8 @@ class TurmaDisciplinaController extends Controller
         IPessoaFisicaRepository $pessoaFisicaRepository,
         IUsuarioRepository $usuarioRepository,
         ICoordenadorTurmaRepository $coordenadorTurmaRepository,
-        TurmaDisciplinaTransformer $turmaDisciplinaTransformer
+        TurmaDisciplinaTransformer $turmaDisciplinaTransformer,
+        TurmaTransformer $turmaTransformer
     ) {
         parent::__construct();
         $this->turmaRepository = $turmaRepository;
@@ -50,6 +53,7 @@ class TurmaDisciplinaController extends Controller
         $this->usuarioRepository = $usuarioRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
         $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
+        $this->turmaTransformer = $turmaTransformer;
     }
 
     public function index(Request $request, $turma_id)
@@ -59,10 +63,17 @@ class TurmaDisciplinaController extends Controller
         }
 
         $classRooms = $this->turmaRepository->findByUuid($turma_id);
+
+        if (is_null($classRooms)) {
+            return $this->router->redirect('turmas?error=not_found');
+        }
+
+        $classRooms = (object)$this->turmaTransformer->transform($classRooms);
+
         $class_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
-                    'class_id' => $classRooms->id
+                    'class_id' => $classRooms->code
                 ]
             );
 
@@ -72,8 +83,6 @@ class TurmaDisciplinaController extends Controller
         $paginatedBoards = $paginator->getPaginatedItems();
 
         $paginatedBoards = $this->turmaDisciplinaTransformer->transformCollection($paginatedBoards);
-
-        dd($paginatedBoards);
 
         return $this->router->view(
             'classRooms/discipline/index',
