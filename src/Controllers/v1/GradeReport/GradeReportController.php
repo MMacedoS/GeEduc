@@ -2,8 +2,6 @@
 
 namespace App\Controllers\v1\GradeReport;
 
-use App\Config\AppServiceProvider;
-use App\Config\Container;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Interfaces\Activitie\IAtividadeRepository;
@@ -12,19 +10,20 @@ use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Interfaces\Discipline\IDisciplinaRepository;
 use App\Interfaces\Frequencies\IFrequenciaRepository;
 use App\Interfaces\Period\IPeriodoRepository;
+use App\Interfaces\Recuperation\IRecuperacaoRepository;
 use App\Interfaces\Scores\IBoletimRepository;
 use App\Interfaces\Scores\INotaRepository;
 use App\Interfaces\Student\IEstudanteRepository;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
-use App\Services\NotaHelperService;
-use App\Utils\Paginator;
+use App\Transformers\Classe\TurmaDisciplinaTransformer;
 
-class GradeReportController extends Controller 
+class GradeReportController extends Controller
 {
     use GenericTrait;
     protected $atividadeRepository;
     protected $turmaDisciplinaRepository;
+    protected $turmaDisciplinaTransformer;
     protected $turmaRepository;
     protected $estudanteRepository;
     protected $frequenciaRepository;
@@ -33,6 +32,7 @@ class GradeReportController extends Controller
     protected $notaRepository;
     protected $boletimRepository;
     protected $disciplinaRepository;
+    protected $recuperacaoRepository;
 
     public function __construct(
         IAtividadeRepository $atividadeRepository,
@@ -41,12 +41,14 @@ class GradeReportController extends Controller
         IEstudanteRepository $estudanteRepository,
         IFrequenciaRepository $frequenciaRepository,
         IEstudanteTurmaRepository $estudanteTurmaRepository,
+        TurmaDisciplinaTransformer $turmaDisciplinaTransformer,
         IDisciplinaRepository $disciplinaRepository,
         IPeriodoRepository $periodoRepository,
         INotaRepository $notaRepository,
-        IBoletimRepository $boletimRepository
+        IBoletimRepository $boletimRepository,
+        IRecuperacaoRepository $recuperacaoRepository
     ) {
-        parent::__construct();   
+        parent::__construct();
         $this->frequenciaRepository = $frequenciaRepository;
         $this->atividadeRepository = $atividadeRepository;
         $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
@@ -57,19 +59,19 @@ class GradeReportController extends Controller
         $this->disciplinaRepository = $disciplinaRepository;
         $this->turmaRepository = $turmaRepository;
         $this->boletimRepository = $boletimRepository;
+        $this->recuperacaoRepository = $recuperacaoRepository;
+        $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
     }
 
     public function indexTeacher(Request $request, string $class_discipline_id)
     {
         $turma_disciplina = $this->turmaDisciplinaRepository
-            ->allClassDisciplines(
-                ['uuid' => $class_discipline_id]
-            )[0];
+            ->findByUuid($class_discipline_id);
 
         $estudantes = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
-                    'class_id' => $turma_disciplina->turma_id, 
+                    'class_id' => $turma_disciplina->turma_id,
                     'school_year' => Date('Y')
                 ]
             );
@@ -77,8 +79,12 @@ class GradeReportController extends Controller
         $atividades = $this->atividadeRepository->allActivities(['class_discipline_id' => $turma_disciplina->id]);
 
         $notas = $this->notaRepository->allScores([
-            'class_discipline_id' => $turma_disciplina->id, 
+            'class_discipline_id' => $turma_disciplina->id,
         ]);
+
+        $recuperacoes = $this->recuperacaoRepository->all(
+            ['class_discipline_id' => $turma_disciplina->id]
+        );
 
         $periodos = $this->periodoRepository->all(['active' => '1']);
 
@@ -91,16 +97,17 @@ class GradeReportController extends Controller
             );
 
         return $this->router->view(
-            'teacher/reports/bimesterGrades/index', 
+            'teacher/reports/bimesterGrades/index',
             [
-                'turma_disciplina' => $turma_disciplina,
+                'turma_disciplina' => $this->turmaDisciplinaTransformer->transform($turma_disciplina),
                 'estudantes' => $estudantes,
                 'atividades' => $atividades,
                 'periodos' => $periodos,
                 'notas' => $notas,
+                'recuperacoes' => $recuperacoes,
                 'frequencias' => $frequencias
             ]
-        ); 
+        );
     }
 
     public function indexStudents(Request $request, string $student_class_id)
@@ -108,10 +115,10 @@ class GradeReportController extends Controller
         $studentClass = $this->estudanteTurmaRepository->findByUuid($student_class_id);
 
         $allStudentClass = $this->estudanteTurmaRepository
-        ->allClassStudents(
-            ["student_id" => $studentClass->estudante_id]
+            ->allClassStudents(
+                ["student_id" => $studentClass->estudante_id]
             )[0];
-      
+
         $periodos = $this->periodoRepository->all(['active' => '1']);
 
         $allDisciplines = $this->disciplinaRepository->findAllDisciplineByClassID($studentClass->turma_id);
@@ -126,10 +133,10 @@ class GradeReportController extends Controller
                     'student_id' => $studentClass->id,
                     'class_id' => $studentClass->turma_id
                 ]
-            );  
+            );
 
         return $this->router->view(
-            'student/reports/bimesterGrades/index', 
+            'student/reports/bimesterGrades/index',
             [
                 'allStudentClass' => $allStudentClass,
                 'allDisciplines' => $allDisciplines,
@@ -137,15 +144,16 @@ class GradeReportController extends Controller
                 'frequencias' => $frequencias,
                 'notas' => $notas,
             ]
-        ); 
+        );
     }
 
-    private function generateArrayIDsForWhere(array $params = []): string {
+    private function generateArrayIDsForWhere(array $params = []): string
+    {
         $ids = array_map(fn($param) => $param->id, $params);
         return implode(',', $ids);
     }
 
-    public function boletins(Request $request, string $turma_id) 
+    public function boletins(Request $request, string $turma_id)
     {
         $class = $this->turmaRepository->findByUuid($turma_id);
 
@@ -158,30 +166,30 @@ class GradeReportController extends Controller
                     'academic_year' => Date('Y')
                 ]
             );
-        
+
         $all_students = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
-                    'class_id' => $class->id, 
+                    'class_id' => $class->id,
                     'school_year' => Date('Y')
                 ]
             );
 
         return $this->router->view(
-            'reports/boletim', 
+            'reports/boletim',
             [
                 'allStudentClass' => $all_students,
                 'allDisciplines' => $all_disciplines,
                 'periodos' => $periodos,
                 'notaService' => $this->boletimRepository
             ]
-        ); 
+        );
     }
 
     public function allTicketsDetails(Request $request, string $turma_id)
     {
-        $class = $this->turmaRepository->findByUuid($turma_id);        
-      
+        $class = $this->turmaRepository->findByUuid($turma_id);
+
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $all_disciplines = $this->turmaDisciplinaRepository
@@ -190,8 +198,8 @@ class GradeReportController extends Controller
                     'class_id' => $class->id,
                     'academic_year' => Date('Y')
                 ]
-            );       
-        
+            );
+
         $all_students = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
@@ -201,7 +209,7 @@ class GradeReportController extends Controller
             );
 
         return $this->router->view(
-            'reports/details', 
+            'reports/details',
             [
                 'allStudentClass' => $all_students,
                 'allDisciplines' => $all_disciplines,
@@ -209,13 +217,13 @@ class GradeReportController extends Controller
                 'notaService' => $this->boletimRepository,
                 'activitiesService' => $this->atividadeRepository
             ]
-        ); 
+        );
     }
 
     public function ticketsDetailsByStudent(Request $request, string $turma_id, string $estudante_id)
     {
-        $class = $this->turmaRepository->findByUuid($turma_id);        
-      
+        $class = $this->turmaRepository->findByUuid($turma_id);
+
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $all_disciplines = $this->turmaDisciplinaRepository
@@ -224,19 +232,19 @@ class GradeReportController extends Controller
                     'class_id' => $class->id,
                     'academic_year' => Date('Y')
                 ]
-            );       
-        
+            );
+
         $all_students = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
-                    'class_id' => $class->id, 
+                    'class_id' => $class->id,
                     'uuid' => $estudante_id,
                     'school_year' => Date('Y')
                 ]
             );
 
         return $this->router->view(
-            'reports/details', 
+            'reports/details',
             [
                 'allStudentClass' => $all_students,
                 'allDisciplines' => $all_disciplines,
@@ -244,8 +252,6 @@ class GradeReportController extends Controller
                 'notaService' => $this->boletimRepository,
                 'activitiesService' => $this->atividadeRepository
             ]
-        ); 
+        );
     }
 }
-
-

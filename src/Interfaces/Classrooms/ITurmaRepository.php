@@ -4,8 +4,9 @@ namespace App\Interfaces\Classrooms;
 
 use App\Models\Classrooms\Turma;
 
-interface ITurmaRepository {
-    
+interface ITurmaRepository
+{
+
     public function allClassRooms(array $params = []);
 
     public function create(array $data);
@@ -14,7 +15,7 @@ interface ITurmaRepository {
 
     public function findByName(string $name): ?Turma;
 
-    public function findByUuid(string $uuid);
+    public function findByUuid(string $class_id);
 
     public function findById(string $id);
 

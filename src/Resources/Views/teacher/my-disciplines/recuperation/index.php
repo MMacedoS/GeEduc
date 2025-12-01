@@ -1,4 +1,5 @@
-<?php require_once __DIR__ . '/../../../layout/top.php'; ?>
+<?php require_once __DIR__ . '/../../../layout/top.php';
+?>
 
 <!-- Row start -->
 <div class="row gx-3">
@@ -15,8 +16,8 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-archive lh-1"></i>
-                <a href="/meus-componentes/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas[0]->uuid ?>/recuperacoes"
-                    class="text-decoration-none">Recuperação do Componente: <?= getJsonToObject($turmas_disciplinas[0]->professor_disciplina)->disciplina->nome ?></a>
+                <a href="/meus-componentes/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas->uuid ?>/recuperacoes"
+                    class="text-decoration-none">Recuperação do Componente: <?= $turmas_disciplinas->teacher_name ?></a>
             </li>
         </ol>
         <!-- Breadcrumb end -->
@@ -97,7 +98,7 @@
                                                 <!-- Modal -->
                                                 <div class="modal fade" id="modalNota<?= $index ?>" tabindex="-1" aria-labelledby="modalNotaLabel<?= $index ?>" aria-hidden="true">
                                                     <div class="modal-dialog">
-                                                        <form class="modal-content" method="post" action="/meus-componentes/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas[0]->uuid ?>/recuperacao">
+                                                        <form class="modal-content" method="post" action="/meus-componentes/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas->uuid ?>/recuperacao">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="modalNotaLabel<?= $index ?>">
                                                                     Lançar Recuperação I Semestre - <?= getJsonToObject($value->estudante)->nome ?>
@@ -136,26 +137,67 @@
                         <? endif; ?>
                         <? if ($periodos[0]->periodo == '4'): ?>
                             <div class="tab-pane fade" id="two" role="tabpanel">
-                                <div class="p-5">
-                                    <h1 class="display-5 fw-bold text-success">
-                                        Tab Two
-                                    </h1>
-                                    <div class="col-lg-6">
-                                        <p class="lead mb-4">
-                                            Quickly design and customize responsive
-                                            mobile-first sites with Bootstrap, the world’s
-                                            most popular front-end open source toolkit,
-                                            featuring Sass variables and mixins, responsive
-                                            grid system, extensive prebuilt components, and
-                                            powerful JavaScript plugins.
-                                        </p>
-                                        <div class="d-grid gap-2 d-sm-flex">
-                                            <button type="button" class="btn btn-success btn-lg">
-                                                Button
-                                            </button>
-                                            <button type="button" class="btn btn-info btn-lg">
-                                                Button
-                                            </button>
+                                <h5 class="ms-4">Lista de Recuperação</h5>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="list-group w-auto">
+                                            <? if (empty($semester_2)): echo '<h1 class="display-9 fw-bold text-success">
+                                                    Não há estudantes para recuperação neste semestre
+                                                </h1>';
+                                            endif; ?>
+                                            <? foreach ($semester_2 as $index => $value) : ?>
+                                                <a href="#"
+                                                    class="list-group-item list-group-item-action d-flex gap-3 py-3"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalNota<?= $index ?>">
+                                                    <div class="d-flex gap-2 w-100 justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 class="mb-0"><?= getJsonToObject($value->estudante)->nome ?></h6>
+                                                            <p class="mb-0 opacity-75">Total alcançado: <?= $value->media + $value->nota ?? 0 ?></p>
+                                                        </div>
+                                                        <? if (!is_null($value->nota)) : ?>
+                                                            <small class="badge bg-primary border border-primary">Lançada</small>
+                                                        <? else : ?>
+                                                            <small class="badge bg-danger border border-danger">Lançar</small>
+                                                        <? endif; ?>
+                                                    </div>
+                                                </a>
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="modalNota<?= $index ?>" tabindex="-1" aria-labelledby="modalNotaLabel<?= $index ?>" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <form class="modal-content" method="post" action="/meus-componentes/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas->uuid ?>/recuperacao">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalNotaLabel<?= $index ?>">
+                                                                    Lançar Recuperação II Semestre - <?= getJsonToObject($value->estudante)->nome ?>
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" name="student_class_id" value="<?= $value->estudante_turma_id ?>">
+                                                                <div class="mb-3 row">
+                                                                    <div class="col-6">
+                                                                        <label for="nota<?= $index ?>" class="form-label">Nota</label>
+                                                                        <input type="number" name="score" id="nota<?= $index ?>" class="form-control" value="<?= $value->nota ?>" required min="0" max="3" step="0.1">
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <label for="" class="form-label">Período</label>
+                                                                        <input type="text" name="period" id="" class="form-control" value="II Semestre" readonly>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="detalhamento<?= $index ?>" class="form-label">Detalhamento da nota</label>
+                                                                    <textarea name="obs" id="detalhamento<?= $index ?>" class="form-control" rows="3" required><?= $value->obs ?></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer justify-content-end">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            <? endforeach; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -163,9 +205,9 @@
                             <div class="tab-pane fade" id="three" role="tabpanel">
                                 <div class="p-5 text-end">
                                     <h1 class="display-5 fw-bold text-success">
-                                        Tab Three
+                                        Não esta disponivel no momento
                                     </h1>
-                                    <div class="col-lg-6 ms-auto">
+                                    <!-- <div class="col-lg-6 ms-auto">
                                         <p class="lead mb-4">
                                             Quickly design and customize responsive
                                             mobile-first sites with Bootstrap, the world’s
@@ -182,7 +224,7 @@
                                                 Button
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         <? endif; ?>

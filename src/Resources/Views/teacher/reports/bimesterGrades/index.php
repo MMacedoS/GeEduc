@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +11,13 @@
             background-color: #fff;
             font-size: 11px;
         }
-        .table th, .table td {
+
+        .table th,
+        .table td {
             padding: 5px;
             vertical-align: middle;
         }
+
         .text-center {
             text-align: center;
         }
@@ -23,7 +27,7 @@
         }
 
         .bg-row {
-            background-color:rgb(181, 230, 202) !important;
+            background-color: rgb(181, 230, 202) !important;
         }
 
         .bgb-1 {
@@ -31,7 +35,7 @@
         }
 
         .bgb-2 {
-            background-color:rgb(134, 127, 127) !important;
+            background-color: rgb(134, 127, 127) !important;
         }
 
         .bgb-3 {
@@ -39,7 +43,7 @@
         }
 
         .bgb-4 {
-            background-color:rgb(179, 159, 159) !important;
+            background-color: rgb(179, 159, 159) !important;
         }
 
         @media print {
@@ -61,7 +65,8 @@
                 width: 100% !important;
             }
 
-            .table th, .table td {
+            .table th,
+            .table td {
                 border: 1px solid #000 !important;
             }
 
@@ -75,104 +80,131 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container" style="width: 100% !important; max-width: 100%">
+    <div class="container" style="width: 100% !important; max-width: 100%">
 
-    <table class="table table-bordered small mb-4">
-        <thead>
-            <tr><th colspan="100%" class="text-center fs-5"><?= NAME_SCHOOL ?></th></tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Endereço:</strong> <?= SCHOOL_ADDRESS ?></td>
-                <td colspan="3"><strong>CEP:</strong> <?= SCHOOL_ZIP_CODE ?></td>
-            </tr>
-            <tr>
-                <td><strong>Professor:</strong> <?= getJsonToObject($turma_disciplina->professor_disciplina)->professor->nome ?></td>
-                <td colspan="3"><strong>Turma:</strong> <?= getJsonToObject($turma_disciplina->turma)->nome ?></td>
-            </tr>
-        </tbody>
-    </table>
+        <table class="table table-bordered small mb-4">
+            <thead>
+                <tr>
+                    <th colspan="100%" class="text-center fs-5"><?= NAME_SCHOOL ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Endereço:</strong> <?= SCHOOL_ADDRESS ?></td>
+                    <td colspan="3"><strong>CEP:</strong> <?= SCHOOL_ZIP_CODE ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Professor/Disciplina:</strong> <?= $turma_disciplina->teacher_name . "/" . $turma_disciplina->subject_name ?></td>
+                    <td colspan="3"><strong>Turma:</strong> <?= $turma_disciplina->class_name ?></td>
+                </tr>
+            </tbody>
+        </table>
 
-    <?php
-    // Mapeia notas e faltas
-    $frequenciasMap = [];
-    $notasMap = [];    
+        <?php
+        // Mapeia notas e faltas
+        $frequenciasMap = [];
+        $notasMap = [];
 
-    foreach ($frequencias as $frequencia) {
-        $frequenciasMap["$frequencia->estudante_turma_id$frequencia->periodo_id"] = $frequencia->faltas;
-    }
+        foreach ($frequencias as $frequencia) {
+            $frequenciasMap["$frequencia->estudante_turma_id$frequencia->periodo_id"] = $frequencia->faltas;
+        }
 
-    foreach ($notas as $nota) {
-        $notasMap["$nota->estudante_turma_id$nota->atividade_id$nota->periodo_id"] = $nota->nota;
-        $chavePeriodo = "$nota->estudante_turma_id$nota->periodo_id";
-        $notasMap[$chavePeriodo] = ($notasMap[$chavePeriodo] ?? 0) + ($nota->nota ?? 0);
-    }
+        foreach ($notas as $nota) {
+            $notasMap["$nota->estudante_turma_id$nota->atividade_id$nota->periodo_id"] = $nota->nota;
+            $chavePeriodo = "$nota->estudante_turma_id$nota->periodo_id";
+            $notasMap[$chavePeriodo] = ($notasMap[$chavePeriodo] ?? 0) + ($nota->nota ?? 0);
+        }
 
-    // Cabeçalho com colunas dinâmicas para cada bimestre
-    ?>
-    <table class="table table-bordered small table-striped">
-        <thead class="table-primary text-center">
-            <tr>
-                <th rowspan="2" class="bg-e">Estudante</th>
-                <?php foreach ($periodos as $periodo): ?>
-                    <th colspan="<?= count($atividades) + 1 ?>" class="bgb-<?= $periodo->periodo ?>">
-                        <?= $periodo->periodo ?>º Bimestre
-                    </th>
-                <?php endforeach; ?>
-                <th colspan="3">Resultado</th>
-            </tr>
-            <tr>
-                <?php foreach ($periodos as $periodo): ?>
-                    <?php foreach ($atividades as $atividade): ?>
-                        <th class="bgb-<?= $periodo->periodo ?>"><?= getJsonToObject($atividade->activies_details)->tipo ?></th>
+        // Cabeçalho com colunas dinâmicas para cada bimestre
+        ?>
+        <table class="table table-bordered small table-striped">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th rowspan="2" class="bg-e">Estudante</th>
+                    <?php foreach ($periodos as $periodo):
+                        if ($periodo->periodo % 2 === 0) {
+                            $colspan = count($atividades) + 2; // +2 para Soma e REC
+                        }
+                        if ($periodo->periodo % 2 !== 0) {
+                            $colspan = count($atividades) + 1; // +1 para Soma
+                        }
+                    ?>
+                        <th colspan="<?= $colspan ?>" class="bgb-<?= $periodo->periodo ?>">
+                            <?= $periodo->periodo ?>º Bimestre
+                        </th>
                     <?php endforeach; ?>
-                    <th>Soma</th>
-                <?php endforeach; ?>
+                    <th colspan="3">Resultado</th>
+                </tr>
+                <tr>
+                    <?php foreach ($periodos as $periodo): ?>
+                        <?php foreach ($atividades as $atividade): ?>
+                            <th class="bgb-<?= $periodo->periodo ?>"><?= getJsonToObject($atividade->activies_details)->tipo ?></th>
+                        <?php endforeach; ?>
+                        <th>Soma</th>
+                        <?php if ($periodo->periodo % 2 === 0):  ?>
+                            <th>REC</th>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                     <th>Total</th>
                     <th>Faltas</th>
                     <th>Situação</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($estudantes as $estudante): 
-                $total_geral = 0;
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($estudantes as $estudante):
+                    $total_geral = 0;
                 ?>
-                
-                <tr>
-                    <td class="bg-row"><?= getJsonToObject($estudante->estudante)->nome ?></td>
-                    <?php foreach ($periodos as $periodo): ?>
-                        <?php foreach ($atividades as $atividade): ?>
-                            <td class="text-center">
-                                <?= $notasMap["$estudante->id$atividade->id$periodo->id"] ?? '-' ?>
-                            </td>
-                        <?php endforeach; ?>
-                        <?php
+
+                    <tr>
+                        <td class="bg-row"><?= getJsonToObject($estudante->estudante)->nome ?></td>
+                        <?php foreach ($periodos as $periodo): ?>
+                            <?php foreach ($atividades as $atividade): ?>
+                                <td class="text-center">
+                                    <?= $notasMap["$estudante->id$atividade->id$periodo->id"] ?? '-' ?>
+                                </td>
+                            <?php endforeach; ?>
+                            <?php
                             $total = $notasMap["$estudante->id$periodo->id"] ?? 0;
                             $total_geral += $total;
                             $faltas = $frequenciasMap["$estudante->id$periodo->id"] ?? 0;
                             $situacao = $total >= MIN_SCORE ? "Aprovado" : "Reprovado";
-                        ?>
-                        <td class="text-center"><?= $total ?></td>
-                    <?php endforeach; ?>
-                    <td class="text-center"><?=$total_geral?></td>
-                    <td class="text-center"><?= $faltas ?></td>
-                    <td class="text-center"><?= $total > 0 ? '-' : '-' ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+                            ?>
+                            <td class="text-center"><?= $total ?></td>
+                            <?php if ($periodo->periodo % 2 === 0):  ?>
+                                <td class="text-center">
+                                    <?
+                                    $semestre = $periodo->periodo <= 2 ? "I Semestre" : "II Semestre";
+                                    $recuperacao = array_filter($recuperacoes, function ($rec) use ($estudante, $semestre) {
+                                        return $rec->estudante_turma_id === $estudante->id && $rec->periodo === $semestre;
+                                    });
+                                    $recuperacao = array_values($recuperacao);
+                                    $total_geral += $recuperacao ? $recuperacao[0]->nota : 0;
+                                    echo $recuperacao ? $recuperacao[0]->nota : '-';
+                                    ?>
+                                </td>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <td class="text-center"><?= $total_geral ?></td>
+                        <td class="text-center"><?= $faltas ?></td>
+                        <td class="text-center"><?= $total > 0 ? '-' : '-' ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
 
-    <p class="mt-3">
-        <strong>Legenda:</strong> Total = Soma das notas, Faltas = Total por bimestre, Situação = Aprovado ou Reprovado com base na média.
-    </p>
-</div>
+        <p class="mt-3">
+            <strong>Legenda:</strong> REC = Recuperação Semestral, Total = Soma das notas, Faltas = Total por bimestre, Situação = Aprovado ou Reprovado com base na média.
+        </p>
+    </div>
 
-<script>
-window.onload = function () {
-    window.print();
-    // window.close();
-};
-</script>
+    <script>
+        window.onload = function() {
+            window.print();
+            // window.close();
+        };
+    </script>
 </body>
+
 </html>

@@ -12,8 +12,8 @@ class ProfessorTransformer
         return [
             'code' => $professor->id,
             'id' => $professor->uuid,
-            'name' => $this->prepareNameTeacher($professor->id),
-            'email' => $this->prepareEmailTeacher($professor->id),
+            'name' => $this->prepareNameTeacher($professor->pessoa_fisica_id),
+            'email' => $this->prepareEmailTeacher($professor->pessoa_fisica_id),
             'active' => $professor->ativo,
             'created_at' => $professor->created_at,
             'updated_at' => $professor->updated_at,

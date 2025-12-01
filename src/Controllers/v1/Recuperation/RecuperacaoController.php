@@ -9,6 +9,7 @@ use App\Interfaces\Period\IPeriodoRepository;
 use App\Interfaces\Recuperation\IRecuperacaoRepository;
 use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Request\Request;
+use App\Transformers\Classe\TurmaDisciplinaTransformer;
 use App\Utils\Paginator;
 
 class RecuperacaoController extends Controller
@@ -18,13 +19,15 @@ class RecuperacaoController extends Controller
     protected $recuperacaoRepository;
     protected $turmaRepository;
     protected $periodoRepository;
+    protected $turmaDisciplinaTransformer;
 
     public function __construct(
         IRecuperacaoRepository $recuperacaoRepository,
         ITurmaDisciplinaRepository $turmaDisciplinaRepository,
         IProfessorDisciplinaRepository $professorDisciplinaRepository,
         IPeriodoRepository $periodoRepository,
-        ITurmaRepository $turmaRepository
+        ITurmaRepository $turmaRepository,
+        TurmaDisciplinaTransformer $turmaDisciplinaTransformer
     ) {
         parent::__construct();
         $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
@@ -32,6 +35,7 @@ class RecuperacaoController extends Controller
         $this->professorDisciplinaRepository = $professorDisciplinaRepository;
         $this->turmaRepository = $turmaRepository;
         $this->periodoRepository = $periodoRepository;
+        $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
     }
 
     public function index(Request $request, string $class_id, string $class_discipline_id)
@@ -40,11 +44,8 @@ class RecuperacaoController extends Controller
 
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
-        $class_disciplines = $this->turmaDisciplinaRepository->allClassDisciplines(
-            [
-                'class_id' => $classRooms->id,
-                'uuid' => $class_discipline_id
-            ]
+        $class_disciplines = $this->turmaDisciplinaRepository->findByUuid(
+            $class_discipline_id
         );
 
         if (is_null($class_disciplines)) {
@@ -58,7 +59,7 @@ class RecuperacaoController extends Controller
                     'periodoTwo' => 2,
                     'type' => 'I Semestre',
                     'total' => 13.8,
-                    'turma_disciplina_id' => $class_disciplines[0]->id
+                    'turma_disciplina_id' => $class_disciplines->id
                 ]
             );
 
@@ -68,7 +69,8 @@ class RecuperacaoController extends Controller
                     'periodoOne' => 3,
                     'periodoTwo' => 4,
                     'type' => 'II Semestre',
-                    'total' => 13.8
+                    'total' => 13.8,
+                    'turma_disciplina_id' => $class_disciplines->id
                 ]
             );
 
@@ -78,15 +80,17 @@ class RecuperacaoController extends Controller
                     'periodoOne' => 1,
                     'periodoTwo' => 4,
                     'type' => 'Exames Finais',
-                    'total' => 27.6
+                    'total' => 27.6,
+                    'turma_disciplina_id' => $class_disciplines->id
                 ]
             );
+
 
         return $this->router->view(
             "teacher/my-disciplines/recuperation/index",
             [
                 'active' => $this->active,
-                'turmas_disciplinas' => $class_disciplines,
+                'turmas_disciplinas' => $this->turmaDisciplinaTransformer->transform($class_disciplines),
                 'turma' => $classRooms,
                 'semester_1' => $semester_one,
                 'semester_2' => $semester_two,
@@ -98,9 +102,9 @@ class RecuperacaoController extends Controller
 
     public function indexByCoordenator(Request $request, string $class_id)
     {
-        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
+        $classRooms = $this->turmaRepository->findByUuid((string)$class_id);
 
-        $classRooms = $this->turmaRepository->findByUuid($class_id);
+        $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         if (is_null($classRooms)) {
             return $this->router->redirect("minha-coordenacao/");
