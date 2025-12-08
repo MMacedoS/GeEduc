@@ -29,19 +29,7 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository
     public function allClassRooms(array $params = [])
     {
         $sql = "SELECT 
-                t.*,
-                JSON_OBJECT(
-                    'coordenadores', 
-                    COALESCE(
-                        JSON_ARRAYAGG(
-                            JSON_OBJECT(
-                                'nome', pf.nome,
-                                'email', pf.email
-                            )
-                        ),
-                        JSON_ARRAY()
-                    )
-                ) AS detalhes 
+                t.* 
             FROM " . self::TABLE . " t 
             LEFT JOIN coordenador_as_turma ct ON ct.turma_id = t.id
             LEFT JOIN coordenadores c ON ct.coordenador_id = c.id AND c.ativo = 1

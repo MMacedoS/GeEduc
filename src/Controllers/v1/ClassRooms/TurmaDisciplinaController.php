@@ -110,6 +110,8 @@ class TurmaDisciplinaController extends Controller
                 ]
             );
 
+        $class_disciplines = $this->turmaDisciplinaTransformer->transformCollection($class_disciplines);
+
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($class_disciplines, $perPage, $currentPage);
@@ -141,6 +143,10 @@ class TurmaDisciplinaController extends Controller
             ->findPessoaFisica(
                 ["usuario_id" => $usuario->id]
             );
+
+        if (is_null($pessoaFisica)) {
+            return $this->router->redirect('dashboard?error=422');
+        }
 
         $coordenador = $this->coordenadorRepository
             ->allCoordinators(

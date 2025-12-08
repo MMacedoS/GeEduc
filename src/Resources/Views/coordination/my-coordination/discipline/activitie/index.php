@@ -15,11 +15,11 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\minha-coordenacao/turma/<?= $turma->uuid ?>/disciplinas" class="text-decoration-none">Disciplinas Turma: <?= $turmas_disciplinas->class_name ?? 'não identificado' ?></a>
+                <a href="\minha-coordenacao/turma/<?= $turma->id ?>/disciplinas" class="text-decoration-none">Turma: <?= $turmas_disciplinas->class_name ?? 'não identificado' ?></a>
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-archive lh-1"></i>
-                <a href="/minha-coordenacao/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividades" class="text-decoration-none">Atividades do Componente: <?= $turmas_disciplinas->subject_name ?></a>
+                <a href="/minha-coordenacao/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividades" class="text-decoration-none">Atividades do Componente: <?= $turmas_disciplinas->subject_name ?></a>
             </li>
         </ol>
         <!-- Breadcrumb end -->
@@ -28,7 +28,7 @@
     <div class="col-4 col-xl-6">
         <div class="float-end">
             <? if (hasPermission('cadastrar_atividade') || hasPermission('professor')) { ?>
-                <a href="/minha-coordenacao/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividade" class="btn btn-outline-primary"> + </a>
+                <a href="/minha-coordenacao/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividade" class="btn btn-outline-primary"> + </a>
             <? } ?>
         </div>
     </div>
@@ -58,7 +58,7 @@
                         <table class="table table-striped align-middle m-0">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>#</th>
                                     <th class="text-center">Atividade</th>
                                     <th class="text-center <?= $total_maximo > 10 ? 'text-danger' : 'text-success' ?>">Pontuação Maxima: <?= $total_maximo ?></th>
                                     <th>Situação</th>
@@ -72,20 +72,20 @@
                                 <? foreach ($atividades as $atividade) {
                                 ?>
                                     <tr>
-                                        <td><?= $atividade->id ?></td>
+                                        <td><?= $atividade->code ?></td>
                                         <td class="text-center">
-                                            <?= $atividade->tipo ?? 'não identificado' ?>
+                                            <?= $atividade->title ?? 'não identificado' ?>
                                         </td>
                                         <td class="text-center">
-                                            <?= $atividade->valor ?? 'não identificado' ?>
+                                            <?= $atividade->total_points ?? 'não identificado' ?>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <? if ($atividade->ativo == 0) { ?>
+                                                <? if ($atividade->active == 0) { ?>
                                                     <i class="icon-circle1 me-2 text-danger fs-5"></i>
                                                     Impedido
                                                 <? } ?>
-                                                <? if ($atividade->ativo == 1) { ?>
+                                                <? if ($atividade->active == 1) { ?>
                                                     <i class="icon-circle1 me-2 text-success fs-5"></i>
                                                     Disponivel
                                                 <? } ?>
@@ -94,7 +94,7 @@
                                         <? if (hasPermission('professor')) { ?>
                                             <td class="d-flex">
                                                 <? if (hasPermission('professor')) { ?>
-                                                    <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= $turma->uuid ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividade/<?= $atividade->uuid ?>">
+                                                    <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividade/<?= $atividade->uuid ?>">
                                                         <div class="border p-2 rounded-3">
                                                             <i class="icon-edit fs-5"></i>
                                                         </div>

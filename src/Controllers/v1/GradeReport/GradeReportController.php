@@ -17,6 +17,7 @@ use App\Interfaces\Student\IEstudanteRepository;
 use App\Interfaces\Student\IEstudanteTurmaRepository;
 use App\Request\Request;
 use App\Transformers\Classe\TurmaDisciplinaTransformer;
+use App\Transformers\Students\EstudanteTurmaTransformer;
 
 class GradeReportController extends Controller
 {
@@ -28,6 +29,7 @@ class GradeReportController extends Controller
     protected $estudanteRepository;
     protected $frequenciaRepository;
     protected $estudanteTurmaRepository;
+    protected $estudanteTurmaTransformer;
     protected $periodoRepository;
     protected $notaRepository;
     protected $boletimRepository;
@@ -46,7 +48,8 @@ class GradeReportController extends Controller
         IPeriodoRepository $periodoRepository,
         INotaRepository $notaRepository,
         IBoletimRepository $boletimRepository,
-        IRecuperacaoRepository $recuperacaoRepository
+        IRecuperacaoRepository $recuperacaoRepository,
+        EstudanteTurmaTransformer $estudanteTurmaTransformer
     ) {
         parent::__construct();
         $this->frequenciaRepository = $frequenciaRepository;
@@ -61,6 +64,7 @@ class GradeReportController extends Controller
         $this->boletimRepository = $boletimRepository;
         $this->recuperacaoRepository = $recuperacaoRepository;
         $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
+        $this->estudanteTurmaTransformer = $estudanteTurmaTransformer;
     }
 
     public function indexTeacher(Request $request, string $class_discipline_id)
@@ -157,6 +161,10 @@ class GradeReportController extends Controller
     {
         $class = $this->turmaRepository->findByUuid($turma_id);
 
+        if (is_null($class)) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
         $periodos = $this->periodoRepository->all(['active' => '1']);
 
         $all_disciplines = $this->turmaDisciplinaRepository
@@ -167,6 +175,9 @@ class GradeReportController extends Controller
                 ]
             );
 
+        $all_disciplines = $this->turmaDisciplinaTransformer
+            ->transformCollection($all_disciplines);
+
         $all_students = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
@@ -174,6 +185,9 @@ class GradeReportController extends Controller
                     'school_year' => Date('Y')
                 ]
             );
+
+        $all_students = $this->estudanteTurmaTransformer
+            ->transformCollection($all_students);
 
         return $this->router->view(
             'reports/boletim',
@@ -200,6 +214,9 @@ class GradeReportController extends Controller
                 ]
             );
 
+        $all_disciplines = $this->turmaDisciplinaTransformer
+            ->transformCollection($all_disciplines);
+
         $all_students = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
@@ -207,6 +224,8 @@ class GradeReportController extends Controller
                     'school_year' => Date('Y')
                 ]
             );
+        $all_students = $this->estudanteTurmaTransformer
+            ->transformCollection($all_students);
 
         return $this->router->view(
             'reports/details',
@@ -234,6 +253,9 @@ class GradeReportController extends Controller
                 ]
             );
 
+        $all_disciplines = $this->turmaDisciplinaTransformer
+            ->transformCollection($all_disciplines);
+
         $all_students = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
@@ -242,6 +264,9 @@ class GradeReportController extends Controller
                     'school_year' => Date('Y')
                 ]
             );
+
+        $all_students = $this->estudanteTurmaTransformer
+            ->transformCollection($all_students);
 
         return $this->router->view(
             'reports/details',

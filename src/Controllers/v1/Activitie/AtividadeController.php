@@ -8,6 +8,7 @@ use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Classrooms\ITurmaRepository;
 use App\Models\Classrooms\Turma;
 use App\Request\Request;
+use App\Transformers\Activities\AtividadeTransformer;
 use App\Transformers\Classe\TurmaDisciplinaTransformer;
 use App\Transformers\Classe\TurmaTransformer;
 use App\Utils\LoggerHelper;
@@ -22,13 +23,15 @@ class AtividadeController extends Controller
     protected $turmaRepository;
     protected $turmaDisciplinaTransformer;
     protected $turmaTransformer;
+    protected $atividadeTransformer;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
         ITurmaDisciplinaRepository $turmaDisciplinaRepository,
         IAtividadeRepository $atividadeRepository,
         TurmaDisciplinaTransformer $turmaDisciplinaTransformer,
-        TurmaTransformer $turmaTransformer
+        TurmaTransformer $turmaTransformer,
+        AtividadeTransformer $atividadeTransformer
     ) {
         parent::__construct();
         $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
@@ -36,6 +39,7 @@ class AtividadeController extends Controller
         $this->turmaRepository = $turmaRepository;
         $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
         $this->turmaTransformer = $turmaTransformer;
+        $this->atividadeTransformer = $atividadeTransformer;
     }
 
     private function defineRoutes($class_id, $class_discipline_id)
@@ -76,13 +80,14 @@ class AtividadeController extends Controller
 
         $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines->code]);
 
+        $activities = $this->atividadeTransformer->transformCollection($activities);
+
         $totalValue = $this->sumValueActivities($activities);
 
         $perPage = 10;
         $currentPage = $request->getParam('page') ? (int)$request->getParam('page') : 1;
         $paginator = new Paginator($activities, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
-
         return $this->router->view(
             "$this->routeView/index",
             [
@@ -154,7 +159,7 @@ class AtividadeController extends Controller
         $completed = 0;
         foreach ($class_disciplines as $key => $value) {
             $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $value->id, 'active' => 1]);
-
+            $activities = $this->atividadeTransformer->transformCollection($activities);
             $totalValue = $this->sumValueActivities($activities);
 
             if ($totalValue >= self::TEN) {
@@ -195,11 +200,14 @@ class AtividadeController extends Controller
 
         $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines->id, 'active' => 1]);
 
+        $activities = $this->atividadeTransformer->transformCollection($activities);
+
         $totalValue = $this->sumValueActivities($activities);
 
 
         if ($totalValue >= self::TEN) {
-            return $this->router->redirect($this->redirect);
+            warning('Limite de pontuação atingido! \n Não é possível criar novas atividades para esta disciplina.');
+            return $this->router->redirect($this->redirect, 1);
         }
 
         return $this->router->view(
@@ -228,10 +236,11 @@ class AtividadeController extends Controller
         $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
 
         $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines->id, 'active' => 1]);
-
+        $activities = $this->atividadeTransformer->transformCollection($activities);
         $totalValue = $this->sumValueActivities($activities);
 
         if ($totalValue >= self::TEN) {
+            warning('Limite de pontuação atingido! \n Não é possível criar novas atividades para esta disciplina.');
             return $this->router->redirect($this->redirect);
         }
 
@@ -293,6 +302,11 @@ class AtividadeController extends Controller
         $class_disciplines = $this->turmaDisciplinaTransformer->transform($class_disciplines);
 
         $activitie = $this->atividadeRepository->findByUuid($id);
+        if (is_null($activitie)) {
+            return $this->router->redirect($this->redirect);
+        }
+
+        $activitie = $this->atividadeTransformer->transform($activitie);
 
         return $this->router->view(
             "$this->routeView/edit",
@@ -346,6 +360,7 @@ class AtividadeController extends Controller
         $activitie = $this->atividadeRepository->findByUuid($id);
 
         $activities = $this->atividadeRepository->allActivities(['class_discipline_id' => $class_disciplines[0]->id, 'active' => 1]);
+        $activities = $this->atividadeTransformer->transformCollection($activities);
         $totalValue = $this->sumValueActivities($activities, $data['type']);
 
         if (($totalValue + $data['value']) >= self::TEN) {
@@ -411,8 +426,8 @@ class AtividadeController extends Controller
     private function sumValueActivities($activities, $activitieUpdate = null)
     {
         return array_reduce($activities, function ($sum, $item) use ($activitieUpdate) {
-            if ($item->ativo && $item->tipo != $activitieUpdate) {
-                return $sum + floatval($item->valor);
+            if ($item->active && $item->title != $activitieUpdate) {
+                return $sum + floatval($item->total_points);
             }
         }, 0);
     }

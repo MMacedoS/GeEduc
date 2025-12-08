@@ -11,217 +11,250 @@
             </li>
             <li class="breadcrumb-item">Coordenadores</li>
         </ol>
-       <!-- Breadcrumb end -->
+        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar_coordenador')) {?>
+    <? if (hasPermission('cadastrar_coordenador')) { ?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
-            <a href="\coordenador" class="btn btn-outline-primary" > + </a>
+                <a href="\coordenador" class="btn btn-outline-primary"> + </a>
             </div>
         </div>
-    <? }?>
+    <? } ?>
 </div>
-    <!-- Row end -->
-<? if(isset($success)){?>
+<!-- Row end -->
+
+<!-- Alertas -->
+<? if (isset($success)) { ?>
     <div class="alert border border-success alert-dismissible fade show text-success" role="alert">
-      <b>Success!</b>.
+        <i class="icon-check_circle me-2"></i>
+        <b>Sucesso!</b> Operação realizada com sucesso.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<? }?>
-<? if(isset($danger)){?>
+<? } ?>
+<? if (isset($danger)) { ?>
     <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
-       <b>Danger!</b>.
-       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <i class="icon-cancel me-2"></i>
+        <b>Erro!</b> Ocorreu um problema na operação.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<? }?>
-    <!-- Row start -->
+<? } ?>
+
+<!-- Filtros -->
 <div class="row gx-3">
     <div class="col-12">
-        <form id="coordinators-form" action="/coordenadores" method="GET">            
-            <div class="accordion mt-2" id="accordionSpecialTitle">
-                <div class="accordion-item bg-transparent">
-                    <h2 class="accordion-header" id="headingSpecialTitleTwo">
-                    <button class=" bg-transparent accordion-button <?= isset($situation) || isset($searchFilter) ? '' : 'collapsed'?>" type="button" data-bs-toggle="collapse"
-                       data-bs-target="#filters-coordinators" aria-expanded="false"
-                       aria-controls="collapseSpecialTitleTwo">
-                      <h5 class="m-0">Filtros</h5>
-                    </button>
-                    </h2>
-                    <div id="filters-coordinators" class="accordion-collapse <?= isset($situation) || isset($searchFilter) ? '' : 'collapse'?>"
-                       aria-labelledby="headingSpecialTitleTwo" data-bs-parent="#accordionSpecialTitle">
-                      <div class="accordion-body">
-                        <div class="row justify-content-start">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="m-0">
-                                            <label class="form-label">Busca por nome ou email</label>
-                                            <input 
-                                                class="form-input form-control" 
-                                                type="text" 
-                                                name="name_email" 
-                                                id="name_email" 
-                                                value="<?= isset($searchFilter) ? $searchFilter : null ?>" 
-                                                placeholder="Digite nome ou email">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="icon-filter_list me-2"></i>Filtros de Pesquisa
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="coordinators-form" action="/coordenadores" method="GET">
+                    <div class="row g-3">
+                        <div class="col-lg-5 col-md-6 col-12">
+                            <label class="form-label">Busca por nome ou email</label>
+                            <input
+                                class="form-control"
+                                type="text"
+                                name="name_email"
+                                id="name_email"
+                                value="<?= isset($searchFilter) ? $searchFilter : '' ?>"
+                                placeholder="Digite nome ou email">
+                        </div>
 
-                            <div class="col-md-6 mb-2">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="m-0">
-                                            <label class="form-label">Situação</label>
-                                            <select class="form-select form-control" name="situation" id="situation">
-                                                <option <?= (isset($situation) && $situation == '') ? 'selected' : ''?> value="">Ambas</option>
-                                                <option value="1" <?= (isset($situation) && $situation == 1) ? 'selected' : ''?>>Disponível</option>
-                                                <option value="0" <?= (isset($situation) && $situation == 0) ? 'selected' : ''?>>Impedido</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <label class="form-label">Situação</label>
+                            <select class="form-select" name="situation" id="situation">
+                                <option <?= (isset($situation) && $situation == '') ? 'selected' : '' ?> value="">Todas</option>
+                                <option value="1" <?= (isset($situation) && $situation == 1) ? 'selected' : '' ?>>Disponível</option>
+                                <option value="0" <?= (isset($situation) && $situation == 0) ? 'selected' : '' ?>>Impedido</option>
+                            </select>
+                        </div>
 
-                            <div class="col-xxl-12">
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <div class="d-flex flex-wrap gap-2 justify-content-end">
-                                            <a href="\coordenadores" class="btn btn-secondary <?= isset($situation) || isset($searchFilter) ? 'd-block' : 'd-none'?>">Limpar</a>
-                                            <button type="submit" class="btn btn-primary">Buscar</button>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="col-lg-4 col-12">
+                            <label class="form-label d-none d-md-block">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary flex-fill">
+                                    <i class="icon-search me-1"></i>Buscar
+                                </button>
+                                <a href="\coordenadores" class="btn btn-secondary flex-fill <?= isset($situation) || isset($searchFilter) ? '' : 'd-none' ?>">
+                                    <i class="icon-refresh me-1"></i>Limpar
+                                </a>
                             </div>
                         </div>
-                      </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
+</div>
 
-    <div class="col-12">
-        <div class="card mb-3">
+<!-- Lista de Coordenadores -->
+<div class="row gx-3">
+    <!-- Versão Desktop/Tablet - Tabela -->
+    <div class="col-12 d-none d-md-block">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="icon-people me-2"></i>Lista de Coordenadores
+                </h5>
+                <span class="badge bg-primary">Total: <?= count($data['coordenadores']) ?></span>
+            </div>
             <div class="card-body">
-                <div class="table-outer">
-                    <div class="table-responsive">
-                        <table class="table table-striped align-middle m-0">
-                           <thead>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle m-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="60">#</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th width="150" class="text-center">Situação</th>
+                                <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) { ?>
+                                    <th width="120" class="text-center">Ações</th>
+                                <? } ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <? foreach ($data['coordenadores'] as $coordenador) { ?>
                                 <tr>
-                                    <th></th>
-                                    <th>Nome</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">email</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) {?>
-                                     <th>Ação</th>
-                                     <? } ?>
-                                </tr>
-                            </thead>
-                            
-                            <tbody>
-                            <? 
-                            foreach ($data['coordenadores'] as $coordenador) { 
-                                ?>
-                                    <tr>
-                                        <td><?=$coordenador->id?></td>
-                                        <td class="fw-bold"> <?=getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'não identificado'?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                        <?=getJsonToObject($coordenador->pessoa_fisica)->email ?? 'não identificado'?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">    
-                                            <div class="d-flex align-items-center">
-                                                <? if($coordenador->ativo == 0) { ?>
-                                                    <i class="icon-circle1 me-2 text-danger fs-5"></i>
-                                                    Impedido
+                                    <td class="text-muted"><?= $coordenador->id ?></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar rounded-circle bg-primary text-white me-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                                <?= strtoupper(substr(getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'N', 0, 1)) ?>
+                                            </div>
+                                            <span class="fw-bold"><?= getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'Não identificado' ?></span>
+                                        </div>
+                                    </td>
+                                    <td><?= getJsonToObject($coordenador->pessoa_fisica)->email ?? 'Não informado' ?></td>
+                                    <td class="text-center">
+                                        <? if ($coordenador->ativo == 1) { ?>
+                                            <span class="badge bg-success">
+                                                <i class="icon-check_circle me-1"></i>Disponível
+                                            </span>
+                                        <? } else { ?>
+                                            <span class="badge bg-danger">
+                                                <i class="icon-block me-1"></i>Impedido
+                                            </span>
+                                        <? } ?>
+                                    </td>
+                                    <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) { ?>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <? if (hasPermission('editar_coordenador')) { ?>
+                                                    <a href="/coordenador/<?= $coordenador->uuid ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                        <i class="icon-edit"></i>
+                                                    </a>
                                                 <? } ?>
-                                                <? if($coordenador->ativo == 1) { ?>
-                                                    <i class="icon-circle1 me-2 text-success fs-5"></i>
-                                                    Disponivel
+                                                <? if (hasPermission('deletar_coordenador')) { ?>
+                                                    <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal_<?= $coordenador->uuid ?>" title="Excluir">
+                                                        <i class="icon-delete1"></i>
+                                                    </button>
                                                 <? } ?>
                                             </div>
                                         </td>
-                                        <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) {?>
-                                            <td>
-                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('editar_coordenador')) {?>                                     
-                                                        <a class="mb-1 me-2 mt-1" href="/coordenador/<?=$coordenador->uuid?>">
-                                                            <div class="border p-2 rounded-3">
-                                                                <i class="icon-edit fs-5"></i>
-                                                            </div>
-                                                        </a> 
-                                                    <? } ?>  
-                                                    <? if (hasPermission('deletar_coordenador')) {?>                                                                           
-                                                        <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$coordenador->uuid?>">                                                     
-                                                            <div class="border p-2 rounded-3">
-                                                                <span class="fs-5 text-danger icon-delete1"></span>
-                                                            </div>
-                                                        </button>
-                                                    <? }?>
-                                                </div>
-                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
-                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
-                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="icon-menu"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <div class="header-action-links float-end">
-                                                            <? if (hasPermission('editar_coordenador')) {?>                                     
-                                                                <a class="mb-1 me-2 mt-1" href="/coordenador/<?=$coordenador->uuid?>">
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <i class="icon-edit fs-5"></i>
-                                                                    </div>
-                                                                </a> 
-                                                            <? } ?>  
-                                                            <? if (hasPermission('deletar_coordenador')) {?>                                                                           
-                                                                <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?=$coordenador->uuid?>">                                                     
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <span class="fs-5 text-danger icon-delete1"></span>
-                                                                    </div>
-                                                                </button>
-                                                            <? }?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="modal fade" id="exampleModal_<?=$coordenador->uuid?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Tem certeza que deseja excluir este registro? 
-                                                                <p>Coordenador: <?=getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'não identificado'?></p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="button" onclick="deleteData('/coordenador/<?=$coordenador->uuid?>')" class="btn btn-danger">Confirmar Exclusão</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>                                         
-                                            </td>
-                                        <? }?>
-                                    </tr>
+                                    <? } ?>
+                                </tr>
                             <? } ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="text-end ">
-                        Total <b><?=count($data['coordenadores'])?></b> registros
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Versão Mobile - Cards -->
+    <div class="col-12 d-md-none">
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+                <i class="icon-people me-2"></i>Coordenadores
+            </h6>
+            <span class="badge bg-primary">Total: <?= count($data['coordenadores']) ?></span>
+        </div>
+
+        <? foreach ($data['coordenadores'] as $coordenador) { ?>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar rounded-circle bg-primary text-white me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                                <?= strtoupper(substr(getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'N', 0, 1)) ?>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold"><?= getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'Não identificado' ?></h6>
+                                <small class="text-muted">#<?= $coordenador->id ?></small>
+                            </div>
+                        </div>
+                        <? if ($coordenador->ativo == 1) { ?>
+                            <span class="badge bg-success">
+                                <i class="icon-check_circle"></i>
+                            </span>
+                        <? } else { ?>
+                            <span class="badge bg-danger">
+                                <i class="icon-block"></i>
+                            </span>
+                        <? } ?>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted d-block">
+                            <i class="icon-email me-1"></i><?= getJsonToObject($coordenador->pessoa_fisica)->email ?? 'Não informado' ?>
+                        </small>
+                    </div>
+
+                    <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) { ?>
+                        <div class="d-flex gap-2">
+                            <? if (hasPermission('editar_coordenador')) { ?>
+                                <a href="/coordenador/<?= $coordenador->uuid ?>" class="btn btn-sm btn-outline-primary flex-fill">
+                                    <i class="icon-edit me-1"></i>Editar
+                                </a>
+                            <? } ?>
+                            <? if (hasPermission('deletar_coordenador')) { ?>
+                                <button class="btn btn-sm btn-outline-danger flex-fill" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal_<?= $coordenador->uuid ?>">
+                                    <i class="icon-delete1 me-1"></i>Excluir
+                                </button>
+                            <? } ?>
+                        </div>
+                    <? } ?>
+                </div>
+            </div>
+
+            <!-- Modal de Exclusão -->
+            <div class="modal fade" id="deleteModal_<?= $coordenador->uuid ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">
+                                <i class="icon-warning me-2"></i>Confirmação de Exclusão
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-2">Tem certeza que deseja excluir este coordenador?</p>
+                            <div class="alert alert-warning">
+                                <strong><?= getJsonToObject($coordenador->pessoa_fisica)->nome ?? 'Não identificado' ?></strong><br>
+                                <small><?= getJsonToObject($coordenador->pessoa_fisica)->email ?? 'Não informado' ?></small>
+                            </div>
+                            <p class="text-danger mb-0"><small><i class="icon-info me-1"></i>Esta ação não pode ser desfeita.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="icon-close me-1"></i>Cancelar
+                            </button>
+                            <button type="button" onclick="deleteData('/coordenador/<?= $coordenador->uuid ?>')" class="btn btn-danger">
+                                <i class="icon-delete1 me-1"></i>Confirmar Exclusão
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <? } ?>
     </div>
 </div>
 
 <div class="row">
     <div class="float-end">
-        <?=$data['links']?>
+        <?= $data['links'] ?>
     </div>
 </div>
 

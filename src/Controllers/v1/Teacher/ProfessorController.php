@@ -184,9 +184,14 @@ class ProfessorController extends Controller
 
     public function indexTeacher(Request $request)
     {
+
         $pessoaAuth = $this->authUser();
 
         $professor = $this->professorRepository->teacherByPersonId($pessoaAuth->id);
+
+        if (!$professor) {
+            return $this->router->redirect('dashboard?error=422');
+        }
 
         $class_discipline = $this->turmaDisciplinaRepository
             ->classDisciplinesByTeacherId(

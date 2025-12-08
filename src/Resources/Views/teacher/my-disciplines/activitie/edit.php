@@ -15,30 +15,30 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-archive lh-1"></i>
-                <a href="/meus-componentes/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="text-decoration-none">Atividades do Componente: <?=getJsonToObject($turmas_disciplinas[0]->professor_disciplina)->disciplina->nome?></a>
+                <a href="/meus-componentes/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividades" class="text-decoration-none">Atividades do Componente: <?= $turmas_disciplinas->subject_name ?></a>
             </li>
             <li class="breadcrumb-item">Atualizar Atividade</li>
         </ol>
-       <!-- Breadcrumb end -->
-       <? if(isset($danger)){?>
-        <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
-        <b><?=$message?>!</b>.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Breadcrumb end -->
+        <? if (isset($danger)) { ?>
+            <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+                <b><?= $message ?>!</b>.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        <? }?>  
-    </div>  
-    
+        <? } ?>
+    </div>
+
     <div class="col-4 col-xl-6">
         <div class="float-end">
-            <a href="/meus-componentes/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="btn btn-outline-primary" > Voltar </a>
+            <a href="/meus-componentes/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividades" class="btn btn-outline-primary"> Voltar </a>
         </div>
     </div>
 </div>
 
- <!-- Row end -->
- <form action="/meus-componentes/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividade/<?=$atividade->uuid?>" method="post">
+<!-- Row end -->
+<form action="/meus-componentes/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividade/<?= $atividade->uuid ?>" method="post">
     <div class="row gx-3">
-        <? include_once('_forms.php');?>
+        <? include_once('_forms.php'); ?>
     </div>
 </form>
 

@@ -26,6 +26,7 @@ use App\Interfaces\Recuperation\IRecuperacaoRepository;
 use App\Interfaces\Scores\IBoletimRepository;
 use App\Interfaces\Scores\ILowScoresRepository;
 use App\Interfaces\Scores\INotaRepository;
+use App\Interfaces\Scores\INotaFinalRepository;
 use App\Interfaces\Scores\IParalelaRepository;
 use App\Interfaces\Site\Album\ISiteAlbumRepository;
 use App\Interfaces\Site\Archive\ISiteArquivoRepository;
@@ -63,6 +64,7 @@ use App\Repositories\Recuperation\RecuperacaoRepository;
 use App\Repositories\Scores\BoletimRepository;
 use App\Repositories\Scores\LowScoresRepository;
 use App\Repositories\Scores\NotaRepository;
+use App\Repositories\Scores\NotaFinalRepository;
 use App\Repositories\Scores\ParalelaRepository;
 use App\Repositories\Site\Album\SiteAlbumRepository;
 use App\Repositories\Site\Archive\SiteArquivoRepository;
@@ -173,6 +175,12 @@ class AppServiceProvider
             ->set(
                 INotaRepository::class,
                 new NotaRepository()
+            );
+
+        $this->container
+            ->set(
+                INotaFinalRepository::class,
+                new NotaFinalRepository()
             );
 
         $this->container

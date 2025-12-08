@@ -69,11 +69,11 @@ class Router extends Session
     {
         $url = URL_PREFIX_APP . '/' . $page;
         if ($delay > 0) {
-            echo "<meta http-equiv='refresh' content='{$delay};url={$url}'>";
+            echo "<meta http-equiv='refresh' content='{$delay};url=" . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . "'>";
             exit();
         }
 
-        header("Location: $url");
+        header("Location: " . htmlspecialchars($url, ENT_QUOTES, 'UTF-8'));
 
         exit();
     }

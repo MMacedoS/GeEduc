@@ -179,3 +179,26 @@ if (!function_exists('dd')) {
         die;
     }
 }
+if (!function_exists('cleanString')) {
+    function cleanString($string)
+    {
+        if (is_null($string)) {
+            return null;
+        }
+
+        // Remove espaços extras e converte para minúsculas
+        $string = strtolower(trim($string));
+
+        // Remove caracteres especiais
+        $string = preg_replace('/[^\w\s]/u', '', $string);
+
+        return $string;
+    }
+}
+
+if (!function_exists('warning')) {
+    function warning($message)
+    {
+        echo "<script>alert('Atenção: " . $message . "');</script>";
+    }
+}

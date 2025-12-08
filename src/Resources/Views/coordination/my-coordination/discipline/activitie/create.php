@@ -15,34 +15,34 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="\minha-coordenacao/turma/<?=$turma->uuid?>/disciplinas" class="text-decoration-none">Disciplinas Turma: <?=getJsonToObject($turmas_disciplinas[0]->turma)->nome ?? 'não identificado'?></a>
+                <a href="\minha-coordenacao/turma/<?= $turma->id ?>/disciplinas" class="text-decoration-none">Turma: <?= $turmas_disciplinas->class_name ?? 'não identificado' ?></a>
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-archive lh-1"></i>
-                <a href="/minha-coordenacao/turma/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="text-decoration-none">Atividades do Componente: <?=getJsonToObject($turmas_disciplinas[0]->professor_disciplina)->disciplina->nome?></a>
+                <a href="/minha-coordenacao/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividades" class="text-decoration-none">Atividades do Componente: <?= $turmas_disciplinas->subject_name ?></a>
             </li>
             <li class="breadcrumb-item">Cadastrar Atividade</li>
         </ol>
-       <!-- Breadcrumb end -->
-       <? if(isset($danger)){?>
-        <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
-        <b><?=$message?>!</b>.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Breadcrumb end -->
+        <? if (isset($danger)) { ?>
+            <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
+                <b><?= $message ?>!</b>.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        <? }?>  
-    </div>  
-    
+        <? } ?>
+    </div>
+
     <div class="col-4 col-xl-6">
         <div class="float-end">
-            <a href="/minha-coordenacao/turma/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividades" class="btn btn-outline-primary" > Voltar </a>
+            <a href="/minha-coordenacao/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividades" class="btn btn-outline-primary"> Voltar </a>
         </div>
     </div>
 </div>
 
- <!-- Row end -->
- <form action="/minha-coordenacao/turma/<?=$turma->uuid?>/disciplina/<?=$turmas_disciplinas[0]->uuid?>/atividade" method="post">
+<!-- Row end -->
+<form action="/minha-coordenacao/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/atividade" method="post">
     <div class="row gx-3">
-        <? include_once('_forms.php');?>
+        <? include_once('_forms.php'); ?>
     </div>
 </form>
 

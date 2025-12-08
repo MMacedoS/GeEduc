@@ -17,6 +17,7 @@ class TurmaDisciplinaTransformer
             'id' => $turmaDisciplina->uuid,
             'class_name' => $this->prepareTurmaName($turmaDisciplina->turma_id),
             'class_id' => $turmaDisciplina->turma_id,
+            'class_uuid' => $this->prepareTurmaId($turmaDisciplina->turma_id),
             'subject_id' => $turmaDisciplina->professor_disciplina_id,
             'subject_name' => $this->prepareTurmaDisciplinaName(
                 $turmaDisciplina
@@ -36,7 +37,7 @@ class TurmaDisciplinaTransformer
 
     public function transformCollection(array $turmaDisciplinas)
     {
-        return array_map([$this, 'transform'], $turmaDisciplinas);
+        return array_map(fn($class) => $this->transform($class), $turmaDisciplinas);
     }
 
     private function prepareTurmaDisciplinaName($id)
@@ -56,6 +57,16 @@ class TurmaDisciplinaTransformer
 
         $turma = TurmaRepository::getInstance()->findById($id);
         return $turma ? $turma->nome : null;
+    }
+
+    private function prepareTurmaId($id)
+    {
+        if (is_null($id)) {
+            return null;
+        }
+
+        $turma = TurmaRepository::getInstance()->findById($id);
+        return $turma ? $turma->uuid : null;
     }
 
     private function prepareWorkload($id)

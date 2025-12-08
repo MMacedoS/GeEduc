@@ -132,17 +132,21 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
     {
         $sql = "SELECT
                     et.id as estudante_turma_id,
-                    SUM(n.nota) AS media,
+                    e.id as estudante_id,
+                    e.uuid as estudante_uuid,
+                    pf.nome as estudante_nome,
+                    SUM(COALESCE(n.nota, 0)) AS media,
+                    COUNT(n.id) AS total_atividades,
                     JSON_OBJECT(
                         'id', e.id,
                         'uuid', e.uuid,
                         'nome', pf.nome
                     ) AS estudante,
                     r.id AS recuperacao_id,
-                    r.uuid,
+                    r.uuid AS recuperacao_uuid,
                     r.ano_letivo,
-                    r.nota,
-                    r.periodo,
+                    r.nota AS nota,
+                    r.periodo AS recuperacao_periodo,
                     r.obs
                 FROM estudante_turma et
                 LEFT JOIN estudantes e ON e.id = et.estudante_id
@@ -155,22 +159,57 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                     AND r.periodo = :type 
                     AND r.turma_disciplina_id = :turma_disciplina_id
                 WHERE td.id = :turma_disciplina_id
-                GROUP BY et.id, r.id
-                HAVING SUM(COALESCE(n.nota, 0)) < :total";
+                GROUP BY et.id, e.id, e.uuid, pf.nome, r.id, r.uuid, r.ano_letivo, r.nota, r.periodo, r.obs
+                HAVING SUM(COALESCE(n.nota, 0)) < :total
+                ORDER BY media ASC, pf.nome ASC";
 
         try {
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([
+            if (!isset($params['turma_disciplina_id'])) {
+                throw new \InvalidArgumentException("Parâmetro 'turma_disciplina_id' é obrigatório");
+            }
+
+            if (!isset($params['type'])) {
+                throw new \InvalidArgumentException("Parâmetro 'type' é obrigatório");
+            }
+
+            if (!isset($params['total'])) {
+                throw new \InvalidArgumentException("Parâmetro 'total' é obrigatório");
+            }
+
+            $bindings = [
                 ':periodoOne' => $params['periodoOne'] ?? 1,
                 ':periodoTwo' => $params['periodoTwo'] ?? 2,
                 ':type' => $params['type'],
                 ':total' => $params['total'],
                 ':turma_disciplina_id' => $params['turma_disciplina_id']
-            ]);
+            ];
 
-            return $stmt->fetchAll(PDO::FETCH_CLASS);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS);
+
+            LoggerHelper::logInfo(sprintf(
+                "studentsByTurmaDisciplinaAndScore: %d estudantes encontrados (turma_disciplina: %s, nota < %.2f)",
+                count($result),
+                $bindings[':turma_disciplina_id'],
+                $bindings[':total']
+            ));
+
+            return $result;
+        } catch (\InvalidArgumentException $e) {
+            LoggerHelper::logInfo("Erro de validação em studentsByTurmaDisciplinaAndScore: " . $e->getMessage());
+            throw $e;
         } catch (\PDOException $e) {
-            throw new \Exception("Database query error: " . $e->getMessage());
+            $errorMsg = sprintf(
+                "Erro SQL em studentsByTurmaDisciplinaAndScore - Turma/Disciplina: %s, Erro: %s",
+                $params['turma_disciplina_id'] ?? 'N/A',
+                $e->getMessage()
+            );
+            LoggerHelper::logInfo($errorMsg);
+            throw new \Exception("Erro ao buscar estudantes por turma/disciplina: " . $e->getMessage(), 0, $e);
+        } catch (\Exception $e) {
+            LoggerHelper::logInfo("Erro inesperado em studentsByTurmaDisciplinaAndScore: " . $e->getMessage());
+            throw $e;
         } finally {
             Database::getInstance()->closeConnection();
         }
@@ -179,64 +218,283 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
     public function studentToFailed(array $params = [])
     {
         $sql = "SELECT 
-                    estudante_nome,
-                    GROUP_CONCAT(DISTINCT disciplina ORDER BY disciplina SEPARATOR ', ') AS disciplinas_reprovadas
+                    e.id AS estudante_id,
+                    e.uuid AS estudante_uuid,
+                    et.id AS estudante_turma_id,
+                    pf.nome AS estudante_nome,
+                    pf.email AS estudante_email,
+                    COUNT(DISTINCT d.id) AS quantidade_disciplinas_reprovadas,
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT(
+                            d.nome, 
+                            ' (Média: ', ROUND(soma_por_disciplina.soma_notas, 2), 
+                            CASE 
+                                WHEN soma_por_disciplina.recup_nota IS NOT NULL 
+                                THEN CONCAT(' + Recup: ', ROUND(soma_por_disciplina.recup_nota, 2))
+                                ELSE ''
+                            END,
+                            ' = ', ROUND(soma_por_disciplina.total_com_recup, 2), ')'
+                        )
+                        ORDER BY d.nome 
+                        SEPARATOR ', '
+                    ) AS disciplinas_reprovadas_detalhes,
+                    GROUP_CONCAT(DISTINCT d.nome ORDER BY d.nome SEPARATOR ', ') AS disciplinas_reprovadas,
+                    AVG(soma_por_disciplina.soma_notas) AS media_geral_reprovacoes,
+                    AVG(soma_por_disciplina.total_com_recup) AS media_geral_com_recuperacao,
+                    SUM(CASE WHEN soma_por_disciplina.recup_nota IS NOT NULL THEN 1 ELSE 0 END) AS disciplinas_com_recuperacao
                 FROM (
                     SELECT
-                        pf.nome AS estudante_nome,
-                        d.nome AS disciplina,
-                        SUM(COALESCE(n.nota, 0)) AS soma_notas
-
+                        et.id as et_id,
+                        e.id as e_id,
+                        d.id as d_id,
+                        td.id as td_id,
+                        SUM(COALESCE(n.nota, 0)) AS soma_notas,
+                        r.nota AS recup_nota,
+                        (SUM(COALESCE(n.nota, 0)) + COALESCE(r.nota, 0)) AS total_com_recup
                     FROM notas n
-                    LEFT JOIN estudante_turma et ON et.id = n.estudante_turma_id
-                    LEFT JOIN estudantes e ON e.id = et.estudante_id
-                    LEFT JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id
-                    LEFT JOIN atividade a ON a.id = n.atividade_id
-                    LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
-                    LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
-                    LEFT JOIN disciplinas d ON d.id = pd.disciplina_id
-
+                    INNER JOIN estudante_turma et ON et.id = n.estudante_turma_id
+                    INNER JOIN estudantes e ON e.id = et.estudante_id
+                    INNER JOIN atividade a ON a.id = n.atividade_id
+                    INNER JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
+                    INNER JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
+                    INNER JOIN disciplinas d ON d.id = pd.disciplina_id
+                    LEFT JOIN recuperacao r ON r.estudante_turma_id = et.id 
+                        AND r.turma_disciplina_id = td.id
+                        AND (
+                            (:periodOne = 1 AND :periodTwo = 2 AND r.periodo = 'I Semestre')
+                            OR (:periodOne = 3 AND :periodTwo = 4 AND r.periodo = 'II Semestre')
+                            OR (:periodOne = 1 AND :periodTwo = 4 AND r.periodo IN ('I Semestre', 'II Semestre', 'Exames Finais'))
+                        )
                     WHERE n.periodo_id BETWEEN :periodOne AND :periodTwo
-                    AND td.turma_id = :class
-
-                    GROUP BY et.id, d.id, pf.nome, d.nome
-                    HAVING soma_notas < :total
-                ) AS reprovacoes
-                GROUP BY estudante_nome
-                ORDER BY estudante_nome;
-";
-
-        // $sql = "SELECT 
-        //         et.id AS estudante_turma_id, 
-        //         td.turma_id, 
-        //         pf.nome as estudante, 
-        //         d.nome AS disciplina, 
-        //         SUM(COALESCE(n.nota, 0)) AS soma 
-        //     FROM estudante_turma et 
-        //     LEFT JOIN estudantes e ON e.id = et.estudante_id 
-        //     LEFT JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id 
-        //     LEFT JOIN notas n ON n.estudante_turma_id = et.id AND n.periodo_id BETWEEN :periodOne AND :periodTwo 
-        //     LEFT JOIN atividade a ON a.id = n.atividade_id 
-        //     LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id 
-        //     LEFT JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id 
-        //     LEFT JOIN disciplinas d ON d.id = pd.disciplina_id 
-        //     WHERE td.turma_id = :class 
-        //     GROUP BY et.id, e.id, e.uuid, pf.nome, td.turma_id, d.id, d.nome 
-        //     HAVING soma < :total 
-        //     ORDER BY pf.nome, d.nome";
+                        AND td.turma_id = :class
+                    GROUP BY et.id, e.id, d.id, td.id, r.nota
+                    HAVING total_com_recup < :total
+                ) AS soma_por_disciplina
+                INNER JOIN estudante_turma et ON et.id = soma_por_disciplina.et_id
+                INNER JOIN estudantes e ON e.id = soma_por_disciplina.e_id
+                INNER JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id
+                INNER JOIN disciplinas d ON d.id = soma_por_disciplina.d_id
+                GROUP BY e.id, e.uuid, et.id, pf.nome, pf.email
+                ORDER BY quantidade_disciplinas_reprovadas DESC, pf.nome ASC";
 
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([
+
+            $bindings = [
                 ':periodOne' => $params['periodOne'] ?? 1,
                 ':periodTwo' => $params['periodTwo'] ?? 2,
                 ':class' => $params['class_room'],
                 ':total' => $params['total'] ?? 13.9
-            ]);
+            ];
 
-            return $stmt->fetchAll(PDO::FETCH_CLASS);
+            $stmt->execute($bindings);
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS);
+
+            return $result;
         } catch (\PDOException $e) {
-            throw new \Exception("Database query error: " . $e->getMessage());
+            $errorMsg = sprintf(
+                "Erro ao buscar estudantes reprovados - Turma: %s, Erro: %s",
+                $params['class_room'] ?? 'N/A',
+                $e->getMessage()
+            );
+            LoggerHelper::logInfo($errorMsg);
+            throw new \Exception("Erro ao consultar estudantes reprovados: " . $e->getMessage(), 0, $e);
+        } catch (\Exception $e) {
+            LoggerHelper::logInfo("Erro inesperado em studentToFailed: " . $e->getMessage());
+            throw $e;
+        } finally {
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function studentsByTurmaDisciplinaWithRecovery(array $params = [])
+    {
+        $sql = "SELECT
+                    et.id as estudante_turma_id,
+                    e.id as estudante_id,
+                    e.uuid as estudante_uuid,
+                    pf.nome as estudante_nome,
+                    SUM(COALESCE(n.nota, 0)) AS media_notas,
+                    COUNT(n.id) AS total_atividades,
+                    JSON_OBJECT(
+                        'id', e.id,
+                        'uuid', e.uuid,
+                        'nome', pf.nome
+                    ) AS estudante,
+                    
+                    rs1.id AS recup_sem1_id,
+                    rs1.nota AS recup_sem1_nota,
+                    rs1.obs AS recup_sem1_obs,
+                    
+                    rs2.id AS recup_sem2_id,
+                    rs2.nota AS recup_sem2_nota,
+                    rs2.obs AS recup_sem2_obs,
+                    
+                    (COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) AS recuperacoes_semestrais,
+                    
+                    nf.id AS nota_final_id,
+                    nf.uuid AS nota_final_uuid,
+                    nf.ano_letivo AS nota_final_ano_letivo,
+                    nf.nota AS nota_final,
+                    nf.situacao AS nota_final_situacao,
+                    CAST(NULL AS CHAR) AS nota_final_obs,
+                    
+                    (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) AS media_total,
+                    
+                    CASE 
+                        WHEN nf.nota >= 7.0
+                        THEN 'Aprovado com Exame Final'
+                        WHEN nf.nota IS NOT NULL 
+                        THEN 'Reprovado no Exame Final'
+                        WHEN (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) >= :total_aprovacao 
+                        THEN 'Aprovado com Recuperação'
+                        WHEN (rs1.nota IS NOT NULL OR rs2.nota IS NOT NULL)
+                        THEN 'Aguardando Exame Final'
+                        ELSE 'Reprovado sem Recuperação'
+                    END AS situacao
+                FROM estudante_turma et
+                LEFT JOIN estudantes e ON e.id = et.estudante_id
+                LEFT JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id
+                LEFT JOIN notas n ON n.estudante_turma_id = et.id 
+                    AND n.periodo_id BETWEEN :periodoOne AND :periodoTwo
+                LEFT JOIN atividade a ON a.id = n.atividade_id
+                LEFT JOIN turma_disciplina td ON td.id = a.turma_disciplina_id
+                LEFT JOIN recuperacao rs1 ON rs1.estudante_turma_id = et.id 
+                    AND rs1.turma_disciplina_id = :turma_disciplina_id
+                    AND rs1.periodo = 'I Semestre'
+                LEFT JOIN recuperacao rs2 ON rs2.estudante_turma_id = et.id 
+                    AND rs2.turma_disciplina_id = :turma_disciplina_id
+                    AND rs2.periodo = 'II Semestre'
+                LEFT JOIN nota_final nf ON nf.estudante_turma_id = et.id 
+                    AND nf.turma_disciplina_id = :turma_disciplina_id
+                WHERE td.id = :turma_disciplina_id
+                GROUP BY et.id, e.id, e.uuid, pf.nome, 
+                         rs1.id, rs1.nota, rs1.obs,
+                         rs2.id, rs2.nota, rs2.obs,
+                         nf.id, nf.uuid, nf.ano_letivo, nf.nota, nf.situacao
+                HAVING SUM(COALESCE(n.nota, 0)) < :total_minimo
+                    AND (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) < :total_aprovacao
+                ORDER BY media_total DESC, pf.nome ASC";
+
+        try {
+            if (!isset($params['turma_disciplina_id'])) {
+                throw new \InvalidArgumentException("Parâmetro 'turma_disciplina_id' é obrigatório");
+            }
+
+            if (!isset($params['type'])) {
+                throw new \InvalidArgumentException("Parâmetro 'type' é obrigatório");
+            }
+
+            if (!isset($params['total_minimo'])) {
+                throw new \InvalidArgumentException("Parâmetro 'total_minimo' é obrigatório");
+            }
+
+            $bindings = [
+                ':periodoOne' => $params['periodoOne'] ?? 1,
+                ':periodoTwo' => $params['periodoTwo'] ?? 2,
+                ':type' => $params['type'],
+                ':total_minimo' => $params['total_minimo'],
+                ':total_aprovacao' => $params['total_aprovacao'] ?? 27.9,
+                ':turma_disciplina_id' => $params['turma_disciplina_id']
+            ];
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS);
+
+            LoggerHelper::logInfo(sprintf(
+                "studentsByTurmaDisciplinaWithRecovery: %d estudantes encontrados (turma_disciplina: %s, nota mínima: %.2f, aprovação: %.2f)",
+                count($result),
+                $bindings[':turma_disciplina_id'],
+                $bindings[':total_minimo'],
+                $bindings[':total_aprovacao']
+            ));
+
+            return $result;
+        } catch (\InvalidArgumentException $e) {
+            LoggerHelper::logInfo("Erro de validação em studentsByTurmaDisciplinaWithRecovery: " . $e->getMessage());
+            throw $e;
+        } catch (\PDOException $e) {
+            $errorMsg = sprintf(
+                "Erro SQL em studentsByTurmaDisciplinaWithRecovery - Turma/Disciplina: %s, Erro: %s",
+                $params['turma_disciplina_id'] ?? 'N/A',
+                $e->getMessage()
+            );
+            LoggerHelper::logInfo($errorMsg);
+            throw new \Exception("Erro ao buscar estudantes com recuperação: " . $e->getMessage(), 0, $e);
+        } catch (\Exception $e) {
+            LoggerHelper::logInfo("Erro inesperado em studentsByTurmaDisciplinaWithRecovery: " . $e->getMessage());
+            throw $e;
+        } finally {
+            Database::getInstance()->closeConnection();
+        }
+    }
+
+    public function studentToFailedDetailed(array $params = [])
+    {
+        $sql = "SELECT 
+                et.id AS estudante_turma_id,
+                e.id AS estudante_id,
+                e.uuid AS estudante_uuid,
+                pf.nome AS estudante_nome,
+                pf.email AS estudante_email,
+                d.id AS disciplina_id,
+                d.nome AS disciplina_nome,
+                td.id AS turma_disciplina_id,
+                td.turma_id,
+                SUM(COALESCE(n.nota, 0)) AS soma_notas,
+                COUNT(n.id) AS quantidade_atividades,
+                MIN(n.nota) AS nota_minima,
+                MAX(n.nota) AS nota_maxima,
+                AVG(n.nota) AS media_atividades
+            FROM estudante_turma et 
+            INNER JOIN estudantes e ON e.id = et.estudante_id 
+            INNER JOIN pessoa_fisica pf ON pf.id = e.pessoa_fisica_id 
+            LEFT JOIN notas n ON n.estudante_turma_id = et.id 
+                AND n.periodo_id BETWEEN :periodOne AND :periodTwo 
+            INNER JOIN atividade a ON a.id = n.atividade_id 
+            INNER JOIN turma_disciplina td ON td.id = a.turma_disciplina_id 
+            INNER JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id 
+            INNER JOIN disciplinas d ON d.id = pd.disciplina_id 
+            WHERE td.turma_id = :class 
+            GROUP BY et.id, e.id, e.uuid, pf.nome, pf.email, d.id, d.nome, td.id, td.turma_id 
+            HAVING soma_notas < :total 
+            ORDER BY pf.nome ASC, d.nome ASC";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+
+            $bindings = [
+                ':periodOne' => $params['periodOne'] ?? 1,
+                ':periodTwo' => $params['periodTwo'] ?? 2,
+                ':class' => $params['class_room'],
+                ':total' => $params['total'] ?? 13.9
+            ];
+
+            $stmt->execute($bindings);
+            $result = $stmt->fetchAll(PDO::FETCH_CLASS);
+
+            LoggerHelper::logInfo(sprintf(
+                "studentToFailedDetailed: Encontradas %d reprovações detalhadas (turma: %s, períodos: %d-%d, nota mínima: %.2f)",
+                count($result),
+                $params['class_room'] ?? 'N/A',
+                $bindings[':periodOne'],
+                $bindings[':periodTwo'],
+                $bindings[':total']
+            ));
+
+            return $result;
+        } catch (\PDOException $e) {
+            $errorMsg = sprintf(
+                "Erro ao buscar detalhes de reprovações - Turma: %s, Erro: %s",
+                $params['class_room'] ?? 'N/A',
+                $e->getMessage()
+            );
+            LoggerHelper::logInfo($errorMsg);
+            throw new \Exception("Erro ao consultar detalhes de estudantes reprovados: " . $e->getMessage(), 0, $e);
+        } catch (\Exception $e) {
+            LoggerHelper::logInfo("Erro inesperado em studentToFailedDetailed: " . $e->getMessage());
+            throw $e;
         } finally {
             Database::getInstance()->closeConnection();
         }

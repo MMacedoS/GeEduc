@@ -10,8 +10,10 @@ class EstudanteTurmaTransformer
     public function transform(EstudanteTurma $studentClass)
     {
         return [
+            'code' => $studentClass->id,
+            'id' => $studentClass->uuid,
             'student_id' => $studentClass->estudante_id,
-            'student_name' => $this->prepareNameStudent($studentClass->estudante_id),
+            'student' => $this->prepareStudentName($studentClass->estudante),
             'class_id' => $studentClass->turma_id,
             'class_name' => $this->prepareNameClass($studentClass->turma_id),
             'school_year' => $studentClass->ano_letivo,
@@ -24,11 +26,19 @@ class EstudanteTurmaTransformer
         return array_map(fn($studentClass) => $this->transform($studentClass), $studentClasses);
     }
 
-    private function prepareNameStudent($id)
+    private function prepareStudentName($student)
     {
-        if (is_null($id)) {
+        if (is_null($student)) {
             return null;
         }
+
+        $student = getJsonToObject($student);
+
+        return (object)[
+            'id' => $student->id,
+            'name' => $student->nome,
+            'uuid' => $student->uuid,
+        ];
     }
 
     private function prepareNameClass($id)

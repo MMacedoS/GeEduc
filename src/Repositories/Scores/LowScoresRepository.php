@@ -375,7 +375,6 @@ class LowScoresRepository extends SingletonInstance implements ILowScoresReposit
     {
         try {
             $anoLetivo = $params['ano_letivo'] ?? date('Y');
-            $limiteNota = $params['limite_nota'] ?? 6.0;
             $turmaId = $params['turma_id'] ?? null;
 
             // Filtro para coordenador
@@ -401,7 +400,7 @@ class LowScoresRepository extends SingletonInstance implements ILowScoresReposit
                         WHERE p.periodo IN (1, 2, 3, 4)  -- 4 bimestres
                         GROUP BY n.estudante_turma_id, a.turma_disciplina_id
                         HAVING COUNT(DISTINCT p.periodo) = 4  -- Só alunos com notas nos 4 bimestres
-                            AND SUM(n.nota) < 27.6  -- Soma menor que 27.6 = reprovado
+                            AND SUM(n.nota) < 28  -- Soma menor que 27.6 = reprovado
                     ) as somas_baixas ON et.id = somas_baixas.estudante_turma_id 
                         AND td.id = somas_baixas.turma_disciplina_id
                     WHERE et.ano_letivo = :ano_letivo

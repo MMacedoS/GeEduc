@@ -15,64 +15,64 @@
             </li>
             <li class="breadcrumb-item">
                 <i class="icon-house_siding lh-1"></i>
-                <a href="/minha-coordenacao\turma\<?= getJsonToObject($turma_disciplina->turma)->uuid?>/disciplinas" class="text-decoration-none">Disciplinas Turma: <?= getJsonToObject($turma_disciplina->turma)->nome?></a>
+                <a href="/minha-coordenacao/turma/<?= $turma_disciplina->class_uuid ?>/disciplinas" class="text-decoration-none">Turma: <?= $turma_disciplina->class_name ?></a>
             </li>
-            <li class="breadcrumb-item">Componente: <?=getJsonToObject($turma_disciplina->professor_disciplina)->disciplina->nome?></li>
+            <li class="breadcrumb-item">Componente: <?= $turma_disciplina->subject_name ?></li>
         </ol>
-       <!-- Breadcrumb end -->
+        <!-- Breadcrumb end -->
     </div>
-    <? if (hasPermission('cadastrar_turmas_estudantes')) {?>
+    <? if (hasPermission('cadastrar_turmas_estudantes')) { ?>
         <div class="col-4 col-xl-6">
             <div class="float-end">
                 <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#linkClass"> + </a>
             </div>
         </div>
-    <? }?>
+    <? } ?>
 
-    <? if(isset($_GET['error'])){?>
+    <? if (isset($_GET['error'])) { ?>
         <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
             <b>Sem permissão!</b>.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    <? }?>
+    <? } ?>
 </div>
-    <!-- Row end -->
-<? if(isset($success)){?>
+<!-- Row end -->
+<? if (isset($success)) { ?>
     <div class="alert border border-success alert-dismissible fade show text-success" role="alert">
-      <b>Success!</b>.
+        <b>Success!</b>.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<? }?>
-<? if(isset($danger)){?>
+<? } ?>
+<? if (isset($danger)) { ?>
     <div class="alert border border-danger alert-dismissible fade show text-danger" role="alert">
-       <b>Danger!</b>.
-       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <b>Danger!</b>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<? }?>
+<? } ?>
 
 <div class="row gx-3">
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-body">
-                <div class="container mt-4">   
-                    <form id="frequencia-form" action="/minha-coordenacao/turma/<?=$turma_disciplina->uuid?>/notas" method="POST">
+                <div class="container mt-4">
+                    <form id="frequencia-form" action="/minha-coordenacao/turma/<?= $turma_disciplina->id ?>/notas" method="POST">
                         <div class="row mb-3">
 
-                            <div class="col-md-4">                    
+                            <div class="col-md-4">
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
                                             <label class="form-label">Bimestre</label>
                                             <select class="form-select" name="period_id" id="period_id">
-                                                <?php foreach ($periodos as $key => $value) {?>
-                                                    <option value="<?=$value->id?>" <?= $periodFilter == $value->id ? 'selected' : ''?>><?=$value->periodo?>º</option>
+                                                <?php foreach ($periodos as $key => $value) { ?>
+                                                    <option value="<?= $value->id ?>" <?= $periodFilter == $value->id ? 'selected' : '' ?>><?= $value->periodo ?>º</option>
                                                 <? } ?>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
-                            </div>               
-                            <div class="col-md-2 d-flex align-items-end">             
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="m-0">
@@ -81,13 +81,13 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>        
+                        </div>
                         <hr>
-                        <?php 
+                        <?php
                         $notasMap = [];
                         $paralelaMap = [];
-                        
-                        foreach ($notas as $nota) {                            
+
+                        foreach ($notas as $nota) {
                             $notasMap["$nota->estudante_turma_id$nota->atividade_id"] = $nota->nota;
                             if (isset($notasMap[$nota->estudante_turma_id])) {
                                 $notasMap[$nota->estudante_turma_id] += $nota->nota ?? 0;
@@ -95,58 +95,58 @@
                                 $notasMap[$nota->estudante_turma_id] = $nota->nota ?? 0;
                             }
                         }
-    
-                        foreach ($paralelas as $paralela) {        
+
+                        foreach ($paralelas as $paralela) {
                             if (isset($paralelaMap[$paralela->estudante_turma_id])) {
                                 $paralelaMap[$paralela->estudante_turma_id] += $paralela->nota ?? 0;
                             } else {
                                 $paralelaMap[$paralela->estudante_turma_id] = $paralela->nota ?? 0;
-                            }                    
+                            }
                         }
-                                    
-                        foreach ($estudantes as $key => $estudante) {                                       
+
+                        foreach ($estudantes as $key => $estudante) {
                         ?>
                             <div class="row mb-3 me-0">
                                 <div class="col-sm-12 col-md-4">
                                     <span class="fw-2 mt-2"><?= getJsonToObject($estudante->estudante)->nome ?>
-                                    -
-                                    <?= getJsonToObject($estudante->turma)->nome ?></span>
+                                        -
+                                        <?= getJsonToObject($estudante->turma)->nome ?></span>
                                 </div>
-                                <?php foreach($atividades as $atividade) { ?> 
-                                <div class="col-3 col-md-2">
-                                    <div class="mr-2 d-flex flex-column pe-0">
-                                        <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id"?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
-                                        <input 
-                                            class="form-floating" 
-                                            type="number" 
-                                            name="notas[<?= "$estudante->id,$atividade->id"?>]" 
-                                            min="0" 
-                                            step="0.1" 
-                                            oninput="formatAutoDecimal(this)" 
-                                            max="<?= $atividade->valor ?>" 
-                                            value="<?= $notasMap["$estudante->id$atividade->id"] ?? ''?>">                                   
+                                <?php foreach ($atividades as $atividade) { ?>
+                                    <div class="col-3 col-md-2">
+                                        <div class="mr-2 d-flex flex-column pe-0">
+                                            <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="notas[<?= "$estudante->id,$atividade->id" ?>]"><?= getJsonToObject($atividade->activies_details)->tipo ?>: </label>
+                                            <input
+                                                class="form-floating"
+                                                type="number"
+                                                name="notas[<?= "$estudante->id,$atividade->id" ?>]"
+                                                min="0"
+                                                step="0.1"
+                                                oninput="formatAutoDecimal(this)"
+                                                max="<?= $atividade->valor ?>"
+                                                value="<?= $notasMap["$estudante->id$atividade->id"] ?? '' ?>">
+                                        </div>
                                     </div>
-                                </div>
                                 <?php } ?>
 
                                 <div class="col-sm-12 col-md-3">
                                     <div class="mr-2 d-flex flex-column pe-0">
                                         <label class="form-check-label mt-2 me-2 text-capitalize" style="width: 100px;" for="total">Total: </label>
-                                        <input type="number" min="0" step="0.01" max="10" 
-                                        name="total[<?= $estudante->id ?>]" 
-                                        value="<?= $notasMap[$estudante->id] +($paralelaMap[$estudante->id] ?? 0)?>" disabled>                                   
+                                        <input type="number" min="0" step="0.01" max="10"
+                                            name="total[<?= $estudante->id ?>]"
+                                            value="<?= $notasMap[$estudante->id] + ($paralelaMap[$estudante->id] ?? 0) ?>" disabled>
                                     </div>
                                 </div>
-                            </div>     
-                            <hr>                  
+                            </div>
+                            <hr>
                         <?php } ?>
-                        
+
                         <div class="text-end mt-4">
                             <button type="submit" class="btn btn-success">Salvar notas</button>
                         </div>
                     </form>
                 </div>
-            </div>  
+            </div>
         </div>
     </div>
 </div>
@@ -155,38 +155,37 @@
 <?php require_once __DIR__ . '/../../../layout/bottom.php'; ?>
 
 <script>
-$(document).ready(function() {
-    $('#search').click(function() {
-        searchDate();       
+    $(document).ready(function() {
+        $('#search').click(function() {
+            searchDate();
+        });
+
+        $('#period_id').change(function() {
+            searchDate();
+        });
+
+        const searchDate = function() {
+            // Capturar valores do formulário
+            var period_id = $('#period_id').val();
+
+            // Montar a URL
+            var url = '/minha-coordenacao/turma/<?= $turma_disciplina->id ?>/notas';
+            url += '?period_id=' + period_id;
+
+            // Redirecionar para a URL
+            window.location.href = url;
+        }
     });
 
-    $('#period_id').change(function() {
-        searchDate();       
-    });
+    function formatAutoDecimal(input) {
+        let raw = input.value.replace(/[^0-9]/g, '');
 
-    const searchDate = function() {
-        // Capturar valores do formulário
-        var period_id = $('#period_id').val();
-
-        // Montar a URL
-        var url = '/minha-coordenacao/turma/<?= $turma_disciplina->uuid ?>/notas';
-        url += '?period_id=' + period_id;
-
-        // Redirecionar para a URL
-        window.location.href = url;
+        if (raw.length <= 1) {
+            input.value = raw;
+            return;
+        }
+        const intPart = raw.slice(0, raw.length - 1);
+        const decimalPart = raw.slice(-1);
+        input.value = `${intPart}.${decimalPart}`;
     }
-});
-
-function formatAutoDecimal(input) {
-    let raw = input.value.replace(/[^0-9]/g, '');
-
-    if (raw.length <= 1) {
-        input.value = raw;
-        return;
-    }
-    const intPart = raw.slice(0, raw.length - 1);
-    const decimalPart = raw.slice(-1);
-    input.value = `${intPart}.${decimalPart}`;
-}
-
 </script>
