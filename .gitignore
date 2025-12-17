@@ -9,3 +9,5 @@ vendor/composer/autoload_namespaces.php
 vendor/composer/autoload_files.php
 src/env/app.php
 # src/env/app-exemple.php
+bd/escola_ist(2).sql
+bd/*
