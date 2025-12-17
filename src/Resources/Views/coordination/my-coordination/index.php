@@ -93,165 +93,128 @@
             </div>
         </form>
     </div>
+</div>
 
-    <div class="col-12">
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="table-outer">
-                    <div class="table-responsive">
-                        <table class="table table-striped align-middle m-0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nome</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Turno</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar_coordenador') || hasPermission('deletar_coordenador')) { ?>
-                                        <th class="float-end me-5">Ação</th>
-                                    <? } ?>
-                                </tr>
-                            </thead>
+<div class="row gx-3">
+    <div class="col-12 mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="icon-school me-2"></i>Minhas Turmas
+            </h5>
+            <span class="badge bg-primary">Total: <?= count($turmas) ?></span>
+        </div>
+    </div>
 
-                            <tbody>
-                                <?
-                                foreach ($turmas as $turma) {
-                                ?>
-                                    <tr>
-                                        <td><?= getJsonToObject($turma->turma_details)->id ?></td>
-                                        <td class="fw-bold"> <?= getJsonToObject($turma->turma_details)->nome ?? 'não identificado' ?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell"> <?= getJsonToObject($turma->turma_details)->turno ?? 'não identificado' ?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                            <div class="d-flex align-items-center">
-                                                <? if (getJsonToObject($turma->turma_details)->ativo == 0) { ?>
-                                                    <i class="icon-circle1 me-2 text-danger fs-5"></i>
-                                                    Impedido
-                                                <? } ?>
-                                                <? if (getJsonToObject($turma->turma_details)->ativo == 1) { ?>
-                                                    <i class="icon-circle1 me-2 text-success fs-5"></i>
-                                                    Disponivel
-                                                <? } ?>
-                                            </div>
-                                        </td>
-                                        <? if (hasPermission('editar_disciplina')) { ?>
-                                            <td>
-                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex float-end">
-                                                    <? if (hasPermission('editar_disciplina')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/disciplinas">
-                                                            <div class="border p-2 rounded-3">
-                                                                <i class="icon-link fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1"
-                                                            href="/relatorios/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/boletins" target="_blank">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
-                                                                <i class="icon-archive fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1"
-                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/visibilidade">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
-                                                                <? if (getJsonToObject($turma->turma_details)->visivel == 0) { ?>
-                                                                    <i class="icon-eye-off fs-5"></i>
-                                                                <? } ?>
-                                                                <? if (getJsonToObject($turma->turma_details)->visivel == 1) { ?>
-                                                                    <i class="icon-eye fs-5"></i>
-                                                                <? } ?>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1"
-                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/estudantes">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="estudantes">
-                                                                <i class="icon-list fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1"
-                                                            href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/recuperacoes">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                                <i class="icon-sync_problem fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                </div>
-
-                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3 float-end me-5">
-                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
-                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="icon-menu"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <div class="header-action-links float-end">
-                                                            <? if (hasPermission('editar_disciplina')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/disciplinas">
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <i class="icon-link fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1"
-                                                                    href="/relatorios/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/boletins" target="_blank">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
-                                                                        <i class="icon-archive fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1"
-                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/visibilidade">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Boletim">
-                                                                        <? if (getJsonToObject($turma->turma_details)->visivel == 0) { ?>
-                                                                            <i class="icon-eye-off fs-5"></i>
-                                                                        <? } ?>
-                                                                        <? if (getJsonToObject($turma->turma_details)->visivel == 1) { ?>
-                                                                            <i class="icon-eye fs-5"></i>
-                                                                        <? } ?>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1"
-                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/estudantes">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="estudantes">
-                                                                        <i class="icon-list fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-
-                                                            <? if (hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1"
-                                                                    href="/minha-coordenacao/turma/<?= getJsonToObject($turma->turma_details)->uuid ?>/recuperacoes">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                                        <i class="icon-sync_problem fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        <? } ?>
-                                    </tr>
-                                <? } ?>
-                            </tbody>
-                        </table>
+    <? foreach ($turmas as $turma) {
+        $turmaDetails = getJsonToObject($turma->turma_details);
+    ?>
+        <div class="col-lg-4 col-md-6 col-12 mb-3">
+            <div class="card h-100 shadow-sm" style="transition: all 0.3s ease; border-left: 4px solid #6c757d;">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white;">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="icon-book me-2"></i><?= $turmaDetails->nome ?? 'Não identificado' ?>
+                    </h6>
+                    <? if ($turmaDetails->ativo == 1) { ?>
+                        <span class="badge bg-success">
+                            <i class="icon-check_circle"></i>
+                        </span>
+                    <? } else { ?>
+                        <span class="badge bg-danger">
+                            <i class="icon-block"></i>
+                        </span>
+                    <? } ?>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="icon-calendar me-2 fs-6"></i>
+                                    <strong>Turma:</strong>&nbsp;<?= $turmaDetails->nome ?? 'Não identificado' ?>
+                                </small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="icon-schedule me-2 fs-6"></i>
+                                    <strong>Turno:</strong>&nbsp;<?= $turmaDetails->turno ?? 'N/A' ?>
+                                </small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="icon-tag me-2 fs-6"></i>
+                                    <strong>ID:</strong>&nbsp;<?= $turmaDetails->id ?>
+                                </small>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="icon-date_range me-2 fs-6"></i>
+                                    <strong>Ano Letivo:</strong>&nbsp;2025
+                                </small>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-end ">
-                        Total <b><?= count($turmas) ?></b> registros
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <? if (hasPermission('editar_disciplina')) { ?>
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/disciplinas"
+                                class="btn btn-sm btn-outline-secondary flex-fill"
+                                style="border-color: #86A789; color: #86A789;"
+                                title="Notas">
+                                <i class="icon-edit me-1"></i>Notas
+                            </a>
+                        <? } ?>
+                        <? if (hasPermission('coordenador')) { ?>
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/estudantes"
+                                class="btn btn-sm btn-outline-secondary flex-fill"
+                                style="border-color: #86A789; color: #86A789;"
+                                title="Frequência">
+                                <i class="icon-calendar_today me-1"></i>Frequência
+                            </a>
+                        <? } ?>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <? if (hasPermission('coordenador')) { ?>
+                            <a href="/relatorios/turma/<?= $turmaDetails->uuid ?>/boletins"
+                                class="btn btn-sm btn-outline-primary flex-fill"
+                                target="_blank"
+                                title="Grade">
+                                <i class="icon-grid_on me-1"></i>Grade
+                            </a>
+                        <? } ?>
+                        <? if (hasPermission('coordenador')) { ?>
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/recuperacoes"
+                                class="btn btn-sm btn-outline-warning flex-fill"
+                                title="Atividades">
+                                <i class="icon-assignment me-1"></i>Atividades
+                            </a>
+                        <? } ?>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <? if (hasPermission('coordenador')) { ?>
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/recuperacoes"
+                                class="btn btn-sm btn-outline-danger flex-fill"
+                                title="Recuperação">
+                                <i class="icon-sync_problem me-1"></i>Recuperação
+                            </a>
+                        <? } ?>
+                        <? if (hasPermission('coordenador')) { ?>
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/visibilidade"
+                                class="btn btn-sm btn-outline-info flex-fill"
+                                title="Visibilidade">
+                                <? if ($turmaDetails->visivel == 0) { ?>
+                                    <i class="icon-eye-off me-1"></i>Oculto
+                                <? } else { ?>
+                                    <i class="icon-eye me-1"></i>Visível
+                                <? } ?>
+                            </a>
+                        <? } ?>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    <? } ?>
 </div>
 
 <div class="row">

@@ -111,127 +111,276 @@ foreach ($allStudentClass as $est => $estudante) {
 
     $aluno = $estudante->student_id;
     $pagina = "";
-    $pagina .= '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            ';
+    $pagina .= '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>';
     $pagina .= '<html>';
     $pagina .= '<head>
-                <style>                
+                <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
                 body {
                     -webkit-print-color-adjust: exact;
+                    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                    color: #333;
+                    background: #f5f5f5;
                 }
+                
+                .page {
+                    width: 210mm;
+                    min-height: 297mm;
+                    padding: 3mm 8mm;
+                    margin: 0 auto;
+                    border: 1px #D3D3D3 solid;
+                    border-radius: 5px;
+                    background: white;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+                }
+                
+                .subpage {
+                    padding: 0;
+                    min-height: 289mm;
+                }
+                
+                /* Header Styles */
+                .header-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 3px;
+                    border: 2px solid #00ABF1;
+                }
+                
+                .header-table th {
+                    background: linear-gradient(135deg, #00ABF1 0%, #0088c7 100%);
+                    color: white;
+                    padding: 3px 6px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    border: 1px solid #0088c7;
+                }
+                
+                .header-table td {
+                    padding: 3px 6px;
+                    border: 1px solid #ddd;
+                    font-size: 8pt;
+                    background: #f9f9f9;
+                }
+                
+                .header-table td strong {
+                    color: #00ABF1;
+                }
+                
+                .logo-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                /* Title Styles */
+                .section-title {
+                    background: linear-gradient(135deg, #00ABF1 0%, #0088c7 100%);
+                    color: white;
+                    padding: 3px 8px;
+                    text-align: center;
+                    font-size: 9pt;
+                    font-weight: 600;
+                    border-radius: 3px;
+                    margin: 3px 0 2px 0;
+                    box-shadow: 0 1px 3px rgba(0, 171, 241, 0.3);
+                }
+                
+                /* Table Styles */
                 #customers {
-                margin: 16px 0 0 2px;        
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                border-collapse: collapse;
-                width: 100%;
-                border: 1px solid #ddd;
-                font-size: 9pt;
+                    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;
+                    font-size: 7pt;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin-bottom: 3px;
                 }
-            .page {
-                width: 210mm;
-                min-height: 297mm;
-                padding: 0 18px 0 4mm;
-                margin: 4mm auto;
-                border: 1px #D3D3D3 solid;
-                border-radius: 5px;
-                background: white;
-                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                
+                #customers tr:nth-child(even) {
+                    background-color: #f8f9fa;
                 }
-            .subpage {
-                padding: 0cm;
-                height: 272mm;
-                outline: 0cm #FFEAEA solid;
-            }
-            #customers tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-            #customers tr:hover {
-                background-color: #ddd;
+                
+                #customers tr:hover {
+                    background-color: #e9f5ff;
+                    transition: background-color 0.3s ease;
                 }
-            #customers th {
-                padding-top: 0px;
-                padding-bottom: 0px;
-                background-color: #' . $bg . ';
-                color: white;
-            }              
-
-            table,th,td {
-                border: 1px solid black;
-                white-space: nowrap;
-            }
-            .titulo{
-                text-align:center;
-            }
-            .rodape{
-            // margin-top:100px;
-            }
-            @page {
-            size: A4;
-            margin: 0;
-            }
-            @media print {
-                html, body {
-                width: 210mm;
-                height: 297mm;        
-            }
-            .page {
-                margin: 5px 0 0 0;
-                border: initial;
-                border-radius: initial;
-                width: initial;
-                min-height: initial;
-                box-shadow: initial;
-                background: initial;
-                page-break-after: always;
-            }
-        }
-        .container {
-            display: flex;
-            margin: 30px 0 0 0;
-        }
-            
-        .left-column {
-            flex: 0.4;
-        }
-        
-        .right-column {
-            flex: 0.4;
-        }  
-
-        .left-column, .center-column, .right-column {
-        padding: 10px;
-        }
+                
+                #customers th {
+                    padding: 3px 2px;
+                    background: linear-gradient(135deg, #00ABF1 0%, #0088c7 100%);
+                    color: white;
+                    border: 1px solid #0088c7;
+                    font-weight: 600;
+                    font-size: 7pt;
+                }
+                
+                #customers td {
+                    padding: 2px 1px;
+                    border: 1px solid #ddd;
+                    text-align: center;
+                }
+                
+                .status-approved {
+                    color: #28a745;
+                    font-weight: 600;
+                }
+                
+                .status-recovery {
+                    color: #ffc107;
+                    font-weight: 600;
+                }
+                
+                .status-failed {
+                    color: #dc3545;
+                    font-weight: 600;
+                }
+                
+                table, th, td {
+                    border: 1px solid #ddd;
+                }
+                
+                .titulo {
+                    text-align: center;
+                }
+                
+                /* Chart Container */
+                .chart-container {
+                    background: white;
+                    padding: 3px;
+                    border-radius: 3px;
+                    margin: 3px 0;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                }
+                
+                /* Legend */
+                .legend {
+                    background: #f8f9fa;
+                    padding: 3px 6px;
+                    border-radius: 3px;
+                    border-left: 2px solid #00ABF1;
+                    margin: 3px 0;
+                    font-size: 7pt;
+                    font-style: italic;
+                    color: #666;
+                    line-height: 1.2;
+                }
+                
+                /* Performance Info */
+                .performance-info {
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                    padding: 3px;
+                    border-radius: 3px;
+                    margin: 3px 0;
+                    border-left: 3px solid #00ABF1;
+                    font-size: 7pt;
+                }
+                
+                .performance-info b {
+                    color: #00ABF1;
+                }
+                
+                /* Info Table */
+                .info-table {
+                    margin: 3px 0;
+                }
+                
+                /* Separator */
+                .separator {
+                    border-style: dotted;
+                    border-color: #00ABF1;
+                    border-width: 1px;
+                    margin: 5px 0;
+                    padding: 0;
+                }
+                
+                /* Signature Container */
+                .container {
+                    display: flex;
+                    margin: 5px 0;
+                    gap: 12px;
+                }
+                
+                .signature-box {
+                    flex: 1;
+                    text-align: center;
+                    padding: 0 10px;
+                }
+                
+                .signature-line {
+                    border-top: 1px solid #333;
+                    margin: 8px 0 4px 0;
+                }
+                
+                .signature-label {
+                    font-size: 7pt;
+                    color: #666;
+                }
+                
+                .date-box {
+                    text-align: center;
+                    font-size: 7pt;
+                }
+                
+                @page {
+                    size: A4;
+                    margin: 5mm;
+                }
+                
+                @media print {
+                    html, body {
+                        width: 210mm;
+                        height: 297mm;
+                        background: white;
+                    }
+                    
+                    .page {
+                        margin: 0 auto;
+                        padding: 3mm 8mm;
+                        border: none;
+                        border-radius: 0;
+                        box-shadow: none;
+                        page-break-after: always;
+                    }
+                    
+                    .chart-container {
+                        page-break-inside: avoid;
+                    }
+                }
         </style>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-            <title>Boletim Alunos</title>
+            <title>Boletim Escolar - Instituto Social de Tucano</title>
         </head>';
     $pagina .= '<body> <div class="page"> <div class="subpage"> ';
-    $pagina .= '<table id="customers" width="100%">
+    $pagina .= '<table class="header-table" width="100%">
             <tr> 
-                <th width="33%" colspan="3" style="font-size: 18;" align="center">
-                    <img src="' . ROTA_GERAL . '/Public/assets/images/novaLogo.png" alt="logo" width="100" height="40">
-                    <span style="display: flow-root;">Instituto Social de Tucano</span>
-                </th>
+                <td rowspan="3" width="10%" style="text-align: center; vertical-align: middle; border-right: 2px solid #00ABF1;">
+                    <img src="' . ROTA_GERAL . '/Public/assets/images/novaLogo.png" alt="logo" width="60" height="24">
+                </td>
+                <th colspan="4" style="font-size: 12px;">Instituto Social de Tucano</th>
             </tr>
             <tr>
-                <td width="50%">Endereço: Avenida Francisco Araújo de Souza, s/n.</td>
-                <td width="25%" align="center">CEP: 48790-000</td>
-                <td width="25%" style="text-align: right;">Cidade: Tucano-Ba</td>
+                <td width="35%"><strong>Estudante:</strong> ' . $estudante->student->name . '</td>
+                <td width="20%"><strong>Turma:</strong> ' . $estudante->class_name . '</td>
+                <td width="15%"><strong>Código:</strong> ' . $aluno . '</td>
+                <td width="20%"><strong>CEP:</strong> 48790-000</td>
             </tr>
             <tr>
-                <td width="50%">Estudante:<strong> ' . $estudante->student->name . '</strong></td>
-                <td width="25%" align="center">Turma/Série/Ano Letivo: ' . $estudante->class_name . " / " . $estudante->school_year . '</td>
-                <td width="25%" style="text-align: right;">Código: ' . $aluno . '</td>
+                <td colspan="4"><strong>Endereço:</strong> Av. Francisco Araújo de Souza, s/n. - Tucano-BA</td>
             </tr>
         </table>';
 
-    $pagina .= '<p style="text-align: center; background: #ddd;">Boletim Escolar</p>';
+    $pagina .= '<div class="section-title">Boletim Escolar</div>';
     $pagina .= '<table id="customers">';
     $pagina .= '<tr>';
     $pagina .= '<th colspan="1" rowspan="3"><center>Componentes Curriculares</center></th>';
     $countBimestre = count($periodos);
     $pagina .= '<th colspan="' . ($countBimestre + 7) . '"><center>Bimestres</center></th>';
-    $pagina .= '<th colspan="5" ><center>Total</center></th>';
+    $pagina .= '<th colspan="6" ><center>Total</center></th>';
     $pagina .= '</tr>';
     $pagina .= '<tr>';
 
@@ -248,6 +397,7 @@ foreach ($allStudentClass as $est => $estudante) {
 
     $pagina .= '<th colspan="1" rowspan="2"><center>Total</center></th>';
     $pagina .= '<th colspan="1" rowspan="2"><center>M.F</center></th>';
+    $pagina .= '<th colspan="1" rowspan="2"><center>%</center></th>';
     $pagina .= '<th colspan="1" rowspan="2"><center>E.F</center></th>';
     $pagina .= '<th colspan="1" rowspan="2"><center>R.F</center></th>';
     $pagina .= '<th colspan="1" rowspan="2"><center>T.F</center></th>';
@@ -290,9 +440,11 @@ foreach ($allStudentClass as $est => $estudante) {
 
             $busca_rec = $notaService->allRecuperationScoreByParams($params);
 
-            $params['period'] = 'Exames Finais';
-
-            $busca_rec_final = $notaService->allRecuperationScoreByParams($params);
+            $params['ano_letivo'] = $estudante->school_year;
+            $busca_rec_final = null;
+            if ($i == 4) {
+                $busca_rec_final = $notaService->scoreFinalByStudentAndDisciplineAndPeriod($params);
+            }
 
             $countNota = count($busca_notas);
 
@@ -334,12 +486,28 @@ foreach ($allStudentClass as $est => $estudante) {
             }
         }
 
+        $mediaFinal = $totalPontos / 4;
+        $percentual = ($mediaFinal / 10) * 100;
+
+        $exameFinal = $busca_rec_final ? $busca_rec_final['nota'] : 0;
+
+        // Determinar situação
+        $situacao = '-';
+        $corSituacao = 'black';
+        if ($totalPontos >= 27.8 || $exameFinal >= 6) {
+            $situacao = 'Aprovado';
+            $corSituacao = '#28a745';
+        } elseif ($totalPontos < 27.8) {
+            $situacao = 'Recuperação';
+            $corSituacao = '#ffc107';
+        }
+
         $pagina .= "<td><center>$totalPontos</center></td>";
-        $pagina .= "<td><center>" . number_format($totalPontos / 4, 1, '.', '') . "</center></td>";
-        $rec = $busca_rec_final ? $busca_rec_final['nota'] : 0;
-        $pagina .= "<td><center>" . number_format($rec, 1, '.', '') . "</center></td>";
-        $pagina .= '<td><center><font color="red">-</font></center></td>';
-        $pagina .= '<td><center><font color="red">-</font></center></td>';
+        $pagina .= "<td><center>" . number_format($mediaFinal, 1, ',', '') . "</center></td>";
+        $pagina .= "<td><center>" . number_format($percentual, 1, ',', '') . "%</center></td>";
+        $pagina .= "<td><center>" . number_format($exameFinal, 1, ',', '') . "</center></td>";
+        $pagina .= '<td><center><font color="' . $corSituacao . '"><strong>' . $situacao . '</strong></font></center></td>';
+        $pagina .= '<td><center>' . $totalFalta . '</center></td>';
 
 
         array_push($valores, $array_nota);
@@ -347,78 +515,78 @@ foreach ($allStudentClass as $est => $estudante) {
     $pagina .= '</tr>';
     $pagina .= '</table>';
 
-    $pagina .= '<small style="width: 30%; text-align: justify; font-style:italic; font-size: 7pt;">Legenda: Soma: somatório da etapa, REC: recuperação, RES: resultado, TOTAL: somatório anual, M.F: média final, E.F: Exame final, R.F: (A => Aprovado; A.B => aprovado com bonus, A.C => aprovado conselho, R => reprovado), T.F: total de faltas</small>';
-    $pagina .= '<p style="text-align: center; background: #ddd;">Gráfico de Desempenho</p>';
+    $pagina .= '<div class="legend"><strong>Legenda:</strong> Soma = somatório da etapa | REC = recuperação | TOTAL = somatório anual | M.F = média final | % = percentual de aproveitamento | E.F = Exame final | R.F = Resultado Final (Aprovado, Recuperação) | T.F = total de faltas</div>';
+    $pagina .= '<div class="section-title">Gráfico de Desempenho</div>';
+    $pagina .= '<div class="chart-container">';
     $pagina .= gerar_grafico_barras($disciplinas, $valores, $aluno);
+    $pagina .= '</div>';
+    $pagina .= '<div class="performance-info">';
     $pagina .= gerar_grafico_pizza_soma($disciplinas, $valores, $aluno);
-    $pagina .= '<table id="customers" width="100%">
+    $pagina .= '</div>';
+    $pagina .= '<div class="section-title">Informações Complementares</div>';
+    $pagina .= '<table id="customers" class="info-table" width="100%">
                     <tr> 
-                        <td width="33%" colspan="3"  style="font-size: 12;" align="center"><strong>Informações Complementares</strong></td>
-                        <td style="font-size: 12;" align="center">1º Bimestre</td>
-                        <td style="font-size: 12;" align="center">2º Bimestre</td>
-                        <td style="font-size: 12;" align="center">3º Bimestre</td>
-                        <td style="font-size: 12;" align="center">4º Bimestre</td>
+                        <th colspan="3"><strong>Descrição</strong></th>
+                        <th>1º Bimestre</th>
+                        <th>2º Bimestre</th>
+                        <th>3º Bimestre</th>
+                        <th>4º Bimestre</th>
                     </tr>
                     <tr>
-                        <td width="33%" colspan="3"  style="font-size: 12;" align="center"><strong>Valor</strong></td>
-                        <td style="font-size: 12;" align="center">10.0</td>
-                        <td style="font-size: 12;" align="center">10.0</td>
-                        <td style="font-size: 12;" align="center">10.0</td>
-                        <td style="font-size: 12;" align="center">10.0</td>
-                    </tr>
-
-                    <tr>
-                        <td width="33%" colspan="3"  style="font-size: 12;" align="center"><strong>Média</strong></td>
-                        <td style="font-size: 12;" align="center">7.0</td>
-                        <td style="font-size: 12;" align="center">7.0</td>
-                        <td style="font-size: 12;" align="center">7.0</td>
-                        <td style="font-size: 12;" align="center">7.0</td>
+                        <td colspan="3"><strong>Valor</strong></td>
+                        <td>10.0</td>
+                        <td>10.0</td>
+                        <td>10.0</td>
+                        <td>10.0</td>
                     </tr>
 
                     <tr>
-                        <td width="33%" colspan="3"  style="font-size: 12;" align="center"><strong>Período</strong></td>
-                        <td style="font-size: 12;" align="center">01/02 até 12/04 = 46 dias</td>
-                        <td style="font-size: 12;" align="center">13/04 até 16/06 = 43 dias</td>
-                        <td style="font-size: 12;" align="center">04/07 até 20/09 = 56 dias</td>
-                        <td style="font-size: 12;" align="center">21/09 até 08/12 = 55 dias</td>
+                        <td colspan="3"><strong>Média</strong></td>
+                        <td>7.0</td>
+                        <td>7.0</td>
+                        <td>7.0</td>
+                        <td>7.0</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3"><strong>Período</strong></td>
+                        <td>01/02 até 12/04 = 46 dias</td>
+                        <td>13/04 até 16/06 = 43 dias</td>
+                        <td>04/07 até 20/09 = 56 dias</td>
+                        <td>21/09 até 08/12 = 55 dias</td>
                     </tr>
 
                 </table>';
 
-    $pagina .= '<small id="info" style="width: 100%; text-align: justify; font-style:italic; font-size: 7pt;">Entregar este canhoto assinado pelos pais ou responsáveis em até 3 dias úteis</small>
-                        <hr style="border-style: dotted; border-color: black; border-width: 2px; margin: 10px 0; padding: 0;">
+    $pagina .= '<div class="legend" style="margin-top: 8px;"><strong>Importante:</strong> Entregar este canhoto assinado pelos pais ou responsáveis em até 3 dias úteis</div>
+                        <hr class="separator">
 
-                    <table id="customers" width="100%">
+                    <table class="header-table" width="100%">
                     <tr> 
-                        <th width="33%" colspan="3" style="font-size: 18;" align="center">
-                            <img src="' . ROTA_GERAL . '/Public/assets/images/novaLogo.png" alt="logo" width="100" height="30">
-                            <span style="display: flow-root;">Instituto Social de Tucano</span>
-                        </th>
+                        <td rowspan="2" width="8%" style="text-align: center; vertical-align: middle; border-right: 2px solid #00ABF1;">
+                            <img src="' . ROTA_GERAL . '/Public/assets/images/novaLogo.png" alt="logo" width="45" height="18">
+                        </td>
+                        <th colspan="3" style="font-size: 10px;">Instituto Social de Tucano - Canhoto</th>
                     </tr>
                     <tr>
-                        <td width="75%">Estudante:<strong> ' . $estudante->student->name . '</strong></td>
-
-                        <td width="25%" style="text-align: center;">Código: ' . $aluno . '</td>
+                        <td width="46%"><strong>Estudante:</strong> ' . $estudante->student->name . '</td>
+                        <td width="23%"><strong>Turma:</strong> ' . $estudante->class_name . '</td>
+                        <td width="23%"><strong>Código:</strong> ' . $aluno . '</td>
                     </tr>
-
-                    <tr>
-                        <td width="25%" align="left">Turma/Série/Ano Letivo: ' . $estudante->class_name  . " / " . $estudante->school_year . '</td>
-                        <td width="25%" align="center">Emitido em: ' . implode('/', array_reverse(explode('-', date('Y-m-d')))) . '</td>
-                    </tr>
-
                     </table>';
 
     $pagina .= '<div class="container">
-                    <div style="width: 55%;  line-height: 0; padding: 0 0 0 16px; text-align: center;">
-                    <hr>
-                    <p>Assinatura do responsável</p>
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <p class="signature-label">Assinatura do responsável</p>
                     </div>
-                    <div style="width: 30%; padding: 0 0 0 16px; text-align: center; line-height: 0.5; font-style:normal; font-size: 10pt;">
-                        ______/_________/______
-                        <p>data</p>
+                    <div class="signature-box" style="flex: 0.4;">
+                        <div class="date-box">
+                            <p>______/_____/______</p>
+                            <p class="signature-label">Data</p>
+                        </div>
                     </div>
-                    </div>
-                    ';
+                </div>';
 
     $pagina .= '</div></div></body>';
     $pagina .= '</html>';

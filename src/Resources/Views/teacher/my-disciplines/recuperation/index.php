@@ -403,9 +403,9 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-6">
-                                                            <div class="p-2 <?= $value->nota_final >= 7 ? 'bg-success' : ($value->nota_final ? 'bg-danger' : 'bg-light') ?> bg-opacity-10 rounded">
+                                                            <div class="p-2 <?= $value->nota_final >= 6 ? 'bg-success' : ($value->nota_final ? 'bg-danger' : 'bg-light') ?> bg-opacity-10 rounded">
                                                                 <small class="text-muted d-block">Exame Final</small>
-                                                                <strong class="<?= $value->nota_final >= 7 ? 'text-success' : ($value->nota_final ? 'text-danger' : 'text-muted') ?>">
+                                                                <strong class="<?= $value->nota_final >= 6 ? 'text-success' : ($value->nota_final ? 'text-danger' : 'text-muted') ?>">
                                                                     <?= $value->nota_final ? number_format($value->nota_final, 2, ',', '.') : '0,00' ?>
                                                                 </strong>
                                                             </div>
@@ -473,12 +473,12 @@
                                                                 <div class="col-md-6">
                                                                     <? if ($value->nota_final): ?>
                                                                         <strong><i class="icon-assignment_turned_in me-1"></i> Exame Final:</strong><br>
-                                                                        <span class="fs-5 fw-bold <?= $value->nota_final >= 7 ? 'text-success' : 'text-danger' ?>">
+                                                                        <span class="fs-5 fw-bold <?= $value->nota_final >= 6 ? 'text-success' : 'text-danger' ?>">
                                                                             <?= number_format($value->nota_final, 2, ',', '.') ?> pontos
                                                                         </span>
                                                                     <? else: ?>
                                                                         <strong><i class="icon-flag me-1"></i> Necessário no Exame:</strong><br>
-                                                                        <span class="fs-5 fw-bold text-warning">7,00 pontos</span>
+                                                                        <span class="fs-5 fw-bold text-warning">6,00 pontos</span>
                                                                     <? endif; ?>
                                                                 </div>
                                                             </div>
@@ -500,8 +500,7 @@
                                                                     min="0"
                                                                     max="10"
                                                                     step="0.1"
-                                                                    placeholder="0.0"
-                                                                    <? if ($value->situacao == 'Aprovado com Exame Final'): ?>disabled<? endif; ?>>
+                                                                    placeholder="0.0">
                                                                 <small class="form-text text-muted">
                                                                     <i class="icon-info me-1"></i> Máximo: 10,0 pontos
                                                                 </small>
@@ -526,13 +525,13 @@
                                                                 placeholder="Descreva os critérios de avaliação do exame final e observações relevantes..."
                                                                 <? if ($value->situacao == 'Aprovado com Exame Final'): ?>disabled<? endif; ?>><?= $value->nota_final_obs ?></textarea>
                                                         </div> <? if ($value->nota_final): ?>
-                                                            <div class="alert <?= $value->nota_final >= 7 ? 'alert-success' : 'alert-danger' ?> mb-0">
+                                                            <div class="alert <?= $value->nota_final >= 6 ? 'alert-success' : 'alert-danger' ?> mb-0">
                                                                 <strong><i class="icon-info me-1"></i> Resultado do Exame Final:</strong>
                                                                 <?= $value->situacao ?>
-                                                                <? if ($value->nota_final >= 7): ?>
+                                                                <? if ($value->nota_final >= 6): ?>
                                                                     - O estudante obteve <?= number_format($value->nota_final, 2, ',', '.') ?> pontos e foi aprovado no exame final!
                                                                 <? else: ?>
-                                                                    - O estudante obteve <?= number_format($value->nota_final, 2, ',', '.') ?> pontos, abaixo da nota mínima necessária (7,00).
+                                                                    - O estudante obteve <?= number_format($value->nota_final, 2, ',', '.') ?> pontos, abaixo da nota mínima necessária (6,00).
                                                                 <? endif; ?>
                                                             </div>
                                                         <? endif; ?>
@@ -541,11 +540,9 @@
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                             <i class="icon-close me-1"></i> Fechar
                                                         </button>
-                                                        <? if ($value->situacao != 'Aprovado com Exame Final'): ?>
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="icon-save me-1"></i> Salvar Exame Final
-                                                            </button>
-                                                        <? endif; ?>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="icon-save me-1"></i> Salvar Exame Final
+                                                        </button>
                                                     </div>
                                                 </form>
                                             </div>

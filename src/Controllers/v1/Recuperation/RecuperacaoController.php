@@ -209,7 +209,7 @@ class RecuperacaoController extends Controller
         // Calcular a situação do estudante baseado na nota
         // Para calcular corretamente, precisamos da média total
         // Vamos assumir que se a nota for >= ao necessário, ele está aprovado
-        $situacao = 'Reprovado';
+        $situacao = $nota >= 6 ? 'Aprovado' : 'Reprovado';
 
         // Preparar dados para inserção/atualização
         $notaFinalData = [

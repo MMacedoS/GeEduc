@@ -454,7 +454,7 @@
                                 </td>
                                 <td>
                                     <?php
-                                    if ($total >= MIN_SCORE) {
+                                    if ($total >= 6.9) {
                                         echo '<span class="status-approved">Aprovado</span>';
                                         $disciplinasAprovadas++;
                                     } else {

@@ -216,6 +216,50 @@ class BoletimRepository extends SingletonInstance implements IBoletimRepository
         }
     }
 
+    public function scoreFinalByStudentAndDisciplineAndPeriod(array $params = [])
+    {
+        $sql = "SELECT 
+            nf.estudante_turma_id,
+            nf.nota
+        FROM nota_final nf 
+        LEFT JOIN turma_disciplina td ON td.id = nf.turma_disciplina_id
+        LEFT JOIN estudante_turma et ON et.id = nf.estudante_turma_id";
+
+        $conditions = [];
+        $bindings = [];
+
+        if (isset($params['class_discipline_id'])) {
+            $conditions[] = 'nf.turma_disciplina_id = :class_discipline_id';
+            $bindings[':class_discipline_id'] = $params['class_discipline_id'];
+        }
+
+        if (isset($params['student_class_id'])) {
+            $conditions[] = 'nf.estudante_turma_id = :student_class_id';
+            $bindings[':student_class_id'] = $params['student_class_id'];
+        }
+
+        if (isset($params['ano_letivo'])) {
+            $conditions[] = 'nf.ano_letivo = :ano_letivo';
+            $bindings[':ano_letivo'] = $params['ano_letivo'];
+        }
+
+        if (count($conditions) > 0) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= "
+            ORDER BY nf.id DESC";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindings);
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            return null;
+        }
+    }
+
     public function allcoreByStudentsAndActiviteAndPeriod(array $params = [])
     {
         $sql = "SELECT 

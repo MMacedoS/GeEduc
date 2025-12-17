@@ -342,7 +342,7 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                     (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) AS media_total,
                     
                     CASE 
-                        WHEN nf.nota >= 7.0
+                        WHEN nf.nota >= 6.0
                         THEN 'Aprovado com Exame Final'
                         WHEN nf.nota IS NOT NULL 
                         THEN 'Reprovado no Exame Final'
@@ -372,8 +372,7 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                          rs1.id, rs1.nota, rs1.obs,
                          rs2.id, rs2.nota, rs2.obs,
                          nf.id, nf.uuid, nf.ano_letivo, nf.nota, nf.situacao
-                HAVING SUM(COALESCE(n.nota, 0)) < :total_minimo
-                    AND (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) < :total_aprovacao
+                HAVING (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) < :total_aprovacao
                 ORDER BY media_total DESC, pf.nome ASC";
 
         try {

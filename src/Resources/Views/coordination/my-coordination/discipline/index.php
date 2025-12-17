@@ -47,139 +47,96 @@
 <? } ?>
 
 <div class="row gx-3">
-    <div class="col-12">
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="table-outer">
-                    <div class="table-responsive">
-                        <table class="table table-striped align-middle m-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">#</th>
-                                    <th class="text-center">Disciplina</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Professor</th>
-                                    <th class="text-center">Ano Letivo</th>
-                                    <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                        <th>Ação</th>
-                                    <? } ?>
-                                </tr>
-                            </thead>
+    <div class="col-12 mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="icon-book me-2"></i>Disciplinas da Turma
+            </h5>
+            <span class="badge bg-primary">Total: <?= count($disciplinas) ?></span>
+        </div>
+    </div>
 
-                            <tbody>
-                                <? foreach ($disciplinas as $disciplina) {
-                                ?>
-                                    <tr>
-                                        <td class="text-center"><?= $disciplina->code ?></td>
-                                        <td class="fw-bold text-center">
-                                            <?= $disciplina->subject_name ?? 'não identificado' ?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                            <?= $disciplina->teacher_name ?? 'não identificado' ?>
-                                        </td>
-                                        <td class="text-center"> <?= $disciplina->school_year ?? 'não identificado' ?>
-                                        </td>
-                                        <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                            <td class="d-flex">
-                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= $disciplina->id ?>/notas">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
-                                                                <i class="icon-edit fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('realizar chamadas') || hasPermission('professor')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= $disciplina->id ?>/frequencia">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Frequência">
-                                                                <i class="icon-calendar fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/relatorios/<?= $disciplina->id ?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
-                                                                <i class="icon-file fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('professor')) { ?>
-                                                        <a class="mb-1 me-2 mt-1"
-                                                            href="/minha-coordenacao/turma/<?= $disciplina->class_uuid ?>/disciplina/<?= $disciplina->id ?>/atividades">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                                <i class="icon-link fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                                        <a class="mb-1 me-2 mt-1"
-                                                            href="/minha-coordenacao/turma/<?= $disciplina->class_uuid ?>/disciplina/<?= $disciplina->id ?>/recuperacoes">
-                                                            <div class="border p-2 rounded-3" data-toggle="tooltip" title="Recuperações">
-                                                                <i class="icon-sync_problem fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                </div>
-                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
-                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
-                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="icon-menu"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu">
-                                                        <div class="header-action-links float-end">
-                                                            <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= $disciplina->id ?>/notas">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Notas">
-                                                                        <i class="icon-edit fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('realizar chamadas') || hasPermission('professor')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/minha-coordenacao/turma/<?= $disciplina->id ?>/frequencia">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Frequência">
-                                                                        <i class="icon-calendar fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/relatorios/<?= $disciplina->id ?>/gerar-grade" target="_blank" rel="noopener noreferrer ">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="Gerar grade">
-                                                                        <i class="icon-file fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('professor')) { ?>
-                                                                <a class="mb-1 me-2 mt-1"
-                                                                    href="/minha-coordenacao/turma/<?= $disciplina->class_uuid ?>/disciplina/<?= $disciplina->id ?>/atividades">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                                        <i class="icon-link fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                                                <a class="mb-1 me-2 mt-1"
-                                                                    href="/minha-coordenacao/turma/<?= $disciplina->class_uuid ?>/disciplina/<?= $disciplina->id ?>/recuperacoes">
-                                                                    <div class="border p-2 rounded-3" data-toggle="tooltip" title="atividades">
-                                                                        <i class="icon-sync_problem fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        <? } ?>
-                                    </tr>
-                                <? } ?>
-                            </tbody>
-                        </table>
+    <? foreach ($disciplinas as $disciplina) { ?>
+        <div class="col-lg-4 col-md-6 col-12 mb-3">
+            <div class="card h-100 shadow-sm" style="transition: all 0.3s ease; border-left: 4px solid #86A789;">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #86A789 0%, #739975 100%); color: white;">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="icon-subject me-2"></i><?= $disciplina->subject_name ?? 'Não identificado' ?>
+                    </h6>
+                    <span class="badge bg-white text-dark">
+                        #<?= $disciplina->code ?>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="icon-person me-2 fs-6"></i>
+                                    <strong>Professor:</strong>&nbsp;<?= $disciplina->teacher_name ?? 'Não identificado' ?>
+                                </small>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="icon-date_range me-2 fs-6"></i>
+                                    <strong>Ano Letivo:</strong>&nbsp;<?= $disciplina->school_year ?? 'Não identificado' ?>
+                                </small>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-end ">
-                        Total <b><?= count($disciplinas) ?></b> registros
-                    </div>
+
+                    <? if (hasPermission('realizar chamadas') || hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) { ?>
+                        <div class="d-flex flex-wrap gap-2">
+                            <? if (hasPermission('inserir notas') || hasPermission('professor') || hasPermission('coordenador')) { ?>
+                                <a href="/minha-coordenacao/turma/<?= $disciplina->id ?>/notas"
+                                    class="btn btn-sm btn-outline-secondary flex-fill"
+                                    style="border-color: #86A789; color: #86A789;"
+                                    title="Notas">
+                                    <i class="icon-edit me-1"></i>Notas
+                                </a>
+                            <? } ?>
+                            <? if (hasPermission('realizar chamadas') || hasPermission('professor')) { ?>
+                                <a href="/minha-coordenacao/turma/<?= $disciplina->id ?>/frequencia"
+                                    class="btn btn-sm btn-outline-secondary flex-fill"
+                                    style="border-color: #86A789; color: #86A789;"
+                                    title="Frequência">
+                                    <i class="icon-calendar_today me-1"></i>Frequência
+                                </a>
+                            <? } ?>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
+                                <a href="/relatorios/<?= $disciplina->id ?>/gerar-grade"
+                                    class="btn btn-sm btn-outline-primary flex-fill"
+                                    target="_blank"
+                                    title="Grade">
+                                    <i class="icon-grid_on me-1"></i>Grade
+                                </a>
+                            <? } ?>
+                            <? if (hasPermission('professor')) { ?>
+                                <a href="/minha-coordenacao/turma/<?= $disciplina->class_uuid ?>/disciplina/<?= $disciplina->id ?>/atividades"
+                                    class="btn btn-sm btn-outline-warning flex-fill"
+                                    title="Atividades">
+                                    <i class="icon-assignment me-1"></i>Atividades
+                                </a>
+                            <? } ?>
+                        </div>
+
+                        <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <a href="/minha-coordenacao/turma/<?= $disciplina->class_uuid ?>/disciplina/<?= $disciplina->id ?>/recuperacoes"
+                                    class="btn btn-sm btn-outline-danger flex-fill"
+                                    title="Recuperação">
+                                    <i class="icon-sync_problem me-1"></i>Recuperação
+                                </a>
+                            </div>
+                        <? } ?>
+                    <? } ?>
                 </div>
             </div>
         </div>
-    </div>
+    <? } ?>
 </div>
 
 <div class="row">
