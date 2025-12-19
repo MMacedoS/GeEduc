@@ -15,7 +15,23 @@ class LoggerHelper
         if (is_null(self::$logger)) {
             self::$logger = new Logger('app_logger');
             $logFile = __DIR__ . '/../../logs/app.log';
-            self::$logger->pushHandler(new StreamHandler($logFile, Logger::DEBUG));
+
+            // Criar diretório de logs se não existir
+            $logDir = dirname($logFile);
+            if (!is_dir($logDir)) {
+                @mkdir($logDir, 0777, true);
+            }
+
+            // Verificar se o arquivo pode ser criado/escrito
+            if (!file_exists($logFile)) {
+                @touch($logFile);
+                @chmod($logFile, 0666);
+            }
+
+            // Só adicionar handler se tiver permissão de escrita
+            if (is_writable($logFile) || is_writable($logDir)) {
+                self::$logger->pushHandler(new StreamHandler($logFile, Logger::DEBUG));
+            }
         }
     }
 

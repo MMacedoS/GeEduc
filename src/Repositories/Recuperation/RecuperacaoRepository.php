@@ -337,11 +337,13 @@ class RecuperacaoRepository extends SingletonInstance implements IRecuperacaoRep
                     nf.ano_letivo AS nota_final_ano_letivo,
                     nf.nota AS nota_final,
                     nf.situacao AS nota_final_situacao,
-                    CAST(NULL AS CHAR) AS nota_final_obs,
+                    nf.obs AS nota_final_obs,
                     
                     (SUM(COALESCE(n.nota, 0)) + COALESCE(rs1.nota, 0) + COALESCE(rs2.nota, 0)) AS media_total,
                     
                     CASE 
+                        WHEN nf.situacao = 'Aprovado no Conselho'
+                        THEN 'Aprovado no Conselho'
                         WHEN nf.nota >= 6.0
                         THEN 'Aprovado com Exame Final'
                         WHEN nf.nota IS NOT NULL 

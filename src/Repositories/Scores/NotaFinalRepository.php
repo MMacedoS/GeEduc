@@ -51,19 +51,31 @@ class NotaFinalRepository extends SingletonInstance implements INotaFinalReposit
 
     public function update(array $params, int $id)
     {
-        $sql = "UPDATE nota_final 
-                SET nota = :nota, 
-                    situacao = :situacao,
-                    updated_at = NOW() 
-                WHERE id = :id";
+        $fields = [];
+        $bindings = [':id' => $id];
+
+        if (isset($params['nota'])) {
+            $fields[] = "nota = :nota";
+            $bindings[':nota'] = $params['nota'];
+        }
+
+        if (isset($params['situacao'])) {
+            $fields[] = "situacao = :situacao";
+            $bindings[':situacao'] = $params['situacao'];
+        }
+
+        if (isset($params['obs'])) {
+            $fields[] = "obs = :obs";
+            $bindings[':obs'] = $params['obs'];
+        }
+
+        $fields[] = "updated_at = NOW()";
+
+        $sql = "UPDATE nota_final SET " . implode(", ", $fields) . " WHERE id = :id";
 
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([
-                ':nota' => $params['nota'],
-                ':situacao' => $params['situacao'],
-                ':id' => $id
-            ]);
+            $stmt->execute($bindings);
 
             return $stmt->rowCount();
         } catch (\PDOException $e) {

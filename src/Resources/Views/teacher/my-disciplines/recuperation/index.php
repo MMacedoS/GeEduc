@@ -417,6 +417,13 @@
                                                             <i class="icon-info me-1"></i> Situação
                                                         </small>
                                                         <span class="fw-bold"><?= $value->situacao ?></span>
+
+                                                        <? if ($value->situacao == 'Aprovado no Conselho' && !empty($value->nota_final_obs)): ?>
+                                                            <div class="alert alert-success mt-2 mb-0">
+                                                                <small class="d-block mb-1"><strong><i class="icon-description me-1"></i>Justificativa do Conselho:</strong></small>
+                                                                <small><?= nl2br(htmlspecialchars($value->nota_final_obs)) ?></small>
+                                                            </div>
+                                                        <? endif; ?>
                                                     </div>
 
                                                     <button type="button"
@@ -426,7 +433,67 @@
                                                         <i class="icon-edit me-1"></i>
                                                         <?= !is_null($value->nota_final) ? 'Ver Detalhes' : 'Lançar Exame Final' ?>
                                                     </button>
+
+                                                    <? if ($value->situacao != 'Aprovado no Conselho' && $value->situacao != 'Aprovado com Exame Final' && $value->situacao != 'Aprovado com Recuperação'): ?>
+                                                        <button type="button"
+                                                            class="btn btn-success w-100 mt-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalConselho_<?= $value->estudante_turma_id ?>">
+                                                            <i class="icon-how_to_vote me-1"></i>
+                                                            Aprovar no Conselho
+                                                        </button>
+                                                    <? endif; ?>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Conselho -->
+                                        <div class="modal fade" id="modalConselho_<?= $value->estudante_turma_id ?>" tabindex="-1" aria-labelledby="modalConselhoLabel_<?= $value->estudante_turma_id ?>" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <form class="modal-content" method="post" action="/meus-componentes/turma/<?= $turma->id ?>/disciplina/<?= $turmas_disciplinas->id ?>/aprovar-conselho">
+                                                    <div class="modal-header bg-success text-white">
+                                                        <h5 class="modal-title" id="modalConselhoLabel_<?= $value->estudante_turma_id ?>">
+                                                            <i class="icon-how_to_vote me-2"></i>
+                                                            Aprovação pelo Conselho de Classe
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="alert alert-warning mb-3">
+                                                            <h6 class="alert-heading">
+                                                                <i class="icon-warning me-2"></i>
+                                                                Atenção
+                                                            </h6>
+                                                            <p class="mb-0">
+                                                                Esta ação irá aprovar o estudante <strong><?= getJsonToObject($value->estudante)->nome ?></strong>
+                                                                através de decisão do Conselho de Classe, alterando sua situação para
+                                                                <strong>"Aprovado no Conselho"</strong>.
+                                                            </p>
+                                                        </div>
+
+                                                        <input type="hidden" name="student_class_id" value="<?= $value->estudante_turma_id ?>">
+
+                                                        <div class="mb-3">
+                                                            <label for="obsConselho_<?= $value->estudante_turma_id ?>" class="form-label fw-bold">
+                                                                <i class="icon-description me-1"></i> Justificativa do Conselho
+                                                            </label>
+                                                            <textarea name="obs"
+                                                                id="obsConselho_<?= $value->estudante_turma_id ?>"
+                                                                class="form-control"
+                                                                rows="4"
+                                                                required
+                                                                placeholder="Descreva a justificativa para aprovação pelo conselho de classe..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            <i class="icon-close me-1"></i> Cancelar
+                                                        </button>
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="icon-check me-1"></i> Confirmar Aprovação
+                                                        </button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
 

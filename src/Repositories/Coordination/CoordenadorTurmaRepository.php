@@ -33,7 +33,8 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
                     'nome', t.nome,
                     'turno', t.turno,
                     'visivel', t.visivel,
-                    'ativo', t.ativo
+                    'ativo', t.ativo,
+                    'ano_letivo', (SELECT td.ano_letivo FROM turma_disciplina td WHERE td.turma_id = t.id LIMIT 1)
                 ) AS turma_details
             FROM " . self::TABLE . " ct
             LEFT JOIN turmas t ON t.id = ct.turma_id
@@ -50,6 +51,11 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
         if (isset($params['coordenador_id'])) {
             $conditions[] = "ct.coordenador_id = :coordenador_id";
             $bindings[':coordenador_id'] = $params['coordenador_id'];
+        }
+
+        if (isset($params['academic_year'])) {
+            $conditions[] = "EXISTS (SELECT 1 FROM turma_disciplina td WHERE td.turma_id = t.id AND td.ano_letivo = :academic_year)";
+            $bindings[':academic_year'] = $params['academic_year'];
         }
 
         if (count($conditions) > 0) {
@@ -74,7 +80,8 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
                     'nome', t.nome,
                     'turno', t.turno,
                     'visivel', t.visivel,
-                    'ativo', t.ativo
+                    'ativo', t.ativo,
+                    'ano_letivo', (SELECT td.ano_letivo FROM turma_disciplina td WHERE td.turma_id = t.id LIMIT 1)
                 ) AS turma_details
             FROM turmas t
         ";
@@ -89,6 +96,11 @@ class CoordenadorTurmaRepository extends SingletonInstance implements ICoordenad
         if (isset($params['active'])) {
             $conditions[] = "t.ativo = :active";
             $bindings[':active'] = $params['active'];
+        }
+
+        if (isset($params['academic_year'])) {
+            $conditions[] = "EXISTS (SELECT 1 FROM turma_disciplina td WHERE td.turma_id = t.id AND td.ano_letivo = :academic_year)";
+            $bindings[':academic_year'] = $params['academic_year'];
         }
 
         if (count($conditions) > 0) {

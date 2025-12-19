@@ -222,13 +222,49 @@ class RecuperacaoController extends Controller
 
         try {
             if ($notaExistente) {
-                // Atualizar nota existente
                 $this->notaFinalRepository->update($notaFinalData, $notaExistente->id);
-            } else {
-                // Criar nova nota final
-                $this->notaFinalRepository->create($notaFinalData);
+                return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?success=1");
             }
 
+            $this->notaFinalRepository->create($notaFinalData);
+            return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?success=1");
+        } catch (\Exception $e) {
+            return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?danger=1");
+        }
+    }
+
+    public function approveByCouncil(Request $request, string $class_id, string $class_discipline_id)
+    {
+        $data = $request->getBodyParams();
+
+        if (!isset($data['student_class_id'])) {
+            return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?danger=1");
+        }
+
+        $turma_disciplina = $this->turmaDisciplinaRepository->findByUuid($class_discipline_id);
+
+        if (!$turma_disciplina) {
+            return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?danger=1");
+        }
+
+        // Buscar se já existe uma nota final para este estudante nesta disciplina
+        $notaExistente = $this->notaFinalRepository->findByStudentAndDiscipline(
+            $data['student_class_id'],
+            $turma_disciplina->id
+        );
+
+        if (!$notaExistente) {
+            return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?danger=1");
+        }
+
+        // Preparar dados para aprovação pelo conselho - apenas atualiza a situação
+        $notaFinalData = [
+            'situacao' => 'Aprovado no Conselho',
+            'obs' => $data['obs'] ?? 'Aprovado pelo Conselho de Classe'
+        ];
+
+        try {
+            $this->notaFinalRepository->update($notaFinalData, $notaExistente->id);
             return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?success=1");
         } catch (\Exception $e) {
             return $this->router->redirect("meus-componentes/turma/$class_id/disciplina/$class_discipline_id/recuperacoes?danger=1");

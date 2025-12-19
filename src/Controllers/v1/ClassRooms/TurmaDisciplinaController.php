@@ -70,10 +70,17 @@ class TurmaDisciplinaController extends Controller
 
         $classRooms = (object)$this->turmaTransformer->transform($classRooms);
 
+        // Obter o ano letivo da query string ou usar o ano atual
+        $schoolYear = $request->getParam('school_year');
+        if (!$schoolYear) {
+            $schoolYear = date('Y');
+        }
+
         $class_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
-                    'class_id' => $classRooms->code
+                    'class_id' => $classRooms->code,
+                    'academic_year' => $schoolYear
                 ]
             );
 
@@ -90,7 +97,8 @@ class TurmaDisciplinaController extends Controller
                 'active' => 'pedagogico',
                 'turma' => $classRooms,
                 'turmas_disciplinas' => $paginatedBoards,
-                'links' => $paginator->links()
+                'links' => $paginator->links(),
+                'school_year' => $schoolYear
             ]
         );
     }
@@ -153,20 +161,22 @@ class TurmaDisciplinaController extends Controller
                 ["pessoa_fisica_id" => $pessoaFisica->id]
             );
 
+        // Filtro de ano letivo
+        $currentYear = date('Y');
+        $schoolYear = $request->getParam('school_year') ?? $currentYear;
+
+        $filterParams = ['academic_year' => $schoolYear];
+
         if (!empty($coordenador) && !empty($coordenador[0]->id)) {
+            $filterParams['coordenador_id'] = $coordenador[0]->id;
             $turmas = $this->coordenadorTurmaRepository
-                ->allCoordinatorClass(
-                    ["coordenador_id" => $coordenador[0]->id]
-                );
+                ->allCoordinatorClass($filterParams);
         }
 
         if (empty($coordenador) || is_null($coordenador)) {
+            $filterParams['active'] = 1;
             $turmas = $this->coordenadorTurmaRepository
-                ->allCoordinatorClassWithoutCoordinator(
-                    [
-                        'active' => 1
-                    ]
-                );
+                ->allCoordinatorClassWithoutCoordinator($filterParams);
         }
 
         $perPage = 10;
@@ -190,7 +200,9 @@ class TurmaDisciplinaController extends Controller
                 'turmas' => $paginatedBoards,
                 'links' => $paginator->links(),
                 'searchFilter' => $params['name_email'] ?? null,
-                'situation' => $params['situation'] ?? null
+                'situation' => $params['situation'] ?? null,
+                'school_year' => $schoolYear,
+                'current_year' => $currentYear
             ]
         );
     }
@@ -208,13 +220,20 @@ class TurmaDisciplinaController extends Controller
         $carga_horaria = $this->cargaHorariaRepository
             ->allWorkLoad();
 
+        // Obter o ano letivo da query string ou usar o ano atual
+        $schoolYear = $request->getParam('school_year');
+        if (!$schoolYear) {
+            $schoolYear = date('Y');
+        }
+
         return $this->router->view(
             'classRooms/discipline/create',
             [
                 'active' => 'register',
                 'disciplinas' => $disciplinas,
                 'carga_horaria' => $carga_horaria,
-                'turma' => $classRooms
+                'turma' => $classRooms,
+                'school_year' => $schoolYear
             ]
         );
     }
@@ -255,19 +274,57 @@ class TurmaDisciplinaController extends Controller
                     'message' => "reveja os campos preenchidos",
                     'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria,
-                    'turma' => $classRooms
+                    'turma' => $classRooms,
+                    'school_year' => $data['academic_year'] ?? date('Y')
                 ]
             );
         }
 
         $data['class_id'] = $classRooms->id;
 
+        $errors = [];
+        $successCount = 0;
+
         foreach ($data['teacher_discipline_id'] as $key => $value) {
+            // Verificar se a disciplina já existe para esta turma e ano letivo
+            $existing = $this->turmaDisciplinaRepository->allClassDisciplines([
+                'class_id' => $classRooms->id,
+                'teacher_discipline_id' => $value,
+                'academic_year' => $data['academic_year']
+            ]);
+
+            if (!empty($existing)) {
+                $errors[] = "A disciplina já está vinculada a esta turma no ano letivo {$data['academic_year']}";
+                continue;
+            }
+
             $data['teacher_discipline_id'] = $value;
             $created = $this->turmaDisciplinaRepository->create($data);
+
+            if (!is_null($created)) {
+                $successCount++;
+            } else {
+                $errors[] = "Erro ao vincular uma das disciplinas selecionadas";
+            }
         }
 
-        if (is_null($created)) {
+        // Se houver erros, retornar para o formulário
+        if (!empty($errors)) {
+            return $this->router->view(
+                'classRooms/discipline/create',
+                [
+                    'active' => 'pedagogico',
+                    'danger' => true,
+                    'message' => implode('. ', $errors),
+                    'disciplinas' => $disciplinas,
+                    'carga_horaria' => $carga_horaria,
+                    'turma' => $classRooms,
+                    'school_year' => $data['academic_year']
+                ]
+            );
+        }
+
+        if ($successCount === 0) {
             return $this->router->view(
                 'classRooms/discipline/create',
                 [
@@ -276,12 +333,14 @@ class TurmaDisciplinaController extends Controller
                     'message' => 'não pode ser criado',
                     'disciplinas' => $disciplinas,
                     'carga_horaria' => $carga_horaria,
-                    'turma' => $classRooms
+                    'turma' => $classRooms,
+                    'school_year' => $data['academic_year']
                 ]
             );
         }
 
-        return $this->router->redirect("turmas/$classRooms->uuid/disciplinas/");
+        $schoolYearParam = isset($data['academic_year']) ? '?school_year=' . $data['academic_year'] : '';
+        return $this->router->redirect("turmas/$classRooms->uuid/disciplinas/$schoolYearParam");
     }
 
     public function edit(Request $request, string $class_id, string $id)

@@ -9,7 +9,7 @@
                         </button>
                     </div>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item dropdown <?=$active === 'dashboard' ? 'active-link': ''?>">
+                        <li class="nav-item dropdown <?= $active === 'dashboard' ? 'active-link' : '' ?>">
                             <a class="nav-link dropdown-toggle" href="/dashboard" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="icon-stacked_line_chart"></i> Dashboards
                             </a>
@@ -27,76 +27,77 @@
                             </ul>
                         </li>
                         <?php if (hasPermission('visualizar_pedagogico')) { ?>
-                        <li class="nav-item dropdown <?=$active === 'pedagogico' ? 'active-link': ''?>">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="icon-add_task"></i> Pedagógico
-                            </a>
-                            <ul class="dropdown-menu">                             
-                                <?php if (hasPermission('visualizar_periodos')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\dialetivos\">
-                                            <span>Dias Letivos</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_periodos')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\periodos\">
-                                            <span>Bimestres</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_coordenadores')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\coordenadores">
-                                            <span>Coordenadores</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_carga_horaria')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\carga-horaria">
-                                            <span>Carga Horaria</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_disciplinas')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\disciplinas\">
-                                            <span>Disciplinas</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_estudantes')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\estudantes\">
-                                            <span>Estudantes</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_professores')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\professores">
-                                            <span>Professores</span>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if (hasPermission('visualizar_turmas')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="\turmas">
-                                            <span>Turmas</span>
-                                        </a>
-                                    </li>
-                        
-                                <?php } ?>
-                            </ul>
-                        </li>
-                        <?php } if (hasPermission('visualizar_financeiro')) {?>
-                            <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
+                            <li class="nav-item dropdown <?= $active === 'pedagogico' ? 'active-link' : '' ?>">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-add_task"></i> Pedagógico
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <?php if (hasPermission('visualizar_periodos')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\dialetivos\">
+                                                <span>Dias Letivos</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_periodos')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\periodos\">
+                                                <span>Bimestres</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_coordenadores')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\coordenadores">
+                                                <span>Coordenadores</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_carga_horaria')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\carga-horaria">
+                                                <span>Carga Horaria</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_disciplinas')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\disciplinas\">
+                                                <span>Disciplinas</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_estudantes')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\estudantes\">
+                                                <span>Estudantes</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_professores')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\professores">
+                                                <span>Professores</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('visualizar_turmas')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="\turmas">
+                                                <span>Turmas</span>
+                                            </a>
+                                        </li>
+
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <?php }
+                        if (hasPermission('visualizar_financeiro')) { ?>
+                            <li class="nav-item dropdown <?= $active === 'financeiro' ? 'active-link' : '' ?>">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="icon-now_widgets"></i> Financeiro
                                 </a>
-                                <ul class="dropdown-menu"> 
+                                <ul class="dropdown-menu">
                                     <?php if (hasPermission('visualizar_contas_bancarias')) { ?>
                                         <li>
                                             <a class="dropdown-item" href="/bancos/">
@@ -104,39 +105,73 @@
                                             </a>
                                         </li>
                                     <?php } ?>
-                                    <?php if (hasPermission('visualizar boletos')) { ?>                               
-                                    <li>
-                                        <a class="dropdown-item current-page" href="/consumos/produto">
-                                            <span>Boletos</span>
-                                        </a>
-                                    </li>
-                                    <?php } if (hasPermission('visualizar_mensalidades')) { ?>
-                                    <li>
-                                        <a class="dropdown-item current-page" href="/mensalidades">
-                                            <span>Mensalidade</span>
-                                        </a>
-                                    </li>
-                                    <?php } if (hasPermission('visualizar_planos')) { ?>
-                                    <li>
-                                        <a class="dropdown-item current-page" href="/planos">
-                                            <span>Planos</span>
-                                        </a>
-                                    </li>
-                                    <? } if (hasPermission('visualizar contratos')) { ?>
-                                    <li>
-                                        <a class="dropdown-item current-page" href="/contratos">
-                                            <span>Contratos</span>
-                                        </a>
-                                    </li>
-                                <?php }?>
+                                    <?php if (hasPermission('visualizar boletos')) { ?>
+                                        <li>
+                                            <a class="dropdown-item current-page" href="/consumos/produto">
+                                                <span>Boletos</span>
+                                            </a>
+                                        </li>
+                                    <?php }
+                                    if (hasPermission('visualizar_mensalidades')) { ?>
+                                        <li>
+                                            <a class="dropdown-item current-page" href="/mensalidades">
+                                                <span>Mensalidade</span>
+                                            </a>
+                                        </li>
+                                    <?php }
+                                    if (hasPermission('visualizar_planos')) { ?>
+                                        <li>
+                                            <a class="dropdown-item current-page" href="/planos">
+                                                <span>Planos</span>
+                                            </a>
+                                        </li>
+                                    <? }
+                                    if (hasPermission('visualizar contratos')) { ?>
+                                        <li>
+                                            <a class="dropdown-item current-page" href="/contratos">
+                                                <span>Contratos</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
                                 </ul>
                             </li>
-                            <?php } if (hasPermission('visualizar site')) {?>
-                            <li class="nav-item dropdown <?=$active === 'financeiro' ? 'active-link': ''?>">
+                        <?php }
+
+                        if (hasPermission('visualizar_atas')) { ?>
+
+                            <li class="nav-item dropdown <?= $active === 'relatorios' ? 'active-link' : '' ?>">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-inventory"></i> Relatórios
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="/ata">
+                                            <span>ATA por turma</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php }
+                        if (hasPermission('visualizar_atas')) { ?>
+                            <li class="nav-item dropdown <?= $active === 'relatorios' ? 'active-link' : '' ?>">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="icon-shuffle"></i> Progressão
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="/progression">
+                                            <span>Progressão de estudante</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php }
+                        if (hasPermission('visualizar site')) { ?>
+                            <li class="nav-item dropdown <?= $active === 'financeiro' ? 'active-link' : '' ?>">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="icon-now_widgets"></i> Site
                                 </a>
-                                <ul class="dropdown-menu"> 
+                                <ul class="dropdown-menu">
                                     <?php if (hasPermission('visualizar site')) { ?>
                                         <li>
                                             <a class="dropdown-item" href="/site-albuns/">
@@ -148,44 +183,45 @@
                                             <a class="dropdown-item" href="/site-eventos/">
                                                 <span>Eventos</span>
                                             </a>
-                                            
+
 
                                         </li>
                                     <?php } ?>
                                 </ul>
                             </li>
-                        <?php } if (hasPermission('cadastrar_usuario')) { ?>
+                        <?php }
+                        if (hasPermission('cadastrar_usuario')) { ?>
                             <li class="nav-item dropdown ">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="icon-add_task"></i>Parâmetros
                                 </a>
-                                <ul class="dropdown-menu">                                    
-                                <?php if (hasPermission('cadastrar_usuario')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="/usuarios/">
-                                            <span>Usuários</span>
-                                        </a>
-                                    </li>                                    
-                                <?php } ?>               
-                                <?php if (hasPermission('cadastrar_permissao')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="/permissao/">
-                                            <span>Permissões</span>
-                                        </a>
-                                    </li>                                                                 
-                                <?php } ?>  
-                                <?php if (hasPermission('cadastrar_pessoa')) { ?>
-                                    <li>
-                                        <a class="dropdown-item" href="/pessoas/">
-                                            <span>Pessoa Contato</span>
-                                        </a>
-                                    </li>                                                               
-                                <?php } ?>  
+                                <ul class="dropdown-menu">
+                                    <?php if (hasPermission('cadastrar_usuario')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="/usuarios/">
+                                                <span>Usuários</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('cadastrar_permissao')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="/permissao/">
+                                                <span>Permissões</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (hasPermission('cadastrar_pessoa')) { ?>
+                                        <li>
+                                            <a class="dropdown-item" href="/pessoas/">
+                                                <span>Pessoa Contato</span>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
                                 </ul>
                             </li>
                         <?php } ?>
                         <?php if (hasPermission('estudante')) { ?>
-                            <li class="nav-item <?=$active === 'students' ? 'active-link': ''?>">
+                            <li class="nav-item <?= $active === 'students' ? 'active-link' : '' ?>">
                                 <a class="nav-link" href="/minhas-turmas"><i class="icon-book-open"></i> Minhas Turmas
                                 </a>
                             </li>
@@ -195,19 +231,19 @@
                             </li>
                         <? } ?>
                         <?php if (hasPermission('professor')) { ?>
-                            <li class="nav-item <?=$active === 'teacher' ? 'active-link': ''?>">
+                            <li class="nav-item <?= $active === 'teacher' ? 'active-link' : '' ?>">
                                 <a class="nav-link" href="/meus-componentes"><i class="icon-book-open"></i> Meus Componentes
                                 </a>
                             </li>
                         <? } ?>
                         <?php if ($_SESSION['user']->painel == "coordenador") { ?>
-                            <li class="nav-item <?=$active === 'coordinator' ? 'active-link': ''?>">
+                            <li class="nav-item <?= $active === 'coordinator' ? 'active-link' : '' ?>">
                                 <a class="nav-link" href="/minha-coordenacao"><i class="icon-book-open"></i> Minha Coordenação
                                 </a>
                             </li>
                         <? } ?>
                         <?php if (hasPermission('responsavel_legal')) { ?>
-                            <li class="nav-item <?=$active === 'responsible_legal' ? 'active-link': ''?>">
+                            <li class="nav-item <?= $active === 'responsible_legal' ? 'active-link' : '' ?>">
                                 <a class="nav-link" href="/minha-galerinha"><i class="icon-book-open"></i> Minha Galerinha
                                 </a>
                             </li>
@@ -216,9 +252,9 @@
                                 </a>
                             </li> -->
                         <? } ?>
-                            <li class="nav-item">
-                                <a class="nav-link text-warning" href="/logout">Sair</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-warning" href="/logout">Sair</a>
+                        </li>
                     </ul>
                 </div>
             </div>

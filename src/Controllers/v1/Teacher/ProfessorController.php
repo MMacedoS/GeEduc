@@ -184,6 +184,7 @@ class ProfessorController extends Controller
 
     public function indexTeacher(Request $request)
     {
+        $params = $request->getQueryParams();
 
         $pessoaAuth = $this->authUser();
 
@@ -193,9 +194,14 @@ class ProfessorController extends Controller
             return $this->router->redirect('dashboard?error=422');
         }
 
+        // Filtro de ano letivo
+        $currentYear = date('Y');
+        $schoolYear = $request->getParam('school_year') ?? $currentYear;
+
         $class_discipline = $this->turmaDisciplinaRepository
             ->classDisciplinesByTeacherId(
-                $professor->id
+                $professor->id,
+                $schoolYear
             );
 
         $perPage = 10;
@@ -208,7 +214,9 @@ class ProfessorController extends Controller
             'links' => $paginator->links(),
             'active' => 'teacher',
             'name_discipline' => $params['name_discipline'] ?? null,
-            'situation' => $params['situation'] ?? null
+            'situation' => $params['situation'] ?? null,
+            'school_year' => $schoolYear,
+            'current_year' => $currentYear
         ];
 
         return $this->router->view('/teacher/my-disciplines/index', $data);

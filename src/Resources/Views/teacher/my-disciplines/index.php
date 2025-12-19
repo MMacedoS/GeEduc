@@ -33,6 +33,34 @@
     <? } ?>
 </div>
 <!-- Row end -->
+
+<!-- Filtro de Ano Letivo -->
+<div class="row gx-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body py-2">
+                <form method="GET" action="/meus-componentes/" class="d-flex align-items-center gap-3">
+                    <label for="school_year" class="mb-0 text-nowrap">
+                        <i class="icon-calendar me-1"></i>Ano Letivo:
+                    </label>
+                    <select name="school_year" id="school_year" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <?php
+                        $startYear = $current_year - 5;
+                        $endYear = $current_year + 1;
+                        for ($year = $endYear; $year >= $startYear; $year--) : ?>
+                            <option value="<?= $year ?>" <?= $school_year == $year ? 'selected' : '' ?>>
+                                <?= $year ?>
+                            </option>
+                        <?php endfor; ?>
+                    </select>
+                    <small class="text-muted">
+                        Mostrando: <strong><?= $school_year ?></strong>
+                    </small>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <? if (isset($success)) { ?>
     <div class="alert border border-success alert-dismissible fade show text-success" role="alert">
         <b>Success!</b>.

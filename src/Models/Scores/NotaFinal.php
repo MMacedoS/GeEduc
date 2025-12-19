@@ -14,6 +14,7 @@ class NotaFinal
     public $estudante_turma_id;
     public $nota;
     public $situacao;
+    public $obs;
     public $ano_letivo;
     public $created_at;
     public $updated_at;

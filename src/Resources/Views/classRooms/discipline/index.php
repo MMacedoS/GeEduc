@@ -24,8 +24,10 @@
 
     <div class="col-4 col-xl-6">
         <div class="float-end">
-            <? if (hasPermission('vincular_turmas_disciplina')) { ?>
-                <a href="\turmas\<?= $turma->id ?>\disciplina" class="btn btn-outline-primary"> + </a>
+            <? if (hasPermission('vincular_turmas_disciplina')) {
+                $selectedYear = isset($school_year) ? $school_year : date('Y');
+            ?>
+                <a href="\turmas\<?= $turma->id ?>\disciplina?school_year=<?= $selectedYear ?>" class="btn btn-outline-primary"> + </a>
             <? } ?>
         </div>
     </div>
@@ -44,165 +46,153 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <? } ?>
-<!-- Row start -->
 
-
-<div class="row gx-3">
+<!-- Filtro de Ano Letivo -->
+<div class="row gx-3 mb-3">
     <div class="col-12">
-        <div class="card mb-3">
+        <div class="card">
             <div class="card-body">
-                <div class="table-outer">
-                    <div class="table-responsive">
-                        <table class="table table-striped align-middle m-0">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th class="text-center">Componente Curicular</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Professor</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Carga Horária</th>
-                                    <th class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">Situação</th>
-                                    <? if (hasPermission('editar_turmas_disciplinas') || hasPermission('deletar_turmas_disciplinas')) { ?>
-                                        <th>Ação</th>
-                                    <? } ?>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <? foreach ($turmas_disciplinas as $turma_disciplina) {
-                                ?>
-                                    <tr>
-                                        <td><?= $turma_disciplina->code ?></td>
-                                        <td class="text-center">
-                                            <?= $turma_disciplina->subject_name ?? 'não identificado' ?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                            <?= $turma_disciplina->teacher_name ?? 'não identificado' ?>
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                            <?= $turma_disciplina->workload ?? 'não identificado' ?> Horas
-                                        </td>
-                                        <td class="d-none d-xl-table-cell d-lg-table-cell d-md-table-cell">
-                                            <div class="d-flex align-items-center">
-                                                <? if ($turma_disciplina->active == 0) { ?>
-                                                    <i class="icon-circle1 me-2 text-danger fs-5"></i>
-                                                    Impedido
-                                                <? } ?>
-                                                <? if ($turma_disciplina->active == 1) { ?>
-                                                    <i class="icon-circle1 me-2 text-success fs-5"></i>
-                                                    Disponivel
-                                                <? } ?>
-                                            </div>
-                                        </td>
-                                        <? if (hasPermission('editar_turmas_disciplinas') || hasPermission('deletar_turmas_disciplinas')) { ?>
-                                            <td>
-                                                <div class="d-none d-xl-flex d-lg-flex d-md-flex">
-                                                    <? if (hasPermission('editar_turmas_disciplinas')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/turmas/<?= $turma->id ?>/disciplina/<?= $turma_disciplina->id ?>">
-                                                            <div class="border p-2 rounded-3">
-                                                                <i class="icon-edit fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-                                                    <? if (hasPermission('visualizar_atividades')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/turmas/<?= $turma->id ?>/disciplinas/<?= $turma_disciplina->id ?>/atividades">
-                                                            <div class="border p-2 rounded-3">
-                                                                <i class="icon-link fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-
-                                                    <? if (hasPermission('visualizar_atividades')) { ?>
-                                                        <a class="mb-1 me-2 mt-1" href="/turmas/<?= $turma->id ?>/disciplinas/<?= $turma_disciplina->id ?>/aulas">
-                                                            <div class="border p-2 rounded-3">
-                                                                <i class="icon-library_books fs-5"></i>
-                                                            </div>
-                                                        </a>
-                                                    <? } ?>
-
-                                                    <? if (hasPermission('deletar_turmas_disciplinas')) { ?>
-                                                        <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?= $turma_disciplina->id ?>">
-                                                            <div class="border p-2 rounded-3">
-                                                                <span class="fs-5 text-danger icon-delete1"></span>
-                                                            </div>
-                                                        </button>
-                                                    <? } ?>
-                                                </div>
-                                                <div class="d-block d-xl-none d-lg-none d-md-none dropdown ms-3">
-                                                    <a class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"
-                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="icon-menu"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <div class="header-action-links float-end">
-                                                            <? if (hasPermission('editar_turmas_disciplinas')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/turmas/<?= $turma->id ?>/disciplina/<?= $turma_disciplina->id ?>">
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <i class="icon-edit fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('visualizar_atividades')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/turmas/<?= $turma->id ?>/disciplinas/<?= $turma_disciplina->id ?>/atividades">
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <i class="icon-link fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('visualizar_atividades')) { ?>
-                                                                <a class="mb-1 me-2 mt-1" href="/turmas/<?= $turma->id ?>/disciplinas/<?= $turma_disciplina->id ?>/atividades">
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <i class="icon-edit fs-5"></i>
-                                                                    </div>
-                                                                </a>
-                                                            <? } ?>
-                                                            <? if (hasPermission('deletar_turmas_disciplinas')) { ?>
-                                                                <button class="btn btn-outline btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal_<?= $turma_disciplina->id ?>">
-                                                                    <div class="border p-2 rounded-3">
-                                                                        <span class="fs-5 text-danger icon-delete1"></span>
-                                                                    </div>
-                                                                </button>
-                                                            <? } ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="modal fade" id="exampleModal_<?= $turma_disciplina->id ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Tem certeza que deseja excluir este registro da Turma <?= $turma->nome ?? 'não identificado' ?>?
-                                                                <p>Disciplina <?= $turma_disciplina->subject_name ?? 'não identificado' ?></p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="button" onclick="deleteData('/turmas/<?= $turma->id ?>/disciplina/<?= $turma_disciplina->id ?>')" class="btn btn-danger">Confirmar Exclusão</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        <? } ?>
-                                    </tr>
-                                <? } ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="text-end ">
-                        Total <b><?= count($turmas_disciplinas) ?></b> registros
-                    </div>
-                </div>
+                <form method="GET" action="/turmas/<?= $turma->id ?>/disciplinas" class="d-flex align-items-center gap-3">
+                    <label class="form-label mb-0"><strong>Ano Letivo:</strong></label>
+                    <select name="school_year" class="form-select form-select-sm" style="width: 150px;" onchange="this.form.submit()">
+                        <?
+                        $currentYear = date('Y');
+                        $startYear = $currentYear - 5;
+                        $endYear = $currentYear + 1;
+                        for ($year = $endYear; $year >= $startYear; $year--) {
+                        ?>
+                            <option value="<?= $year ?>" <?= (isset($school_year) && $school_year == $year) ? 'selected' : ($year == $currentYear && !isset($school_year) ? 'selected' : '') ?>>
+                                <?= $year ?>
+                            </option>
+                        <? } ?>
+                    </select>
+                    <small class="text-muted">Exibindo disciplinas do ano <?= isset($school_year) ? $school_year : $currentYear ?></small>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Row start -->
+
+
+<div class="row gx-3">
+    <? if (!empty($turmas_disciplinas)) { ?>
+        <? foreach ($turmas_disciplinas as $turma_disciplina) { ?>
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
+                <div class="card h-100 border">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">#<?= $turma_disciplina->code ?></span>
+                        <? if ($turma_disciplina->active == 0) { ?>
+                            <span class="badge bg-danger">Impedido</span>
+                        <? } else { ?>
+                            <span class="badge bg-success">Disponível</span>
+                        <? } ?>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            <?= $turma_disciplina->subject_name ?? 'não identificado' ?>
+                        </h5>
+
+                        <div class="mb-2">
+                            <small class="text-muted"><i class="icon-user me-1"></i> <strong>Professor:</strong></small>
+                            <p class="mb-0"><?= $turma_disciplina->teacher_name ?? 'não identificado' ?></p>
+                        </div>
+
+                        <div class="mb-2">
+                            <small class="text-muted"><i class="icon-clock me-1"></i> <strong>Carga Horária:</strong></small>
+                            <p class="mb-0"><?= $turma_disciplina->workload ?? 'não identificado' ?> Horas</p>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-light">
+                        <div class="d-flex justify-content-around align-items-center flex-wrap gap-2">
+                            <? if (hasPermission('editar_turmas_disciplinas')) { ?>
+                                <a href="/turmas/<?= $turma->id ?>/disciplina/<?= $turma_disciplina->id ?>"
+                                    class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="icon-edit"></i>
+                                </a>
+                            <? } ?>
+
+                            <? if (hasPermission('visualizar_atividades')) { ?>
+                                <a href="/turmas/<?= $turma->id ?>/disciplinas/<?= $turma_disciplina->id ?>/atividades"
+                                    class="btn btn-sm btn-outline-info" title="Atividades">
+                                    <i class="icon-link"></i>
+                                </a>
+                            <? } ?>
+
+                            <? if (hasPermission('visualizar_atividades')) { ?>
+                                <a href="/turmas/<?= $turma->id ?>/disciplinas/<?= $turma_disciplina->id ?>/aulas"
+                                    class="btn btn-sm btn-outline-secondary" title="Aulas">
+                                    <i class="icon-library_books"></i>
+                                </a>
+                            <? } ?>
+
+                            <? if (hasPermission('deletar_turmas_disciplinas')) { ?>
+                                <button class="btn btn-sm btn-outline-danger" type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal_<?= $turma_disciplina->id ?>"
+                                    title="Excluir">
+                                    <i class="icon-delete1"></i>
+                                </button>
+                            <? } ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal de confirmação de exclusão -->
+                <div class="modal fade" id="exampleModal_<?= $turma_disciplina->id ?>" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Confirmação de Exclusão</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Tem certeza que deseja excluir este registro da Turma <?= $turma->name ?? 'não identificado' ?>?
+                                <p class="fw-bold mt-2">Disciplina: <?= $turma_disciplina->subject_name ?? 'não identificado' ?></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button"
+                                    onclick="deleteData('/turmas/<?= $turma->id ?>/disciplina/<?= $turma_disciplina->id ?>')"
+                                    class="btn btn-danger">Confirmar Exclusão</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <? } ?>
+    <? } else { ?>
+        <div class="col-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="alert alert-info mb-0">
+                        <i class="icon-info me-2"></i>
+                        Nenhuma disciplina vinculada a esta turma ainda.
+                    </div>
+                </div>
+            </div>
+        </div>
+    <? } ?>
+</div>
+
 <div class="row">
-    <div class="float-end">
-        <?= $links ?>
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Total <b><?= count($turmas_disciplinas) ?></b> registros</span>
+                    <div>
+                        <?= $links ?>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -6,6 +6,7 @@ use App\Config\Container;
 use App\Config\Router;
 use App\Controllers\api\v1\TimeSession\TimeSessionController;
 use App\Controllers\v1\Activitie\AtividadeController;
+use App\Controllers\v1\Ata\AtaController;
 use App\Controllers\v1\Bank_account\ContaBancariaController;
 use App\Controllers\v1\Calendar\DiaLetivoController;
 use App\Controllers\v1\ClassRooms\AulaController;
@@ -32,10 +33,10 @@ use App\Controllers\v1\Frequencies\FrequenciaController;
 use App\Controllers\v1\Period\PeriodoController;
 use App\Controllers\v1\Person\PessoaContatoController;
 use App\Controllers\v1\Profile\RecuperarSenhaController;
+use App\Controllers\v1\Progression\ProgressaoController;
 use App\Controllers\v1\Recuperation\RecuperacaoController;
 use App\Controllers\v1\Scores\NotaController;
 use App\Controllers\v1\Site\Album\SiteAlbumController;
-use App\Services\NotaHelperService;
 
 $router = new Router();
 $auth = new Auth();
@@ -46,6 +47,9 @@ $appServiceProvider->registerDependencies();
 
 /////created container active
 $atividadeController = $container->get(AtividadeController::class);
+
+$ataController = $container->get(AtaController::class);
+$progressionController = $container->get(ProgressaoController::class);
 
 $aulaController = $container->get(AulaController::class);
 
@@ -168,5 +172,8 @@ require_once "v1/integrations/integrationAutentique.php";
 
 require_once "api/v1/timeSessionRouters.php";
 
-return $router;
+require_once "v1/ata/ataRoute.php";
 
+require_once "v1/progression/progressionRoute.php";
+
+return $router;

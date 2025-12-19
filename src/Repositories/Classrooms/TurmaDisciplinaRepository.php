@@ -285,7 +285,7 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
         return $stmt->fetch();
     }
 
-    public function classDisciplinesByTeacherId(int $teacherId)
+    public function classDisciplinesByTeacherId(int $teacherId, ?string $academicYear = null)
     {
 
         $sql = "SELECT 
@@ -321,11 +321,18 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
             AND p.id = :id
         ";
 
+        $bindings = [':id' => $teacherId];
+
+        if ($academicYear) {
+            $sql .= " AND td.ano_letivo = :academic_year";
+            $bindings[':academic_year'] = $academicYear;
+        }
+
         $sql .= " ORDER BY p.created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
 
-        $stmt->execute([':id' => $teacherId]);
+        $stmt->execute($bindings);
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
     }

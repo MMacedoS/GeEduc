@@ -13,6 +13,8 @@ $router->create('POST', "/meus-componentes/turma/{turma_id}/disciplina/{discipli
 
 $router->create('POST', "/meus-componentes/turma/{turma_id}/disciplina/{disciplina_id}/exame-final", [$recuperacaoController, 'storeFinalExam'], $auth);
 
+$router->create('POST', "/meus-componentes/turma/{turma_id}/disciplina/{disciplina_id}/aprovar-conselho", [$recuperacaoController, 'approveByCouncil'], $auth);
+
 $router->create("GET", "/meus-componentes/", [$professorController, "indexTeacher"], $auth);
 $router->create('GET', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'indexTeacher'], $auth);
 $router->create('POST', "/meus-componentes/{id}/frequencia", [$frequenciaController, 'store'], $auth);
