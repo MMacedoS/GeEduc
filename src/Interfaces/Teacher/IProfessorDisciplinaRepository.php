@@ -2,7 +2,8 @@
 
 namespace App\Interfaces\Teacher;
 
-interface IProfessorDisciplinaRepository {
+interface IProfessorDisciplinaRepository
+{
 
     public function allTeacherDisciplines(array $params = []);
 
@@ -15,4 +16,6 @@ interface IProfessorDisciplinaRepository {
     public function findByUuid(string $uuid);
 
     public function findById(string $id);
+
+    public function duplicateForYear(int $turmaId, int $newYear): bool;
 }

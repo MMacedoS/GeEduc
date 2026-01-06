@@ -2,8 +2,9 @@
 
 namespace App\Interfaces\Activitie;
 
-interface IAtividadeRepository {
-    
+interface IAtividadeRepository
+{
+
     public function allActivities(array $params = []);
 
     public function create(array $params);
@@ -15,4 +16,6 @@ interface IAtividadeRepository {
     public function findByUuid(string $uuid);
 
     public function findById(string $id);
+
+    public function duplicateForNewYear(int $turmaId, int $newYear): bool;
 }

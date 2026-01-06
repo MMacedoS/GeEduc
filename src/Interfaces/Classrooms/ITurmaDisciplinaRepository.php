@@ -2,8 +2,9 @@
 
 namespace App\Interfaces\Classrooms;
 
-interface ITurmaDisciplinaRepository {
-    
+interface ITurmaDisciplinaRepository
+{
+
     public function allClassDisciplines(array $params = []);
 
     public function create(array $data);
@@ -21,4 +22,6 @@ interface ITurmaDisciplinaRepository {
     public function findById(string $id);
 
     public function classDisciplineByParams(array $params = []);
+
+    public function duplicateDisciplinesForYear(int $turmaId, int $newYear): bool;
 }

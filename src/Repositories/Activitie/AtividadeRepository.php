@@ -113,6 +113,53 @@ class AtividadeRepository extends SingletonInstance implements IAtividadeReposit
         }
     }
 
+    public function duplicateForNewYear(int $turmaId, int $newYear): bool
+    {
+        try {
+            $sql = "
+                INSERT INTO " . self::TABLE . " (uuid, turma_disciplina_id, tipo, valor, ativo)
+                SELECT 
+                    UUID(),
+                    td_new.id,
+                    a.tipo,
+                    a.valor,
+                    1
+                FROM atividade a
+                INNER JOIN turma_disciplina td_old ON td_old.id = a.turma_disciplina_id
+                INNER JOIN professor_disciplina pd_old ON pd_old.id = td_old.professor_disciplina_id
+                INNER JOIN professor_disciplina pd_new ON pd_new.professor_id = pd_old.professor_id
+                    AND pd_new.disciplina_id = pd_old.disciplina_id
+                    AND pd_new.ano_letivo = :new_year
+                INNER JOIN turma_disciplina td_new ON td_new.turma_id = td_old.turma_id
+                    AND td_new.professor_disciplina_id = pd_new.id
+                    AND td_new.ano_letivo = :new_year
+                WHERE td_old.turma_id = :turma_id
+                AND a.ativo = 1
+                AND td_old.ativo = 1
+                AND td_old.ano_letivo < :new_year
+                AND NOT EXISTS (
+                    SELECT 1 FROM atividade a2
+                    INNER JOIN turma_disciplina td2 ON td2.id = a2.turma_disciplina_id
+                    WHERE td2.id = td_new.id
+                    AND a2.tipo = a.tipo
+                    AND a2.valor = a.valor
+                )
+            ";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':turma_id' => $turmaId,
+                ':new_year' => $newYear
+            ]);
+
+            return true;
+        } catch (\Throwable $th) {
+            LoggerHelper::logError("Erro ao duplicar atividades: {$th->getMessage()}");
+            LoggerHelper::logError("Trace: " . $th->getTraceAsString());
+            return false;
+        }
+    }
+
     public function update(array $data, int $id)
     {
         $atividades = $this->findById($id);

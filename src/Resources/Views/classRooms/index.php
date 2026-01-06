@@ -222,6 +222,30 @@
                                                             <i class="icon-link me-1"></i> Gerenciar Disciplinas
                                                         </a>
                                                     <? } ?>
+                                                    <?
+                                                    if (hasPermission('cadastrar_turma') && $turma->active == 1 && !empty($turma->disciplines)) {
+                                                        $currentYear = date('Y');
+                                                        $disciplinesArray = is_object($turma->disciplines) ? (array)$turma->disciplines : $turma->disciplines;
+                                                        $hasCurrentYear = false;
+                                                        foreach ($disciplinesArray as $disc) {
+                                                            $discObj = is_array($disc) ? (object)$disc : $disc;
+                                                            if (isset($discObj->ano_letivo) && $discObj->ano_letivo == $currentYear) {
+                                                                $hasCurrentYear = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        if (!$hasCurrentYear) {
+                                                    ?>
+                                                            <button class="btn btn-sm btn-outline-info" type="button"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#duplicateModal_<?= $turma->id ?>"
+                                                                title="Adicionar disciplinas para o ano de <?= $currentYear ?>">
+                                                                <i class="icon-copy me-1"></i> Adicionar Ano <?= $currentYear ?>
+                                                            </button>
+                                                    <?
+                                                        }
+                                                    }
+                                                    ?>
                                                 </div>
                                             </div>
 
@@ -305,6 +329,34 @@
                                             data-bs-dismiss="modal">Cancelar</button>
                                         <button type="button" onclick="deleteData('/turma/<?= $turma->id ?>')"
                                             class="btn btn-danger">Confirmar Exclusão</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal de confirmação de adição de disciplinas -->
+                        <div class="modal fade" id="duplicateModal_<?= $turma->id ?>" tabindex="-1"
+                            aria-labelledby="duplicateModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="duplicateModalLabel">Adicionar Disciplinas para Novo Ano</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Deseja adicionar as disciplinas da turma <strong><?= $turma->name ?? 'não identificado' ?></strong> com os respectivos professores para o ano letivo de <strong><?= date('Y') ?></strong>?</p>
+                                        <div class="alert alert-info mt-3">
+                                            <i class="icon-info me-2"></i>
+                                            <small>Esta ação irá vincular as disciplinas atuais e professores desta turma ao novo ano letivo.</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancelar</button>
+                                        <form action="/turma/<?= $turma->id ?>/duplicate-disciplines" method="POST" style="display: inline;">
+                                            <button type="submit" class="btn btn-info">Confirmar</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

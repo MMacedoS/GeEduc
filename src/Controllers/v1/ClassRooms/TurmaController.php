@@ -5,6 +5,7 @@ namespace App\Controllers\v1\ClassRooms;
 use App\Controllers\Controller;
 use App\Controllers\v1\Traits\GenericTrait;
 use App\Interfaces\Classrooms\ITurmaRepository;
+use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
 use App\Interfaces\Coordination\ICoordenadorRepository;
 use App\Interfaces\Coordination\ICoordenadorTurmaRepository;
 use App\Request\Request;
@@ -16,18 +17,21 @@ class TurmaController extends Controller
 {
     use GenericTrait;
     protected $turmaRepository;
+    protected $turmaDisciplinaRepository;
     protected $coordenadorRepository;
     protected $coordenadorTurmaRepository;
     protected $turmaTransformer;
 
     public function __construct(
         ITurmaRepository $turmaRepository,
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
         ICoordenadorRepository $coordenadorRepository,
         ICoordenadorTurmaRepository $coordenadorTurmaRepository,
         TurmaTransformer $turmaTransformer
     ) {
         parent::__construct();
         $this->turmaRepository = $turmaRepository;
+        $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
         $this->coordenadorRepository = $coordenadorRepository;
         $this->coordenadorTurmaRepository = $coordenadorTurmaRepository;
         $this->turmaTransformer = $turmaTransformer;
@@ -181,5 +185,31 @@ class TurmaController extends Controller
         $this->turmaRepository->delete($turma->id);
 
         return $this->router->redirect('turmas/');
+    }
+
+    public function duplicateDisciplines(Request $request, string $id)
+    {
+        if (!hasPermission('cadastrar_turma')) {
+            return $this->router->redirect('dashboard?error=422');
+        }
+
+        $turma = $this->turmaRepository->findByUuid($id);
+
+        if (is_null($turma)) {
+            return $this->router->redirect('turmas?danger=1');
+        }
+
+        $currentYear = (int)date('Y');
+
+        $duplicated = $this->turmaDisciplinaRepository->duplicateDisciplinesForYear(
+            $turma->id,
+            $currentYear
+        );
+
+        if (!$duplicated) {
+            return $this->router->redirect('turmas?danger=1');
+        }
+
+        return $this->router->redirect('turmas?success=1');
     }
 }

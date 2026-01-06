@@ -4,8 +4,12 @@ namespace App\Repositories\Classrooms;
 
 use App\Config\Database;
 use App\Config\SingletonInstance;
+use App\Interfaces\Activitie\IAtividadeRepository;
 use App\Interfaces\Classrooms\ITurmaDisciplinaRepository;
+use App\Interfaces\Teacher\IProfessorDisciplinaRepository;
 use App\Models\Classrooms\TurmaDisciplina;
+use App\Repositories\Activitie\AtividadeRepository;
+use App\Repositories\Teacher\ProfessorDisciplinaRepository;
 use App\Repositories\Traits\FindTrait;
 use App\Utils\LoggerHelper;
 
@@ -16,10 +20,15 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
 
     use FindTrait;
 
+    protected $professorDisciplinaRepository;
+    protected $atividadeRepository;
+
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
         $this->model = new TurmaDisciplina();
+        $this->professorDisciplinaRepository = ProfessorDisciplinaRepository::getInstance();
+        $this->atividadeRepository = AtividadeRepository::getInstance();
     }
 
     public function allClassDisciplines(array $params = [])
@@ -335,5 +344,82 @@ class TurmaDisciplinaRepository extends SingletonInstance implements ITurmaDisci
         $stmt->execute($bindings);
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+    }
+    public function duplicateDisciplinesForYear(int $turmaId, int $newYear): bool
+    {
+        try {
+            $this->conn->beginTransaction();
+
+            $professorDisciplinaDuplicated = $this->professorDisciplinaRepository->duplicateForYear($turmaId, $newYear);
+
+            if (!$professorDisciplinaDuplicated) {
+                $this->conn->rollBack();
+                return false;
+            }
+
+            $turmaDisciplinaDuplicated = $this->duplicateTurmaDisciplinaRecords($turmaId, $newYear);
+
+            if (!$turmaDisciplinaDuplicated) {
+                $this->conn->rollBack();
+                return false;
+            }
+
+            $atividadesDuplicated = $this->atividadeRepository->duplicateForNewYear($turmaId, $newYear);
+
+            if (!$atividadesDuplicated) {
+                $this->conn->rollBack();
+                return false;
+            }
+
+            $this->conn->commit();
+            return true;
+        } catch (\Throwable $th) {
+            $this->conn->rollBack();
+            LoggerHelper::logError("Erro ao duplicar disciplinas: {$th->getMessage()}");
+            LoggerHelper::logError("Trace: " . $th->getTraceAsString());
+            return false;
+        }
+    }
+
+    private function duplicateTurmaDisciplinaRecords(int $turmaId, int $newYear): bool
+    {
+        try {
+            $sql = "
+                INSERT INTO " . self::TABLE . " (uuid, turma_id, carga_horaria_id, professor_disciplina_id, ativo, ano_letivo)
+                SELECT 
+                    UUID(), 
+                    td.turma_id, 
+                    td.carga_horaria_id,
+                    pd_new.id,
+                    1,
+                    :new_year
+                FROM turma_disciplina td
+                INNER JOIN professor_disciplina pd_old ON pd_old.id = td.professor_disciplina_id
+                INNER JOIN professor_disciplina pd_new ON pd_new.professor_id = pd_old.professor_id
+                    AND pd_new.disciplina_id = pd_old.disciplina_id
+                    AND pd_new.ano_letivo = :new_year
+                WHERE td.turma_id = :turma_id 
+                AND td.ativo = 1
+                AND pd_old.ativo = 1
+                AND td.ano_letivo < :new_year
+                AND NOT EXISTS (
+                    SELECT 1 FROM turma_disciplina td2
+                    WHERE td2.turma_id = td.turma_id
+                    AND td2.professor_disciplina_id = pd_new.id
+                    AND td2.ano_letivo = :new_year
+                )
+                ORDER BY td.created_at DESC
+            ";
+
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':turma_id' => $turmaId,
+                ':new_year' => $newYear
+            ]);
+        } catch (\Throwable $th) {
+            LoggerHelper::logError("Erro ao duplicar turma_disciplina: {$th->getMessage()}");
+            LoggerHelper::logError("Trace: " . $th->getTraceAsString());
+            return false;
+        }
     }
 }

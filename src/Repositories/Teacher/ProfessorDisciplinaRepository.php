@@ -170,4 +170,43 @@ class ProfessorDisciplinaRepository extends SingletonInstance implements IProfes
 
         return $updated;
     }
+
+    public function duplicateForYear(int $turmaId, int $newYear): bool
+    {
+        try {
+            $sql = "
+                INSERT IGNORE INTO " . self::TABLE . " (uuid, professor_id, disciplina_id, ano_letivo, ativo)
+                SELECT DISTINCT
+                    UUID(),
+                    pd.professor_id,
+                    pd.disciplina_id,
+                    :new_year,
+                    1
+                FROM turma_disciplina td
+                INNER JOIN professor_disciplina pd ON pd.id = td.professor_disciplina_id
+                WHERE td.turma_id = :turma_id
+                AND td.ativo = 1
+                AND pd.ativo = 1
+                AND td.ano_letivo < :new_year
+                AND NOT EXISTS (
+                    SELECT 1 FROM professor_disciplina pd2
+                    WHERE pd2.professor_id = pd.professor_id
+                    AND pd2.disciplina_id = pd.disciplina_id
+                    AND pd2.ano_letivo = :new_year
+                )
+            ";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':turma_id' => $turmaId,
+                ':new_year' => $newYear
+            ]);
+
+            return true;
+        } catch (\Throwable $th) {
+            LoggerHelper::logError("Erro ao duplicar professor_disciplina: {$th->getMessage()}");
+            LoggerHelper::logError("Trace: " . $th->getTraceAsString());
+            return false;
+        }
+    }
 }
