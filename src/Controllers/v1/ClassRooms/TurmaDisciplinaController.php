@@ -111,10 +111,15 @@ class TurmaDisciplinaController extends Controller
 
         $classRoom = $this->turmaRepository->findByUuid($turma_id);
 
+        // Obter ano letivo do parâmetro ou usar o ano atual
+        $currentYear = date('Y');
+        $schoolYear = $request->getParam('school_year') ?? $currentYear;
+
         $class_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
-                    'class_id' => $classRoom->id
+                    'class_id' => $classRoom->id,
+                    'academic_year' => $schoolYear
                 ]
             );
 
@@ -133,7 +138,9 @@ class TurmaDisciplinaController extends Controller
                 'links' => $paginator->links(),
                 'active' => 'coordinator',
                 'name_discipline' => $params['name_discipline'] ?? null,
-                'situation' => $params['situation'] ?? null
+                'situation' => $params['situation'] ?? null,
+                'school_year' => $schoolYear,
+                'current_year' => $currentYear
             ]
         );
     }

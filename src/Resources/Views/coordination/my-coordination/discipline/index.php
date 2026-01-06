@@ -107,7 +107,7 @@
 
                         <div class="d-flex flex-wrap gap-2 mt-2">
                             <? if (hasPermission('professor') || hasPermission('coordenador')) { ?>
-                                <a href="/relatorios/<?= $disciplina->id ?>/gerar-grade"
+                                <a href="/relatorios/<?= $disciplina->id ?>/gerar-grade?school_year=<?= $school_year ?? date('Y') ?>"
                                     class="btn btn-sm btn-outline-primary flex-fill"
                                     target="_blank"
                                     title="Grade">

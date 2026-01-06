@@ -185,14 +185,14 @@
 
                     <div class="d-flex flex-wrap gap-2">
                         <? if (hasPermission('editar_disciplina')) { ?>
-                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/disciplinas"
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/disciplinas?school_year=<?= $school_year ?>"
                                 class="btn btn-sm btn-outline-primary flex-fill"
                                 title="Disciplinas">
                                 <i class="icon-subject me-1"></i>Disciplinas
                             </a>
                         <? } ?>
                         <? if (hasPermission('editar_disciplina')) { ?>
-                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/disciplinas"
+                            <a href="/minha-coordenacao/turma/<?= $turmaDetails->uuid ?>/disciplinas?school_year=<?= $school_year ?>"
                                 class="btn btn-sm btn-outline-secondary flex-fill"
                                 style="border-color: #86A789; color: #86A789;"
                                 title="Notas">
@@ -211,7 +211,7 @@
 
                     <div class="d-flex flex-wrap gap-2 mt-2">
                         <? if (hasPermission('coordenador')) { ?>
-                            <a href="/relatorios/turma/<?= $turmaDetails->uuid ?>/boletins"
+                            <a href="/relatorios/turma/<?= $turmaDetails->uuid ?>/boletins?school_year=<?= $school_year ?>"
                                 class="btn btn-sm btn-outline-primary flex-fill"
                                 target="_blank"
                                 title="Grade">

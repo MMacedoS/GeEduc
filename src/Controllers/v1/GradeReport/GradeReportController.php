@@ -72,11 +72,14 @@ class GradeReportController extends Controller
         $turma_disciplina = $this->turmaDisciplinaRepository
             ->findByUuid($class_discipline_id);
 
+        // Obter ano letivo do parâmetro ou usar o ano atual
+        $schoolYear = $request->getParam('school_year') ?? date('Y');
+
         $estudantes = $this->estudanteTurmaRepository
             ->allClassStudents(
                 [
                     'class_id' => $turma_disciplina->turma_id,
-                    'school_year' => Date('Y')
+                    'school_year' => $schoolYear
                 ]
             );
 
@@ -165,13 +168,16 @@ class GradeReportController extends Controller
             return $this->router->redirect('dashboard?error=422');
         }
 
+        // Obter ano letivo do parâmetro ou usar o ano atual
+        $schoolYear = $request->getParam('school_year') ?? date('Y');
+
         $periodos = $this->periodoRepository->all(['active' => '1']);
 
         $all_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
                     'class_id' => $class->id,
-                    'academic_year' => Date('Y')
+                    'academic_year' => $schoolYear
                 ]
             );
 
@@ -182,7 +188,7 @@ class GradeReportController extends Controller
             ->allClassStudents(
                 [
                     'class_id' => $class->id,
-                    'school_year' => Date('Y')
+                    'school_year' => $schoolYear
                 ]
             );
 
@@ -204,13 +210,16 @@ class GradeReportController extends Controller
     {
         $class = $this->turmaRepository->findByUuid($turma_id);
 
+        // Obter ano letivo do parâmetro ou usar o ano atual
+        $schoolYear = $request->getParam('school_year') ?? date('Y');
+
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $all_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
                     'class_id' => $class->id,
-                    'academic_year' => Date('Y')
+                    'academic_year' => $schoolYear
                 ]
             );
 
@@ -221,7 +230,7 @@ class GradeReportController extends Controller
             ->allClassStudents(
                 [
                     'class_id' => $class->id,
-                    'school_year' => Date('Y')
+                    'school_year' => $schoolYear
                 ]
             );
         $all_students = $this->estudanteTurmaTransformer
@@ -243,13 +252,16 @@ class GradeReportController extends Controller
     {
         $class = $this->turmaRepository->findByUuid($turma_id);
 
+        // Obter ano letivo do parâmetro ou usar o ano atual
+        $schoolYear = $request->getParam('school_year') ?? date('Y');
+
         $periodos = array_reverse($this->periodoRepository->all(['active' => '1']));
 
         $all_disciplines = $this->turmaDisciplinaRepository
             ->allClassDisciplines(
                 [
                     'class_id' => $class->id,
-                    'academic_year' => Date('Y')
+                    'academic_year' => $schoolYear
                 ]
             );
 
@@ -261,7 +273,7 @@ class GradeReportController extends Controller
                 [
                     'class_id' => $class->id,
                     'uuid' => $estudante_id,
-                    'school_year' => Date('Y')
+                    'school_year' => $schoolYear
                 ]
             );
 
