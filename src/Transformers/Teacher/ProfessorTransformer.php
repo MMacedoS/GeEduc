@@ -7,25 +7,25 @@ use App\Repositories\Person\PessoaFisicaRepository;
 
 class ProfessorTransformer
 {
-    public function transform(Professor $professor)
+    public static function transform(Professor $professor)
     {
         return [
             'code' => $professor->id,
             'id' => $professor->uuid,
-            'name' => $this->prepareNameTeacher($professor->pessoa_fisica_id),
-            'email' => $this->prepareEmailTeacher($professor->pessoa_fisica_id),
+            'name' => self::prepareNameTeacher($professor->pessoa_fisica_id),
+            'email' => self::prepareEmailTeacher($professor->pessoa_fisica_id),
             'active' => $professor->ativo,
             'created_at' => $professor->created_at,
             'updated_at' => $professor->updated_at,
         ];
     }
 
-    public function transformCollection(array $professors)
+    public static function transformCollection(array $professors)
     {
-        return array_map([$this, 'transform'], $professors);
+        return array_map(fn($professor) => self::transform($professor), $professors);
     }
 
-    private function prepareNameTeacher($id)
+    private static function prepareNameTeacher($id)
     {
         if (is_null($id)) {
             return null;
@@ -35,7 +35,7 @@ class ProfessorTransformer
         return $pessoaFisica ? $pessoaFisica->nome : null;
     }
 
-    private function prepareEmailTeacher($id)
+    private static function prepareEmailTeacher($id)
     {
         if (is_null($id)) {
             return null;

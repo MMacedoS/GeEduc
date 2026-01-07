@@ -7,26 +7,30 @@ use App\Repositories\Classrooms\TurmaRepository;
 
 class EstudanteTurmaTransformer
 {
-    public function transform(EstudanteTurma $studentClass)
+    public static function transform(EstudanteTurma $studentClass)
     {
+        $turmaData = self::prepareClassData($studentClass->turma);
+        $estudanteData = self::prepareStudentData($studentClass->estudante);
+
         return [
             'code' => $studentClass->id,
+            'uuid' => $studentClass->uuid,
             'id' => $studentClass->uuid,
             'student_id' => $studentClass->estudante_id,
-            'student' => $this->prepareStudentName($studentClass->estudante),
+            'estudante' => $estudanteData,
             'class_id' => $studentClass->turma_id,
-            'class_name' => $this->prepareNameClass($studentClass->turma_id),
+            'turma' => $turmaData,
             'school_year' => $studentClass->ano_letivo,
             'status' => $studentClass->ativo ? 'active' : 'inactive',
         ];
     }
 
-    public function transformCollection(array $studentClasses)
+    public static function transformCollection(array $studentClasses)
     {
-        return array_map(fn($studentClass) => $this->transform($studentClass), $studentClasses);
+        return array_map(fn($studentClass) => self::transform($studentClass), $studentClasses);
     }
 
-    private function prepareStudentName($student)
+    private static function prepareStudentData($student)
     {
         if (is_null($student)) {
             return null;
@@ -34,20 +38,28 @@ class EstudanteTurmaTransformer
 
         $student = getJsonToObject($student);
 
-        return (object)[
-            'id' => $student->id,
-            'name' => $student->nome,
-            'uuid' => $student->uuid,
+        return [
+            'id' => $student->id ?? null,
+            'uuid' => $student->uuid ?? null,
+            'nome' => $student->nome ?? 'N/A',
+            'matricula' => $student->matricula ?? null,
+            'pessoa_fisica_id' => $student->pessoa_fisica_id ?? null
         ];
     }
 
-    private function prepareNameClass($id)
+    private static function prepareClassData($turma)
     {
-        if (is_null($id)) {
+        if (is_null($turma)) {
             return null;
         }
 
-        $turma = TurmaRepository::getInstance()->findById($id);
-        return $turma ? $turma->nome : null;
+        $turma = getJsonToObject($turma);
+
+        return [
+            'id' => $turma->id ?? null,
+            'nome' => $turma->nome ?? 'N/A',
+            'visivel' => $turma->visivel ?? 1,
+            'ordem' => $turma->ordem ?? 0
+        ];
     }
 }

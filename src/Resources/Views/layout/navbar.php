@@ -152,8 +152,8 @@
                                 </ul>
                             </li>
                         <?php }
-                        if (hasPermission('visualizar_atas')) { ?>
-                            <li class="nav-item dropdown <?= $active === 'relatorios' ? 'active-link' : '' ?>">
+                        if (hasPermission('visualizar_progressao')) { ?>
+                            <li class="nav-item dropdown <?= $active === 'progression' ? 'active-link' : '' ?>">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="icon-shuffle"></i> Progressão
                                 </a>

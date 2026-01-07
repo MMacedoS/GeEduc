@@ -203,4 +203,28 @@ class TurmaRepository extends SingletonInstance implements ITurmaRepository
 
         return $updated;
     }
+
+    public function getClassroomsWithDisciplinesByYear(int $order, int $year = 2026)
+    {
+        $sql = "SELECT DISTINCT t.* 
+                FROM turmas t
+                INNER JOIN turma_disciplina td ON td.turma_id = t.id
+                WHERE t.ativo = 1 
+                AND td.ano_letivo = :year
+                AND t.ordem = :order
+                ORDER BY t.ordem ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':year' => $year,
+            ':order' => $order
+        ]);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::CLASS_NAME);
+    }
+
+    public function getConnection()
+    {
+        return $this->conn;
+    }
 }

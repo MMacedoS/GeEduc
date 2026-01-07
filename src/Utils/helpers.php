@@ -58,6 +58,9 @@ if (!function_exists('getCustomers')) {
 if (!function_exists('getJsonToObject')) {
     function getJsonToObject($data)
     {
+        if (empty($data)) {
+            return null;
+        }
         return json_decode($data);
     }
 }

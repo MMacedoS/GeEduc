@@ -21,21 +21,18 @@ class ProfessorController extends Controller
     protected $professorDisciplinaRepository;
     protected $pessoaFisicaRepository;
     protected $turmaDisciplinaRepository;
-    protected $professorTransformer;
 
     public function __construct(
         IProfessorRepository $professorRepository,
         IProfessorDisciplinaRepository $professorDisciplinaRepository,
         IPessoaFisicaRepository $pessoaFisicaRepository,
-        ITurmaDisciplinaRepository $turmaDisciplinaRepository,
-        ProfessorTransformer $professorTransformer
+        ITurmaDisciplinaRepository $turmaDisciplinaRepository
     ) {
         parent::__construct();
         $this->professorRepository = $professorRepository;
         $this->pessoaFisicaRepository = $pessoaFisicaRepository;
         $this->professorDisciplinaRepository = $professorDisciplinaRepository;
         $this->turmaDisciplinaRepository = $turmaDisciplinaRepository;
-        $this->professorTransformer = $professorTransformer;
     }
 
     public function index(Request $request)
@@ -52,7 +49,7 @@ class ProfessorController extends Controller
         $paginator = new Paginator($professores, $perPage, $currentPage);
         $paginatedBoards = $paginator->getPaginatedItems();
 
-        $paginatedBoards = $this->professorTransformer->transformCollection($paginatedBoards);
+        $paginatedBoards = ProfessorTransformer::transformCollection($paginatedBoards);
 
         return $this->router->view('teacher/index', [
             'active' => 'pedagogico',

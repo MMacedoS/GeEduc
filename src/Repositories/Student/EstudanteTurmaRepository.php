@@ -31,6 +31,7 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
                         'id', t.uuid,
                         'nome', t.nome,
                         'visivel', t.visivel,
+                        'ordem', t.ordem,
                         'coordenadores', JSON_ARRAYAGG(
                             JSON_OBJECT(
                                 'nome', pf.nome,
@@ -42,7 +43,8 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
                         'id', e.id,
                         'uuid', e.uuid,
                         'pessoa_fisica_id', e.pessoa_fisica_id,
-                        'nome', pfe.nome
+                        'nome', pfe.nome,
+                        'matricula', e.matricula
                     ) AS estudante
                 FROM estudante_turma et
                 LEFT JOIN turmas t ON t.id = et.turma_id AND t.ativo = 1
@@ -91,11 +93,16 @@ class EstudanteTurmaRepository extends SingletonInstance implements IEstudanteTu
             $bindings[':ativo'] = $params['active'];
         }
 
+        if (isset($params['coordinator_id'])) {
+            $conditions[] = "c.id = :coordinator_id";
+            $bindings[':coordinator_id'] = $params['coordinator_id'];
+        }
+
         if (count($conditions) > 0) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
-        $sql .= " GROUP BY et.id, e.id, pfe.id ORDER BY pfe.nome ASC";
+        $sql .= " GROUP BY et.id, e.id, pfe.id, t.id ORDER BY t.ordem DESC, pfe.nome ASC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($bindings);

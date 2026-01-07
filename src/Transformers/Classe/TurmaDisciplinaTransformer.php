@@ -10,46 +10,45 @@ use App\Transformers\Teacher\ProfessorDisciplinaTransformer;
 
 class TurmaDisciplinaTransformer
 {
-    public function transform(TurmaDisciplina $turmaDisciplina)
+    public static function transform(TurmaDisciplina $turmaDisciplina)
     {
         return (object)[
             'code' => $turmaDisciplina->id,
             'id' => $turmaDisciplina->uuid,
-            'class_name' => $this->prepareTurmaName($turmaDisciplina->turma_id),
+            'class_name' => self::prepareTurmaName($turmaDisciplina->turma_id),
             'class_id' => $turmaDisciplina->turma_id,
-            'class_uuid' => $this->prepareTurmaId($turmaDisciplina->turma_id),
+            'class_uuid' => self::prepareTurmaId($turmaDisciplina->turma_id),
             'subject_id' => $turmaDisciplina->professor_disciplina_id,
-            'subject_name' => $this->prepareTurmaDisciplinaName(
+            'subject_name' => self::prepareTurmaDisciplinaName(
                 $turmaDisciplina
                     ->professor_disciplina_id
             )->subject_name ?? null,
-            'teacher_name' => $this->prepareTurmaDisciplinaName(
+            'teacher_name' => self::prepareTurmaDisciplinaName(
                 $turmaDisciplina
                     ->professor_disciplina_id
             )->teacher_name ?? null,
             'school_year' => $turmaDisciplina->ano_letivo,
-            'workload' => $this->prepareWorkload($turmaDisciplina->carga_horaria_id),
+            'workload' => self::prepareWorkload($turmaDisciplina->carga_horaria_id),
             'active' => $turmaDisciplina->ativo,
             'created_at' => $turmaDisciplina->created_at,
             'updated_at' => $turmaDisciplina->updated_at,
         ];
     }
 
-    public function transformCollection(array $turmaDisciplinas)
+    public static function transformCollection(array $turmaDisciplinas)
     {
-        return array_map(fn($class) => $this->transform($class), $turmaDisciplinas);
+        return array_map(fn($class) => self::transform($class), $turmaDisciplinas);
     }
 
-    private function prepareTurmaDisciplinaName($id)
+    private static function prepareTurmaDisciplinaName($id)
     {
         $professorDisciplinaRepository = ProfessorDisciplinaRepository::getInstance();
         $professorDisciplina = $professorDisciplinaRepository->findById($id);
-        $professorDisciplinaTransformer = new ProfessorDisciplinaTransformer();
 
-        return (object)$professorDisciplinaTransformer->transform($professorDisciplina);
+        return (object)ProfessorDisciplinaTransformer::transform($professorDisciplina);
     }
 
-    private function prepareTurmaName($id)
+    private static function prepareTurmaName($id)
     {
         if (is_null($id)) {
             return null;
@@ -59,7 +58,7 @@ class TurmaDisciplinaTransformer
         return $turma ? $turma->nome : null;
     }
 
-    private function prepareTurmaId($id)
+    private static function prepareTurmaId($id)
     {
         if (is_null($id)) {
             return null;
@@ -69,7 +68,7 @@ class TurmaDisciplinaTransformer
         return $turma ? $turma->uuid : null;
     }
 
-    private function prepareWorkload($id)
+    private static function prepareWorkload($id)
     {
         $cargaHorariaRepository = CargaHorariaRepository::getInstance();
         $cargaHoraria = $cargaHorariaRepository->findById($id);

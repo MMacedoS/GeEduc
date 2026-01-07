@@ -8,7 +8,7 @@ use App\Repositories\Student\EstudanteTurmaRepository;
 
 class EstudanteTransformer
 {
-    public function transform(Estudante $student)
+    public static function transform(Estudante $student)
     {
         if (is_array($student)) {
             $student = (object) $student;
@@ -17,15 +17,15 @@ class EstudanteTransformer
         return [
             'code' => $student->id,
             'id' => $student->uuid,
-            'class' => $this->studentClasse($student->id),
-            'student_name' => $this->prepareStudentName($student->id),
-            'birth_date' => $this->prepareBirthDate($student->id),
-            'student_email' => $this->prepareStudentEmail($student->id),
+            'class' => self::studentClasse($student->id),
+            'student_name' => self::prepareStudentName($student->id),
+            'birth_date' => self::prepareBirthDate($student->id),
+            'student_email' => self::prepareStudentEmail($student->id),
             'active' => $student->ativo,
         ];
     }
 
-    private function studentClasse($studentId)
+    private static function studentClasse($studentId)
     {
         if (is_null($studentId)) {
             return null;
@@ -33,19 +33,17 @@ class EstudanteTransformer
 
         $estudanteTurmaRepository = EstudanteTurmaRepository::getInstance();
 
-        $estudanteTurmaTransformer = new EstudanteTurmaTransformer();
-
         $studentClasses = $estudanteTurmaRepository->studentClassByStudentId($studentId);
 
         if (empty($studentClasses)) {
             return null;
         }
 
-        $transformedClasses = (object)$estudanteTurmaTransformer->transform($studentClasses);
+        $transformedClasses = (object)EstudanteTurmaTransformer::transform($studentClasses);
         return $transformedClasses->class_name ?? null;
     }
 
-    private function prepareStudentName($studentId)
+    private static function prepareStudentName($studentId)
     {
         if (is_null($studentId)) {
             return null;
@@ -55,7 +53,7 @@ class EstudanteTransformer
         return $pessoaFisica ? $pessoaFisica->nome : null;
     }
 
-    private function prepareBirthDate($studentId)
+    private static function prepareBirthDate($studentId)
     {
         if (is_null($studentId)) {
             return null;
@@ -65,7 +63,7 @@ class EstudanteTransformer
         return $pessoaFisica ? $pessoaFisica->data_nascimento : null;
     }
 
-    private function prepareStudentEmail($studentId)
+    private static function prepareStudentEmail($studentId)
     {
         if (is_null($studentId)) {
             return null;
@@ -74,8 +72,8 @@ class EstudanteTransformer
         return $pessoaFisica ? $pessoaFisica->email : null;
     }
 
-    public function transformCollection(array $students): array
+    public static function transformCollection(array $students): array
     {
-        return array_map(fn($student) => $this->transform($student), $students);
+        return array_map(fn($student) => self::transform($student), $students);
     }
 }

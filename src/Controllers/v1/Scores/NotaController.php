@@ -25,7 +25,6 @@ class NotaController extends Controller
     protected $estudanteRepository;
     protected $periodoRepository;
     protected $paralelaRepository;
-    protected $turmaDisciplinaTransformer;
 
     public function __construct(
         IAtividadeRepository $atividadeRepository,
@@ -34,8 +33,7 @@ class NotaController extends Controller
         IEstudanteRepository $estudanteRepository,
         IPeriodoRepository $periodoRepository,
         INotaRepository $notaRepository,
-        IParalelaRepository $paralelaRepository,
-        TurmaDisciplinaTransformer $turmaDisciplinaTransformer
+        IParalelaRepository $paralelaRepository
     ) {
         parent::__construct();
         $this->atividadeRepository = $atividadeRepository;
@@ -45,7 +43,6 @@ class NotaController extends Controller
         $this->periodoRepository = $periodoRepository;
         $this->notaRepository = $notaRepository;
         $this->paralelaRepository = $paralelaRepository;
-        $this->turmaDisciplinaTransformer = $turmaDisciplinaTransformer;
     }
 
     private function defineRoutes($class_discipline_id)
@@ -103,7 +100,7 @@ class NotaController extends Controller
             "$this->routeView/score",
             [
                 'active' => $this->active,
-                'turma_disciplina' => $this->turmaDisciplinaTransformer->transform($turma_disciplina),
+                'turma_disciplina' => TurmaDisciplinaTransformer::transform($turma_disciplina),
                 'estudantes' => $estudantes,
                 'notas' => $notas,
                 'periodos' => $periodos,

@@ -22,4 +22,6 @@ interface ITurmaRepository
     public function allClassroomsByTeacherID(?int $id);
 
     public function delete(int $id);
+
+    public function getClassroomsWithDisciplinesByYear(int $order, int $year);
 }

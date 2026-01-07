@@ -8,22 +8,24 @@ use App\Repositories\Classrooms\TurmaDisciplinaRepository;
 
 class TurmaTransformer
 {
-    public function transform(Turma $class)
+    public static function transform(Turma $class)
     {
         return [
             'code' => $class->id,
             'id' => $class->uuid,
             'name' => $class->nome,
+            'nome' => $class->nome,
             'order' => $class->ordem,
-            'coordinators' => $this->prepareCoordinators($class->id),
+            'ordem' => $class->ordem,
+            'coordinators' => self::prepareCoordinators($class->id),
             'visible' => $class->visivel,
             'shift' => $class->turno,
             'active' => $class->ativo,
-            'disciplines' => $this->prepareDisciplines($class->id),
+            'disciplines' => self::prepareDisciplines($class->id),
         ];
     }
 
-    private function prepareCoordinators($classId)
+    private static function prepareCoordinators($classId)
     {
         if (!$classId) {
             return [];
@@ -45,7 +47,7 @@ class TurmaTransformer
         return $details;
     }
 
-    private function prepareDisciplines($classId)
+    private static function prepareDisciplines($classId)
     {
         if (!$classId) {
             return [];
@@ -85,8 +87,8 @@ class TurmaTransformer
         return array_filter($details);
     }
 
-    public function transformCollection(array $classes): array
+    public static function transformCollection(array $classes): array
     {
-        return array_map(fn($class) => $this->transform($class), $classes);
+        return array_map(fn($class) => self::transform($class), $classes);
     }
 }

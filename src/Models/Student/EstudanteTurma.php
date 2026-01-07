@@ -4,8 +4,9 @@ namespace App\Models\Student;
 
 use App\Models\Traits\UuidTrait;
 
-class EstudanteTurma {
-    
+class EstudanteTurma
+{
+
     use UuidTrait;
 
     public $id;
@@ -19,7 +20,7 @@ class EstudanteTurma {
     public $created_at;
     public $updated_at;
 
-    public function __construct () {}
+    public function __construct() {}
 
     public function create(
         array $data
@@ -34,14 +35,26 @@ class EstudanteTurma {
         if (isset($data['class_id'])) {
             $estudante_turma->turma_id = $data['class_id'];
         }
+        if (isset($data['turma_id'])) {
+            $estudante_turma->turma_id = $data['turma_id'];
+        }
         if (isset($data['student_id'])) {
             $estudante_turma->estudante_id = $data['student_id'];
+        }
+        if (isset($data['estudante_id'])) {
+            $estudante_turma->estudante_id = $data['estudante_id'];
         }
         if (isset($data['active'])) {
             $estudante_turma->ativo = $data['active'];
         }
+        if (isset($data['ativo'])) {
+            $estudante_turma->ativo = $data['ativo'];
+        }
         if (isset($data['school_year'])) {
             $estudante_turma->ano_letivo = $data['school_year'];
+        }
+        if (isset($data['ano_letivo'])) {
+            $estudante_turma->ano_letivo = $data['ano_letivo'];
         }
         if (isset($data['created_at'])) {
             $estudante_turma->created_at = $data['created_at'];
@@ -55,10 +68,10 @@ class EstudanteTurma {
 
     public function update(array $data, EstudanteTurma $estudante_turma): EstudanteTurma
     {
-        $estudante_turma->turma_id = $data['class_id'] ?? $estudante_turma->turma_id;
-        $estudante_turma->estudante_id = $data['student_id'] ?? $estudante_turma->estudante_id;
-        $estudante_turma->ano_letivo = $data['school_year'] ?? $estudante_turma->ano_letivo;
-        $estudante_turma->ativo = $data['active'] ?? $estudante_turma->ativo;
+        $estudante_turma->turma_id = $data['class_id'] ?? $data['turma_id'] ?? $estudante_turma->turma_id;
+        $estudante_turma->estudante_id = $data['student_id'] ?? $data['estudante_id'] ?? $estudante_turma->estudante_id;
+        $estudante_turma->ano_letivo = $data['school_year'] ?? $data['ano_letivo'] ?? $estudante_turma->ano_letivo;
+        $estudante_turma->ativo = $data['active'] ?? $data['ativo'] ?? $estudante_turma->ativo;
 
         return $estudante_turma;
     }
