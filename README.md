@@ -94,8 +94,12 @@ DB_USER=root
 DB_PASS=secret
 JWT_SECRET=suachavesecreta
 
-php -S localhost:8000 -t Public
+docker-compose up -d --build
 
+Sistema:
+👉 http://localhost:8000
+phpMyAdmin:
+👉 http://localhost:8080
 
 📌 Rotas
 Exemplo de algumas rotas disponíveis:
