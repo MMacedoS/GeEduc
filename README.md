@@ -4,6 +4,17 @@ Sistema de gestão escolar desenvolvido em **PHP Puro**, seguindo boas práticas
 O projeto aplica **POO**, **MVC**, **SOLID**, **Singleton**, **JWT** e **Clean Code**, garantindo organização, escalabilidade e manutenção simplificada.  
 A interface utiliza **Bootstrap 5**, garantindo um layout moderno e responsivo.
 
+## 📌 Sobre o projeto
+
+Sistema de gestão escolar desenvolvido para digitalizar e organizar processos acadêmicos, substituindo controles manuais e centralizando informações de alunos, professores e turmas.
+
+O sistema permite gerenciamento completo da rotina escolar, com foco em organização, segurança e escalabilidade.
+
+## 💡 Problema resolvido
+
+Muitas instituições realizam o controle acadêmico de forma manual ou com sistemas pouco integrados, gerando inconsistências e dificuldade de acesso às informações.
+
+Este sistema resolve esse problema ao centralizar dados e automatizar processos como controle de notas, frequência e gestão de turmas.
 ---
 
 ## 🚀 Tecnologias e Padrões Utilizados
@@ -18,6 +29,14 @@ A interface utiliza **Bootstrap 5**, garantindo um layout moderno e responsivo.
 - **Roteamento personalizado**
 
 ---
+
+## 🚀 Diferenciais
+
+- Arquitetura baseada em MVC com separação clara de responsabilidades
+- Aplicação de princípios SOLID para maior manutenção e escalabilidade
+- Sistema de autenticação stateless utilizando JWT
+- Organização em camadas (Services, Repositories, Controllers)
+- Estrutura preparada para crescimento do sistema
 
 ## 📂 Estrutura do Projeto
 
@@ -67,7 +86,7 @@ Sistema-Escolar/
 ### 1️⃣ Clonar o repositório
 
 ```bash
-git clone https://github.com/seuusuario/sistema-escolar.git
+git clone https://github.com/mmacedos/sistema-escolar.git
 
 DB_HOST=localhost
 DB_NAME=sistema_escolar
